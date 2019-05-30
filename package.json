@@ -13,6 +13,7 @@
     "@types/react": "16.8.19",
     "@types/react-dom": "16.8.4",
     "@types/react-icons": "^3.0.0",
+    "@types/three": "^0.103.2",
     "classnames": "^2.2.6",
     "dat.gui": "^0.7.6",
     "gh-pages": "^2.0.1",
@@ -23,7 +24,8 @@
     "react-dom": "^16.8.6",
     "react-icons": "^3.7.0",
     "react-scripts": "3.0.1",
-    "typescript": "3.5.1"
+    "three": "^0.104.0",
+    "typescript": "3.4.5"
   },
   "scripts": {
     "predeploy": "npm run build",

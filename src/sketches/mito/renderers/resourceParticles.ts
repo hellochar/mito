@@ -3,6 +3,7 @@ import { BufferAttribute, BufferGeometry, Color, Points, PointsMaterial, ShaderM
 export class ResourceParticles extends Points {
     static BUFFER_SIZE = 100000;
     public geometry!: BufferGeometry;
+    public material!: ResourceParticleMaterial;
     static newGeometry() {
         const geometry = new BufferGeometry();
         const positions = new Float32Array(ResourceParticles.BUFFER_SIZE * 3);

@@ -38,8 +38,9 @@ export function updateParamsHash() {
     const nonDefaultParams: Partial<Params> = {};
     const keys = Object.keys(PARAMS_DEFAULT) as Array<keyof Params>;
     for (const key of keys) {
-        if (params[key] !== PARAMS_DEFAULT[key]) {
-            nonDefaultParams[key] = params[key];
+        const k = params[key];
+        if (k !== PARAMS_DEFAULT[key]) {
+            nonDefaultParams[key] = k;
         }
     }
     if (Object.keys(nonDefaultParams).length > 0) {

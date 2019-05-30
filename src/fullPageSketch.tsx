@@ -1,4 +1,4 @@
-import * as classnames from "classnames";
+import classnames from "classnames";
 import { parse } from "query-string";
 import * as React from "react";
 

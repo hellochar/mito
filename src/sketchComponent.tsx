@@ -52,7 +52,7 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
 
         // canvas setup
         const canvas = this.props.sketch.renderer.domElement;
-        canvas.tabindex = 1;
+        canvas.tabIndex = 1;
         (Object.keys(UI_EVENTS) as Array<keyof typeof UI_EVENTS>).forEach((eventName) => {
             if (this.props.sketch.events != null) {
                 const callback = this.props.sketch.events[eventName] as EventListener;

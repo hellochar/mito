@@ -1,5 +1,3 @@
-import { Matrix3 } from "../../node_modules/@types/three";
-
 // copy-pasted from https://raw.githubusercontent.com/josephg/noisejs/master/perlin.js
 // tslint:disable
 
