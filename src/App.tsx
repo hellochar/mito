@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.scss';
 import { FullPageSketch } from './fullPageSketch';
 import Mito from './sketches/mito';

@@ -2,7 +2,7 @@ import * as React from "react";
 
 import Mito from "..";
 import { World } from "../game";
-import { Tile, Tissue, Transport, Vein } from "../game/tile";
+import { Tile, Transport } from "../game/tile";
 import { findPositionsThroughNonObstacles, findPositionsThroughTissue } from "../pathfinding";
 import TileHighlight from "../tutorial/tileHighlight";
 import { HoveredTileInfo } from "./HoveredTileInfo";

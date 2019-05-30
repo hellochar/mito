@@ -59,7 +59,7 @@ export abstract class Tile {
             this.darkness = 0;
         } else {
             let minDarkness = this.darkness;
-            for (const [_, t] of neighbors) {
+            for (const [, t] of neighbors) {
                 const contrib = Math.max(0.2, map(this.pos.y, height / 2, height, params.soilDarknessBase, 1));
                 const darknessFromNeighbor = t instanceof Rock ? Infinity : t.darkness + contrib;
                 if (t instanceof Cell) {
@@ -97,7 +97,7 @@ export abstract class Tile {
         }
     }
 
-    canDiffuse(dir: Vector2, tile: Tile): tile is Tile & HasInventory {
+    canDiffuse(_dir: Vector2, tile: Tile): tile is Tile & HasInventory {
         return canPullResources(this, tile);
     }
 
@@ -157,10 +157,6 @@ function canPullResources(receiver: any, giver: any): giver is HasInventory {
     );
 }
 
-function randRound(x: number) {
-    const fract = x - Math.floor(x);
-    return (Math.random() > fract) ? Math.floor(x) : Math.ceil(x);
-}
 
 const noiseCo2 = new Noise();
 export class Air extends Tile {
@@ -338,7 +334,6 @@ export class Cell extends Tile implements HasEnergy {
             }
             if (this.energy < params.cellEnergyMax) {
                 const energeticNeighbors = neighborsAndSelf.filter((t) => hasEnergy(t)) as any as HasEnergy[];
-                const averageEnergy = energeticNeighbors.reduce((energy, neighbor) => energy + neighbor.energy, 0) / energeticNeighbors.length;
                 for (const neighbor of energeticNeighbors) {
                     if (this.energy < params.cellEnergyMax) {
                         let energyTransfer = 0;
@@ -605,7 +600,7 @@ export class Fruit extends Cell {
     step() {
         super.step();
         const neighbors = this.world.tileNeighbors(this.pos);
-        for (const [dir, neighbor] of neighbors) {
+        for (const [, neighbor] of neighbors) {
             if (hasInventory(neighbor)) {
                 // LMAO
                 neighbor.inventory.give(this.inventory, 0, neighbor.inventory.sugar);

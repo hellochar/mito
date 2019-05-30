@@ -1,4 +1,4 @@
-import { Color, DoubleSide, PointsMaterial, Scene, Vector2, Vector3 } from "three";
+import { Color, Scene, Vector2 } from "three";
 
 import lazy from "../../../common/lazy";
 import { map } from "../../../math";
@@ -91,7 +91,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
             this.sugars.push(newParticle());
         }
     }
-    private handleGetResources = (giver: Inventory, water: number, sugar: number) => {
+    private handleGetResources = (giver: Inventory) => {
         let wantedMeshes = Math.ceil(this.target.water);
         while (this.waters.length < wantedMeshes) {
             const v = giver.carrier.pos.clone().sub(this.target.carrier.pos);
@@ -109,7 +109,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
         }
     }
 
-    private handleGiveResources = (getter: Inventory, water: number, sugar: number) => {
+    private handleGiveResources = () => {
         let wantedMeshes = Math.ceil(this.target.water);
         if (this.waters.length > wantedMeshes) {
             this.waters.splice(wantedMeshes, this.waters.length - wantedMeshes);
@@ -121,8 +121,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
         }
     }
 
-    private updateNumParticles(resource: number, resourceArray: Vector2[]) {
-        const wantedMeshes = Math.ceil(resource);
+    private updateNumParticles(resource: number) {
         // while (resourceArray.length < wantedMeshes) {
         //     this.newParticle(resourceArray);
         // }
@@ -179,8 +178,8 @@ export class InventoryRenderer extends Renderer<Inventory> {
     }
 
     update() {
-        this.updateNumParticles(this.target.water, this.waters);
-        this.updateNumParticles(this.target.sugar, this.sugars);
+        this.updateNumParticles(this.target.water);
+        this.updateNumParticles(this.target.sugar);
         this.simulateResourcePositions();
         this.commitParticles(InventoryRenderer.WaterParticles(), this.target.water, this.waters);
         this.commitParticles(InventoryRenderer.SugarParticles(), this.target.sugar, this.sugars);

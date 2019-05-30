@@ -21,9 +21,6 @@ export interface TileHighlightProps {
 
 class TileHighlight extends React.PureComponent<TileHighlightProps, {}> {
     private object = TILE_HIGHLIGHT().clone();
-    constructor(props: TileHighlightProps) {
-        super(props);
-    }
     render() {
         this.object.position.x = this.props.x;
         this.object.position.y = this.props.y;

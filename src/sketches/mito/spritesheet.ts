@@ -3,8 +3,6 @@ import devlog from "../../common/devlog";
 import lazy from "../../common/lazy";
 
 const spriteSize = 16; // 16x16 sprites
-const spriteSheetWidth = 1024;
-const spriteSheetHeight = 512;
 let spritesheetLoaded = false;
 const SPRITESHEET = lazy(() => new THREE.TextureLoader().load( '/assets/images/roguelikeSheet_transparent.png', (() => {
     SPRITESHEET().dispatchEvent({type: "update"});

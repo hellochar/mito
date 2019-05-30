@@ -2,7 +2,7 @@ import classnames from "classnames";
 import { parse } from "query-string";
 import * as React from "react";
 
-import { ISketch, SketchAudioContext, SketchConstructor } from "./sketch";
+import { SketchConstructor } from "./sketch";
 import { SketchComponent } from "./sketchComponent";
 
 export interface ISketchRouteProps {
@@ -30,13 +30,6 @@ export class FullPageSketch extends React.Component<ISketchRouteProps, {}> {
         }
     }
 
-    private requestFullscreen(ref: HTMLElement) {
-        if (ref.webkitRequestFullscreen) {
-            ref.webkitRequestFullscreen();
-        } else if (ref.mozRequestFullScreen) {
-            ref.mozRequestFullScreen();
-        }
-    }
 
     private exitFullscreen() {
         if (document.webkitExitFullscreen) {

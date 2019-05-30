@@ -6,7 +6,7 @@ import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
 import { MOVEMENTS } from "../keymap";
 import { params } from "../params";
-import { Cell, Fruit, GrowingCell, Tile, Tissue, Transport } from "./tile";
+import { Cell, Fruit, GrowingCell, Tile, Transport } from "./tile";
 import { World } from "./world";
 
 export class Player {

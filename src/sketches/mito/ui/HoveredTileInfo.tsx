@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/accessible-emoji */
 import * as React from "react";
 
 import { Constructor } from "../constructor";

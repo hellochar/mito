@@ -1,10 +1,9 @@
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
 
 import devlog from "../../../common/devlog";
-import { ActionMove } from "../action";
 import { Player } from "../game";
 import { lerp2, Mito } from "../index";
-import { ACTION_KEYMAP, MOVEMENT_KEYS } from "../keymap";
+import { MOVEMENT_KEYS } from "../keymap";
 import { MOVEMENT_KEY_MESHES } from "../movementKeyMeshes";
 import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";

@@ -1,7 +1,7 @@
 import { ArrowHelper, Object3D, Scene, Vector2, Vector3 } from "three";
 
 import Mito from "..";
-import { Root, Transport } from "../game/tile";
+import { Transport } from "../game/tile";
 import { TileRenderer } from "./TileRenderer";
 
 export class TransportRenderer extends TileRenderer<Transport> {

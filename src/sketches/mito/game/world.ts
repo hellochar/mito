@@ -2,16 +2,13 @@ import { Vector2 } from "three";
 import * as THREE from "three";
 
 import devlog from "../../../common/devlog";
-import { Noise } from "../../../common/perlin";
-import { map } from "../../../math/index";
-import { Constructor } from "../constructor";
 import { DIRECTION_VALUES } from "../directions";
 import { Entity, GameState, height, isSteppable, width } from "../index";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
 import { Environment } from "./environment";
 import { Player } from "./player";
-import { Air, Cell, DeadCell, Fountain, Fruit, hasEnergy, Leaf, Rock, Root, Soil, Tile, Tissue, Vein } from "./tile";
+import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
 
 export class StepStats {
     constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
@@ -89,10 +86,6 @@ export class World {
         // this.newTile(x - 1, y - 2, Leaf);
     }
 
-    private newTile(x: number, y: number, type: Constructor<Tile>) {
-        const p = new Vector2(x, y);
-        this.setTileAt(p, new type(p, this));
-    }
 
     public tileAt(v: Vector2): Tile | null;
     public tileAt(x: number, y: number): Tile | null;

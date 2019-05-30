@@ -105,16 +105,16 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
         return (<>
             <h2>Attribution</h2>
             <p>
-                Tiles: <a href="http://kenney.nl/assets?s=roguelike" target="_blank">Kenney.nl Roguelike Assets</a>
+                Tiles: <a href="http://kenney.nl/assets?s=roguelike" target="_blank" rel="noopener noreferrer">Kenney.nl Roguelike Assets</a>
             </p>
             <p>
-                Pop sound when leaves convert: <a href="http://soundbible.com/2067-Blop.html" target="_blank">Blop by Mark DiAngelo</a> (<a href="https://creativecommons.org/licenses/by/3.0/us/">CC BY 3.0 US</a>)
+                Pop sound when leaves convert: <a href="http://soundbible.com/2067-Blop.html" target="_blank" rel="noopener noreferrer">Blop by Mark DiAngelo</a> (<a href="https://creativecommons.org/licenses/by/3.0/us/">CC BY 3.0 US</a>)
                 </p>
             <p>
-                Perlin noise: <a href="https://github.com/josephg/noisejs" target="_blank">josephg/noisejs</a>
+                Perlin noise: <a href="https://github.com/josephg/noisejs" target="_blank" rel="noopener noreferrer">josephg/noisejs</a>
             </p>
             <p>
-                Part of 7drl 2018: <a href="http://7drl.org/" target="_blank">http://7drl.org/</a>
+                Part of 7drl 2018: <a href="http://7drl.org/" target="_blank" rel="noopener noreferrer">http://7drl.org/</a>
             </p>
             <p>
                 Fruit icon: <a href='https://www.freepik.com/free-vector/fruits-set-pixel-icons_1001072.htm'>Designed by Freepik</a>
