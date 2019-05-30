@@ -1,16 +1,21 @@
-import * as $ from "jquery";
 import * as THREE from "three";
 
 import devlog from "../../common/devlog";
 import { SketchAudioContext } from "../../sketch";
 
+function sourceElement(assetName: string, type: string) {
+    const source = document.createElement("source");
+    source.src = `/assets/audio/${assetName}.${type}`;
+    source.type = `audio/${type}`;
+    return source;
+}
 function makeNodeOfAudioAsset(ctx: SketchAudioContext, assetName: string): Unit {
-    const audio = (
-        $("<audio autoplay loop>")
-            .append(`<source src="/assets/audio/mito/${assetName}.ogg" type="audio/ogg">`)
-            .append(`<source src="/assets/audio/mito/${assetName}.mp3" type="audio/mp3">`)
-            .append(`<source src="/assets/audio/mito/${assetName}.wav" type="audio/wav">`) as JQuery<HTMLAudioElement>
-    )[0];
+    const audio = document.createElement("audio");
+    audio.autoplay = true;
+    audio.loop = true;
+    audio.appendChild(sourceElement(assetName, "ogg"));
+    audio.appendChild(sourceElement(assetName, "mp3"));
+    audio.appendChild(sourceElement(assetName, "wav"));
     const source = ctx.createMediaElementSource(audio);
     const gain = ctx.createGain();
     source.connect(gain);

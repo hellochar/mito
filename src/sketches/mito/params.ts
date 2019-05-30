@@ -29,8 +29,8 @@ type Params = typeof PARAMS_DEFAULT;
 
 export const params = { ...PARAMS_DEFAULT };
 
-if (location.hash.length > 0) {
-    const urlHashParams: object = JSON.parse(decodeURI(location.hash.substr(1)));
+if (window.location.hash.length > 0) {
+    const urlHashParams: object = JSON.parse(decodeURI(window.location.hash.substr(1)));
     Object.assign(params, urlHashParams);
 }
 
@@ -43,9 +43,9 @@ export function updateParamsHash() {
         }
     }
     if (Object.keys(nonDefaultParams).length > 0) {
-        location.hash = encodeURI(JSON.stringify(nonDefaultParams));
+        window.location.hash = encodeURI(JSON.stringify(nonDefaultParams));
     } else {
-        location.hash = "";
+        window.location.hash = "";
     }
 }
 updateParamsHash();

@@ -12,7 +12,7 @@ export class ParamsGUI extends React.Component {
             closed: true,
             width: 450,
         });
-        gui.add(params, "environment", Object.keys(ALL_ENVIRONMENTS)).onChange(() => setTimeout(() => location.reload(), 100));
+        gui.add(params, "environment", Object.keys(ALL_ENVIRONMENTS)).onChange(() => setTimeout(() => window.location.reload(), 100));
         gui.add(params, "droop", 0, 0.5, 0.01);
         gui.add(params, "fountainTurnsPerWater", 1, 100, 1);
         gui.add(params, "isRealtime");
