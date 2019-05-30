@@ -18,7 +18,8 @@ export const UI_EVENTS = {
 };
 
 export type UIEventReciever = {
-    [E in keyof typeof UI_EVENTS]?: JQuery.EventHandler<HTMLElement>;
+    [E in keyof typeof UI_EVENTS]?: (this: HTMLElement, ev: GlobalEventHandlersEventMap[E]) => void;
+    // [E in keyof typeof UI_EVENTS]?: (ev: Event) => void;
 };
 
 export abstract class ISketch {

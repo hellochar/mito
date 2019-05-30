@@ -1,17 +1,10 @@
-import * as classnames from "classnames";
-import * as $ from "jquery";
+import classnames from "classnames";
 import * as React from "react";
 import * as THREE from "three";
 
 import { ISketch, SketchAudioContext, SketchConstructor, UI_EVENTS } from "./sketch";
 
-import FaVolumeOff from "react-icons/lib/fa/volume-off";
-import FaVolumeUp from "react-icons/lib/fa/volume-up";
-
-
-const $window = $(window);
-const $body = $(document.body);
-const HAS_SOUND = true;
+import { FaVolumeOff, FaVolumeUp } from "react-icons/fa";
 
 export interface ISketchComponentProps extends React.DOMAttributes<HTMLDivElement> {
     eventsOnBody?: boolean;
@@ -55,19 +48,19 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
 
     componentDidMount() {
         this.updateRendererCanvasToMatchParent(this.props.sketch.renderer);
-        $window.resize(this.handleWindowResize);
+        window.addEventListener("resize", this.handleWindowResize);
 
         // canvas setup
-        const $canvas = $(this.props.sketch.renderer.domElement);
-        $canvas.attr("tabindex", 1);
+        const canvas = this.props.sketch.renderer.domElement;
+        canvas.tabindex = 1;
         (Object.keys(UI_EVENTS) as Array<keyof typeof UI_EVENTS>).forEach((eventName) => {
             if (this.props.sketch.events != null) {
-                const callback = this.props.sketch.events[eventName];
+                const callback = this.props.sketch.events[eventName] as EventListener;
                 if (callback != null) {
                     if (this.props.eventsOnBody) {
-                        $body.on(eventName, callback);
+                        document.body.addEventListener(eventName, callback);
                     } else {
-                        $canvas.on(eventName, callback);
+                        canvas.addEventListener(eventName, callback);
                     }
                 }
             }
@@ -105,17 +98,17 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
             cancelAnimationFrame(this.frameId);
         }
         this.props.sketch.renderer.dispose();
-        $window.off("resize", this.handleWindowResize);
+        window.removeEventListener("resize", this.handleWindowResize);
 
-        const $canvas = $(this.props.sketch.canvas);
+        const canvas = this.props.sketch.canvas;
         (Object.keys(UI_EVENTS) as Array<keyof typeof UI_EVENTS>).forEach((eventName) => {
             if (this.props.sketch.events != null) {
-                const callback = this.props.sketch.events[eventName];
+                const callback = this.props.sketch.events[eventName] as EventListener;
                 if (callback != null) {
                     if (this.props.eventsOnBody) {
-                        $body.off(eventName, callback);
+                        document.body.removeEventListener(eventName, callback);
                     } else {
-                        $canvas.off(eventName, callback);
+                        canvas.removeEventListener(eventName, callback);
                     }
                 }
             }
