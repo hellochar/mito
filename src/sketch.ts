@@ -55,7 +55,7 @@ export abstract class ISketch {
 
     abstract animate(millisElapsed: number): void;
 
-    render?(): React.ReactNode;
+    render?(): React.ReactElement;
 
     resize?(width: number, height: number): void;
 

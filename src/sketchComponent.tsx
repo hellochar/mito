@@ -76,16 +76,16 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
     }
 
     render() {
-        const sketchElementsWithKey: React.ReactNode[] = [];
+        const sketchElementsWithKey: React.ReactElement[] = [];
         if (this.props.sketch.render != null) {
             sketchElementsWithKey.push(this.props.sketch.render());
         }
         if (this.props.sketch.elements != null) {
-            sketchElementsWithKey.push(...this.props.sketch.elements.map((el, idx) => React.cloneElement(el, { key: idx })));
+            sketchElementsWithKey.push(...this.props.sketch.elements);
         }
         return (
             <div className="sketch-elements">
-                {sketchElementsWithKey}
+                {sketchElementsWithKey.map((el, idx) => React.cloneElement(el, { key: idx }))}
             </div>
         );
     }

@@ -17,6 +17,7 @@
     "dat.gui": "^0.7.6",
     "gh-pages": "^2.0.1",
     "node-sass": "^4.12.0",
+    "normalize.css": "^8.0.1",
     "pathfinding": "^0.4.18",
     "query-string": "^6.5.0",
     "react": "^16.8.6",

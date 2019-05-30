@@ -73,7 +73,7 @@ export function hookUpAudio(ctx: SketchAudioContext) {
     const loader = new THREE.AudioLoader();
 
     loader.load(
-        '/assets/audio/mito/Blop-Mark_DiAngelo-79054334.mp3',
+        '/assets/audio/Blop-Mark_DiAngelo-79054334.mp3',
         (audioBuffer: THREE.AudioBuffer) => {
             blopBuffer = audioBuffer;
         },
@@ -85,7 +85,7 @@ export function hookUpAudio(ctx: SketchAudioContext) {
         },
     );
     loader.load(
-        '/assets/audio/mito/suckwater.wav',
+        '/assets/audio/suckwater.wav',
         (audioBuffer: THREE.AudioBuffer) => {
             suckWaterBuffer = audioBuffer;
         },

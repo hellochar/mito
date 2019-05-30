@@ -51,7 +51,7 @@ export class HUD extends React.PureComponent<HUDProps> {
         canvas.focus();
     }
     renderButton(key: string, text: string | null, props?: React.HTMLProps<HTMLDivElement>) {
-        return (<div className="mito-hud-button mito-hud-build-item" onClick={(e) => {
+        return (<div key={key} className="mito-hud-button mito-hud-build-item" onClick={(e) => {
             this.props.onTryActionKey(key);
             this.ensureCanvasFocus(e);
         }} {...props}>

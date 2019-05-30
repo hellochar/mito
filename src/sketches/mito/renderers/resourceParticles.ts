@@ -13,9 +13,9 @@ export class ResourceParticles extends Points {
         return geometry;
     }
     constructor(params: MaterialParams) {
-        super(ResourceParticles.newGeometry(), new ResourceParticleMaterial(params));
-        this.material.depthTest = false;
-        this.material.needsUpdate = true;
+        super();
+        this.geometry = ResourceParticles.newGeometry();
+        this.material = new ResourceParticleMaterial(params)
         this.frustumCulled = false;
     }
     private index = 0;

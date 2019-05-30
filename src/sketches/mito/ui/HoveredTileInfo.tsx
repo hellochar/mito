@@ -16,19 +16,15 @@ export class HoveredTileInfo extends React.Component<HoveredTileInfoProps> {
         if (!tile) {
             return null;
         }
-        const infos = [
-            this.tileInfo(tile),
-            this.inventoryInfo(tile),
-            this.cellInfo(tile),
-            this.growingCellInfo(tile),
-            this.rootInfo(tile),
-            this.leafInfo(tile),
-            this.airInfo(tile),
-            this.fountainInfo(tile),
-        ];
-        const children = infos;
         return (<div className="tile-hover">
-            {children}
+            { this.tileInfo(tile) }
+            { this.inventoryInfo(tile) }
+            { this.cellInfo(tile) }
+            { this.growingCellInfo(tile) }
+            { this.rootInfo(tile) }
+            { this.leafInfo(tile) }
+            { this.airInfo(tile) }
+            { this.fountainInfo(tile) }
         </div>);
     }
     private rootInfo(tile: Tile) {
