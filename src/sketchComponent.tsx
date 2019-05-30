@@ -1,13 +1,13 @@
+import * as classnames from "classnames";
 import * as $ from "jquery";
 import * as React from "react";
 import * as THREE from "three";
 
-import FaVolumeOff = require("react-icons/lib/fa/volume-off");
-import FaVolumeUp = require("react-icons/lib/fa/volume-up");
-
-import * as classnames from "classnames";
-import { Link } from "react-router-dom";
 import { ISketch, SketchAudioContext, SketchConstructor, UI_EVENTS } from "./sketch";
+
+import FaVolumeOff from "react-icons/lib/fa/volume-off";
+import FaVolumeUp from "react-icons/lib/fa/volume-up";
+
 
 const $window = $(window);
 const $body = $(document.body);
@@ -241,7 +241,6 @@ export class SketchComponent extends React.Component<ISketchComponentProps, ISke
             <p className="sketch-error">
                 Oops - something went wrong! Make sure you're using Chrome, or are on your desktop.
                 <pre>{message}</pre>
-                <p><Link className="back" to="/">Back</Link></p>
             </p>
         );
     }
