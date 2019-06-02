@@ -551,7 +551,7 @@ export class Root extends Cell {
     public waterTransferAmount = 0;
     // public tilePairs: Vector2[] = []; // implied that the opposite direction is connected
     public activeNeighbors: Vector2[] = [];
-    public inventory: Inventory = new Inventory(20, this);
+    public inventory = new Inventory(params.tissueInventoryCapacity, this);
     cooldown = 0;
 
     public step() {

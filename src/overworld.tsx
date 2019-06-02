@@ -109,14 +109,14 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     }
 
     renderTemperate() {
-        return <div className="icon icon-temperate">T</div>;
+        return <div className="icon icon-temperate">Temperate</div>;
     }
 
     renderRocky() {
-        return <div className="icon icon-rocky">R</div>;
+        return <div className="icon icon-rocky">Rocky</div>;
     }
 
     renderDesert() {
-        return <div className="icon icon-desert">D</div>;
+        return <div className="icon icon-desert">Desert</div>;
     }
 }

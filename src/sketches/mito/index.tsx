@@ -128,6 +128,7 @@ export class Mito extends ISketch {
                     });
                 }
             }
+            event.preventDefault();
             return false;
         },
         mousemove: (event: MouseEvent) => {

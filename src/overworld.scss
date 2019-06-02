@@ -19,16 +19,16 @@
 .overworld-map-icon {
   width: 100px;
   height: 100px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
   position: absolute;
   cursor: pointer;
 
   .icon {
+    border: 1px solid transparentize($color: $white, $amount: 0.5);
     width: 100%;
     height: 100%;
-    text-align: center;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
@@ -38,8 +38,10 @@
 
 .icon-rocky {
   background: $light-gray3;
+  color: black;
 }
 
 .icon-desert {
   background: $orange5;
+  color: black;
 }
