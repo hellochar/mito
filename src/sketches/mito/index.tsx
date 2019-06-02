@@ -1,15 +1,14 @@
 import * as React from "react";
 import * as THREE from "three";
-import { Object3D, OrthographicCamera, Scene, Vector2, Vector3 } from "three";
+import { Object3D, OrthographicCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
 
 import devlog from "../../common/devlog";
 import { map } from "../../math/index";
-import { ISketch } from "../../sketch";
+import { ISketch, SketchAudioContext } from "../../sketch";
 import { Action, ActionBuild, ActionBuildTransport, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
 import { Constructor } from "./constructor";
 import { Player, World } from "./game";
-import { ALL_ENVIRONMENTS, Temperate } from "./game/environment";
 import { Cell, Fruit, Root, Soil, Tile, Tissue, Transport, Vein } from "./game/tile";
 import { ACTION_KEYMAP, BUILD_HOTKEYS, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
@@ -22,6 +21,7 @@ import { TransportRenderer } from "./renderers/TransportRenderer";
 import { NewPlayerTutorial } from "./tutorial";
 import { TutorialBuildRoot } from "./tutorial/tutorialBuildTissue";
 import { GameStack, Hover, HUD, ParamsGUI } from "./ui";
+import { Level } from "../../overworld";
 
 export type Entity = Tile | Player;
 
@@ -65,7 +65,7 @@ export interface UIStateExpanding {
 export type UIState = UIStateMain | UIStateExpanding;
 
 export class Mito extends ISketch {
-    public readonly world = new World((ALL_ENVIRONMENTS[params.environment] || Temperate)());
+    public readonly world: World;
     public scene = new Scene();
     private camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);
     public renderers = new Map<Entity, Renderer<Entity>>();
@@ -224,7 +224,9 @@ export class Mito extends ISketch {
     })();
 
     static originalFn = Object3D.prototype.updateMatrixWorld;
-    public init() {
+    constructor(renderer: WebGLRenderer, context: SketchAudioContext, level: Level) {
+        super(renderer, context);
+        this.world = level.world!;
         (window as any).mito = this;
         hookUpAudio(this.audioContext);
         this.camera.zoom = 1.5;

@@ -10,6 +10,7 @@ export interface ISketchComponentProps extends React.DOMAttributes<HTMLDivElemen
     eventsOnBody?: boolean;
     errorElement?: JSX.Element;
     sketchClass: SketchConstructor;
+    otherArgs?: any[];
 }
 
 export interface SketchSuccess {
@@ -70,8 +71,6 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
         //     event.preventDefault();
         // });
 
-        // TODO handle errors here
-        this.props.sketch.init();
         this.frameId = requestAnimationFrame(this.loop);
     }
 
@@ -182,7 +181,8 @@ export class SketchComponent extends React.Component<ISketchComponentProps, ISke
                 const renderer = new THREE.WebGLRenderer({ alpha: true, preserveDrawingBuffer: true, antialias: true });
                 ref.appendChild(renderer.domElement);
 
-                const sketch = new (this.props.sketchClass)(renderer, this.audioContext);
+                const otherArgs = this.props.otherArgs || [];
+                const sketch = new (this.props.sketchClass)(renderer, this.audioContext, ...otherArgs);
                 this.setState({status: { type: "success", sketch: sketch }});
             } catch (e) {
                 this.setState({ status: { type: "error", error: e }});

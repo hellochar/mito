@@ -5,13 +5,14 @@ import { SketchComponent } from "./sketchComponent";
 
 export interface ISketchRouteProps {
     sketchClass: SketchConstructor;
+    otherArgs?: any[];
 }
 
 export class FullPageSketch extends React.Component<ISketchRouteProps, {}> {
     public render() {
         return (
             <div className="full-page-sketch" ref={this.handleDivRef}>
-                <SketchComponent sketchClass={this.props.sketchClass} />
+                <SketchComponent sketchClass={this.props.sketchClass} otherArgs={this.props.otherArgs} />
             </div>
         );
     }

@@ -51,8 +51,6 @@ export abstract class ISketch {
         return this.renderer.domElement;
     }
 
-    abstract init(): void;
-
     abstract animate(millisElapsed: number): void;
 
     render?(): React.ReactElement;
@@ -63,7 +61,7 @@ export abstract class ISketch {
 }
 
 export interface SketchConstructor {
-    new (renderer: THREE.WebGLRenderer, audioContext: SketchAudioContext): ISketch;
+    new (renderer: THREE.WebGLRenderer, audioContext: SketchAudioContext, ...otherArgs: any[]): ISketch;
 
     id?: string;
 }
