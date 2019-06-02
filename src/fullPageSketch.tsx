@@ -1,5 +1,3 @@
-import classnames from "classnames";
-import { parse } from "query-string";
 import * as React from "react";
 
 import { SketchConstructor } from "./sketch";
@@ -7,17 +5,12 @@ import { SketchComponent } from "./sketchComponent";
 
 export interface ISketchRouteProps {
     sketchClass: SketchConstructor;
-
-    isKiosk?: boolean;
 }
 
 export class FullPageSketch extends React.Component<ISketchRouteProps, {}> {
     public render() {
-        const { isKiosk } = this.props;
-        const isPresentationMode = !!parse(window.location.search).presentationMode;
-        const classes = classnames("full-page-sketch", { "presentation-mode": isPresentationMode, "kiosk-mode": isKiosk });
         return (
-            <div className={classes} ref={this.handleDivRef}>
+            <div className="full-page-sketch" ref={this.handleDivRef}>
                 <SketchComponent sketchClass={this.props.sketchClass} />
             </div>
         );
@@ -29,7 +22,6 @@ export class FullPageSketch extends React.Component<ISketchRouteProps, {}> {
             this.exitFullscreen();
         }
     }
-
 
     private exitFullscreen() {
         if (document.webkitExitFullscreen) {
