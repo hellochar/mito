@@ -225,7 +225,7 @@ export class Mito extends ISketch {
     })();
 
     static originalFn = Object3D.prototype.updateMatrixWorld;
-    constructor(renderer: WebGLRenderer, context: SketchAudioContext, level: Level) {
+    constructor(renderer: WebGLRenderer, context: SketchAudioContext, level: Level, public onWinLoss: (state: "win" | "lose") => void) {
         super(renderer, context);
         this.world = level.world!;
         (window as any).mito = this;
@@ -308,7 +308,12 @@ Textures in memory: ${this.renderer.info.memory.textures}
         if (this.tutorialRef) {
             this.tutorialRef.setState({ time: this.world.time });
         }
-        this.gameState = this.world.checkWinLoss() || this.gameState;
+        if (this.gameState === "main") {
+            this.gameState = this.world.checkWinLoss() || this.gameState;
+            if (this.gameState === "win" || this.gameState === "lose") {
+                this.onWinLoss(this.gameState);
+            }
+        }
 
         // const deletedEntities = this.getRemovedEntitiesNaive();
         const deletedEntities = stats.deleted;

@@ -5,11 +5,50 @@ import { Environment, Temperate, Rocky, Desert } from "./sketches/mito/game/envi
 
 import "./overworld.scss";
 
-export interface OverWorld {
-    width: number;
-    height: number;
-    levels: {
-        [key: string]: Level;
+export class OverWorld {
+    static generate(): OverWorld {
+        const levels: { [key: string]: Level } = {};
+        const width = 5;
+        const height = 5;
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                const key = `${x},${y}`;
+                if (x === Math.floor(width / 2) && y === Math.floor(height / 2)) {
+                    const environment = Temperate();
+                    const level = createLevel(x, y, environment);
+                    level.visible = true;
+                    levels[key] = level;
+                } else {
+                    const environment = Math.random() < 0.33 ? Temperate() : Math.random() < 0.5 ? Rocky() : Desert();
+                    levels[key] = createLevel(x, y, environment);
+                }
+            }
+        }
+        return new OverWorld(width, height, levels);
+    }
+
+    constructor(
+        public width: number,
+        public height: number,
+        public levels: {
+            [key: string]: Level;
+        }
+    ) {}
+
+    levelAt(x: number, y: number) {
+        if (this.isValidPosition(x, y)) {
+            return [this.levels[`${x},${y}`]];
+        } else {
+            return [];
+        }
+    }
+
+    isValidPosition(x: number, y: number) {
+        return x >= 0 && x < this.width
+            && y >= 0 && y < this.height
+            && x === Math.floor(x)
+            && y === Math.floor(y)
+            ;
     }
 }
 
@@ -33,27 +72,6 @@ export function createLevel(x: number, y: number, environment: Environment): Lev
     };
 }
 
-export function generateNewOverWorld(): OverWorld {
-    const levels: { [key: string]: Level } = {};
-    const width = 5;
-    const height = 5;
-    for (let x = 0; x < width; x++) {
-        for (let y = 0; y < height; y++) {
-            const key = `${x},${y}`;
-            if (x === Math.floor(width / 2) && y === Math.floor(height / 2)) {
-                const environment = Temperate();
-                const level = createLevel(x, y, environment);
-                level.visible = true;
-                levels[key] = level;
-            } else {
-                const environment = Math.random() < 0.33 ? Temperate() : Math.random() < 0.5 ? Rocky() : Desert();
-                levels[key] = createLevel(x, y, environment);
-            }
-        }
-    }
-    return { width, height, levels };
-}
-
 interface OverWorldMapProps {
     overWorld: OverWorld;
     onClickLevel: (level: Level) => void;
@@ -67,9 +85,9 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
         const overWorldElements = [];
         for (const key in this.props.overWorld.levels) {
             const level = this.props.overWorld.levels[key];
-            // if (level.visible) {
+            if (level.visible) {
                 overWorldElements.push(this.renderLevelMapIcon(level));
-            // }
+            }
         }
         const style = {
             width: this.props.overWorld.width * 100,
