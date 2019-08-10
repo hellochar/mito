@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as THREE from "three";
-import { Object3D, OrthographicCamera, Scene, Vector2, WebGLRenderer } from "three";
+import { OrthographicCamera, Scene, Vector2, WebGLRenderer } from "three";
 
 import devlog from "../../common/devlog";
 import { map, lerp2 } from "../../math/index";
@@ -9,34 +9,18 @@ import { ISketch, SketchAudioContext } from "../../sketch";
 import { Action, ActionBuild, ActionBuildTransport, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
 import { Constructor } from "./constructor";
-import { Entity, Player, World } from "./game";
+import { Player, World } from "./game";
 import { Cell, Fruit, Root, Soil, Tile, Tissue, Transport, Vein } from "./game/tile";
 import { ACTION_KEYMAP, BUILD_HOTKEYS, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
 import { actionMoveFor, findPositionsThroughNonObstacles, findPositionsThroughTissue, pathFrom } from "./pathfinding";
-import { InventoryRenderer } from "./renderers/InventoryRenderer";
-import { PlayerRenderer } from "./renderers/PlayerRenderer";
-import { Renderer } from "./renderers/Renderer";
-import { TileRenderer } from "./renderers/TileRenderer";
-import { TransportRenderer } from "./renderers/TransportRenderer";
 import { NewPlayerTutorial } from "./tutorial";
 import { TutorialBuildRoot } from "./tutorial/tutorialBuildTissue";
 import { GameStack, Hover, HUD, ParamsGUI } from "./ui";
+import { WorldRenderer } from "./renderers/WorldRenderer";
 
 export const width = 50;
 export const height = 100;
-
-function createRendererFor<E extends Entity>(object: E, scene: Scene, mito: Mito): Renderer<Entity> {
-    if (object instanceof Player) {
-        return new PlayerRenderer(object, scene, mito);
-    } else if (object instanceof Transport) {
-        return new TransportRenderer(object, scene, mito);
-    } else if (object instanceof Tile) {
-        return new TileRenderer(object, scene, mito);
-    } else {
-        throw new Error(`Couldn't find renderer for ${object}`);
-    }
-}
 
 export type GameState = "main" | "win" | "lose" | "instructions";
 
@@ -54,7 +38,6 @@ export class Mito extends ISketch {
     public readonly world: World;
     public scene = new Scene();
     private camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);
-    public renderers = new Map<Entity, Renderer<Entity>>();
     // when true, automatically create tissue tiles when walking into soil or dirt
     public autoplace: Constructor<Cell> | undefined;
     public render() {
@@ -210,50 +193,28 @@ export class Mito extends ISketch {
         return mesh;
     })();
 
-    static originalFn = Object3D.prototype.updateMatrixWorld;
+    private worldRenderer: WorldRenderer;
     constructor(renderer: WebGLRenderer, context: SketchAudioContext, level: Level, public onWinLoss: (state: "win" | "lose") => void) {
         super(renderer, context);
         this.world = level.world!;
-        (window as any).mito = this;
-        hookUpAudio(this.audioContext);
-        this.camera.zoom = 1.5;
-        this.camera.add(this.audioListener);
 
-        this.resize(this.canvas.width, this.canvas.height);
-
-        this.scene.add(InventoryRenderer.WaterParticles());
-        this.scene.add(InventoryRenderer.SugarParticles());
-
-        // darkness and water diffuse a few times to stabilize it
-        for (let i = 0; i < 5; i++) {
-            this.world.step();
-        }
-        // this.gameState = "instructions";
         this.camera.position.z = 10;
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
         this.camera.position.x = this.world.player.pos.x;
         this.camera.position.y = this.world.player.pos.y;
+        this.camera.zoom = 1.5;
+        this.resize(this.canvas.width, this.canvas.height);
+        this.camera.add(this.audioListener);
 
-        // const airBg = new THREE.Mesh(
-        //     new PlaneBufferGeometry(width, height),
-        //     materialMapping.get(Air)!.clone(),
-        // );
-        // airBg.position.x = width / 2 - 0.5;
-        // airBg.position.y = height / 2 - 0.5;
-        // this.scene.add(airBg);
-        this.updateAmbientAudio();
+        this.worldRenderer = new WorldRenderer(this.world, this.scene, this);
+
+        // step once to get a StepStats
+        this.world.step();
         this.world.player.mapActions = this.mapActions;
-    }
 
-    public getOrCreateRenderer(entity: Entity) {
-        const renderer = this.renderers.get(entity);
-        if (renderer == null) {
-            const created = createRendererFor(entity, this.scene, this);
-            this.renderers.set(entity, created);
-            return created;
-        } else {
-            return renderer;
-        }
+        hookUpAudio(this.audioContext);
+        this.updateAmbientAudio();
+        (window as any).mito = this;
     }
 
     public updateAmbientAudio() {
@@ -286,11 +247,13 @@ Textures in memory: ${this.renderer.info.memory.textures}
         console.log(s);
     }
 
-    public worldStepAndDeleteOldRenderers() {
+    public worldStep() {
         if (!this.firstActionTakenYet) {
             return;
         }
-        const stats = this.world.step();
+
+        this.world.step();
+
         if (this.tutorialRef) {
             this.tutorialRef.setState({ time: this.world.time });
         }
@@ -299,18 +262,6 @@ Textures in memory: ${this.renderer.info.memory.textures}
             if (this.gameState === "win" || this.gameState === "lose") {
                 this.onWinLoss(this.gameState);
             }
-        }
-
-        // const deletedEntities = this.getRemovedEntitiesNaive();
-        const deletedEntities = stats.deleted;
-
-        for (const e of deletedEntities) {
-            const renderer = this.renderers.get(e);
-            if (renderer == null) {
-                throw new Error(`Couldn't find renderer for ${e}!`);
-            }
-            renderer.destroy();
-            this.renderers.delete(e);
         }
 
         this.updateAmbientAudio();
@@ -357,18 +308,13 @@ Textures in memory: ${this.renderer.info.memory.textures}
                             this.world.player.setAction(moveAction);
                         }
                     }
-                    this.worldStepAndDeleteOldRenderers();
+                    this.worldStep();
                 }
             } else if (world.player.getAction() != null) {
-                this.worldStepAndDeleteOldRenderers();
+                this.worldStep();
             }
 
-            InventoryRenderer.startFrame();
-            this.world.entities().forEach((entity) => {
-                const renderer = this.getOrCreateRenderer(entity);
-                renderer.update();
-            });
-            InventoryRenderer.endFrame();
+            this.worldRenderer.update();
         }
         if (this.uiState.type === "expanding") {
             if (!this.world.player.isBuildCandidate(this.world.tileAt(this.uiState.target))) {
@@ -397,13 +343,7 @@ Textures in memory: ${this.renderer.info.memory.textures}
             lerp2(this.camera.position, target, 0.3);
         }
 
-        // const s = new Map();
-        // Object3D.prototype.updateMatrixWorld = function(...args) {
-        //     Mito.originalFn.apply(this, args);
-        //     const k = (s.get(this.name || this.constructor.name) || []); s.set(this.name || this.constructor.name, k); k.push(this);
-        // }
         this.renderer.render(this.scene, this.camera);
-        // console.log("update Matrix World: ", s);
 
         this.hoveredTile = this.getTileAtScreenPosition(this.mouse.x, this.mouse.y);
         // this.perfDebug();

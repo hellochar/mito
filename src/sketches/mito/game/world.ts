@@ -316,6 +316,10 @@ export class World {
         // this.checkResources();
     }
 
+    public getLastStepStats() {
+        return this.stepStats;
+    }
+
     public stepWeather() {
         // offset first rain event by 300 turns
         const isRaining = (this.time + this.environment.climate.turnsBetweenRainfall - 200) % this.environment.climate.turnsBetweenRainfall < this.environment.climate.rainDuration;

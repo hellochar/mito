@@ -14,6 +14,7 @@
     "@types/react": "16.8.19",
     "@types/react-dom": "16.8.4",
     "@types/react-icons": "^3.0.0",
+    "@types/reselect": "^2.2.0",
     "classnames": "^2.2.6",
     "dat.gui": "^0.7.6",
     "gh-pages": "^2.0.1",
@@ -26,6 +27,7 @@
     "react-dom": "^16.8.6",
     "react-icons": "^3.7.0",
     "react-scripts": "3.0.1",
+    "reselect": "^4.0.0",
     "three": "^0.104.0",
     "typescript": "3.4.5"
   },
