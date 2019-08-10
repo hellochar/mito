@@ -1,14 +1,13 @@
 import { AStarFinder, DiagonalMovement, Grid } from "pathfinding";
 import { Vector2 } from "three";
 
-import { height, width } from ".";
 import { ActionMove } from "./action";
 import { World } from "./game";
 import { Cell, Tissue } from "./game/tile";
 import { MOVEMENTS } from "./keymap";
 
 export function findPositionsThroughTissue(world: World, target: Vector2, includeTargetIfNonTissue = false) {
-    const grid = newGrid((x, y, g) => {
+    const grid = newGrid(world.width, world.height, (x, y, g) => {
         const tile = world.tileAt(x, y);
         if (tile != null && world.player.isWalkable(tile)) {
             g.setWalkableAt(x, y, true);
@@ -25,7 +24,7 @@ export function findPositionsThroughTissue(world: World, target: Vector2, includ
 }
 
 export function findPositionsThroughNonObstacles(world: World, target: Vector2) {
-    const grid = newGrid((x, y, g) => {
+    const grid = newGrid(world.width, world.height, (x, y, g) => {
         const tile = world.tileAt(x, y)!;
         if (tile instanceof Tissue || (!(tile instanceof Cell) && !tile.isObstacle)) {
             g.setWalkableAt(x, y, true);
@@ -58,7 +57,7 @@ function findPositions(grid: Grid, start: Vector2, target: Vector2) {
         grid) as Array<[number, number]>;
 }
 
-function newGrid(fn: (x: number, y: number, grid: Grid) => void) {
+function newGrid(width: number, height: number, fn: (x: number, y: number, grid: Grid) => void) {
     const grid = new Grid(width, height);
     for (let x = 0; x < width; x++) {
         for (let y = 0; y < height; y++) {

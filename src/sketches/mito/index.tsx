@@ -19,8 +19,6 @@ import { TutorialBuildRoot } from "./tutorial/tutorialBuildTissue";
 import { GameStack, Hover, HUD, ParamsGUI } from "./ui";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 
-export const width = 50;
-export const height = 100;
 
 export type GameState = "main" | "win" | "lose" | "instructions";
 
@@ -219,8 +217,8 @@ export class Mito extends ISketch {
 
     public updateAmbientAudio() {
         const yPos = this.world.player.pos.y;
-        const drumVolume = map(yPos, height / 2, height, 0, 0.5);
-        const stringsVolume = map(yPos, height / 2, 0, 0, 0.5);
+        const drumVolume = map(yPos, this.world.height / 2, this.world.height, 0, 0.5);
+        const stringsVolume = map(yPos, this.world.height / 2, 0, 0, 0.5);
         drums.gain.gain.value = Math.max(0, drumVolume);
         strings.gain.gain.value = Math.max(0, stringsVolume);
     }
@@ -277,11 +275,6 @@ Textures in memory: ${this.renderer.info.memory.textures}
     private getTileAtScreenPosition(clientX: number, clientY: number) {
         const cameraNorm = this.getCameraNormCoordinates(clientX, clientY);
         this.raycaster.setFromCamera(cameraNorm, this.camera);
-
-        // const coordinate = this.raycaster.ray.origin
-        // const intersects = this.raycaster.intersectObjects(this.scene.children, true).filter(({object}) => object instanceof TileMesh);
-        // const i = intersects[0];
-        // if (i != null) {
 
         const {x, y} = this.raycaster.ray.origin;
         const ix = Math.round(x);

@@ -4,7 +4,6 @@ import { Noise } from "../../../common/perlin";
 import { map } from "../../../math/index";
 import { Constructor } from "../constructor";
 import { DIRECTIONS } from "../directions";
-import { height, width } from "../index";
 import { hasInventory, HasInventory, Inventory } from "../inventory";
 import { params } from "../params";
 import { World } from "./world";
@@ -60,7 +59,7 @@ export abstract class Tile {
         } else {
             let minDarkness = this.darkness;
             for (const [, t] of neighbors) {
-                const contrib = Math.max(0.2, map(this.pos.y, height / 2, height, params.soilDarknessBase, 1));
+                const contrib = Math.max(0.2, map(this.pos.y, this.world.height / 2, this.world.height, params.soilDarknessBase, 1));
                 const darknessFromNeighbor = t instanceof Rock ? Infinity : t.darkness + contrib;
                 if (t instanceof Cell) {
                     minDarkness = 0;
@@ -173,11 +172,11 @@ export class Air extends Tile {
     }
 
     private computeCo2() {
-        const base = map(this.pos.y, height / 2, 0, this.world.environment.floorCo2, 1.15);
-        const scaleX = map(this.pos.y, height / 2, 0, 4, 9);
+        const base = map(this.pos.y, this.world.height / 2, 0, this.world.environment.floorCo2, 1.15);
+        const scaleX = map(this.pos.y, this.world.height / 2, 0, 4, 9);
         // const offset = noiseCo2.perlin3(94.2321 - this.pos.x / scaleX, 3221 - this.pos.y / 2.5, world.time / 5 + 93.1) * 0.2;
         const time = this.world == null ? 0 : this.world.time;
-        const offset = noiseCo2.perlin3(94.231 + (this.pos.x - width / 2) / scaleX, 2312 + this.pos.y / 8, time / 1000 + 93.1) * 0.25;
+        const offset = noiseCo2.perlin3(94.231 + (this.pos.x - this.world.width / 2) / scaleX, 2312 + this.pos.y / 8, time / 1000 + 93.1) * 0.25;
         // don't compute dark/light or water diffusion
         return Math.max(Math.min(base + offset, 1), Math.min(0.4, this.world.environment.floorCo2 * 0.75));
     }
@@ -229,7 +228,7 @@ export class Soil extends Tile implements HasInventory {
 
     stepEvaporation() {
         const { evaporationRate, evaporationBottom } = this.world.environment;
-        const evaporationHeightScalar = map(this.pos.y, height / 2, height * evaporationBottom, 1, 0);
+        const evaporationHeightScalar = map(this.pos.y, this.world.height / 2, this.world.height * evaporationBottom, 1, 0);
         const evaporationAmountScalar = this.inventory.water;
         if (Math.random() < evaporationRate * evaporationHeightScalar * evaporationAmountScalar) {
             this.inventory.add(-1, 0);
@@ -371,7 +370,7 @@ export class Cell extends Tile implements HasEnergy {
                 this.world.player.pos.y += 1;
             }
             this.world.maybeRemoveCellAt(this.pos);
-            if (this.pos.y < height - 1) {
+            if (this.pos.y < this.world.height - 1) {
                 this.pos.y += 1;
             }
             this.droopY -= 1;

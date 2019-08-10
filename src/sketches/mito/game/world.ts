@@ -3,7 +3,7 @@ import * as THREE from "three";
 
 import devlog from "../../../common/devlog";
 import { DIRECTION_VALUES } from "../directions";
-import { GameState, height, width } from "../index";
+import { GameState } from "../index";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
 import { Environment } from "./environment";
@@ -17,14 +17,16 @@ export class StepStats {
 
 export class World {
     public time: number = 0;
-    public readonly player = new Player(new Vector2(width / 2, height / 2), this);
+    public width = 50;
+    public height = 100;
+    public readonly player = new Player(new Vector2(this.width / 2, this.height / 2), this);
     public fruit?: Fruit = undefined;
     private gridEnvironment: Tile[][];
     private gridCells: Array<Array<Cell | null>>;
     private neighborCache: Array<Array<Map<Vector2, Tile>>>;
 
     constructor(public environment: Environment) {
-        this.gridEnvironment = new Array(width).fill(undefined).map((_, x) => (new Array(height).fill(undefined).map((__, y) => {
+        this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
             const pos = new Vector2(x, y);
 
             let tile: Tile | undefined;
@@ -49,7 +51,7 @@ export class World {
         }
 
         const radius = 2.5;
-        this.gridCells = new Array(width).fill(undefined).map((_, x) => (new Array(height).fill(undefined).map((__, y) => {
+        this.gridCells = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
             const pos = new Vector2(x, y);
             // add a "seed" of tissue around the player
             if (this.player.pos.distanceTo(pos) < radius) {
@@ -62,7 +64,7 @@ export class World {
                 return null;
             }
         })));
-        this.neighborCache = new Array(width).fill(undefined).map((_, x) => (new Array(height).fill(undefined).map((__, y) => {
+        this.neighborCache = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
             return this.computeTileNeighbors(x, y);
         })));
         this.fillCachedEntities();
@@ -199,7 +201,7 @@ export class World {
         return maybeCell;
     }
     public isValidPosition(x: number, y: number) {
-        if (x >= width || x < 0 || y >= height || y < 0) {
+        if (x >= this.width || x < 0 || y >= this.height || y < 0) {
             return false;
         } else {
             return true;
@@ -261,14 +263,14 @@ export class World {
         // which means you can get weird artifacts like "water suddenly moves 20 squares".
         // to combat this we alternatingly reverse the tile iteration order.
         let x = 0, y = 0;
-        for (x = 0; x < width; x++) {
-            for (y = (x + this.time) % 2; y < height; y += 2) {
+        for (x = 0; x < this.width; x++) {
+            for (y = (x + this.time) % 2; y < this.height; y += 2) {
                 // checkerboard
                 newEntities.push(this.tileAt(x, y)!);
             }
         }
-        for (x = 0; x < width; x++) {
-            for (y = (x + this.time + 1) % 2; y < height; y += 2) {
+        for (x = 0; x < this.width; x++) {
+            for (y = (x + this.time + 1) % 2; y < this.height; y += 2) {
                 // opposite checkerboard
                 newEntities.push(this.tileAt(x, y)!);
             }
@@ -324,7 +326,7 @@ export class World {
         // offset first rain event by 300 turns
         const isRaining = (this.time + this.environment.climate.turnsBetweenRainfall - 200) % this.environment.climate.turnsBetweenRainfall < this.environment.climate.rainDuration;
         if (isRaining) {
-            const x = THREE.Math.randInt(0, width - 1);
+            const x = THREE.Math.randInt(0, this.width - 1);
             const t = this.tileAt(x, 0);
             if (t instanceof Air) {
                 t.inventory.add(this.environment.climate.waterPerDroplet, 0);
@@ -338,8 +340,8 @@ export class World {
         const sunAngle = this.time * Math.PI * 2 / 1000;
         const directionalBias = Math.sin(sunAngle + Math.PI / 2);
         const sunAmount = Math.atan(Math.sin(sunAngle) * 12) / (Math.PI / 2) * 0.5 + 0.5;
-        for (let y = 0; y <= height * 0.6; y++) {
-            for (let x = 0; x < width; x++) {
+        for (let y = 0; y <= this.height * 0.6; y++) {
+            for (let x = 0; x < this.width; x++) {
                 const t = this.environmentTileAt(x, y);
                 if (t instanceof Air) {
                     let sunlight = 0;
