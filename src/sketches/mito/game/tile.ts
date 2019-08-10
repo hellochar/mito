@@ -195,7 +195,14 @@ export class Air extends Tile {
         }
         this.stepGravity();
         this.stepDiffusion(this.world.tileNeighbors(this.pos));
+        this.stepEvaporation();
         this._co2 = this.computeCo2();
+    }
+
+    stepEvaporation() {
+        if (Math.random() < 0.01 * this.inventory.water) {
+            this.inventory.add(-1, 0);
+        }
     }
 
     canDiffuse(dir: Vector2, tile: Tile): tile is Tile & HasInventory {

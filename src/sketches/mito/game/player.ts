@@ -16,7 +16,7 @@ export class Player implements Steppable {
     private events = new EventEmitter();
     private actionQueue: Action[] = [];
     public mapActions?: (player: Player, action: Action) => Action | Action[] | undefined;
-    public speed = 0.16;
+    public speed = 0.22;
     public suckWater = true;
     public suckSugar = true;
     get pos() {
