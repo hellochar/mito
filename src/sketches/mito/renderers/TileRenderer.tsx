@@ -1,10 +1,10 @@
 import { ArrowHelper, Audio, BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Line, LineBasicMaterial, Material, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Scene, Vector2, Vector3 } from "three";
 import lazy from "../../../common/lazy";
-import { map } from "../../../math/index";
+import { map, lerp2 } from "../../../math/index";
 import { blopBuffer, suckWaterBuffer } from "../audio";
 import { Constructor } from "../constructor";
 import { Air, Cell, DeadCell, Fountain, Fruit, GrowingCell, hasEnergy, hasTilePairs, Leaf, Rock, Root, Soil, Tile, Tissue, Transport, Vein } from "../game/tile";
-import { lerp2, Mito } from "../index";
+import { Mito } from "../index";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
 import { fruitTexture, textureFromSpritesheet } from "../spritesheet";

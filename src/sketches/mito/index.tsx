@@ -1,14 +1,15 @@
 import * as React from "react";
 import * as THREE from "three";
-import { Object3D, OrthographicCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
+import { Object3D, OrthographicCamera, Scene, Vector2, WebGLRenderer } from "three";
 
 import devlog from "../../common/devlog";
-import { map } from "../../math/index";
+import { map, lerp2 } from "../../math/index";
+import { Level } from "../../overworld";
 import { ISketch, SketchAudioContext } from "../../sketch";
 import { Action, ActionBuild, ActionBuildTransport, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
 import { Constructor } from "./constructor";
-import { Player, World } from "./game";
+import { Entity, Player, World } from "./game";
 import { Cell, Fruit, Root, Soil, Tile, Tissue, Transport, Vein } from "./game/tile";
 import { ACTION_KEYMAP, BUILD_HOTKEYS, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
@@ -21,24 +22,9 @@ import { TransportRenderer } from "./renderers/TransportRenderer";
 import { NewPlayerTutorial } from "./tutorial";
 import { TutorialBuildRoot } from "./tutorial/tutorialBuildTissue";
 import { GameStack, Hover, HUD, ParamsGUI } from "./ui";
-import { Level } from "../../overworld";
 
-export type Entity = Tile | Player;
-
-interface Steppable {
-    step(): void;
-}
-
-export function isSteppable(obj: any): obj is Steppable {
-    return typeof obj.step === "function";
-}
 export const width = 50;
 export const height = 100;
-
-export function lerp2(v: Vector3, t: {x: number, y: number}, l: number) {
-    v.x = v.x * (1 - l) + t.x * l;
-    v.y = v.y * (1 - l) + t.y * l;
-}
 
 function createRendererFor<E extends Entity>(object: E, scene: Scene, mito: Mito): Renderer<Entity> {
     if (object instanceof Player) {

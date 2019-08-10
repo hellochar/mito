@@ -2,6 +2,11 @@ export function lerp(a: number, b: number, x: number) {
     return a + (b - a) * x;
 }
 
+export function lerp2(v: {x: number, y: number}, t: {x: number, y: number}, l: number) {
+    v.x = v.x * (1 - l) + t.x * l;
+    v.y = v.y * (1 - l) + t.y * l;
+}
+
 export function map(x: number, xStart: number, xStop: number, yStart: number, yStop: number) {
     return lerp(yStart, yStop, (x - xStart) / (xStop - xStart));
 }

@@ -3,12 +3,13 @@ import * as THREE from "three";
 
 import devlog from "../../../common/devlog";
 import { DIRECTION_VALUES } from "../directions";
-import { Entity, GameState, height, isSteppable, width } from "../index";
+import { GameState, height, width } from "../index";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
 import { Environment } from "./environment";
 import { Player } from "./player";
 import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
+import { Entity, isSteppable } from "./entity";
 
 export class StepStats {
     constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}

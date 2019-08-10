@@ -2,11 +2,12 @@ import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene 
 
 import devlog from "../../../common/devlog";
 import { Player } from "../game";
-import { lerp2, Mito } from "../index";
+import { Mito } from "../index";
 import { MOVEMENT_KEYS } from "../keymap";
 import { MOVEMENT_KEY_MESHES } from "../movementKeyMeshes";
 import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
+import { lerp2 } from "../../../math";
 
 export class PlayerRenderer extends Renderer<Player> {
     public mesh: Mesh;
