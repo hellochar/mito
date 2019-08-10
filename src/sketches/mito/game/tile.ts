@@ -7,6 +7,7 @@ import { DIRECTIONS } from "../directions";
 import { hasInventory, HasInventory, Inventory } from "../inventory";
 import { params } from "../params";
 import { World } from "./world";
+import { Steppable } from "./entity";
 
 export interface HasEnergy {
     energy: number;
@@ -16,7 +17,7 @@ export function hasEnergy<T>(e: T): e is HasEnergy & T {
     return typeof (e as any).energy === "number";
 }
 
-export abstract class Tile {
+export abstract class Tile implements Steppable {
     static displayName = "Tile";
     static fallAmount = 0;
     public isObstacle = false;
@@ -47,6 +48,9 @@ export abstract class Tile {
 
     // test tiles diffusing water around on same-type tiles
     public step() {
+        if (this.world.time % 3 !== 0) {
+            return;
+        }
         const neighbors = this.world.tileNeighbors(this.pos);
         this.stepDarkness(neighbors);
         this.stepDiffusion(neighbors);
@@ -186,6 +190,9 @@ export class Air extends Tile {
     }
 
     step() {
+        if (this.world.time % 3 !== 0) {
+            return;
+        }
         this.stepGravity();
         this.stepDiffusion(this.world.tileNeighbors(this.pos));
         this._co2 = this.computeCo2();
@@ -222,6 +229,9 @@ export class Soil extends Tile implements HasInventory {
     }
 
     step() {
+        if (this.world.time % 3 !== 0) {
+            return;
+        }
         super.step();
         this.stepEvaporation();
     }
@@ -253,6 +263,9 @@ export class Fountain extends Soil {
         super(pos, water, world);
     }
     step() {
+        if (this.world.time % 3 !== 0) {
+            return;
+        }
         super.step();
         if (this.cooldown > 0) {
             this.cooldown--;
@@ -304,6 +317,9 @@ export class Cell extends Tile implements HasEnergy {
     // }
 
     step() {
+        if (this.world.time % 3 !== 0) {
+            return;
+        }
         super.step();
         this.energy -= 1;
         const tileNeighbors = this.world.tileNeighbors(this.pos);
@@ -462,6 +478,9 @@ export class GrowingCell extends Cell {
         this.timeRemaining = this.timeToBuild = (completedCell.constructor as any).turnsToBuild || 0;
     }
     step() {
+        if (this.world.time % 3 !== 0) {
+            return;
+        }
         super.step();
         this.timeRemaining--;
         if (this.timeRemaining <= 0) {
@@ -493,6 +512,9 @@ export class Leaf extends Cell {
     public tilePairs: Vector2[] = []; // implied that the opposite direction is connected
 
     public step() {
+        if (this.world.time % 3 !== 0) {
+            return;
+        }
         super.step();
         this.didConvert = false;
         const neighbors = this.world.tileNeighbors(this.pos);
@@ -554,6 +576,9 @@ export class Root extends Cell {
     cooldown = 0;
 
     public step() {
+        if (this.world.time % 3 !== 0) {
+            return;
+        }
         super.step();
         if (this.cooldown <= 0) {
             this.stepWaterTransfer();
@@ -597,6 +622,9 @@ export class Fruit extends Cell {
 
     // seeds aggressively take the inventory from neighbors
     step() {
+        if (this.world.time % 3 !== 0) {
+            return;
+        }
         super.step();
         const neighbors = this.world.tileNeighbors(this.pos);
         for (const [, neighbor] of neighbors) {
@@ -614,6 +642,9 @@ export class Transport extends Tissue {
     public cooldown = 0;
 
     step() {
+        if (this.world.time % 3 !== 0) {
+            return;
+        }
         // transport hungers at double speed
         this.energy -= 1;
         super.step();

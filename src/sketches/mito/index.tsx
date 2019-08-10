@@ -294,15 +294,11 @@ Textures in memory: ${this.renderer.info.memory.textures}
         this.canvas.focus();
         if (this.gameState === "main") {
             if (params.isRealtime) {
-                if (this.frameCount % 3 === 0) {
-                    if (this.world.player.getAction() == null) {
-                        const moveAction = this.keysToMovement(this.keyMap);
-                        if (moveAction) {
-                            this.world.player.setAction(moveAction);
-                        }
-                    }
-                    this.worldStep();
+                const moveAction = this.keysToMovement(this.keyMap);
+                if (moveAction) {
+                    this.world.player.setAction(moveAction);
                 }
+                this.worldStep();
             } else if (world.player.getAction() != null) {
                 this.worldStep();
             }
@@ -318,8 +314,8 @@ Textures in memory: ${this.renderer.info.memory.textures}
         if (this.uiState.type === "main") {
             this.scene.remove(this.expandingTileHighlight);
             const target = new THREE.Vector2(
-                this.world.player.pos.x + mouseNorm.x / 2,
-                this.world.player.pos.y - mouseNorm.y / 2,
+                this.world.player.posFloat.x + mouseNorm.x / 2,
+                this.world.player.posFloat.y - mouseNorm.y / 2,
             );
             lerp2(this.camera.position, target, 0.3);
         } else {

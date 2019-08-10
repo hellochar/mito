@@ -29,8 +29,10 @@ export class PlayerRenderer extends Renderer<Player> {
         this.scene.add(this.mesh);
     }
     update() {
-        lerp2(this.mesh.position, this.target.droopPos(), 0.5);
-        // lerp2(this.mesh.position, this.target.droopPos(), 1.0);
+        const pos = this.target.droopPosFloat().clone();
+        pos.x += Math.cos(performance.now() / 1000) * 0.04;
+        pos.y += Math.sin(performance.now() / 400) * 0.08;
+        lerp2(this.mesh.position, pos, 0.5);
         this.mesh.position.z = 2;
         for (const [key, keyMesh] of MOVEMENT_KEY_MESHES) {
             const action = MOVEMENT_KEYS[key];

@@ -4,18 +4,27 @@ import { Action, ActionBuild, ActionBuildTransport, ActionDeconstruct, ActionDro
 import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
-import { MOVEMENTS } from "../keymap";
 import { params } from "../params";
 import { Cell, Fruit, GrowingCell, Tile, Transport } from "./tile";
 import { World } from "./world";
+import { Steppable } from "./entity";
 
-export class Player {
+export class Player implements Steppable {
     public inventory = new Inventory(params.maxResources, this, Math.round(params.maxResources / 3), Math.round(params.maxResources / 3));
     private action?: Action;
     private events = new EventEmitter();
     private actionQueue: Action[] = [];
     public mapActions?: (player: Player, action: Action) => Action | Action[] | undefined;
-    public constructor(public pos: Vector2, public world: World) { }
+    public speed = 0.16;
+    get pos() {
+        // return this._pos;
+        return this.posFloat.clone().round();
+    }
+    // private _pos: Vector2;
+    public constructor(public posFloat: Vector2, public world: World) {
+        // this._pos = this.posFloat.clone().round();
+    }
+
     public setActions(actions: Action[]) {
         this.actionQueue = actions;
     }
@@ -35,14 +44,14 @@ export class Player {
         }
     }
 
-    public droopPos() {
+    public droopPosFloat() {
         const droopY = this.droopY();
         if (droopY !== 0) {
-            const t = this.pos.clone();
+            const t = this.posFloat.clone();
             t.y += droopY;
             return t;
         }
-        return this.pos;
+        return this.posFloat;
     }
 
     public currentTile() {
@@ -98,7 +107,7 @@ export class Player {
         }
     }
     public verifyMove(action: ActionMove) {
-        const target = this.pos.clone().add(action.dir);
+        const target = this.posFloat.clone().add(action.dir.clone().setLength(this.speed)).round();
         return this.isWalkable(target);
     }
 
@@ -120,9 +129,8 @@ export class Player {
     public isBuildCandidate(tile: Tile | null): tile is Tile {
         if (tile != null && !this.isWalkable(tile) && !tile.isObstacle) {
             // This Tile could conceivably be built upon. But are we close enough?
-            const offset = tile.pos.clone().sub(this.pos);
-            const areWeCloseEnough = MOVEMENTS.find((move) => move.dir.equals(offset)) != null;
-            return areWeCloseEnough;
+            const distance = tile.pos.distanceTo(this.posFloat);
+            return distance < 1;
         } else {
             return false;
         }
@@ -134,7 +142,8 @@ export class Player {
             footsteps.gain.gain.value = 1.0;
             footsteps.gain.gain.linearRampToValueAtTime(0, footsteps.gain.context.currentTime + 0.05);
             // do the move
-            this.pos.add(action.dir);
+            this.posFloat.add(action.dir.clone().setLength(this.speed));
+            // this._pos = this.posFloat.clone().round();
             this.autopickup();
             return true;
         } else {
@@ -207,13 +216,13 @@ export class Player {
             }
             cell.droopY = this.droopY();
             this.world.setTileAt(action.position, cell);
-            if (this.isWalkable(cell)) {
-                // move into the tissue cell
-                this.attemptMove({
-                    type: "move",
-                    dir: action.position.clone().sub(this.pos),
-                });
-            }
+            // if (this.isWalkable(cell)) {
+            //     // move into the tissue cell
+            //     this.attemptMove({
+            //         type: "move",
+            //         dir: action.position.clone().sub(this.pos),
+            //     });
+            // }
             return true;
         } else {
             return false;

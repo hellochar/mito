@@ -3,7 +3,7 @@ import { Player } from "./player";
 
 export type Entity = Tile | Player;
 
-interface Steppable {
+export interface Steppable {
     step(): void;
 }
 
