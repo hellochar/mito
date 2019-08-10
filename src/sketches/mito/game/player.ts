@@ -8,6 +8,7 @@ import { params } from "../params";
 import { Cell, Fruit, GrowingCell, Tile, Transport } from "./tile";
 import { World } from "./world";
 import { Steppable } from "./entity";
+import { ACTION_KEYMAP } from "../keymap";
 
 export class Player implements Steppable {
     public inventory = new Inventory(params.maxResources, this, Math.round(params.maxResources / 3), Math.round(params.maxResources / 3));
@@ -16,6 +17,8 @@ export class Player implements Steppable {
     private actionQueue: Action[] = [];
     public mapActions?: (player: Player, action: Action) => Action | Action[] | undefined;
     public speed = 0.16;
+    public suckWater = true;
+    public suckSugar = true;
     get pos() {
         // return this._pos;
         return this.posFloat.clone().round();
@@ -79,6 +82,12 @@ export class Player implements Steppable {
             }
         }
         const actionSuccessful = this.attemptAction(this.action);
+        if (!this.suckWater) {
+            this.attemptAction(ACTION_KEYMAP.j);
+        }
+        if (!this.suckSugar) {
+            this.attemptAction(ACTION_KEYMAP.k);
+        }
         if (actionSuccessful) {
             this.events.emit("action", this.action);
         }
@@ -159,7 +168,7 @@ export class Player implements Steppable {
         const cell = this.currentTile();
         if (hasInventory(cell)) {
             const inv = cell.inventory;
-            inv.give(this.inventory, inv.water, inv.sugar);
+            inv.give(this.inventory, this.suckWater ? inv.water : 0, this.suckSugar ? inv.sugar : 0);
         }
     }
     public tryConstructingNewCell<T>(position: Vector2, cellType: Constructor<T>) {

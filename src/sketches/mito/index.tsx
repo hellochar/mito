@@ -250,6 +250,8 @@ Textures in memory: ${this.renderer.info.memory.textures}
             return;
         }
 
+        this.world.player.suckWater = !this.keyMap.has("j");
+        this.world.player.suckSugar = !this.keyMap.has("k");
         this.world.step();
 
         if (this.tutorialRef) {

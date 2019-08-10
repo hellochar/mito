@@ -7,11 +7,11 @@ export const ACTION_KEYMAP: { [key: string]: Action } = {
     "j": {
         type: "drop",
         sugar: 0,
-        water: 10, // hack hack we can assume max 100 water, it's fine
+        water: 1, // hack hack we can assume max 100 water, it's fine
     },
     "k": {
         type: "drop",
-        sugar: 10,
+        sugar: 1,
         water: 0, // hack hack we can assume max 100 water, it's fine
     },
     ".": {
