@@ -4,7 +4,6 @@ import { OrthographicCamera, Scene, Vector2, WebGLRenderer } from "three";
 
 import devlog from "../../common/devlog";
 import { map, lerp2 } from "../../math/index";
-import { Level } from "../../overworld";
 import { ISketch, SketchAudioContext } from "../../sketch";
 import { Action, ActionBuild, ActionBuildTransport, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
@@ -18,6 +17,7 @@ import { NewPlayerTutorial } from "./tutorial";
 import { TutorialBuildRoot } from "./tutorial/tutorialBuildTissue";
 import { GameStack, Hover, HUD, ParamsGUI } from "./ui";
 import { WorldRenderer } from "./renderers/WorldRenderer";
+import { HexTile } from "../../overworld/hexTile";
 
 
 export type GameState = "main" | "win" | "lose" | "instructions";
@@ -192,9 +192,12 @@ export class Mito extends ISketch {
     })();
 
     private worldRenderer: WorldRenderer;
-    constructor(renderer: WebGLRenderer, context: SketchAudioContext, level: Level, public onWinLoss: (state: "win" | "lose") => void) {
+    constructor(renderer: WebGLRenderer, context: SketchAudioContext, level: HexTile, public onWinLoss: (state: "win" | "lose") => void) {
         super(renderer, context);
-        this.world = level.world!;
+        if (level.info.world == null) {
+            level.info.world = new World(level.info.environment!);
+        }
+        this.world = level.info.world;
 
         this.camera.position.z = 10;
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));

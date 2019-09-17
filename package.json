@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@types/classnames": "^2.2.7",
+    "@types/d3-scale": "^2.1.1",
     "@types/dat.gui": "^0.7.2",
     "@types/jest": "24.0.13",
     "@types/localforage": "^0.0.34",
@@ -16,6 +17,7 @@
     "@types/react-icons": "^3.0.0",
     "@types/reselect": "^2.2.0",
     "classnames": "^2.2.6",
+    "d3-scale": "^3.1.0",
     "dat.gui": "^0.7.6",
     "gh-pages": "^2.0.1",
     "localforage": "^1.7.3",
@@ -28,6 +30,7 @@
     "react-icons": "^3.7.0",
     "react-scripts": "3.0.1",
     "reselect": "^4.0.0",
+    "simplex-noise": "^2.4.0",
     "three": "^0.104.0",
     "typescript": "3.4.5"
   },

@@ -2,31 +2,33 @@ import React from 'react';
 
 import { FullPageSketch } from './fullPageSketch';
 import Mito from './sketches/mito';
-import { OverWorld, OverWorldMap, Level } from './overworld';
+import { OverWorldMap } from './overworld/OverWorldMap';
+import { OverWorld } from "./overworld/overWorld";
+import { HexTile } from './overworld/hexTile';
 
 export interface AppState {
     overWorld: OverWorld;
-    currentLevel?: Level;
+    currentLevel?: HexTile;
 }
 
 class App extends React.PureComponent<{}, AppState> {
     state: AppState = {
         overWorld: OverWorld.generate(),
     };
-    handleClickLevel = (level: Level) => {
-        this.setState({ currentLevel: level });
+    handleClickLevel = (level: HexTile) => {
+        if (level.info.visible && !level.info.conquered) {
+            this.setState({ currentLevel: level });
+        }
     }
 
     handleWinLoss = (state: "win" | "lose") => {
         if (state === "win" && this.state.currentLevel) {
             const { currentLevel } = this.state;
-            const {x, y} = currentLevel;
-            currentLevel.conquered = true;
-            const { overWorld } = this.state;
-            overWorld.levelAt(x-1, y).forEach((l) => l.visible = true);
-            overWorld.levelAt(x+1, y).forEach((l) => l.visible = true);
-            overWorld.levelAt(x, y-1).forEach((l) => l.visible = true);
-            overWorld.levelAt(x, y+1).forEach((l) => l.visible = true);
+            currentLevel.info.conquered = true;
+
+            for (const n of currentLevel.neighbors) {
+                n.info.visible = true;
+            }
             this.setState({
                 currentLevel: undefined
             });
