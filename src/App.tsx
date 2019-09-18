@@ -13,9 +13,11 @@ export interface AppState {
 
 class App extends React.PureComponent<{}, AppState> {
     state: AppState = {
-        overWorld: OverWorld.generate(),
+        // overWorld: OverWorld.generateFilledHex(),
+        overWorld: OverWorld.generateRectangle(100, 50),
     };
     handleClickLevel = (level: HexTile) => {
+        console.log(level.info);
         if (level.info.visible && !level.info.conquered) {
             this.setState({ currentLevel: level });
         }

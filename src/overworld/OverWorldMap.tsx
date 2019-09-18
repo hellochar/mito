@@ -1,11 +1,12 @@
 import { scaleLinear } from "d3-scale";
-import React, { useRef, useEffect } from "react";
+import React from "react";
 
 import { HexTile } from "./hexTile";
 import { roundCubeCoordinates } from "./hexMath";
 import { OverWorld } from "./overWorld";
 
 import "./OverWorldMap.scss";
+import { Vector2 } from "three";
 
 const C = Math.sqrt(3) / 2;
 
@@ -14,39 +15,137 @@ interface OverWorldMapProps {
     onClickLevel: (level: HexTile) => void;
 }
 
-export const OverWorldMap: React.FunctionComponent<OverWorldMapProps> = ({ overWorld, onClickLevel }) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    useEffect(() => {
-        canvasRef.current!.width = window.innerWidth;
-        canvasRef.current!.height = window.innerHeight;
-    }, [canvasRef]);
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (canvas != null) {
-            for (const tile of overWorld) {
-                drawTile(canvas, tile);
-            }
-        }
-    });
+interface CameraState {
+  scale: number;
+  dX: number;
+  dY: number;
+}
 
-    const handleCanvasClick = (e: React.MouseEvent) => {
-        if (canvasRef.current != null) {
-            const level = getClickedHexTile(overWorld, canvasRef.current, e);
-            onClickLevel(level);
-        }
+interface OverWorldMapState {
+  cameraState: CameraState;
+  pressedKeys: { [key: string]: boolean };
+}
+
+export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMapState> {
+  state: OverWorldMapState = {
+    cameraState: { scale: 30, dX: 0, dY: 0 },
+    pressedKeys: {},
+  };
+
+  private canvas: HTMLCanvasElement | null = null;
+  private rafId?: number;
+
+  private handleCanvasRef = (ref: HTMLCanvasElement | null) => {
+    this.canvas = ref;
+    if (ref != null) {
+      this.handleResize();
     }
+  }
 
+  private handleCanvasClick = (e: React.MouseEvent) => {
+    if (this.canvas != null) {
+      const level = getClickedHexTile(this.props.overWorld, this.canvas, this.state.cameraState, e);
+      this.props.onClickLevel(level);
+    }
+  }
+
+  private handleKeyDown = (e: KeyboardEvent) => {
+    if (!e.repeat) {
+      const newPressedKeys = { ...this.state.pressedKeys, [e.key]: true };
+      console.log("keydown", newPressedKeys);
+      this.setState({
+        pressedKeys: newPressedKeys,
+      });
+    }
+  };
+
+  private handleKeyUp = (e: KeyboardEvent) => {
+    const newPressedKeys = { ...this.state.pressedKeys };
+    delete newPressedKeys[e.key];
+    this.setState({
+      pressedKeys: newPressedKeys,
+    })
+  };
+
+  private handleResize = () => {
+    if (this.canvas != null) {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+      this.drawMap();
+    }
+  }
+
+  private updateCamera = () => {
+    const panSpeed = 20;
+    let offset = new Vector2();
+    for (const key in this.state.pressedKeys) {
+      if (key === 'w') {
+        offset.y += panSpeed;
+      } else if (key === 's') {
+        offset.y -= panSpeed;
+      } else if (key === 'a') {
+        offset.x += panSpeed;
+      } else if (key === 'd') {
+        offset.x -= panSpeed;
+      }
+    }
+    offset.setLength(panSpeed);
+
+    if (offset.x !== 0 || offset.y !== 0) {
+      const cameraState = this.state.cameraState;
+
+      this.setState({
+        cameraState: {
+          ...cameraState,
+          dX: cameraState.dX + offset.x,
+          dY: cameraState.dY + offset.y
+        }
+      });
+    }
+    this.rafId = requestAnimationFrame(this.updateCamera);
+  }
+
+  private drawMap() {
+    if (this.canvas != null) {
+      const context = this.canvas.getContext("2d")!;
+      context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      for (const tile of this.props.overWorld) {
+        drawTile(this.canvas, this.state.cameraState, tile);
+      }
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keyup', this.handleKeyUp);
+    window.addEventListener('resize', this.handleResize);
+    this.rafId = requestAnimationFrame(this.updateCamera);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keyup', this.handleKeyUp);
+    window.removeEventListener('resize', this.handleResize);
+    cancelAnimationFrame(this.rafId!);
+  }
+
+  componentDidUpdate() {
+    this.drawMap();
+  }
+
+  render() {
     return (
-        <div className="overworld-map-container">
-            <canvas ref={canvasRef} onClick={handleCanvasClick} />
-        </div>
+      <div className="overworld-map-container">
+        <canvas ref={this.handleCanvasRef} onClick={this.handleCanvasClick} />
+      </div>
     );
-};
+  }
+}
 
-function getClickedHexTile(overWorld: OverWorld, canvas: HTMLCanvasElement, event: React.MouseEvent) {
-    const scale = canvas.width / 100;
-    const cX = canvas.width / 2;
-    const cY = canvas.height / 2;
+function getClickedHexTile(overWorld: OverWorld, canvas: HTMLCanvasElement, camera: CameraState, event: React.MouseEvent) {
+    const { scale, dX, dY } = camera;
+    const cX = canvas.width / 2 + dX;
+    const cY = canvas.height / 2 + dY;
 
     const e = event.nativeEvent;
     const pxX = e.offsetX;
@@ -72,7 +171,7 @@ function getClickedHexTile(overWorld: OverWorld, canvas: HTMLCanvasElement, even
 }
 
 function drawHex(c: CanvasRenderingContext2D, x: number, y: number, r: number) {
-  // c.strokeStyle = "gray";
+  c.strokeStyle = "rgb(112, 112, 112)";
   c.beginPath();
   c.moveTo(x + r, y);
   for (let i = 1; i < 6; i++) {
@@ -81,17 +180,17 @@ function drawHex(c: CanvasRenderingContext2D, x: number, y: number, r: number) {
   }
   c.closePath();
   c.fill();
-  // c.stroke();
+  c.stroke();
 }
 
 const colorScale = scaleLinear<string, string>()
   .domain([-1, 0, 1, 5, 6])
   .range(["rgb(0, 60, 255)", "lightblue", "yellow", "orange"]);
 
-function drawTile(canvas: HTMLCanvasElement, tile: HexTile) {
-  const scale = canvas.width / 100;
-  const cX = canvas.width / 2;
-  const cY = canvas.height / 2;
+function drawTile(canvas: HTMLCanvasElement, camera: CameraState, tile: HexTile) {
+  const { scale, dX, dY } = camera;
+  const cX = canvas.width / 2 + dX;
+  const cY = canvas.height / 2 + dY;
   const c = canvas.getContext('2d')!;
   if (tile.info.visible) {
     const { x, y } = tile.cartesian;
