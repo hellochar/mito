@@ -23,12 +23,12 @@ interface CameraState {
 
 interface OverWorldMapState {
   cameraState: CameraState;
-  pressedKeys: { [key: string]: boolean };
+  pressedKeys: { [code: string]: boolean };
 }
 
 export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMapState> {
   state: OverWorldMapState = {
-    cameraState: { scale: 30, dX: 0, dY: 0 },
+    cameraState: { scale: 48, dX: 0, dY: 0 },
     pressedKeys: {},
   };
 
@@ -51,8 +51,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
 
   private handleKeyDown = (e: KeyboardEvent) => {
     if (!e.repeat) {
-      const newPressedKeys = { ...this.state.pressedKeys, [e.key]: true };
-      console.log("keydown", newPressedKeys);
+      const newPressedKeys = { ...this.state.pressedKeys, [e.code]: true };
       this.setState({
         pressedKeys: newPressedKeys,
       });
@@ -61,7 +60,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
 
   private handleKeyUp = (e: KeyboardEvent) => {
     const newPressedKeys = { ...this.state.pressedKeys };
-    delete newPressedKeys[e.key];
+    delete newPressedKeys[e.code];
     this.setState({
       pressedKeys: newPressedKeys,
     })
@@ -79,13 +78,13 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     const panSpeed = 20;
     let offset = new Vector2();
     for (const key in this.state.pressedKeys) {
-      if (key === 'w') {
+      if (key === 'KeyW' || key === 'ArrowUp') {
         offset.y += panSpeed;
-      } else if (key === 's') {
+      } else if (key === 'KeyS' || key === 'ArrowDown') {
         offset.y -= panSpeed;
-      } else if (key === 'a') {
+      } else if (key === 'KeyA' || key === 'ArrowLeft') {
         offset.x += panSpeed;
-      } else if (key === 'd') {
+      } else if (key === 'KeyD' || key === 'ArrowRight') {
         offset.x -= panSpeed;
       }
     }
