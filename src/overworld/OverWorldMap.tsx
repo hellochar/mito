@@ -1,5 +1,5 @@
 import { scaleLinear } from "d3-scale";
-import React from "react";
+import React, { CSSProperties } from "react";
 
 import { HexTile } from "./hexTile";
 import { roundCubeCoordinates } from "./hexMath";
@@ -7,12 +7,13 @@ import { OverWorld } from "./overWorld";
 
 import "./OverWorldMap.scss";
 import { Vector2 } from "three";
+import { LevelInfo } from "./levelInfo";
 
 const C = Math.sqrt(3) / 2;
 
 interface OverWorldMapProps {
     overWorld: OverWorld;
-    onClickLevel: (level: HexTile) => void;
+    onPlayLevel: (level: HexTile) => void;
 }
 
 interface CameraState {
@@ -24,6 +25,7 @@ interface CameraState {
 interface OverWorldMapState {
   cameraState: CameraState;
   pressedKeys: { [code: string]: boolean };
+  highlightedTile?: HexTile;
 }
 
 export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMapState> {
@@ -44,8 +46,15 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
 
   private handleCanvasClick = (e: React.MouseEvent) => {
     if (this.canvas != null) {
-      const level = getClickedHexTile(this.props.overWorld, this.canvas, this.state.cameraState, e);
-      this.props.onClickLevel(level);
+      if (this.state.highlightedTile != null) {
+        this.setState({ highlightedTile: undefined });
+      } else {
+        const level = getClickedHexTile(this.props.overWorld, this.canvas, this.state.cameraState, e);
+        if (level != null) {
+          this.setState({ highlightedTile: level });
+        }
+      }
+      // this.props.onPlayLevel(level);
     }
   }
 
@@ -136,9 +145,64 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     return (
       <div className="overworld-map-container">
         <canvas ref={this.handleCanvasRef} onClick={this.handleCanvasClick} />
+        {this.maybeRenderHighlightedTile()}
       </div>
     );
   }
+
+  maybeRenderHighlightedTile() {
+    if (this.state.highlightedTile != null) {
+      return (
+        <OverWorldModal camera={this.state.cameraState} tile={this.state.highlightedTile}>
+          <HexTileInfo tile={this.state.highlightedTile} />
+        </OverWorldModal>
+      );
+    }
+  }
+}
+
+interface OverWorldModalProps {
+  camera: CameraState;
+  tile: HexTile;
+  children: React.ReactNode;
+}
+
+function OverWorldModal({ tile, camera, children }: OverWorldModalProps) {
+  const [px, py] = pixelPosition(tile, camera);
+  // this element is put in the center
+  const container: CSSProperties = {
+    zIndex: 1,
+    position: "absolute",
+    left: px + camera.scale * 0.5,
+    top: py,
+    display: "flex",
+  };
+  const positioner: CSSProperties = {
+    position: "absolute",
+    left: "20px",
+    alignSelf: "center",
+    justifySelf: "top",
+    background: "white",
+    borderRadius: "5px",
+    color: "black",
+  };
+
+  return (
+    <div style={container}>
+      <div className="overworld-modal-positioner" style={positioner}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function pixelPosition(tile: HexTile, camera: CameraState) {
+  const { dX, dY, scale } = camera;
+  const { x, y } = tile.cartesian;
+
+  const cX = window.innerWidth / 2 + dX;
+  const cY = window.innerHeight / 2 + dY;
+  return [cX + x * scale, cY + y * scale];
 }
 
 function getClickedHexTile(overWorld: OverWorld, canvas: HTMLCanvasElement, camera: CameraState, event: React.MouseEvent) {
@@ -187,22 +251,32 @@ const colorScale = scaleLinear<string, string>()
   .range(["rgb(0, 60, 255)", "lightblue", "yellow", "orange"]);
 
 function drawTile(canvas: HTMLCanvasElement, camera: CameraState, tile: HexTile) {
-  const { scale, dX, dY } = camera;
-  const cX = canvas.width / 2 + dX;
-  const cY = canvas.height / 2 + dY;
+  const { scale } = camera;
+  const [px, py] = pixelPosition(tile, camera);
+
   const c = canvas.getContext('2d')!;
   if (tile.info.visible) {
-    const { x, y } = tile.cartesian;
     c.fillStyle = colorScale(tile.info.height);
-    drawHex(c, cX + x * scale, cY + y * scale, scale);
+    drawHex(c, px, py, scale);
     c.font = "12px serif";
     c.textAlign = "center";
     c.textBaseline = "middle";
     c.fillStyle = "#666";
-    c.fillText(tile.info.height + "", cX + x * scale, cY + y * scale, scale);
+    c.fillText(tile.info.height + "", px, py, scale);
   } else {
-    const { x, y } = tile.cartesian;
     c.fillStyle = "grey";
-    drawHex(c, cX + x * scale, cY + y * scale, scale);
+    drawHex(c, px, py, scale);
   }
+}
+
+interface LevelInfoProps {
+  tile: HexTile;
+}
+
+function HexTileInfo({ tile }: LevelInfoProps) {
+  return (
+    <div>
+      <pre>{JSON.stringify(tile.info, null, 4)}</pre>
+    </div>
+  );
 }

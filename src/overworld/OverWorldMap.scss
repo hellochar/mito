@@ -15,3 +15,15 @@
     height: 100%;
   }
 }
+
+.overworld-modal-positioner {
+  &::before {
+    position: absolute;
+    top: 50%;
+    transform: translate(-100%, -50%);
+    left: 0;
+    content: "";
+    border: 20px solid transparent;
+    border-right-color: white;
+  }
+}

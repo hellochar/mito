@@ -386,7 +386,8 @@ export class World {
         if (this.tileAt(this.player.pos.x, this.player.pos.y) instanceof DeadCell) {
             return "lose";
         }
-        return null;
+        return "win";
+        // return null;
     }
     public checkResources() {
         let totalSugar = 0;
