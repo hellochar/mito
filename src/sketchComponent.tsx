@@ -40,6 +40,8 @@ interface SketchSuccessComponentProps {
 class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps, {frameCount: number}> {
     private frameId?: number;
     private lastTimestamp = 0;
+    private stop = false;
+
     constructor(props: SketchSuccessComponentProps) {
         super(props);
         this.state = {
@@ -90,6 +92,8 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
     }
 
     componentWillUnmount() {
+        this.stop = true;
+
         if (this.props.sketch.destroy) {
             this.props.sketch.destroy();
         }
@@ -125,11 +129,16 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
             console.error(e);
         }
 
-        // force new render()
-        this.setState({
-            frameCount: this.props.sketch.frameCount,
-        });
-        this.frameId = requestAnimationFrame(this.loop);
+        // careful - sketch.animate might have triggered a whole React update loop
+        // and made this component unmount.
+        if (!this.stop) {
+            // force new render()
+            this.setState({
+                frameCount: this.props.sketch.frameCount,
+            });
+            this.frameId = requestAnimationFrame(this.loop);
+            console.log("setting frameId", this.frameId);
+        }
     }
 
     private handleWindowResize = () => {
@@ -189,10 +198,14 @@ export class SketchComponent extends React.Component<ISketchComponentProps, ISke
                 console.error(e);
             }
         } else {
+            if (this.state.status.type === "success") {
+                this.state.status.sketch.canvas.remove();
+            }
             document.removeEventListener("visibilitychange", this.handleVisibilityChange);
             if (this.audioContext != null) {
                 this.audioContext.close();
             }
+            this.setState({ status: {type: "loading" } });
         }
     }
 
