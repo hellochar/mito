@@ -1,5 +1,6 @@
 import { scaleLinear } from "d3-scale";
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useState } from "react";
+import styled, { keyframes } from "styled-components";
 
 import { HexTile } from "./hexTile";
 import { roundCubeCoordinates } from "./hexMath";
@@ -50,12 +51,15 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
         this.setState({ highlightedTile: undefined });
       } else {
         const level = getClickedHexTile(this.props.overWorld, this.canvas, this.state.cameraState, e);
-        if (level != null) {
+        if (level != null && level.info.visible) {
           this.setState({ highlightedTile: level });
         }
       }
-      // this.props.onPlayLevel(level);
     }
+  }
+
+  private onPlayLevel = (level: HexTile) => {
+      this.props.onPlayLevel(level);
   }
 
   private handleKeyDown = (e: KeyboardEvent) => {
@@ -154,7 +158,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     if (this.state.highlightedTile != null) {
       return (
         <OverWorldModal camera={this.state.cameraState} tile={this.state.highlightedTile}>
-          <HexTileInfo tile={this.state.highlightedTile} />
+          <HexTileInfo tile={this.state.highlightedTile} onClickPlay={this.onPlayLevel} />
         </OverWorldModal>
       );
     }
@@ -167,6 +171,39 @@ interface OverWorldModalProps {
   children: React.ReactNode;
 }
 
+const opacifyIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-80px) scale(0.75);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+`;
+
+const OverworldModalPositioner = styled.div`
+  position: absolute;
+  left: 20px;
+  align-self: center;
+  justify-self: top;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 5px;
+  color: black;
+  animation: ${opacifyIn} 0.2s both;
+
+  &::before {
+    position: absolute;
+    top: 50%;
+    transform: translate(-100%, -50%);
+    left: 0;
+    content: "";
+    border: 20px solid transparent;
+    border-right-color: rgba(255, 255, 255, 0.9);
+  }
+`;
+
 function OverWorldModal({ tile, camera, children }: OverWorldModalProps) {
   const [px, py] = pixelPosition(tile, camera);
   // this element is put in the center
@@ -177,21 +214,11 @@ function OverWorldModal({ tile, camera, children }: OverWorldModalProps) {
     top: py,
     display: "flex",
   };
-  const positioner: CSSProperties = {
-    position: "absolute",
-    left: "20px",
-    alignSelf: "center",
-    justifySelf: "top",
-    background: "white",
-    borderRadius: "5px",
-    color: "black",
-  };
-
   return (
     <div style={container}>
-      <div className="overworld-modal-positioner" style={positioner}>
+      <OverworldModalPositioner>
         {children}
-      </div>
+      </OverworldModalPositioner>
     </div>
   );
 }
@@ -271,12 +298,92 @@ function drawTile(canvas: HTMLCanvasElement, camera: CameraState, tile: HexTile)
 
 interface LevelInfoProps {
   tile: HexTile;
+  onClickPlay: (level: HexTile) => void;
 }
 
-function HexTileInfo({ tile }: LevelInfoProps) {
+const HexTileInfoContainer = styled.div`
+  margin: 10px;
+  width: 320px;
+`;
+
+const PlayButton = styled.button`
+  cursor: pointer;
+  padding: 10px;
+  width: 100%;
+  background-color: darkgreen;
+  color: white;
+  font-size: 18px;
+`;
+
+const ExpandDetails = styled.div`
+  text-transform: uppercase;
+  font-size: 12px;
+  font-family: sans-serif;
+`;
+
+function HexTileInfo({ tile, onClickPlay }: LevelInfoProps) {
+  const handleClickPlay = () => {
+    onClickPlay(tile);
+  }
+
+  const playButtonElement = (tile.info.height === -1 || tile.info.conquered) ? null :
+    <PlayButton onClick={handleClickPlay}>Populate</PlayButton>;
+
+  const header =
+    tile.info.conquered ? <h1>Populated</h1> :
+    (tile.info.height === -1) ? <h1>Deep Water</h1> :
+    <h1>Unexplored</h1>;
+
+  const stringifyInfo = { ...tile.info };
+  delete stringifyInfo.world;
+
+  const expand = (tile.info.height === -1) ? null : 
+    <Expand shrunkElements={
+      <ExpandDetails>Details</ExpandDetails>
+    }>
+      <pre style={{fontSize: "12px"}}>{JSON.stringify(stringifyInfo, null, 4)}</pre>
+    </Expand>;
+
+  return (
+    <HexTileInfoContainer>
+      {header}
+      {expand}
+      {playButtonElement}
+    </HexTileInfoContainer>
+  );
+}
+
+interface ExpandProps {
+  children: React.ReactNode;
+  shrunkElements: React.ReactNode;
+}
+
+const ExpandButton = styled.div`
+  cursor: pointer;
+  position: relative;
+  border-bottom: 1px solid black;
+  margin: 20px 0;
+  display: flex;
+`;
+
+const ExpandCaret = styled.div`
+  margin-left: auto;
+`;
+
+function Expand({ children, shrunkElements }: ExpandProps) {
+  const [expanded, setExpanded] = useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
   return (
     <div>
-      <pre>{JSON.stringify(tile.info, null, 4)}</pre>
+      <ExpandButton onClick={handleExpandClick}>
+        { shrunkElements }
+        { expanded ? <ExpandCaret>▼</ExpandCaret> : <ExpandCaret>▶</ExpandCaret>}
+      </ExpandButton>
+      { expanded ? <div>{children}</div> : null }
     </div>
-  );
+  )
 }

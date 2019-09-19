@@ -21,6 +21,10 @@ export class HexTile {
     neighbors: HexTile[] = new Array(6);
     info: LevelInfo = {
         height: 0,
+        rainfall: "medium",
+        soilType: "average",
+        temperature: "temperate",
+        wind: "low",
         conquered: false,
         visible: false,
     };

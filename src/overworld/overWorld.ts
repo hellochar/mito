@@ -5,19 +5,24 @@ import { HexStore } from "./hexStore";
 import { Temperate, Desert, Rocky } from "../sketches/mito/game/environment";
 
 export class OverWorld {
-    private static populateLevelInfo(tile: HexTile, noise: SimplexNoise) {
+    private static randomHeight(tile: HexTile, noise: SimplexNoise) {
         const { x, y } = tile.cartesian;
-        const { info } = tile;
-        info.height += (noise.noise3D(x / 24, y / 24, 0) - 0.2) * 6;
-        info.height += noise.noise3D(x / 24, y / 24, 1.453) * 6;
-        info.height += noise.noise3D(x / 6, y / 6, 1.453) * 1.5;
-        info.height += 1;
+        let height = 0;
+        height += (noise.noise3D(x / 24, y / 24, 0) - 0.2) * 6;
+        height += noise.noise3D(x / 24, y / 24, 1.453) * 6;
+        height += noise.noise3D(x / 6, y / 6, 1.453) * 1.5;
+        height += 1;
         // info.height += 4 - Math.abs(tile.magnitude * tile.magnitude) * 0.02;
-        info.height -= Math.abs(y * y) * 0.025;
-        if (info.height < 0 && info.height >= -1) {
-            info.height = 0;
+        height -= Math.abs(y * y) * 0.025;
+        if (height < 0 && height >= -1) {
+            height = 0;
         }
-        info.height = Math.round(Math.max(Math.min(info.height, 6), -1));
+        height = Math.round(Math.max(Math.min(height, 6), -1));
+        return height;
+    }
+    private static populateLevelInfo(tile: HexTile, noise: SimplexNoise) {
+        const { info } = tile;
+        info.height = OverWorld.randomHeight(tile, noise);
 
         info.environment =
             info.height < 2 ? Temperate() :
