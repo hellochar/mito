@@ -2,70 +2,70 @@ import * as React from "react";
 import * as THREE from "three";
 
 export const UI_EVENTS = {
-    click: true,
-    contextmenu: true,
-    dblclick: true,
-    mousedown: true,
-    mouseup: true,
-    mousemove: true,
-    touchstart: true,
-    touchmove: true,
-    touchend: true,
-    keyup: true,
-    keydown: true,
-    keypress: true,
-    wheel: true,
+  click: true,
+  contextmenu: true,
+  dblclick: true,
+  mousedown: true,
+  mouseup: true,
+  mousemove: true,
+  touchstart: true,
+  touchmove: true,
+  touchend: true,
+  keyup: true,
+  keydown: true,
+  keypress: true,
+  wheel: true,
 };
 
 export type UIEventReciever = {
-    [E in keyof typeof UI_EVENTS]?: (this: HTMLElement, ev: GlobalEventHandlersEventMap[E]) => void;
-    // [E in keyof typeof UI_EVENTS]?: (ev: Event) => void;
+  [E in keyof typeof UI_EVENTS]?: (this: HTMLElement, ev: GlobalEventHandlersEventMap[E]) => void;
+  // [E in keyof typeof UI_EVENTS]?: (ev: Event) => void;
 };
 
 export abstract class ISketch {
-    static id?: string;
+  static id?: string;
 
-    public elements?: JSX.Element[];
-    public events?: UIEventReciever;
-    /**
-     * milliseconds since sketch started running.
-     */
-    public timeElapsed = 0;
+  public elements?: JSX.Element[];
+  public events?: UIEventReciever;
+  /**
+  * milliseconds since sketch started running.
+  */
+  public timeElapsed = 0;
 
-    public frameCount = 0;
+  public frameCount = 0;
 
-    constructor(public renderer: THREE.WebGLRenderer, public audioContext: SketchAudioContext) {}
+  constructor(public renderer: THREE.WebGLRenderer, public audioContext: SketchAudioContext) { }
 
-    /**
-     * height / width
-     */
-    get aspectRatio() {
-        return this.renderer.domElement.height / this.renderer.domElement.width;
-    }
+  /**
+  * height / width
+  */
+  get aspectRatio() {
+    return this.renderer.domElement.height / this.renderer.domElement.width;
+  }
 
-    get resolution() {
-        return new THREE.Vector2(this.renderer.domElement.width, this.renderer.domElement.height);
-    }
+  get resolution() {
+    return new THREE.Vector2(this.renderer.domElement.width, this.renderer.domElement.height);
+  }
 
-    get canvas() {
-        return this.renderer.domElement;
-    }
+  get canvas() {
+    return this.renderer.domElement;
+  }
 
-    abstract animate(millisElapsed: number): void;
+  abstract animate(millisElapsed: number): void;
 
-    render?(): React.ReactElement;
+  render?(): React.ReactElement;
 
-    resize?(width: number, height: number): void;
+  resize?(width: number, height: number): void;
 
-    destroy?(): void;
+  destroy?(): void;
 }
 
 export interface SketchConstructor {
-    new (renderer: THREE.WebGLRenderer, audioContext: SketchAudioContext, ...otherArgs: any[]): ISketch;
+  new(renderer: THREE.WebGLRenderer, audioContext: SketchAudioContext, ...otherArgs: any[]): ISketch;
 
-    id?: string;
+  id?: string;
 }
 
 export interface SketchAudioContext extends AudioContext {
-    gain: GainNode;
+  gain: GainNode;
 }

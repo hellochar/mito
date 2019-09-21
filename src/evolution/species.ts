@@ -61,42 +61,42 @@ export type TraitValue = -3 | -2 | -1 | 0 | 1 | 2 | 3;
 
 export type Traits = {
   /**
-   * How fast the cell walks across this tile. Higher is faster.
-   */
+  * How fast the cell walks across this tile. Higher is faster.
+  */
   walkSpeed: TraitValue;
 
   /**
-   * How slower the cell consumes energy. Higher is lower energy usage
-   * for the same behavior.
-   */
+  * How slower the cell consumes energy. Higher is lower energy usage
+  * for the same behavior.
+  */
   energyEfficiency: TraitValue;
   /**
-   * How well this cell photosynthesizes. Higher is faster photosynthesis.
-   */
+  * How well this cell photosynthesizes. Higher is faster photosynthesis.
+  */
   photosynthesis: TraitValue;
   /**
-   * How well this cell absorbs nutrients and water from roots. Higher is
-   * faster absorption rate.
-   */
+  * How well this cell absorbs nutrients and water from roots. Higher is
+  * faster absorption rate.
+  */
   rootAbsorption: TraitValue;
   /**
-   * How many resources this cell can carry.
-   */
+  * How many resources this cell can carry.
+  */
   carryCapacity: TraitValue;
   /**
-   * Whether this cell actively transports water. Higher means faster
-   * water transport.
-   */
+  * Whether this cell actively transports water. Higher means faster
+  * water transport.
+  */
   activeTransportWater: TraitValue;
   /**
-   * Whether this cell actively transports sugar. Higher means faster
-   * sugar transport.
-   */
+  * Whether this cell actively transports sugar. Higher means faster
+  * sugar transport.
+  */
   activeTransportSugar: TraitValue;
   /**
-   * How stable this cell is against gravity, weight, and wind forces.
-   * Higher is more stable.
-   */
+  * How stable this cell is against gravity, weight, and wind forces.
+  * Higher is more stable.
+  */
   structuralStability: TraitValue;
 };
 

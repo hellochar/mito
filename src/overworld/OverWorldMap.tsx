@@ -13,8 +13,8 @@ import HexTileInfo from "./HexTileInfo";
 const C = Math.sqrt(3) / 2;
 
 interface OverWorldMapProps {
-    overWorld: OverWorld;
-    onPlayLevel: (level: HexTile) => void;
+  overWorld: OverWorld;
+  onPlayLevel: (level: HexTile) => void;
 }
 
 export interface CameraState {
@@ -59,7 +59,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
   }
 
   private onPlayLevel = (level: HexTile) => {
-      this.props.onPlayLevel(level);
+    this.props.onPlayLevel(level);
   }
 
   private handleKeyDown = (e: KeyboardEvent) => {
@@ -166,31 +166,31 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
 }
 
 function getClickedHexTile(overWorld: OverWorld, canvas: HTMLCanvasElement, camera: CameraState, event: React.MouseEvent) {
-    const { scale, dX, dY } = camera;
-    const cX = canvas.width / 2 + dX;
-    const cY = canvas.height / 2 + dY;
+  const { scale, dX, dY } = camera;
+  const cX = canvas.width / 2 + dX;
+  const cY = canvas.height / 2 + dY;
 
-    const e = event.nativeEvent;
-    const pxX = e.offsetX;
-    const pxY = e.offsetY;
-    const x = (pxX - cX) / scale;
-    const y = (pxY - cY) / scale;
-    // we now have a fractional cartesian coordinates
-    // now we flip the equations:
+  const e = event.nativeEvent;
+  const pxX = e.offsetX;
+  const pxY = e.offsetY;
+  const x = (pxX - cX) / scale;
+  const y = (pxY - cY) / scale;
+  // we now have a fractional cartesian coordinates
+  // now we flip the equations:
 
-    // x = 1.5i
-    // i = x / 1.5
+  // x = 1.5i
+  // i = x / 1.5
 
-    // y = 2Cj + Ci
-    // j = (y - Ci) / (2 * C)
+  // y = 2Cj + Ci
+  // j = (y - Ci) / (2 * C)
 
-    const i = x / 1.5;
-    const j = (y - C * i) / (2 * C);
-    const k = -(i + j);
+  const i = x / 1.5;
+  const j = (y - C * i) / (2 * C);
+  const k = -(i + j);
 
-    const rounded = roundCubeCoordinates(i, j, k);
+  const rounded = roundCubeCoordinates(i, j, k);
 
-    return overWorld.tileAt(rounded.i, rounded.j);
+  return overWorld.tileAt(rounded.i, rounded.j);
 }
 
 function drawHex(c: CanvasRenderingContext2D, x: number, y: number, r: number) {
