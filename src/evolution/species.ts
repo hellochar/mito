@@ -47,15 +47,15 @@ function dnaPairToTraitType(dnaTuple: DNATuple): TraitType | undefined {
   }
 }
 
-type DNATuple =
+export type DNATuple =
 "AA" | "AC" | "AG" | "AT" |
 "CA" | "CC" | "CG" | "CT" |
 "GA" | "GC" | "GG" | "GT" |
 "TA" | "TC" | "TG" | "TT";
 
-type DNA = "A" | "C" | "G" | "T";
+export type DNA = "A" | "C" | "G" | "T";
 
-type Gene = [DNATuple, DNATuple];
+export type Gene = [DNATuple, DNATuple];
 
 export type TraitValue = -3 | -2 | -1 | 0 | 1 | 2 | 3;
 
