@@ -6,6 +6,7 @@ import { Tile, Transport } from "../game/tile";
 import { findPositionsThroughNonObstacles, findPositionsThroughTissue } from "../pathfinding";
 import TileHighlight from "../tutorial/tileHighlight";
 import { HoveredTileInfo } from "./HoveredTileInfo";
+import PointHighlight from "../tutorial/PointHighlight";
 
 interface HoverProps {
   mito: Mito;
@@ -16,31 +17,33 @@ export class Hover extends React.Component<HoverProps> {
     return this.props.mito.scene;
   }
   public render() {
-    const { hoveredTile } = this.props.mito;
+    const { highlightedTile } = this.props.mito;
+    const highlightedPosition = this.props.mito.getHighlightPosition();
     return <>
-      <HoveredTileInfo tile={hoveredTile} />
-      {this.maybeRenderHoveredTileHighlight(hoveredTile)}
-      {this.maybeRenderPath()}
+      <HoveredTileInfo tile={highlightedTile} />
+      <PointHighlight x={highlightedPosition.x} y={highlightedPosition.y} scene={this.scene} />
+      {this.maybeRenderTileHighlight(highlightedTile)}
+      {/* {this.maybeRenderPath()} */}
     </>;
   }
 
-  public maybeRenderHoveredTileHighlight(tile?: Tile) {
+  public maybeRenderTileHighlight(tile?: Tile) {
     if (tile) {
       return <TileHighlight x={tile.pos.x} y={tile.pos.y} scene={this.scene} />;
     }
   }
 
-  public maybeRenderPath() {
-    const { autoplace, hoveredTile, scene, world } = this.props.mito;
-    if (hoveredTile) {
-      if (autoplace != null && Mito.expansionTiles.indexOf(autoplace) !== -1) {
-        return <PathHighlight tile={hoveredTile} scene={scene} world={world} walkable="non-obstacles" />;
-      }
-      if (autoplace === Transport) {
-        return <PathHighlight tile={hoveredTile} scene={scene} world={world} walkable="tissue" />;
-      }
-    }
-  }
+  // public maybeRenderPath() {
+  //   const { autoplace, hoveredTile, scene, world } = this.props.mito;
+  //   if (hoveredTile) {
+  //     if (autoplace != null && Mito.expansionTiles.indexOf(autoplace) !== -1) {
+  //       return <PathHighlight tile={hoveredTile} scene={scene} world={world} walkable="non-obstacles" />;
+  //     }
+  //     if (autoplace === Transport) {
+  //       return <PathHighlight tile={hoveredTile} scene={scene} world={world} walkable="tissue" />;
+  //     }
+  //   }
+  // }
 }
 
 class PathHighlight extends React.PureComponent<{ world: World, tile: Tile, scene: THREE.Scene, walkable: "tissue" | "non-obstacles" }> {

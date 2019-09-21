@@ -137,7 +137,6 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
         frameCount: this.props.sketch.frameCount,
       });
       this.frameId = requestAnimationFrame(this.loop);
-      console.log("setting frameId", this.frameId);
     }
   }
 

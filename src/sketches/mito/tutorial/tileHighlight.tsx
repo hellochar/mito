@@ -3,6 +3,7 @@ import * as THREE from "three";
 
 import lazy from "../../../common/lazy";
 import { SceneObject } from "./sceneObject";
+import { Animate } from "./Animate";
 
 export const TILE_HIGHLIGHT = lazy(() => {
   const geometry = new THREE.PlaneBufferGeometry(1, 1);
@@ -28,28 +29,6 @@ class TileHighlight extends React.PureComponent<TileHighlightProps, {}> {
       <Animate a={((t) => this.object.scale.setScalar(Math.sin(t * 3.7) * 0.04 + 0.94))} />
       <SceneObject object={this.object} parent={this.props.scene} />
     </>;
-  }
-}
-
-class Animate extends React.Component<{ a: (time: number) => void }> {
-  private rafid?: number;
-
-  private animate = (time: number) => {
-    this.props.a(time / 1000);
-    this.rafid = requestAnimationFrame(this.animate);
-  }
-
-  render() {
-    return null;
-  }
-
-  componentDidMount() {
-    this.rafid = requestAnimationFrame(this.animate);
-  }
-  componentWillUnmount() {
-    if (this.rafid) {
-      cancelAnimationFrame(this.rafid);
-    }
   }
 }
 

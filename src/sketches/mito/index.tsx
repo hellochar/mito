@@ -59,7 +59,7 @@ export class Mito extends ISketch {
   }
   public tutorialRef: NewPlayerTutorial | null = null;
   public mouse = new THREE.Vector2();
-  public hoveredTile?: Tile;
+  public highlightedTile?: Tile;
   private raycaster = new THREE.Raycaster();
   public gameState: GameState = "main";
   private firstActionTakenYet = false;
@@ -87,7 +87,7 @@ export class Mito extends ISketch {
   public events = {
     contextmenu: (event: MouseEvent) => {
       if (this.uiState.type === "main") {
-        const tile = this.getTileAtScreenPosition(event.clientX!, event.clientY!);
+        const tile = this.getHighlightedTile(event.clientX!, event.clientY!);
         if (tile != null) {
           this.world.player.setAction({
             type: "deconstruct",
@@ -277,19 +277,45 @@ Textures in memory: ${this.renderer.info.memory.textures}
     );
   }
 
-  private getTileAtScreenPosition(clientX: number, clientY: number) {
-    const cameraNorm = this.getCameraNormCoordinates(clientX, clientY);
-    this.raycaster.setFromCamera(cameraNorm, this.camera);
+  public getHighlightPosition(clientX = this.mouse.x, clientY = this.mouse.y) {
+    const offset = new Vector2(
+      clientX - this.canvas.width / 2,
+      clientY - this.canvas.height / 2,
+    );
 
-    const { x, y } = this.raycaster.ray.origin;
-    const ix = Math.round(x);
-    const iy = Math.round(y);
-    const tile = this.world.tileAt(ix, iy);
+    // if (offset.length() > 0.75) {
+    //   offset.setLength(0.75);
+    // }
+    const {x, y} = this.world.player.posFloat;
+
+    offset.x += x;
+    offset.y += y;
+    return offset;
+  }
+
+  private getHighlightedTile(clientX: number, clientY: number) {
+    const p = this.getHighlightPosition(clientX, clientY);
+    p.round();
+
+    const tile = this.world.tileAt(p.x, p.y);
     if (tile != null && tile.lightAmount() > 0) {
       return tile;
     }
-    // }
   }
+
+  // private getTileAtScreenPosition(clientX: number, clientY: number) {
+  //   const cameraNorm = this.getCameraNormCoordinates(clientX, clientY);
+  //   this.raycaster.setFromCamera(cameraNorm, this.camera);
+
+  //   const { x, y } = this.raycaster.ray.origin;
+  //   const ix = Math.round(x);
+  //   const iy = Math.round(y);
+  //   const tile = this.world.tileAt(ix, iy);
+  //   if (tile != null && tile.lightAmount() > 0) {
+  //     return tile;
+  //   }
+  //   // }
+  // }
 
   public animate() {
     const { world } = this;
@@ -339,7 +365,8 @@ Textures in memory: ${this.renderer.info.memory.textures}
 
     this.renderer.render(this.scene, this.camera);
 
-    this.hoveredTile = this.getTileAtScreenPosition(this.mouse.x, this.mouse.y);
+    // this.hoveredTile = this.getTileAtScreenPosition(this.mouse.x, this.mouse.y);
+    this.highlightedTile = this.getHighlightedTile(this.mouse.x, this.mouse.y);
     // this.perfDebug();
   }
   public keysToMovement(keys: Set<string>): ActionMove | null {
@@ -449,7 +476,7 @@ Textures in memory: ${this.renderer.info.memory.textures}
 
   public handleClick(clientX: number, clientY: number) {
     this.firstActionTakenYet = true;
-    const target = this.getTileAtScreenPosition(clientX, clientY);
+    const target = this.getHighlightedTile(clientX, clientY);
     if (this.uiState.type === "expanding") {
       if (target == null || !this.uiState.target.equals(target.pos)) {
         this.resetUIState();
