@@ -128,6 +128,10 @@ export class Inventory {
     return fpref(capacity - water - sugar);
   }
 
+  public isMaxed() {
+    return this.space() < 1;
+  }
+
   validate(water: number = this.water, sugar: number = this.sugar) {
     const { capacity } = this;
     if (water < 0) {

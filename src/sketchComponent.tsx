@@ -50,8 +50,8 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
   };
 
   componentDidMount() {
-    this.updateRendererCanvasToMatchParent(this.props.sketch.renderer);
     window.addEventListener("resize", this.handleWindowResize);
+    this.handleWindowResize();
 
     // canvas setup
     const canvas = this.props.sketch.renderer.domElement;
@@ -218,7 +218,7 @@ export class SketchComponent extends React.Component<ISketchComponentProps, ISke
       }
     }
 
-    const { sketchClass, ...containerProps } = this.props;
+    const { sketchClass, otherArgs, eventsOnBody, errorElement, ...containerProps } = this.props;
     const className = classnames("sketch-component", this.state.status.type);
     return (
       <div {...containerProps} id={this.props.sketchClass.id} className={className} ref={this.handleContainerRef}>

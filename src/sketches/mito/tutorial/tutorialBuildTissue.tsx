@@ -3,7 +3,6 @@ import * as React from "react";
 import { Action } from "../action";
 import { World } from "../game";
 import { Air, Leaf, Root, Soil, Tile, Tissue } from "../game/tile";
-import { BUILD_HOTKEYS } from "../keymap";
 import TileHighlight from "./tileHighlight";
 import { Tutorial } from "./tutorial";
 
@@ -73,7 +72,7 @@ export class TutorialBuildRoot extends Tutorial {
   };
   constructor(props: any) {
     super(props);
-    BUILD_HOTKEYS.r = Root;
+    // BUILD_HOTKEYS.r = Root;
   }
   render() {
     const buildCandidateHighlights: JSX.Element[] = [];
@@ -116,7 +115,7 @@ export class TutorialBuildLeaf extends Tutorial {
   };
   constructor(props: any) {
     super(props);
-    BUILD_HOTKEYS.f = Leaf;
+    // BUILD_HOTKEYS.f = Leaf;
   }
   render() {
     const buildCandidateHighlights: JSX.Element[] = [];

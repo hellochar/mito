@@ -220,8 +220,8 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 }
 
-const materialMapping = lazy(() => {
-  const materials = new Map<Constructor<Tile>, Material>();
+export const materialMapping = lazy(() => {
+  const materials = new Map<Constructor<Tile>, MeshBasicMaterial>();
   materials.set(Air, new MeshBasicMaterial({
     side: DoubleSide,
     depthWrite: false,

@@ -2,8 +2,6 @@ import * as React from "react";
 
 import Mito from "..";
 import { Action } from "../action";
-import { Fruit, Transport } from "../game/tile";
-import { BUILD_HOTKEYS } from "../keymap";
 import { Tutorial } from "./tutorial";
 import { TutorialBuildLeaf, TutorialBuildRoot, TutorialBuildTissue } from "./tutorialBuildTissue";
 import TutorialMovement from "./tutorialMovement";
@@ -33,8 +31,8 @@ export class NewPlayerTutorial extends React.PureComponent<NewPlayerTutorialProp
   handleFulfilled = () => {
     this.setState({ step: this.state.step + 1 }, () => {
       if (this.isFinished()) {
-        BUILD_HOTKEYS.T = Transport;
-        BUILD_HOTKEYS.F = Fruit;
+        // BUILD_HOTKEYS.T = Transport;
+        // BUILD_HOTKEYS.F = Fruit;
         // BUILD_HOTKEYS.v = Vein;
       }
     });
@@ -136,10 +134,10 @@ export class NewPlayerTutorial extends React.PureComponent<NewPlayerTutorialProp
   // ];
 
   componentDidMount() {
-    delete BUILD_HOTKEYS.f;
-    delete BUILD_HOTKEYS.r;
-    delete BUILD_HOTKEYS.T;
-    delete BUILD_HOTKEYS.F;
+    // delete BUILD_HOTKEYS.f;
+    // delete BUILD_HOTKEYS.r;
+    // delete BUILD_HOTKEYS.T;
+    // delete BUILD_HOTKEYS.F;
 
     this.props.mito.world.player.on("action", (action: Action) => {
       if (this.tutorialRef) {

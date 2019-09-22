@@ -1,7 +1,5 @@
 import { Action, ActionMove } from "./action";
-import { Constructor } from "./constructor";
 import { DIRECTIONS } from "./directions";
-import { Cell, Fruit, Leaf, Root, Tissue, Transport } from "./game/tile";
 
 export const ACTION_KEYMAP: { [key: string]: Action } = {
   "q": {
@@ -36,19 +34,3 @@ export const MOVEMENT_KEYS: { [key: string]: ActionMove } = {
 };
 
 export const MOVEMENTS = Object.keys(MOVEMENT_KEYS).map((key) => MOVEMENT_KEYS[key]);
-
-export const BUILD_HOTKEYS: { [key: string]: Constructor<Cell> } = {
-  1: Tissue,
-  2: Leaf,
-  3: Root,
-  4: Transport,
-  5: Fruit,
-
-  // t: Tissue,
-  // f: Leaf,
-  // r: Root,
-  // T: Transport,
-  // F: Fruit,
-
-  // v: Vein,
-};

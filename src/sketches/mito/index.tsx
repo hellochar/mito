@@ -5,20 +5,17 @@ import { OrthographicCamera, Scene, Vector2, WebGLRenderer } from "three";
 import devlog from "../../common/devlog";
 import { map, lerp2 } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../../sketch";
-import { Action, ActionBuild, ActionBuildTransport, ActionMove } from "./action";
+import { ActionBuild, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
 import { Constructor } from "./constructor";
-import { Player, World } from "./game";
-import { Cell, Fruit, Root, Soil, Tile, Tissue, Transport, Vein } from "./game/tile";
-import { ACTION_KEYMAP, BUILD_HOTKEYS, MOVEMENT_KEYS } from "./keymap";
+import { World } from "./game";
+import { Cell, Fruit, Root, Tissue, Transport, Vein, Leaf, Tile } from "./game/tile";
+import { ACTION_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
-import { actionMoveFor, findPositionsThroughNonObstacles, findPositionsThroughTissue, pathFrom } from "./pathfinding";
 import { NewPlayerTutorial } from "./tutorial";
-import { TutorialBuildRoot } from "./tutorial/tutorialBuildTissue";
 import { GameStack, Hover, HUD, ParamsGUI } from "./ui";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { HexTile } from "../../overworld/hexTile";
-
 
 export type GameState = "main" | "win" | "lose" | "instructions";
 
@@ -36,21 +33,16 @@ export class Mito extends ISketch {
   public readonly world: World;
   public scene = new Scene();
   private camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);
-  // when true, automatically create tissue tiles when walking into soil or dirt
-  public autoplace: Constructor<Cell> | undefined;
+
+  public cellBar: Constructor<Cell>[] = [Tissue, Leaf, Root, Transport, Fruit];
+  public cellBarIndex = 0;
+  get selectedCell() {
+    return this.cellBar[this.cellBarIndex];
+  }
+
   public render() {
     return <>
-      <HUD
-        autoplace={this.autoplace}
-        mouseX={this.mouse.x}
-        mouseY={this.mouse.y}
-        uiState={this.uiState}
-        isTutorialFinished={this.tutorialRef == null ? true : this.tutorialRef.isFinished()}
-        sugar={this.world.player.inventory.sugar}
-        water={this.world.player.inventory.water}
-        onTryActionKey={this.tryAction}
-        world={this.world}
-      />
+      <HUD mito={this} />
       <GameStack mito={this} state={this.gameState} />
       {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
       <ParamsGUI />
@@ -59,22 +51,15 @@ export class Mito extends ISketch {
   }
   public tutorialRef: NewPlayerTutorial | null = null;
   public mouse = new THREE.Vector2();
+  public mouseDown = false;
+  public mouseButton = -1;
   public highlightedTile?: Tile;
-  private raycaster = new THREE.Raycaster();
   public gameState: GameState = "main";
   private firstActionTakenYet = false;
   public audioListener = new THREE.AudioListener();
   private keyMap = new Set<string>();
   public uiState: UIState = { type: "main" };
 
-  private enterUIStateExpanding(target: THREE.Vector2) {
-    const originalZoom = this.uiState.type === "main" ? this.camera.zoom : this.uiState.originalZoom;
-    this.uiState = {
-      type: "expanding",
-      originalZoom,
-      target,
-    };
-  }
 
   private resetUIState() {
     if (this.uiState.type === "expanding") {
@@ -86,15 +71,6 @@ export class Mito extends ISketch {
 
   public events = {
     contextmenu: (event: MouseEvent) => {
-      if (this.uiState.type === "main") {
-        const tile = this.getHighlightedTile(event.clientX!, event.clientY!);
-        if (tile != null) {
-          this.world.player.setAction({
-            type: "deconstruct",
-            position: tile.pos,
-          });
-        }
-      }
       event.preventDefault();
       return false;
     },
@@ -102,15 +78,22 @@ export class Mito extends ISketch {
       this.mouse.x = event.clientX!;
       this.mouse.y = event.clientY!;
     },
-    click: (event: MouseEvent) => {
+    click: () => {
       // left-click
-      this.handleClick(event.clientX!, event.clientY!);
+      // this.handleClick(event.clientX!, event.clientY!);
+    },
+    mousedown: (event: MouseEvent) => {
+      this.mouseButton = event.button;
+      this.mouseDown = true;
+    },
+    mouseup: () => {
+      this.mouseDown = false;
     },
     keydown: (event: KeyboardEvent) => {
       this.firstActionTakenYet = true;
       const key = event.key!;
       this.keyMap.add(key);
-      this.tryAction(key);
+      this.handleKeyDown(key);
     },
     keyup: (event: KeyboardEvent) => {
       this.keyMap.delete(event.key!);
@@ -129,30 +112,10 @@ export class Mito extends ISketch {
     },
   };
 
-  tryAction = (key: string) => {
+  handleKeyDown = (key: string) => {
     if (key === "?") {
       this.gameState = (this.gameState === "instructions" ? "main" : "instructions");
       return;
-    }
-    if (this.uiState.type === "expanding") {
-      if (key === "Escape") {
-        this.resetUIState();
-        return;
-      }
-      if (key in BUILD_HOTKEYS && !(BUILD_HOTKEYS[key] === Fruit && this.world.fruit != null)) {
-        const cellType = BUILD_HOTKEYS[key];
-        const buildAction: ActionBuild = {
-          type: "build",
-          cellType: cellType,
-          position: this.uiState.target,
-        };
-        this.world.player.setAction(buildAction);
-        this.resetUIState();
-        return;
-      } else if (ACTION_KEYMAP[key]) {
-        this.resetUIState();
-        return;
-      }
     }
     if (this.gameState === "instructions") {
       if (key === "Escape") {
@@ -161,19 +124,13 @@ export class Mito extends ISketch {
       // block further actions
       return;
     }
-    if (this.autoplace != null && key === "Escape") {
-      this.autoplace = undefined;
-    }
     const action = ACTION_KEYMAP[key] || MOVEMENT_KEYS[key];
     if (action != null) {
       this.world.player.setAction(action);
     } else {
-      if (key in BUILD_HOTKEYS) {
-        if (this.autoplace === BUILD_HOTKEYS[key] || (BUILD_HOTKEYS[key] === Fruit && this.world.fruit != null)) {
-          this.autoplace = undefined;
-        } else {
-          this.autoplace = BUILD_HOTKEYS[key];
-        }
+      if (['1', '2', '3', '4', '5'].indexOf(key) !== -1) {
+        const index = key.charCodeAt(0) - '1'.charCodeAt(0);
+        this.cellBarIndex = index;
       }
     }
   }
@@ -204,14 +161,12 @@ export class Mito extends ISketch {
     this.camera.position.x = this.world.player.pos.x;
     this.camera.position.y = this.world.player.pos.y;
     this.camera.zoom = 1.5;
-    this.resize(this.canvas.width, this.canvas.height);
     this.camera.add(this.audioListener);
 
     this.worldRenderer = new WorldRenderer(this.world, this.scene, this);
 
     // step once to get a StepStats
     this.world.step();
-    this.world.player.mapActions = this.mapActions;
 
     hookUpAudio(this.audioContext);
     this.updateAmbientAudio();
@@ -253,8 +208,8 @@ Textures in memory: ${this.renderer.info.memory.textures}
       return;
     }
 
-    this.world.player.suckWater = !this.keyMap.has("j");
-    this.world.player.suckSugar = !this.keyMap.has("k");
+    this.world.player.suckWater = !this.keyMap.has("q");
+    this.world.player.suckSugar = !this.keyMap.has("e");
     this.world.step();
 
     if (this.tutorialRef) {
@@ -291,7 +246,7 @@ Textures in memory: ${this.renderer.info.memory.textures}
     return offset;
   }
 
-  private getHighlightedTile(clientX: number, clientY: number) {
+  private getHighlightedTile(clientX = this.mouse.x, clientY = this.mouse.y) {
     const p = this.getHighlightPosition(clientX, clientY);
     p.round();
 
@@ -326,6 +281,14 @@ Textures in memory: ${this.renderer.info.memory.textures}
         const moveAction = this.keysToMovement(this.keyMap);
         if (moveAction) {
           this.world.player.setAction(moveAction);
+        }
+        if (this.mouseDown) {
+          // left
+          if (this.mouseButton === 0) {
+            this.handleLeftClick();
+          } else if (this.mouseButton === 2) {
+            this.handleRightClick();
+          }
         }
         this.worldStep();
       } else if (world.player.getAction() != null) {
@@ -364,7 +327,7 @@ Textures in memory: ${this.renderer.info.memory.textures}
     this.renderer.render(this.scene, this.camera);
 
     // this.hoveredTile = this.getTileAtScreenPosition(this.mouse.x, this.mouse.y);
-    this.highlightedTile = this.getHighlightedTile(this.mouse.x, this.mouse.y);
+    this.highlightedTile = this.getHighlightedTile();
     // this.perfDebug();
   }
   public keysToMovement(keys: Set<string>): ActionMove | null {
@@ -384,80 +347,6 @@ Textures in memory: ${this.renderer.info.memory.textures}
     }
   }
 
-  // if this move, taken by Player, doesn't make sense, then take an action that does
-  public mapActions = (player: Player, action: Action): Action | Action[] | undefined => {
-    if (action == null) {
-      return;
-    }
-    if (action.type === "none") {
-      return action;
-    }
-    this.resetUIState();
-    if (action.type === "still" && (this.autoplace === Vein || this.autoplace === Tissue)) {
-      return {
-        type: "build",
-        cellType: this.autoplace,
-        position: player.pos,
-      };
-    }
-    if (action.type !== "move") {
-      return action;
-    }
-    const targetTile = this.world.tileAt(player.pos.x + action.dir.x, player.pos.y + action.dir.y);
-    const currentTile = player.currentTile();
-    // autoplace
-    if (this.autoplace != null) {
-      if (this.autoplace === Transport) {
-        if (action.dir == null) { throw new Error("bad dir"); }
-        const buildTransportAction: ActionBuildTransport = {
-          type: "build-transport",
-          cellType: Transport,
-          position: this.world.player.pos,
-          dir: action.dir,
-        };
-        return buildTransportAction;
-      } else if (this.autoplace === Vein && !(currentTile instanceof Vein)) {
-        return {
-          type: "multiple",
-          actions: [
-            {
-              type: "build",
-              cellType: Vein,
-              position: player.pos,
-            },
-            action,
-          ],
-        };
-      } else if (!player.verifyMove(action)) {
-        const buildAction: ActionBuild = {
-          type: "build",
-          cellType: this.autoplace,
-          position: player.pos.clone().add(action.dir),
-        };
-        if (this.autoplace !== Tissue && this.autoplace !== Root) {
-          this.autoplace = undefined;
-        }
-        return buildAction;
-      } else {
-        return action;
-      }
-    } else if (player.isBuildCandidate(targetTile)) {
-      if (this.tutorialRef != null) {
-        // we're in root tutorial
-        if (this.tutorialRef.tutorialRef instanceof TutorialBuildRoot) {
-          // only allow building on the soil
-          if (!(targetTile instanceof Soil)) {
-            return;
-          }
-        }
-      }
-      // we attempt to move into a place we cannot
-      // this.enterUIStateExpanding(targetTile.pos);
-      return;
-    } else {
-      return action;
-    }
-  }
 
   public resize(w: number, h: number) {
     const aspect = h / w;
@@ -472,15 +361,21 @@ Textures in memory: ${this.renderer.info.memory.textures}
     this.camera.updateProjectionMatrix();
   }
 
-  public handleClick(clientX: number, clientY: number) {
-    this.firstActionTakenYet = true;
-    const target = this.getHighlightedTile(clientX, clientY);
-    if (this.uiState.type === "expanding") {
-      if (target == null || !this.uiState.target.equals(target.pos)) {
-        this.resetUIState();
-      }
+  public handleRightClick() {
+    const tile = this.getHighlightedTile();
+    if (tile != null) {
+      this.world.player.setAction({
+        type: "deconstruct",
+        position: tile.pos,
+      });
     }
-    if (!target) {
+    // }
+  }
+
+  public handleLeftClick() {
+    this.firstActionTakenYet = true;
+    const target = this.getHighlightedTile();
+    if (target == null) {
       return;
     }
 
@@ -490,28 +385,16 @@ Textures in memory: ${this.renderer.info.memory.textures}
       return;
     }
 
-    // clicking an adjacent tile means walk there, allowing for walking past the edge
-    const singleMove = actionMoveFor(this.world.player.pos.x, this.world.player.pos.y, target.pos.x, target.pos.y);
-    if (singleMove) {
-      if (this.world.player.isBuildCandidate(target)) {
-        this.enterUIStateExpanding(target.pos);
-        return;
-      } else {
-        this.world.player.setAction(singleMove);
-        return;
-      }
+    // clicking a build candidate will try to build with the currently selected cell
+    if (this.world.player.isBuildCandidate(target)) {
+      const action: ActionBuild = {
+        type: "build",
+        cellType: this.selectedCell,
+        position: target.pos.clone(),
+      };
+      this.world.player.setAction(action);
     }
 
-    // now we're clicking past an adjacent tile. find a path.
-    let actions: Action[];
-    // Tissue and Vein are common tiles you use to expand with (two types of roads)
-    // when we're autoplacing those, allow building far away
-    if (this.autoplace && Mito.expansionTiles.indexOf(this.autoplace) !== -1) {
-      actions = pathFrom(findPositionsThroughNonObstacles(this.world, target.pos));
-    } else {
-      actions = pathFrom(findPositionsThroughTissue(this.world, target.pos, this.autoplace != null));
-    }
-    this.world.player.setActions(actions);
   }
   static expansionTiles: Array<Constructor<Cell>> = [Tissue, Root, Vein];
 }

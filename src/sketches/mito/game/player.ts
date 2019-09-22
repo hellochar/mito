@@ -14,30 +14,33 @@ export class Player implements Steppable {
   public inventory = new Inventory(params.maxResources, this, Math.round(params.maxResources / 3), Math.round(params.maxResources / 3));
   private action?: Action;
   private events = new EventEmitter();
-  private actionQueue: Action[] = [];
-  public mapActions?: (player: Player, action: Action) => Action | Action[] | undefined;
-  public speed = 0.15;
+  public mapActions?: (player: Player, action: Action) => Action | undefined;
+  public speed = 0.10;
   public suckWater = true;
   public suckSugar = true;
+
   get pos() {
-    // return this._pos;
     return this.posFloat.clone().round();
   }
-  // private _pos: Vector2;
+
   public constructor(public posFloat: Vector2, public world: World) {
-    // this._pos = this.posFloat.clone().round();
   }
 
-  public setActions(actions: Action[]) {
-    this.actionQueue = actions;
-  }
   public setAction(action: Action) {
-    this.action = action;
-    this.actionQueue = [];
+    if (this.action != null) {
+      this.action = {
+        type: "multiple",
+        actions: [this.action, action]
+      };
+    } else {
+      this.action = action;
+    }
   }
+
   public getAction() {
     return this.action;
   }
+
   public droopY() {
     const tile = this.world.tileAt(this.pos.x, this.pos.y);
     if (tile instanceof Cell) {
@@ -67,15 +70,11 @@ export class Player implements Steppable {
 
   public step() {
     if (this.action === undefined) {
-      this.action = this.actionQueue.shift() || { type: "none" };
+      this.action = { type: "none" };
     }
     if (this.mapActions) {
       const mappedAction = this.mapActions(this, this.action);
-      if (Array.isArray(mappedAction)) {
-        const [currentAction, ...futureActions] = mappedAction;
-        this.action = currentAction;
-        this.actionQueue.unshift(...futureActions);
-      } else if (mappedAction != null) {
+      if (mappedAction != null) {
         this.action = mappedAction;
       } else {
         this.action = { type: "none" };
@@ -137,9 +136,10 @@ export class Player implements Steppable {
 
   public isBuildCandidate(tile: Tile | null): tile is Tile {
     if (tile != null && !this.isWalkable(tile) && !tile.isObstacle) {
-      // This Tile could conceivably be built upon. But are we close enough?
-      const distance = tile.pos.distanceTo(this.posFloat);
-      return distance < 1;
+      return true;
+      // // This Tile could conceivably be built upon. But are we close enough?
+      // const distance = tile.pos.distanceTo(this.posFloat);
+      // return distance < 1;
     } else {
       return false;
     }
