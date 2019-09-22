@@ -37,6 +37,12 @@ export interface ActionDrop {
   sugar: number;
 }
 
+export interface ActionPickup {
+  type: "pickup";
+  water: number;
+  sugar: number;
+}
+
 export interface ActionNone {
   type: "none";
 }
@@ -46,4 +52,4 @@ export interface ActionMultiple {
   actions: Action[];
 }
 
-export type Action = ActionStill | ActionMove | ActionBuild | ActionDeconstruct | ActionBuildTransport | ActionDrop | ActionNone | ActionMultiple;
+export type Action = ActionStill | ActionMove | ActionBuild | ActionDeconstruct | ActionBuildTransport | ActionDrop | ActionNone | ActionMultiple | ActionPickup;

@@ -164,23 +164,33 @@
 .mito-inventory {
     position: absolute;
     bottom: 0;
-    left: 25%;
-    right: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    // left: 25%;
+    // right: 25%;
     display: flex;
     flex-direction: column;
     opacity: 0.95;
     transition: transform 2s;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border: 1px solid grey;
+    background: rgba(255, 255, 255, 0.25);
 
     &.hidden {
-        transform: translateY(170%);
+        transform: translateX(-50%) translateY(170%);
     }
 
     .mito-inventory-container {
         z-index: 1;
         padding: 10px;
         background: hsl(111, 70%, 27%);
-        border-top-left-radius: 2px;
-        border-top-right-radius: 2px;
+        border-bottom: 1px solid grey;
+        margin-bottom: 10px;
+    }
+
+    .cell-bar {
+        margin: 10px;
     }
 
     .mito-inventory-indicator {

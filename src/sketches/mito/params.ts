@@ -40,7 +40,7 @@ export function updateParamsHash() {
   for (const key of keys) {
     const k = params[key];
     if (k !== PARAMS_DEFAULT[key]) {
-      nonDefaultParams[key] = k;
+      nonDefaultParams[key] = k as any;
     }
   }
   if (Object.keys(nonDefaultParams).length > 0) {

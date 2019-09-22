@@ -40,6 +40,10 @@ export class Mito extends ISketch {
     return this.cellBar[this.cellBarIndex];
   }
 
+  public setCellBarIndex(i: number) {
+    this.cellBarIndex = ((i % this.cellBar.length) + this.cellBar.length) % this.cellBar.length;
+  }
+
   public render() {
     return <>
       <HUD mito={this} />
@@ -59,7 +63,6 @@ export class Mito extends ISketch {
   public audioListener = new THREE.AudioListener();
   private keyMap = new Set<string>();
   public uiState: UIState = { type: "main" };
-
 
   private resetUIState() {
     if (this.uiState.type === "expanding") {
@@ -101,16 +104,21 @@ export class Mito extends ISketch {
       this.keyMap.delete(event.key!);
     },
     wheel: (e: WheelEvent) => {
-      // on my mouse, one scroll is + or - 125
-      const delta = -(e.deltaX + e.deltaY) / 125 / 20;
-      const currZoom = this.camera.zoom;
-      const scalar = Math.pow(2, delta);
-      // console.log(currZoom);
-      // zoom of 2 is zooming in
-      // const newZoom = Math.min(Math.max(currZoom * scalar, 1), 2.5);
-      const newZoom = currZoom * scalar;
-      this.camera.zoom = newZoom;
-      this.camera.updateProjectionMatrix();
+      if (e.deltaX + e.deltaY < 0) {
+        this.setCellBarIndex(this.cellBarIndex - 1);
+      } else {
+        this.setCellBarIndex(this.cellBarIndex + 1);
+      }
+      // // on my mouse, one scroll is + or - 125
+      // const delta = -(e.deltaX + e.deltaY) / 125 / 20;
+      // const currZoom = this.camera.zoom;
+      // const scalar = Math.pow(2, delta);
+      // // console.log(currZoom);
+      // // zoom of 2 is zooming in
+      // // const newZoom = Math.min(Math.max(currZoom * scalar, 1), 2.5);
+      // const newZoom = currZoom * scalar;
+      // this.camera.zoom = newZoom;
+      // this.camera.updateProjectionMatrix();
     },
   };
 
@@ -126,15 +134,15 @@ export class Mito extends ISketch {
       // block further actions
       return;
     }
-    const action = ACTION_KEYMAP[key] || MOVEMENT_KEYS[key];
-    if (action != null) {
-      this.world.player.setAction(action);
-    } else {
-      if (['1', '2', '3', '4', '5'].indexOf(key) !== -1) {
-        const index = key.charCodeAt(0) - '1'.charCodeAt(0);
-        this.cellBarIndex = index;
-      }
+    // const action = ACTION_KEYMAP[key] || MOVEMENT_KEYS[key];
+    // if (action != null) {
+    //   this.world.player.setAction(action);
+    // } else {
+    if (['1', '2', '3', '4', '5'].indexOf(key) !== -1) {
+      const index = key.charCodeAt(0) - '1'.charCodeAt(0);
+      this.cellBarIndex = index;
     }
+    // }
   }
 
   private expandingTileHighlight = (() => {
@@ -210,8 +218,8 @@ Textures in memory: ${this.renderer.info.memory.textures}
       return;
     }
 
-    this.world.player.suckWater = !this.keyMap.has("q");
-    this.world.player.suckSugar = !this.keyMap.has("e");
+    // this.world.player.dropWater = this.keyMap.has("q");
+    // this.world.player.dropSugar = this.keyMap.has("e");
     this.world.step();
 
     if (this.tutorialRef) {
@@ -283,6 +291,11 @@ Textures in memory: ${this.renderer.info.memory.textures}
         const moveAction = this.keysToMovement(this.keyMap);
         if (moveAction) {
           this.world.player.setAction(moveAction);
+        }
+        for (const key of this.keyMap) {
+          if (ACTION_KEYMAP[key]) {
+            this.world.player.setAction(ACTION_KEYMAP[key]);
+          }
         }
         if (this.mouseDown) {
           // left

@@ -5,12 +5,17 @@ export const ACTION_KEYMAP: { [key: string]: Action } = {
   q: {
     type: "drop",
     sugar: 0,
-    water: 0.25, // hack hack we can assume max 100 water, it's fine
+    water: 1, // hack hack we can assume max 100 water, it's fine
   },
   e: {
     type: "drop",
-    sugar: 0.25,
+    sugar: 1,
     water: 0, // hack hack we can assume max 100 water, it's fine
+  },
+  ' ': {
+    type: "pickup",
+    sugar: 1,
+    water: 1,
   },
 };
 

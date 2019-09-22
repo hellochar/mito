@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
-import { Action, ActionBuild, ActionBuildTransport, ActionDeconstruct, ActionDrop, ActionMove, ActionMultiple } from "../action";
+import { Action, ActionBuild, ActionBuildTransport, ActionDeconstruct, ActionDrop, ActionMove, ActionMultiple, ActionPickup } from "../action";
 import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
@@ -16,8 +16,8 @@ export class Player implements Steppable {
   private events = new EventEmitter();
   public mapActions?: (player: Player, action: Action) => Action | undefined;
   public speed = 0.10;
-  public suckWater = true;
-  public suckSugar = true;
+  // public dropWater = false;
+  // public dropSugar = false;
 
   get pos() {
     return this.posFloat.clone().round();
@@ -81,12 +81,12 @@ export class Player implements Steppable {
       }
     }
     const actionSuccessful = this.attemptAction(this.action);
-    if (!this.suckWater) {
-      this.attemptAction(ACTION_KEYMAP.q);
-    }
-    if (!this.suckSugar) {
-      this.attemptAction(ACTION_KEYMAP.e);
-    }
+    // if (this.dropWater) {
+    //   this.attemptAction(ACTION_KEYMAP.q);
+    // }
+    // if (this.dropSugar) {
+    //   this.attemptAction(ACTION_KEYMAP.e);
+    // }
     if (actionSuccessful) {
       this.events.emit("action", this.action);
     }
@@ -110,6 +110,8 @@ export class Player implements Steppable {
         return this.attemptDeconstruct(action);
       case "drop":
         return this.attemptDrop(action);
+      case "pickup":
+        return this.attemptPickup(action);
       case "multiple":
         return this.attemptMultiple(action);
     }
@@ -153,24 +155,24 @@ export class Player implements Steppable {
       // do the move
       this.posFloat.add(action.dir.clone().setLength(this.speed));
       // this._pos = this.posFloat.clone().round();
-      this.autopickup();
+      // this.autopickup();
       return true;
     } else {
       return false;
     }
   }
   public attemptStill() {
-    this.autopickup();
+    // this.autopickup();
     return true;
   }
-  private autopickup() {
-    // autopickup resources in the position as possible
-    const cell = this.currentTile();
-    if (hasInventory(cell)) {
-      const inv = cell.inventory;
-      inv.give(this.inventory, this.suckWater ? inv.water : 0, this.suckSugar ? inv.sugar : 0);
-    }
-  }
+  // private autopickup() {
+  //   // autopickup resources in the position as possible
+  //   const cell = this.currentTile();
+  //   if (hasInventory(cell)) {
+  //     const inv = cell.inventory;
+  //     inv.give(this.inventory, this.suckWater ? inv.water : 0, this.suckSugar ? inv.sugar : 0);
+  //   }
+  // }
   public tryConstructingNewCell<T>(position: Vector2, cellType: Constructor<T>) {
     position = position.clone();
     const targetTile = this.world.tileAt(position.x, position.y);
@@ -319,6 +321,28 @@ export class Player implements Steppable {
     } else {
       return false;
     }
+  }
+
+  public attemptPickup(action: ActionPickup) {
+    const cell = this.currentTile();
+    if (hasInventory(cell)) {
+      const inv = cell.inventory;
+      inv.give(this.inventory, action.water, action.sugar);
+    }
+    return true;
+    // // drop as much as you can onto the current tile
+    // const currentTile = this.currentTile();
+    // if (hasInventory(currentTile)) {
+    //   const { water, sugar } = action;
+    //   // first, pick up the opposite of what you can from the tile to try and make space
+    //   currentTile.inventory.give(this.inventory, sugar, water);
+
+    //   // give as much as you can
+    //   this.inventory.give(currentTile.inventory, water, sugar);
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   }
 
   public attemptMultiple(multiple: ActionMultiple) {

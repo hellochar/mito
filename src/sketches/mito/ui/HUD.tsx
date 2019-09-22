@@ -29,13 +29,13 @@ export class HUD extends React.Component<HUDProps> {
       <div className={classnames("mito-hud", { hidden: !this.isTutorialFinished() })}>
         {this.renderFruitUI()}
       </div>
-      <CellBar bar={this.mito.cellBar} index={this.mito.cellBarIndex} />
       <div className={classnames("mito-inventory", { hidden: false })}>
         {isMaxedEl}
         <div className="mito-inventory-container">
           {this.renderInventoryBar()}
           {this.renderInventory()}
         </div>
+        <CellBar bar={this.mito.cellBar} index={this.mito.cellBarIndex} onIndexClicked={(i) => this.mito.setCellBarIndex(i)} />
       </div>
     </>);
   }
