@@ -3,8 +3,6 @@ import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene 
 import devlog from "../../../common/devlog";
 import { Player } from "../game";
 import { Mito } from "../index";
-import { MOVEMENT_KEYS } from "../keymap";
-import { MOVEMENT_KEY_MESHES } from "../movementKeyMeshes";
 import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
 import { lerp2 } from "../../../math";
@@ -34,19 +32,19 @@ export class PlayerRenderer extends Renderer<Player> {
     pos.y += Math.sin(performance.now() / 400) * 0.08;
     lerp2(this.mesh.position, pos, 0.5);
     this.mesh.position.z = 2;
-    for (const [key, keyMesh] of MOVEMENT_KEY_MESHES) {
-      const action = MOVEMENT_KEYS[key];
-      const x = this.target.pos.x + action.dir.x;
-      const y = this.target.pos.y + action.dir.y;
-      if (this.target.isBuildCandidate(this.mito.world.tileAt(x, y)) && this.mito.uiState.type === "main") {
-        this.scene.add(keyMesh);
-        keyMesh.position.x = x;
-        keyMesh.position.y = y;
-        keyMesh.position.z = 2;
-      } else {
-        this.scene.remove(keyMesh);
-      }
-    }
+    // for (const [key, keyMesh] of MOVEMENT_KEY_MESHES) {
+    //   const action = MOVEMENT_KEYS[key];
+    //   const x = this.target.pos.x + action.dir.x;
+    //   const y = this.target.pos.y + action.dir.y;
+    //   if (this.target.isBuildCandidate(this.mito.world.tileAt(x, y)) && this.mito.uiState.type === "main") {
+    //     this.scene.add(keyMesh);
+    //     keyMesh.position.x = x;
+    //     keyMesh.position.y = y;
+    //     keyMesh.position.z = 2;
+    //   } else {
+    //     this.scene.remove(keyMesh);
+    //   }
+    // }
   }
   destroy() {
     this.scene.remove(this.mesh);

@@ -12,10 +12,15 @@ export interface AppState {
 }
 
 class App extends React.PureComponent<{}, AppState> {
-  state: AppState = {
-    // overWorld: OverWorld.generateFilledHex(),
-    overWorld: OverWorld.generateRectangle(100, 50),
-  };
+  constructor(props: {}) {
+    super(props);
+    const overWorld = OverWorld.generateRectangle(100, 50);
+    const activeLevel = overWorld.getStartTile();
+    this.state = {
+      overWorld,
+      activeLevel,
+    };
+  }
   handlePlayLevel = (level: HexTile) => {
     console.log(level.info);
     if (level.info.visible && !level.info.conquered) {

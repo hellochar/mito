@@ -81,16 +81,22 @@ export class OverWorld {
     return new OverWorld(storage);
   }
 
+  private startTile: HexTile;
+
   constructor(private storage: HexStore) {
     // hook up neighbors
     storage.hookUpNeighbors();
 
     // make an initial tile visible
     const tiles = Array.from(storage);
-    const startTile = tiles
+    this.startTile = tiles
       .filter(t => t.info.height === 0)
       .sort((t1, t2) => t1.magnitude - t2.magnitude)[0];
-    startTile.info.visible = true;
+    this.startTile.info.visible = true;
+  }
+
+  public getStartTile() {
+    return this.startTile;
   }
 
   public tileAt(i: number, j: number) {

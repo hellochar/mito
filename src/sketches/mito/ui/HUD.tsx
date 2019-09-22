@@ -130,9 +130,8 @@ export class HUD extends React.PureComponent<HUDProps> {
   }
   public renderSecondEls() {
     return (<div className="mito-hud-section mito-hud-section-actions">
-      {this.renderButton('1', " - Drop water")}
-      {this.renderButton('2', " - Drop sugar")}
-      {this.renderButton('.', " - Wait a turn")}
+      {this.renderButton('q', " - Drop water")}
+      {this.renderButton('e', " - Drop sugar")}
       {this.renderButton('?', " - Instructions")}
     </div>);
   }
