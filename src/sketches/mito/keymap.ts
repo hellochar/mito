@@ -2,12 +2,12 @@ import { Action, ActionMove } from "./action";
 import { DIRECTIONS } from "./directions";
 
 export const ACTION_KEYMAP: { [key: string]: Action } = {
-  "q": {
+  q: {
     type: "drop",
     sugar: 0,
     water: 0.25, // hack hack we can assume max 100 water, it's fine
   },
-  "e": {
+  e: {
     type: "drop",
     sugar: 0.25,
     water: 0, // hack hack we can assume max 100 water, it's fine

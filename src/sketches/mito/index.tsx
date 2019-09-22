@@ -93,7 +93,9 @@ export class Mito extends ISketch {
       this.firstActionTakenYet = true;
       const key = event.key!;
       this.keyMap.add(key);
-      this.handleKeyDown(key);
+      if (!event.repeat) {
+        this.handleKeyDown(key);
+      }
     },
     keyup: (event: KeyboardEvent) => {
       this.keyMap.delete(event.key!);

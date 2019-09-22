@@ -82,10 +82,10 @@ export class Player implements Steppable {
     }
     const actionSuccessful = this.attemptAction(this.action);
     if (!this.suckWater) {
-      this.attemptAction(ACTION_KEYMAP.j);
+      this.attemptAction(ACTION_KEYMAP.q);
     }
     if (!this.suckSugar) {
-      this.attemptAction(ACTION_KEYMAP.k);
+      this.attemptAction(ACTION_KEYMAP.e);
     }
     if (actionSuccessful) {
       this.events.emit("action", this.action);
