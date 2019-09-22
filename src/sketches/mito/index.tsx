@@ -283,9 +283,7 @@ Textures in memory: ${this.renderer.info.memory.textures}
       clientY - this.canvas.height / 2,
     );
 
-    // if (offset.length() > 0.75) {
-    //   offset.setLength(0.75);
-    // }
+    offset.setLength(0.75);
     const {x, y} = this.world.player.posFloat;
 
     offset.x += x;
