@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
 
 import { Constructor } from "./constructor";
-import { Cell, Transport } from "./game/tile";
+import { Cell } from "./game/tile";
 
 export interface ActionStill {
   type: "still";
@@ -15,6 +15,7 @@ export interface ActionMove {
 export interface ActionBuild<T extends Cell = any> {
   type: "build";
   cellType: Constructor<T>;
+  args: any[];
   position: Vector2;
 }
 
@@ -22,13 +23,6 @@ export interface ActionDeconstruct {
   type: "deconstruct";
   position: Vector2;
   force?: boolean;
-}
-
-export interface ActionBuildTransport {
-  type: "build-transport";
-  cellType: Constructor<Transport>;
-  position: Vector2;
-  dir: Vector2;
 }
 
 export interface ActionDrop {
@@ -52,4 +46,4 @@ export interface ActionMultiple {
   actions: Action[];
 }
 
-export type Action = ActionStill | ActionMove | ActionBuild | ActionDeconstruct | ActionBuildTransport | ActionDrop | ActionNone | ActionMultiple | ActionPickup;
+export type Action = ActionStill | ActionMove | ActionBuild | ActionDeconstruct | ActionDrop | ActionNone | ActionMultiple | ActionPickup;

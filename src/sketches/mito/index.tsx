@@ -242,13 +242,18 @@ Textures in memory: ${this.renderer.info.memory.textures}
     );
   }
 
-  public getHighlightPosition(clientX = this.mouse.x, clientY = this.mouse.y) {
+  public getHighlightVector(clientX = this.mouse.x, clientY = this.mouse.y) {
     const offset = new Vector2(
       clientX - this.canvas.width / 2,
       clientY - this.canvas.height / 2,
     );
 
     offset.setLength(0.75);
+    return offset;
+  }
+
+  public getHighlightPosition(clientX = this.mouse.x, clientY = this.mouse.y) {
+    const offset = this.getHighlightVector(clientX, clientY);
     const {x, y} = this.world.player.posFloat;
 
     offset.x += x;
@@ -394,18 +399,19 @@ Textures in memory: ${this.renderer.info.memory.textures}
       return;
     }
 
-    // clicking self means "be still".
-    if (target.pos.equals(this.world.player.pos)) {
-      this.world.player.setAction({ type: "still" });
-      return;
-    }
-
     // clicking a build candidate will try to build with the currently selected cell
     if (this.world.player.isBuildCandidate(target)) {
+      const args: any[] = [];
+      if (this.selectedCell === Transport) {
+        const highlightVector = this.getHighlightVector();
+        const roundedHighlightVector = highlightVector.setLength(1).round();
+        args.push(roundedHighlightVector);
+      }
       const action: ActionBuild = {
         type: "build",
         cellType: this.selectedCell,
         position: target.pos.clone(),
+        args,
       };
       this.world.player.setAction(action);
     }

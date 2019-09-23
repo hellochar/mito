@@ -299,6 +299,7 @@ export class Cell extends Tile implements HasEnergy {
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
   // public offset = new Vector2();
   public droopY = 0;
+  public args: any[] = [];
 
   // private stepMetabolism() {
   //     // transition from not eating to eating
@@ -511,7 +512,7 @@ export function hasTilePairs(t: any): t is IHasTilePairs {
 
 export class Leaf extends Cell {
   static displayName = "Leaf";
-  public isObstacle = true;
+  public isObstacle = false;
   public averageEfficiency = 0;
   public averageSpeed = 0;
   public didConvert = false;
@@ -643,10 +644,20 @@ export class Fruit extends Cell {
   }
 }
 
+function isFractional(x: number) {
+  return x % 1 !== 0;
+}
+
 export class Transport extends Tissue {
   static displayName = "Transport";
-  public dir!: Vector2;
   public cooldown = 0;
+
+  constructor(pos: Vector2, world: World, public dir: Vector2) {
+    super(pos, world);
+    if (isFractional(dir.x) || isFractional(dir.y)) {
+      throw new Error("build transport with fractional dir " + dir.x + ', ' + dir.y);
+    }
+  }
 
   step() {
     if (this.world.time % 3 !== 0) {

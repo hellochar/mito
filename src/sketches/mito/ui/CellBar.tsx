@@ -30,14 +30,14 @@ const CellBarContainer = styled.div`
 `;
 
 
-export interface CellTypeProps {
+export interface CellBarItemProps {
   children?: React.ReactNode;
   type: Constructor<Cell>;
   isSelected: boolean;
   onClick: () => void;
 }
 
-const CellTypeDiv = styled.div<CellTypeProps>`
+const CellBarItemDiv = styled.div<CellBarItemProps>`
   transform: ${props => props.isSelected ? "scale(1.2)" : "scale(1)"};
   transition: transform 0.025s;
   width: 60px;
@@ -45,6 +45,14 @@ const CellTypeDiv = styled.div<CellTypeProps>`
   border: 1px solid darkgrey;
   border-radius: 2px;
   margin: 0 5px;
+  color: white;
+  text-shadow:
+   -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+     1px 1px 0 #000;
+  font-size: 12px;
+  font-family: sans-serif;
   cursor: pointer;
   background-image:
     ${props => {
@@ -72,9 +80,9 @@ const CellTypeDiv = styled.div<CellTypeProps>`
   image-rendering: pixelated;
 `;
 
-function CellBarItem({ type, isSelected, onClick }: CellTypeProps) {
+function CellBarItem({ type, isSelected, onClick }: CellBarItemProps) {
   return (
-    <CellTypeDiv type={type} isSelected={isSelected} onClick={onClick}>{type.displayName}</CellTypeDiv>
+    <CellBarItemDiv type={type} isSelected={isSelected} onClick={onClick}>{type.displayName}</CellBarItemDiv>
   );
 }
 

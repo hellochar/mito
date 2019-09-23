@@ -11,7 +11,7 @@ export class PlayerRenderer extends Renderer<Player> {
   public mesh: Mesh;
   constructor(target: Player, scene: Scene, mito: Mito) {
     super(target, scene, mito);
-    this.mesh = new Mesh(new PlaneBufferGeometry(1, 1),
+    this.mesh = new Mesh(new PlaneBufferGeometry(0.75, 0.75),
       // new THREE.CircleBufferGeometry(0.5, 20),
       new MeshBasicMaterial({
         transparent: true,

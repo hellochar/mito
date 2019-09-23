@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
-import { Action, ActionBuild, ActionBuildTransport, ActionDeconstruct, ActionDrop, ActionMove, ActionMultiple, ActionPickup } from "../action";
+import { Action, ActionBuild, ActionDeconstruct, ActionDrop, ActionMove, ActionMultiple, ActionPickup } from "../action";
 import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
@@ -8,7 +8,6 @@ import { params } from "../params";
 import { Cell, Fruit, GrowingCell, Tile, Transport } from "./tile";
 import { World } from "./world";
 import { Steppable } from "./entity";
-import { ACTION_KEYMAP } from "../keymap";
 
 export class Player implements Steppable {
   public inventory = new Inventory(params.maxResources, this, Math.round(params.maxResources / 3), Math.round(params.maxResources / 3));
@@ -104,8 +103,6 @@ export class Player implements Steppable {
         return this.attemptMove(action);
       case "build":
         return this.attemptBuild(action);
-      case "build-transport":
-        return this.attemptBuildTransport(action);
       case "deconstruct":
         return this.attemptDeconstruct(action);
       case "drop":
@@ -137,15 +134,13 @@ export class Player implements Steppable {
   }
 
   public isBuildCandidate(tile: Tile | null): tile is Tile {
-    if (tile != null && !this.isWalkable(tile) && !tile.isObstacle) {
+    if (tile != null && !tile.isObstacle) {
       return true;
-      // // This Tile could conceivably be built upon. But are we close enough?
-      // const distance = tile.pos.distanceTo(this.posFloat);
-      // return distance < 1;
     } else {
       return false;
     }
   }
+
   public attemptMove(action: ActionMove) {
     if (this.verifyMove(action)) {
       footsteps.audio.currentTime = Math.random() * 0.05;
@@ -173,7 +168,7 @@ export class Player implements Steppable {
   //     inv.give(this.inventory, this.suckWater ? inv.water : 0, this.suckSugar ? inv.sugar : 0);
   //   }
   // }
-  public tryConstructingNewCell<T>(position: Vector2, cellType: Constructor<T>) {
+  public tryConstructingNewCell<T extends Cell>(position: Vector2, cellType: Constructor<T>, args: any[]) {
     position = position.clone();
     const targetTile = this.world.tileAt(position.x, position.y);
     if (targetTile == null) {
@@ -197,7 +192,8 @@ export class Player implements Steppable {
       this.inventory.water >= waterCost &&
       this.inventory.sugar >= sugarCost) {
       this.inventory.add(-waterCost, -sugarCost);
-      const newTile = new cellType(position, this.world);
+      const newTile = new cellType(position, this.world, ...args);
+      newTile.args = args;
       build.audio.currentTime = 0;
       build.gain.gain.cancelScheduledValues(0);
       build.gain.gain.value = 0.2;
@@ -208,16 +204,44 @@ export class Player implements Steppable {
     }
   }
 
+  private argsEq(args1: any, args2: any) {
+    if (typeof args1 !== typeof args2) {
+      return false;
+    }
+    if (args1 == null && args2 == null) {
+      return true;
+    }
+    if (args1 instanceof Vector2 && args2 instanceof Vector2) {
+      return args1.equals(args2);
+    }
+    if (args1 instanceof Array && args2 instanceof Array) {
+      const allEq = args1.every((_, index) => this.argsEq(args1[index], args2[index]));
+      return allEq;
+    }
+  }
+
+  private isMeaningfulBuild(action: ActionBuild, existingCell: Cell) {
+    if (existingCell.constructor !== action.cellType) {
+      return true;
+    }
+
+    if (!this.argsEq(action.args, existingCell.args)) {
+      return true;
+    }
+
+    return false;
+  }
+
   public attemptBuild(action: ActionBuild) {
     const existingCell = this.world.cellAt(action.position.x, action.position.y);
-    if (existingCell != null && existingCell.constructor === action.cellType) {
+    if (existingCell != null && !this.isMeaningfulBuild(action, existingCell)) {
       // already built, whatever.
       return true;
     }
     if (existingCell) {
       this.attemptDeconstruct({ type: "deconstruct", position: action.position, force: true });
     }
-    const matureCell = this.tryConstructingNewCell(action.position, action.cellType);
+    const matureCell = this.tryConstructingNewCell(action.position, action.cellType, action.args);
     if (matureCell != null) {
       let cell: Cell;
       if (action.cellType.turnsToBuild) {
@@ -227,71 +251,12 @@ export class Player implements Steppable {
       }
       cell.droopY = this.droopY();
       this.world.setTileAt(action.position, cell);
-      // if (this.isWalkable(cell)) {
-      //     // move into the tissue cell
-      //     this.attemptMove({
-      //         type: "move",
-      //         dir: action.position.clone().sub(this.pos),
-      //     });
-      // }
       return true;
     } else {
       return false;
     }
   }
 
-  // public attemptBuild(action: ActionBuild) {
-  //     const existingCell = this.world.cellAt(action.position.x, action.position.y);
-  //     if (existingCell instanceof action.cellType) {
-  //         // already built, whatever.
-  //         return true;
-  //     }
-  //     if (existingCell) {
-  //         this.attemptDeconstruct({ type: "deconstruct", position: action.position, force: true });
-  //     }
-  //     const newCell = this.tryConstructingNewCell(action.position, action.cellType);
-  //     if (newCell != null) {
-  //         newCell.droopY = this.droopY();
-  //         this.world.setTileAt(action.position, newCell);
-  //         if (this.world.fruit == null && newCell instanceof Fruit) {
-  //             this.world.fruit = newCell;
-  //         }
-  //         if (newCell instanceof Tissue) {
-  //             // move into the tissue cell
-  //             this.attemptMove({
-  //                 type: "move",
-  //                 dir: action.position.clone().sub(this.pos),
-  //             });
-  //         }
-  //         return true;
-  //     } else {
-  //         return false;
-  //     }
-  // }
-
-  public attemptBuildTransport(action: ActionBuildTransport) {
-    if (action.dir == null) {
-      console.error("null dir", action);
-      return true;
-    }
-    const existingCell = this.world.cellAt(action.position.x, action.position.y);
-    if (existingCell) {
-      this.attemptDeconstruct({ type: "deconstruct", position: action.position, force: true });
-    }
-    const newCell = this.tryConstructingNewCell(action.position, action.cellType);
-    if (newCell != null) {
-      newCell.dir = action.dir;
-      this.world.setTileAt(action.position, newCell);
-      // move into the next cell
-      this.attemptMove({
-        type: "move",
-        dir: action.dir,
-      });
-      return true;
-    } else {
-      return false;
-    }
-  }
   public attemptDeconstruct(action: ActionDeconstruct): boolean {
     if (!action.position.equals(this.pos) || action.force) {
       const maybeCell = this.world.maybeRemoveCellAt(action.position);
