@@ -15,6 +15,16 @@ export class StepStats {
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) { }
 }
 
+export interface Season {
+  name: "spring" | "summer" | "fall" | "winter";
+  percent: number;
+}
+
+const SEASON_ORDER: Season["name"][] = ["spring", "summer", "fall", "winter"];
+
+export const TIME_PER_YEAR = 30 * 60 * 15; // 30 fps * 60 seconds/minute * 15 minutes
+export const TIME_PER_SEASON = TIME_PER_YEAR / 4;
+
 export class World {
   public time: number = 0;
   public width = 50;
@@ -24,6 +34,15 @@ export class World {
   private gridEnvironment: Tile[][];
   private gridCells: Array<Array<Cell | null>>;
   private neighborCache: Array<Array<Map<Vector2, Tile>>>;
+
+  get season() {
+    const name = SEASON_ORDER[Math.floor(this.time / TIME_PER_SEASON)];
+    const percent = (this.time % TIME_PER_SEASON) / TIME_PER_SEASON;
+    return {
+      name,
+      percent,
+    };
+  }
 
   constructor(public environment: Environment) {
     this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
