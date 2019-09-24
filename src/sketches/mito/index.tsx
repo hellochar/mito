@@ -49,7 +49,7 @@ export class Mito extends ISketch {
       <HUD mito={this} />
       <GameStack mito={this} state={this.gameState} />
       {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
-      <ParamsGUI />
+      {/* <ParamsGUI /> */}
       <Hover mito={this} />
     </>;
   }

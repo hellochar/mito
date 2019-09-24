@@ -14,7 +14,7 @@ export class Player implements Steppable {
   private action?: Action;
   private events = new EventEmitter();
   public mapActions?: (player: Player, action: Action) => Action | undefined;
-  public speed = 0.15;
+  public speed = 0.20;
   // public dropWater = false;
   // public dropSugar = false;
 

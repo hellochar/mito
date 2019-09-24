@@ -512,7 +512,7 @@ export function hasTilePairs(t: any): t is IHasTilePairs {
 
 export class Leaf extends Cell {
   static displayName = "Leaf";
-  public isObstacle = true;
+  public isObstacle = false;
   public averageEfficiency = 0;
   public averageSpeed = 0;
   public didConvert = false;
@@ -578,7 +578,7 @@ export class Leaf extends Cell {
 export class Root extends Cell {
   static displayName = "Root";
   public waterTransferAmount = 0;
-  public isObstacle = true;
+  public isObstacle = false;
   // public tilePairs: Vector2[] = []; // implied that the opposite direction is connected
   public activeNeighbors: Vector2[] = [];
   public inventory = new Inventory(params.tissueInventoryCapacity, this);
