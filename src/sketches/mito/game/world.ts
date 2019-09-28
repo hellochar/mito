@@ -3,13 +3,13 @@ import * as THREE from "three";
 
 import devlog from "../../../common/devlog";
 import { DIRECTION_VALUES } from "../directions";
-import { GameState } from "../index";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
 import { Environment } from "./environment";
 import { Player } from "./player";
-import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
+import { Air, Cell, DeadCell, hasEnergy, Rock, Soil, Tile, Tissue, Fruit } from "./tile";
 import { Entity, isSteppable } from "./entity";
+import { GameResult } from "..";
 
 export class StepStats {
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) { }
@@ -22,7 +22,7 @@ export interface Season {
 
 const SEASON_ORDER: Season["name"][] = ["spring", "summer", "fall", "winter"];
 
-export const TIME_PER_YEAR = 30 * 60 * 15; // 30 fps * 60 seconds/minute * 15 minutes
+export const TIME_PER_YEAR = 30 * 60 * 1; // 30 fps * 60 seconds/minute * 15 minutes
 export const TIME_PER_SEASON = TIME_PER_YEAR / 4;
 
 export class World {
@@ -30,10 +30,10 @@ export class World {
   public width = 50;
   public height = 100;
   public readonly player = new Player(new Vector2(this.width / 2, this.height / 2), this);
-  public fruit?: Fruit = undefined;
   private gridEnvironment: Tile[][];
   private gridCells: Array<Array<Cell | null>>;
   private neighborCache: Array<Array<Map<Vector2, Tile>>>;
+  private wipResult: Omit<GameResult, "status">;
 
   get season() {
     const name = SEASON_ORDER[Math.floor(this.time / TIME_PER_SEASON)];
@@ -45,6 +45,11 @@ export class World {
   }
 
   constructor(public environment: Environment) {
+    this.wipResult = {
+      fruitMade: 0,
+      mutationPointsEarned: 0,
+      world: this,
+    };
     this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
       const pos = new Vector2(x, y);
 
@@ -108,7 +113,6 @@ export class World {
     // this.newTile(x - 1, y - 2, Leaf);
   }
 
-
   public tileAt(v: Vector2): Tile | null;
   public tileAt(x: number, y: number): Tile | null;
   public tileAt(xOrVec2: number | Vector2, y?: number): Tile | null {
@@ -157,11 +161,7 @@ export class World {
       throw new Error(`invalid position ${x}, ${y} `);
     }
     if (tile instanceof Fruit) {
-      if (this.fruit == null) {
-        this.fruit = tile;
-      } else {
-        console.warn("made multiple Fruit!");
-      }
+      this.wipResult.fruitMade++;
     }
     const oldTile = this.tileAt(x, y)!;
     // if replacing a tile with inventory, try giving resources to neighbors of the same type
@@ -211,9 +211,6 @@ export class World {
     const maybeCell = this.cellAt(position.x, position.y);
     if (maybeCell) {
       this.gridCells[position.x][position.y] = null;
-      if (maybeCell === this.fruit) {
-        this.fruit = undefined;
-      }
       this.stepStats.deleted.push(maybeCell);
     }
     this.handleTileUpdated(position);
@@ -390,23 +387,32 @@ export class World {
       }
     }
   }
-  // public computeStress() {
-  //     // each cell looks at their neighboring 8 cells and tries to give their stress to the neighbor
-  //     // if the neighbor is soil or rock, it's 100% free
-  // }
-  public checkWinLoss(): GameState | null {
-    // you win if there's a seed with full capacity
-    if (this.fruit != null) {
-      if (this.fruit.inventory.sugar > Fruit.sugarToWin) {
-        return "win";
-      }
-    }
+
+  public maybeGetGameResult(): GameResult | null {
     // you lose if you're standing on a dead cell
     if (this.tileAt(this.player.pos.x, this.player.pos.y) instanceof DeadCell) {
-      return "lose";
+      return {
+        ...this.wipResult,
+        status: "lost",
+      };
     }
-    return null;
+    if (this.time < TIME_PER_YEAR) {
+      return null;
+    }
+    // you lose if you haven't reproduced
+    if (this.wipResult.fruitMade === 0) {
+      return {
+        ...this.wipResult,
+        status: "lost",
+      };
+    }
+    // you win if there's a seed with full capacity
+    return {
+      ...this.wipResult,
+      status: "won",
+    };
   }
+
   public checkResources() {
     let totalSugar = 0;
     let totalWater = 0;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as THREE from "three";
-import { OrthographicCamera, Scene, Vector2, WebGLRenderer } from "three";
+import { OrthographicCamera, Scene, Vector2, WebGLRenderer, Vector3 } from "three";
 
 import devlog from "../../common/devlog";
 import { map, lerp2 } from "../../math/index";
@@ -13,64 +13,52 @@ import { Cell, Fruit, Root, Tissue, Transport, Vein, Leaf, Tile } from "./game/t
 import { ACTION_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
 import { NewPlayerTutorial } from "./tutorial";
-import { GameStack, Hover, HUD, ParamsGUI } from "./ui";
+import { GameStack, Hover, HUD } from "./ui";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { HexTile } from "../../overworld/hexTile";
 
-export type GameState = "main" | "win" | "lose" | "instructions";
+export interface GameResult {
+  status: "won" | "lost";
+  mutationPointsEarned: number;
+  fruitMade: number;
+  world: World;
+}
 
-export interface UIStateMain {
-  type: "main";
+export class WorldDOMElement {
+  constructor(public mito: Mito, public positionFn: () => Vector2, public renderFn: () => JSX.Element) { }
+
+  render() {
+    const worldPosition = this.positionFn();
+    const pixelPosition = this.mito.worldToScreen(worldPosition);
+    const left = pixelPosition.x;
+    const top = pixelPosition.y;
+    const style: React.CSSProperties = {
+      left,
+      top
+    };
+    return (
+      <div style={style}>
+        {this.renderFn()}
+      </div>
+    );
+  }
 }
-export interface UIStateExpanding {
-  type: "expanding";
-  originalZoom: number;
-  target: THREE.Vector2;
-}
-export type UIState = UIStateMain | UIStateExpanding;
 
 export class Mito extends ISketch {
   public readonly world: World;
   public scene = new Scene();
   private camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);
-
   public cellBar: Constructor<Cell>[] = [Tissue, Leaf, Root, Transport, Fruit];
   public cellBarIndex = 0;
-  get selectedCell() {
-    return this.cellBar[this.cellBarIndex];
-  }
-
-  public setCellBarIndex(i: number) {
-    this.cellBarIndex = ((i % this.cellBar.length) + this.cellBar.length) % this.cellBar.length;
-  }
-
-  public render() {
-    return <>
-      <HUD mito={this} />
-      <GameStack mito={this} state={this.gameState} />
-      {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
-      {/* <ParamsGUI /> */}
-      <Hover mito={this} />
-    </>;
-  }
   public tutorialRef: NewPlayerTutorial | null = null;
   public mouse = new THREE.Vector2();
   public mouseDown = false;
   public mouseButton = -1;
-  public highlightedTile?: Tile;
-  public gameState: GameState = "main";
+  public instructionsOpen = false;
   private firstActionTakenYet = false;
   public audioListener = new THREE.AudioListener();
   private keyMap = new Set<string>();
-  public uiState: UIState = { type: "main" };
-
-  private resetUIState() {
-    if (this.uiState.type === "expanding") {
-      this.camera.zoom = this.uiState.originalZoom;
-      this.camera.updateProjectionMatrix();
-      this.uiState = { type: "main" };
-    }
-  }
+  public highlightedTile?: Tile;
 
   public events = {
     contextmenu: (event: MouseEvent) => {
@@ -122,44 +110,12 @@ export class Mito extends ISketch {
     },
   };
 
-  handleKeyDown = (key: string) => {
-    if (key === "?") {
-      this.gameState = (this.gameState === "instructions" ? "main" : "instructions");
-      return;
-    }
-    if (this.gameState === "instructions") {
-      if (key === "Escape") {
-        this.gameState = "main";
-      }
-      // block further actions
-      return;
-    }
-    // const action = ACTION_KEYMAP[key] || MOVEMENT_KEYS[key];
-    // if (action != null) {
-    //   this.world.player.setAction(action);
-    // } else {
-    if (['1', '2', '3', '4', '5'].indexOf(key) !== -1) {
-      const index = key.charCodeAt(0) - '1'.charCodeAt(0);
-      this.cellBarIndex = index;
-    }
-    // }
+  get selectedCell() {
+    return this.cellBar[this.cellBarIndex];
   }
 
-  private expandingTileHighlight = (() => {
-    const mesh = new THREE.Mesh(
-      new THREE.PlaneBufferGeometry(1, 1),
-      new THREE.MeshBasicMaterial({
-        color: "white",
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.5,
-      }),
-    );
-    return mesh;
-  })();
-
   private worldRenderer: WorldRenderer;
-  constructor(renderer: WebGLRenderer, context: SketchAudioContext, level: HexTile, public onWinLoss: (state: "win" | "lose") => void) {
+  constructor(renderer: WebGLRenderer, context: SketchAudioContext, level: HexTile, public onWinLoss: (result: GameResult) => void) {
     super(renderer, context);
     if (level.info.world == null) {
       level.info.world = new World(level.info.environment!);
@@ -181,6 +137,46 @@ export class Mito extends ISketch {
     hookUpAudio(this.audioContext);
     this.updateAmbientAudio();
     (window as any).mito = this;
+    (window as any).THREE = THREE;
+  }
+
+  handleKeyDown = (key: string) => {
+    if (key === "?") {
+      this.instructionsOpen = !this.instructionsOpen;
+      return;
+    }
+    if (this.instructionsOpen) {
+      if (key === "Escape") {
+        this.instructionsOpen = false;
+      }
+      return;
+    }
+
+    if (['1', '2', '3', '4', '5'].indexOf(key) !== -1) {
+      const index = key.charCodeAt(0) - '1'.charCodeAt(0);
+      this.cellBarIndex = index;
+    }
+  }
+
+  public setCellBarIndex(i: number) {
+    this.cellBarIndex = ((i % this.cellBar.length) + this.cellBar.length) % this.cellBar.length;
+  }
+
+  public render() {
+    const worldDomElementComponents: JSX.Element[] = [];
+    for (const e of this.worldDomElements) {
+      worldDomElementComponents.push(e.render());
+    }
+    return <>
+      <HUD mito={this} />
+      <GameStack mito={this} />
+      {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
+      {/* <ParamsGUI /> */}
+      <Hover mito={this} />
+      <div className="world-dom-components">
+        { worldDomElementComponents }
+      </div>
+    </>;
   }
 
   public updateAmbientAudio() {
@@ -214,7 +210,7 @@ Textures in memory: ${this.renderer.info.memory.textures}
   }
 
   public worldStep() {
-    if (!this.firstActionTakenYet) {
+    if (!this.firstActionTakenYet || this.instructionsOpen) {
       return;
     }
 
@@ -225,11 +221,10 @@ Textures in memory: ${this.renderer.info.memory.textures}
     if (this.tutorialRef) {
       this.tutorialRef.setState({ time: this.world.time });
     }
-    if (this.gameState === "main") {
-      this.gameState = this.world.checkWinLoss() || this.gameState;
-      if (this.gameState === "win" || this.gameState === "lose") {
-        this.onWinLoss(this.gameState);
-      }
+
+    const gameResult = this.world.maybeGetGameResult();
+    if (gameResult != null) {
+      this.onWinLoss(gameResult);
     }
 
     this.updateAmbientAudio();
@@ -271,6 +266,27 @@ Textures in memory: ${this.renderer.info.memory.textures}
     }
   }
 
+  worldToScreen(world: Vector2) {
+    const screen = new Vector3(world.x, world.y, 0);
+    screen.project(this.camera); // `camera` is a THREE.PerspectiveCamera
+
+    screen.x = Math.round((0.5 + screen.x / 2) * this.canvas.width);
+    screen.y = Math.round((0.5 - screen.y / 2) * this.canvas.height);
+
+    return screen;
+  }
+
+  private worldDomElements = new Set<WorldDOMElement>();
+  addWorldDOMElement(positionFn: () => THREE.Vector2, renderFn: () => JSX.Element): WorldDOMElement {
+    const e = new WorldDOMElement(this, positionFn, renderFn);
+    this.worldDomElements.add(e);
+    return e;
+  }
+
+  removeWorldDOMElement(worldDomElement: WorldDOMElement) {
+    this.worldDomElements.delete(worldDomElement);
+  }
+
   // private getTileAtScreenPosition(clientX: number, clientY: number) {
   //   const cameraNorm = this.getCameraNormCoordinates(clientX, clientY);
   //   this.raycaster.setFromCamera(cameraNorm, this.camera);
@@ -286,68 +302,47 @@ Textures in memory: ${this.renderer.info.memory.textures}
   // }
 
   public animate() {
-    const { world } = this;
+    if (this.instructionsOpen) {
+      return;
+    }
     // if (document.activeElement !== this.canvas && !document.querySelector(".dg.ac")!.contains(document.activeElement)) {
     //     this.canvas.focus();
     // }
     this.canvas.focus();
-    if (this.gameState === "main") {
-      if (params.isRealtime) {
-        const moveAction = this.keysToMovement(this.keyMap);
-        if (moveAction) {
-          this.world.player.setAction(moveAction);
-        }
-        for (const key of this.keyMap) {
-          if (ACTION_KEYMAP[key]) {
-            this.world.player.setAction(ACTION_KEYMAP[key]);
-          }
-        }
-        if (this.mouseDown) {
-          // left
-          if (this.mouseButton === 0) {
-            this.handleLeftClick();
-          } else if (this.mouseButton === 2) {
-            this.handleRightClick();
-          }
-        }
-        this.worldStep();
-      } else if (world.player.getAction() != null) {
-        this.worldStep();
+    if (params.isRealtime) {
+      const moveAction = this.keysToMovement(this.keyMap);
+      if (moveAction) {
+        this.world.player.setAction(moveAction);
       }
+      for (const key of this.keyMap) {
+        if (ACTION_KEYMAP[key]) {
+          this.world.player.setAction(ACTION_KEYMAP[key]);
+        }
+      }
+      if (this.mouseDown) {
+        // left
+        if (this.mouseButton === 0) {
+          this.handleLeftClick();
+        } else if (this.mouseButton === 2) {
+          this.handleRightClick();
+        }
+      }
+      this.worldStep();
+    } else if (this.world.player.getAction() != null) {
+      this.worldStep();
+    }
+    this.worldRenderer.update();
 
-      this.worldRenderer.update();
-    }
-    if (this.uiState.type === "expanding") {
-      if (!this.world.player.isBuildCandidate(this.world.tileAt(this.uiState.target))) {
-        this.resetUIState();
-      }
-    }
+    this.highlightedTile = this.getHighlightedTile();
+
     const mouseNorm = this.getCameraNormCoordinates(this.mouse.x, this.mouse.y);
-    if (this.uiState.type === "main") {
-      this.scene.remove(this.expandingTileHighlight);
-      const target = new THREE.Vector2(
-        this.world.player.posFloat.x + mouseNorm.x / 2,
-        this.world.player.posFloat.y - mouseNorm.y / 2,
-      );
-      lerp2(this.camera.position, target, 0.3);
-    } else {
-      this.scene.add(this.expandingTileHighlight);
-      this.expandingTileHighlight.position.set(
-        this.uiState.target.x,
-        this.uiState.target.y,
-        1,
-      );
-      const target = new THREE.Vector2(
-        this.uiState.target.x,
-        this.uiState.target.y,
-      );
-      lerp2(this.camera.position, target, 0.3);
-    }
+    const target = new THREE.Vector2(
+      this.world.player.posFloat.x + mouseNorm.x / 2,
+      this.world.player.posFloat.y - mouseNorm.y / 2,
+    );
+    lerp2(this.camera.position, target, 0.3);
 
     this.renderer.render(this.scene, this.camera);
-
-    // this.hoveredTile = this.getTileAtScreenPosition(this.mouse.x, this.mouse.y);
-    this.highlightedTile = this.getHighlightedTile();
     // this.perfDebug();
   }
   public keysToMovement(keys: Set<string>): ActionMove | null {
@@ -367,7 +362,6 @@ Textures in memory: ${this.renderer.info.memory.textures}
     }
   }
 
-
   public resize(w: number, h: number) {
     const aspect = h / w;
     // at zoom 1, we see 12 pixels up and 12 pixels down
@@ -384,6 +378,9 @@ Textures in memory: ${this.renderer.info.memory.textures}
   public handleRightClick() {
     const tile = this.getHighlightedTile();
     if (tile != null) {
+      if (tile instanceof Fruit) {
+        return; // disallow deleting fruit
+      }
       this.world.player.setAction({
         type: "deconstruct",
         position: tile.pos,

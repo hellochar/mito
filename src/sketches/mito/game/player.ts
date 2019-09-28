@@ -175,11 +175,6 @@ export class Player implements Steppable {
       // out of bounds/out of map
       return;
     }
-    // disallow building a seed if there already is one
-    // todo fix typings on constructor vs typeof
-    if (this.world.fruit != null && (cellType as any) === Fruit) {
-      return;
-    }
     // disallow building over a seed
     if (targetTile instanceof Fruit) {
       return;
@@ -259,19 +254,20 @@ export class Player implements Steppable {
 
   public attemptDeconstruct(action: ActionDeconstruct): boolean {
     if (!action.position.equals(this.pos) || action.force) {
-      const maybeCell = this.world.maybeRemoveCellAt(action.position);
-      if (maybeCell != null) {
+      const cell = this.world.maybeRemoveCellAt(action.position);
+      if (cell != null) {
         // refund the resources back
-        const refund = maybeCell.energy / params.cellEnergyMax;
+        const refund = cell.energy / params.cellEnergyMax;
         this.inventory.add(refund, refund);
-        if (hasInventory(maybeCell)) {
-          maybeCell.inventory.give(this.inventory, maybeCell.inventory.water, maybeCell.inventory.sugar);
+        if (hasInventory(cell)) {
+          cell.inventory.give(this.inventory, cell.inventory.water, cell.inventory.sugar);
         }
         return true;
       }
     }
     return false;
   }
+
   public attemptDrop(action: ActionDrop) {
     // drop as much as you can onto the current tile
     const currentTile = this.currentTile();

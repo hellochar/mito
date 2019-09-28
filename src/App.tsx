@@ -1,14 +1,16 @@
 import React from 'react';
 
 import { FullPageSketch } from './fullPageSketch';
-import Mito from './sketches/mito';
+import Mito, { GameResult } from './sketches/mito';
 import { OverWorldMap } from './overworld/OverWorldMap';
 import { OverWorld } from "./overworld/overWorld";
 import { HexTile } from './overworld/hexTile';
+import GameResultsScreen from './sketches/mito/ui/GameResultsScreen';
 
 export interface AppState {
   overWorld: OverWorld;
   activeLevel?: HexTile;
+  activeGameResult?: GameResult;
 }
 
 class App extends React.PureComponent<{}, AppState> {
@@ -21,32 +23,38 @@ class App extends React.PureComponent<{}, AppState> {
       activeLevel,
     };
   }
+
   handlePlayLevel = (level: HexTile) => {
-    console.log(level.info);
     if (level.info.visible && !level.info.conquered) {
       this.setState({ activeLevel: level });
     }
-  }
+  };
 
-  handleWinLoss = (state: "win" | "lose") => {
-    if (state === "win" && this.state.activeLevel) {
-      const { activeLevel: currentLevel } = this.state;
-      currentLevel.info.conquered = true;
+  handleWinLoss = (result: GameResult) => {
+    this.setState({ activeGameResult: result });
+    if (result.status === "won" && this.state.activeLevel != null) {
+      const { activeLevel } = this.state;
+      activeLevel.info.conquered = true;
 
-      for (const n of currentLevel.neighbors) {
+      for (const n of activeLevel.neighbors) {
         n.info.visible = true;
       }
-      this.setState({
-        activeLevel: undefined
-      });
     }
-  }
+  };
+
+  handleResultsDone = () => {
+    this.setState({
+      activeLevel: undefined,
+      activeGameResult: undefined,
+    });
+  };
 
   render() {
     return (
       <div className="App">
-        {this.maybeRenderOverWorldMap()}
-        {this.maybeRenderLevel()}
+        { this.maybeRenderOverWorldMap() }
+        { this.maybeRenderLevel() }
+        { this.maybeRenderGameResult() }
       </div>
     );
   }
@@ -58,8 +66,14 @@ class App extends React.PureComponent<{}, AppState> {
   }
 
   maybeRenderLevel() {
-    if (this.state.activeLevel != null) {
+    if (this.state.activeLevel != null && this.state.activeGameResult == null) {
       return <FullPageSketch sketchClass={Mito} otherArgs={[this.state.activeLevel, this.handleWinLoss]} />;
+    }
+  }
+
+  maybeRenderGameResult() {
+    if (this.state.activeGameResult != null) {
+      return <GameResultsScreen results={this.state.activeGameResult} onDone={this.handleResultsDone} />;
     }
   }
 }

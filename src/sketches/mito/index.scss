@@ -314,6 +314,23 @@
     }
 }
 
+.world-dom-components {
+    z-index: 1;
+    position: absolute;
+
+    > * {
+        pointer-events: none;
+        position: absolute;
+    }
+}
+
+.fruit-indicator {
+    color: white;
+    font-size: 10px;
+    width: 100px;
+    transform: translate(-50%, -50%);
+}
+
 .tile-hover {
     text-align: left;
     min-width: 120px;

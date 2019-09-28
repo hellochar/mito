@@ -101,20 +101,19 @@ export class HUD extends React.Component<HUDProps> {
   public render() {
     const isMaxed = this.inventory.isMaxed();
     const isMaxedEl = <div className={`mito-inventory-maxed${isMaxed ? " is-maxed" : ""}`}>maxed</div>;
-    return (<>
-      <div className={classnames("mito-hud", { hidden: !this.isTutorialFinished() })}>
-        {this.renderFruitUI()}
-      </div>
-      <SeasonsTracker time={this.world.time} season={this.world.season} />
-      <div className={classnames("mito-inventory", { hidden: false })}>
-        {isMaxedEl}
-        <div className="mito-inventory-container">
-          {this.renderInventoryBar()}
-          {this.renderInventory()}
+    return (
+      <>
+        <SeasonsTracker time={this.world.time} season={this.world.season} />
+        <div className={classnames("mito-inventory", { hidden: false })}>
+          {isMaxedEl}
+          <div className="mito-inventory-container">
+            {this.renderInventoryBar()}
+            {this.renderInventory()}
+          </div>
+          <CellBar bar={this.mito.cellBar} index={this.mito.cellBarIndex} onIndexClicked={(i) => this.mito.setCellBarIndex(i)} />
         </div>
-        <CellBar bar={this.mito.cellBar} index={this.mito.cellBarIndex} onIndexClicked={(i) => this.mito.setCellBarIndex(i)} />
-      </div>
-    </>);
+      </>
+    );
   }
 
   renderInventory() {
@@ -140,17 +139,5 @@ export class HUD extends React.Component<HUDProps> {
       <div style={emptyStyles} className="mito-inventory-bar-empty"></div>
     </div>);
     return inventoryBar;
-  }
-
-  // public renderTime() {
-  //     return <div className="mito-hud-section">{this.props.world.time}</div>;
-  // }
-  public renderFruitUI() {
-    const { world } = this;
-    if (world.fruit != null) {
-      return (<div className="mito-hud-section">
-        You bear Fruit! {world.fruit.inventory.sugar.toFixed(2)} of {Fruit.sugarToWin} sugar!
-                </div>);
-    }
   }
 }

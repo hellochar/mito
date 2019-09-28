@@ -338,6 +338,7 @@ export class Cell extends Tile implements HasEnergy {
     if (true) {
       for (const tile of neighborsAndSelf) {
         if (hasInventory(tile) && !(tile instanceof Fruit)) {
+          // eat the sugar on your tile to stay alive
           if (this.energy < params.cellEnergyMax) {
             const wantedEnergy = params.cellEnergyMax - this.energy;
             const wantedSugar = Math.min(
@@ -626,10 +627,10 @@ export class Root extends Cell {
 export class Fruit extends Cell {
   static displayName = "Fruit";
   public isObstacle = true;
-  static sugarToWin = 200;
-  public inventory = new Inventory(Fruit.sugarToWin + 100, this);
+  public inventory = new Inventory(100, this);
+  public committedResources = new Inventory(100, this);
 
-  // seeds aggressively take the inventory from neighbors
+  // aggressively take the inventory from neighbors
   step() {
     if (this.world.time % 3 !== 0) {
       return;
@@ -637,11 +638,18 @@ export class Fruit extends Cell {
     super.step();
     const neighbors = this.world.tileNeighbors(this.pos);
     for (const [, neighbor] of neighbors) {
-      if (hasInventory(neighbor)) {
+      if (hasInventory(neighbor) && neighbor instanceof Cell) {
         // LMAO
-        neighbor.inventory.give(this.inventory, 0, neighbor.inventory.sugar);
+        neighbor.inventory.give(this.inventory, neighbor.inventory.water, neighbor.inventory.sugar);
       }
     }
+    this.commitResources();
+  }
+
+  commitResources() {
+    const wantedSugar = Math.min(50 - this.committedResources.sugar, 50);
+    const wantedWater = Math.min(50 - this.committedResources.water, 50);
+    this.inventory.give(this.committedResources, wantedSugar, wantedWater);
   }
 }
 

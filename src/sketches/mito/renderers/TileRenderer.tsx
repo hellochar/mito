@@ -1,10 +1,12 @@
-import { ArrowHelper, Audio, BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Line, LineBasicMaterial, Material, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Scene, Vector2, Vector3 } from "three";
+import React from "react";
+import { ArrowHelper, Audio, BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Scene, Vector2, Vector3 } from "three";
+
 import lazy from "../../../common/lazy";
 import { map, lerp2 } from "../../../math/index";
 import { blopBuffer, suckWaterBuffer } from "../audio";
 import { Constructor } from "../constructor";
 import { Air, Cell, DeadCell, Fountain, Fruit, GrowingCell, hasEnergy, hasTilePairs, Leaf, Rock, Root, Soil, Tile, Tissue, Transport, Vein } from "../game/tile";
-import { Mito } from "../index";
+import { Mito, WorldDOMElement } from "../index";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
 import { fruitTexture, textureFromSpritesheet } from "../spritesheet";
@@ -26,6 +28,8 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private audio?: Audio;
   private lastAudioValueTracker = 0;
   private pairsLines: Object3D[] = [];
+  private worldDomElement?: WorldDOMElement;
+
   constructor(target: T, scene: Scene, mito: Mito) {
     super(target, scene, mito);
     if (this.target instanceof GrowingCell) {
@@ -72,12 +76,25 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.audio = new Audio(this.mito.audioListener);
       this.mesh.add(this.audio);
     }
+
+    if (this.target instanceof Fruit) {
+      const fruit = this.target;
+      this.worldDomElement = mito.addWorldDOMElement(() => this.target.pos, () => {
+        return (
+          <div className="fruit-indicator">
+            <div>{fruit.committedResources.water.toFixed(1)}/50 water</div>
+            <div>{fruit.committedResources.sugar.toFixed(1)}/50 sugar</div>
+          </div>
+        );
+      });
+    }
   }
 
   steps(x: number, size: number) {
     return Math.floor(x / size) * size;
   }
 
+  private static ONE = new Vector2(1, 1);
   private growingRenderer?: TileRenderer;
   update() {
     if (this.target instanceof GrowingCell) {
@@ -86,8 +103,14 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       lerp2(this.mesh.scale, { x: s, y: s }, 0.1);
       // this.mesh.scale.x = s;
       // this.mesh.scale.y = s;
+    } else if (this.target instanceof Fruit) {
+      const r = this.target.committedResources;
+      const percentDone = (r.sugar + r.water) / r.capacity;
+      const scale = map(percentDone, 0, 1, 0.2, 1);
+      const targetScale = new Vector2(scale, scale);
+      lerp2(this.mesh.scale, targetScale, 0.1);
     } else {
-      lerp2(this.mesh.scale, new Vector2(1, 1), 0.1);
+      lerp2(this.mesh.scale, TileRenderer.ONE, 0.1);
     }
     const lightAmount = this.target.lightAmount();
     const mat = this.mesh.material as MeshBasicMaterial;
@@ -182,11 +205,13 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       }
     }
   }
+
   hasActiveNeighbors(t: any): t is {
     activeNeighbors: Vector2[];
   } {
     return Array.isArray(t.activeNeighbors);
   }
+
   static lineGeometry = (() => {
     const g = new BufferGeometry();
     g.addAttribute('position', new Float32BufferAttribute([0, 0, 0, 0, 1, 0], 3));
@@ -214,6 +239,9 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
   destroy() {
     this.scene.remove(this.mesh);
+    if (this.worldDomElement != null) {
+      this.mito.removeWorldDOMElement(this.worldDomElement);
+    }
     if (this.inventoryRenderer != null) {
       this.inventoryRenderer.destroy();
     }
