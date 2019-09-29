@@ -34,12 +34,15 @@ export abstract class Tile implements Steppable {
     return (this.constructor as any).fallAmount;
   }
 
+  public readonly timeMade: number;
+
   public pos: Vector2;
-  public constructor(pos: Vector2, public world: World) {
+  public constructor(pos: Vector2, public readonly world: World) {
     this.pos = pos.clone();
     if (world == null) {
       throw new Error("null world!");
     }
+    this.timeMade = world.time;
   }
 
   public lightAmount() {
@@ -629,6 +632,19 @@ export class Fruit extends Cell {
   public isObstacle = true;
   public inventory = new Inventory(100, this);
   public committedResources = new Inventory(100, this);
+  public timeMatured?: number;
+
+  constructor(pos: Vector2, world: World) {
+    super(pos, world);
+    this.committedResources.on("get", this.handleGetResources);
+  }
+
+  handleGetResources = () => {
+    if (this.timeMatured == null && this.isMature()) {
+      this.timeMatured = this.world.time;
+    }
+    this.committedResources.off("get", this.handleGetResources);
+  }
 
   // aggressively take the inventory from neighbors
   step() {
@@ -647,9 +663,18 @@ export class Fruit extends Cell {
   }
 
   commitResources() {
-    const wantedSugar = Math.min(50 - this.committedResources.sugar, 50);
-    const wantedWater = Math.min(50 - this.committedResources.water, 50);
-    this.inventory.give(this.committedResources, wantedSugar, wantedWater);
+    const wantedWater = Math.min(50 - this.committedResources.water, 0.05);
+    const wantedSugar = Math.min(50 - this.committedResources.sugar, 0.05);
+    this.inventory.give(this.committedResources, wantedWater, wantedSugar);
+  }
+
+  getPercentMatured() {
+    const r = this.committedResources;
+    return (r.sugar + r.water) / r.capacity;
+  }
+
+  isMature() {
+    return this.committedResources.water >= 49 && this.committedResources.sugar >= 49;
   }
 }
 

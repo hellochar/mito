@@ -104,9 +104,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       // this.mesh.scale.x = s;
       // this.mesh.scale.y = s;
     } else if (this.target instanceof Fruit) {
-      const r = this.target.committedResources;
-      const percentDone = (r.sugar + r.water) / r.capacity;
-      const scale = map(percentDone, 0, 1, 0.2, 1);
+      const scale = map(this.target.getPercentMatured(), 0, 1, 0.2, 1);
       const targetScale = new Vector2(scale, scale);
       lerp2(this.mesh.scale, targetScale, 0.1);
     } else {

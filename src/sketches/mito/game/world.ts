@@ -46,8 +46,7 @@ export class World {
 
   constructor(public environment: Environment) {
     this.wipResult = {
-      fruitMade: 0,
-      mutationPointsEarned: 0,
+      fruits: [],
       world: this,
     };
     this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
@@ -161,7 +160,7 @@ export class World {
       throw new Error(`invalid position ${x}, ${y} `);
     }
     if (tile instanceof Fruit) {
-      this.wipResult.fruitMade++;
+      this.wipResult.fruits.push(tile);
     }
     const oldTile = this.tileAt(x, y)!;
     // if replacing a tile with inventory, try giving resources to neighbors of the same type
@@ -399,8 +398,10 @@ export class World {
     if (this.time < TIME_PER_YEAR) {
       return null;
     }
-    // you lose if you haven't reproduced
-    if (this.wipResult.fruitMade === 0) {
+    // at the end of the year, we make a decision:
+    // you lose if you haven't made a single mature fruit
+    const matureFruit = this.wipResult.fruits.filter((f) => f.isMature());
+    if (matureFruit.length === 0) {
       return {
         ...this.wipResult,
         status: "lost",

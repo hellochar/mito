@@ -19,8 +19,7 @@ import { HexTile } from "../../overworld/hexTile";
 
 export interface GameResult {
   status: "won" | "lost";
-  mutationPointsEarned: number;
-  fruitMade: number;
+  fruits: Fruit[];
   world: World;
 }
 

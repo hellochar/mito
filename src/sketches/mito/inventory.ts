@@ -92,6 +92,10 @@ export class Inventory {
     this.events = this.events || new EventEmitter();
     this.events.on(name, fn);
   }
+  public off(name: "give" | "get", fn: (...args: any[]) => any) {
+    this.events = this.events || new EventEmitter();
+    this.events.off(name, fn);
+  }
 
   public add(water: number, sugar: number) {
     const spaceNeeded = fpref(water + sugar);
