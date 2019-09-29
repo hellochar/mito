@@ -82,8 +82,8 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.worldDomElement = mito.addWorldDOMElement(() => this.target.pos, () => {
         return (
           <div className="fruit-indicator">
-            <div>{fruit.committedResources.water.toFixed(1)}/50 water</div>
-            <div>{fruit.committedResources.sugar.toFixed(1)}/50 sugar</div>
+            <div>{fruit.committedResources.water.toFixed(1)}/{Fruit.neededResources / 2} water</div>
+            <div>{fruit.committedResources.sugar.toFixed(1)}/{Fruit.neededResources / 2} sugar</div>
           </div>
         );
       });

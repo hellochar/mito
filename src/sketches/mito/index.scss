@@ -326,9 +326,9 @@
 
 .fruit-indicator {
     color: white;
-    font-size: 10px;
+    font-size: 12px;
     width: 100px;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) translateY(-30px);
 }
 
 .tile-hover {

@@ -630,8 +630,9 @@ export class Root extends Cell {
 export class Fruit extends Cell {
   static displayName = "Fruit";
   public isObstacle = true;
-  public inventory = new Inventory(100, this);
-  public committedResources = new Inventory(100, this);
+  public inventory = new Inventory(8, this);
+  static readonly neededResources = 100;
+  public committedResources = new Inventory(Fruit.neededResources, this);
   public timeMatured?: number;
 
   constructor(pos: Vector2, world: World) {
@@ -655,16 +656,18 @@ export class Fruit extends Cell {
     const neighbors = this.world.tileNeighbors(this.pos);
     for (const [, neighbor] of neighbors) {
       if (hasInventory(neighbor) && neighbor instanceof Cell) {
-        // LMAO
-        neighbor.inventory.give(this.inventory, neighbor.inventory.water, neighbor.inventory.sugar);
+        const wantedWater = Fruit.neededResources / 2 - this.committedResources.water;
+        const wantedSugar = Fruit.neededResources / 2 - this.committedResources.sugar;
+
+        neighbor.inventory.give(this.inventory, wantedWater, wantedSugar);
       }
     }
     this.commitResources();
   }
 
   commitResources() {
-    const wantedWater = Math.min(50 - this.committedResources.water, 0.05);
-    const wantedSugar = Math.min(50 - this.committedResources.sugar, 0.05);
+    const wantedWater = Math.min(Fruit.neededResources / 2 - this.committedResources.water, 0.2);
+    const wantedSugar = Math.min(Fruit.neededResources / 2 - this.committedResources.sugar, 0.2);
     this.inventory.give(this.committedResources, wantedWater, wantedSugar);
   }
 
@@ -674,7 +677,8 @@ export class Fruit extends Cell {
   }
 
   isMature() {
-    return this.committedResources.water >= 49 && this.committedResources.sugar >= 49;
+    // add 1 buffer for fp errors
+    return this.committedResources.water + this.committedResources.sugar >= Fruit.neededResources - 1;
   }
 }
 
