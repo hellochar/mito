@@ -1,22 +1,11 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+
+import "./Expand.scss";
 
 interface ExpandProps {
   children: React.ReactNode;
   shrunkElements: React.ReactNode;
 }
-
-const ExpandButton = styled.div`
-  cursor: pointer;
-  position: relative;
-  border-bottom: 1px solid black;
-  margin: 20px 0;
-  display: flex;
-`;
-
-const ExpandCaret = styled.div`
-  margin-left: auto;
-`;
 
 function Expand({ children, shrunkElements }: ExpandProps) {
   const [expanded, setExpanded] = useState(false);
@@ -27,10 +16,12 @@ function Expand({ children, shrunkElements }: ExpandProps) {
 
   return (
     <div>
-      <ExpandButton onClick={handleExpandClick}>
+      <div className="expand-button" onClick={handleExpandClick}>
         {shrunkElements}
-        {expanded ? <ExpandCaret>▼</ExpandCaret> : <ExpandCaret>▶</ExpandCaret>}
-      </ExpandButton>
+        <div className="expand-caret">
+          {expanded ? "▼" : "▶" }
+        </div>
+      </div>
       {expanded ? <div>{children}</div> : null}
     </div>
   );

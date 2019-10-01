@@ -1,0 +1,38 @@
+.overworld-modal {
+  z-index: 1;
+  position: absolute;
+  display: flex;
+
+  .overworld-modal-positioner {
+    position: absolute;
+    left: 20px;
+    align-self: center;
+    justify-self: top;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    color: black;
+    animation: opacifyIn 0.2s both;
+
+    &::before {
+      position: absolute;
+      top: 50%;
+      transform: translate(-100%, -50%);
+      left: 0;
+      content: "";
+      border: 20px solid transparent;
+      border-right-color: rgba(255, 255, 255, 0.9);
+    }
+  }
+}
+
+@keyframes opacifyIn {
+  from {
+    opacity: 0;
+    transform: translateX(-80px) scale(0.75);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}

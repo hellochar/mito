@@ -1,0 +1,11 @@
+.expand-button {
+  cursor: pointer;
+  position: relative;
+  border-bottom: 1px solid black;
+  margin: 20px 0;
+  display: flex;
+
+  .expand-caret {
+    margin-left: auto;
+  }
+}

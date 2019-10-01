@@ -1,9 +1,12 @@
 import * as React from "react";
-import styled from "styled-components";
 
 import { Constructor } from "../constructor";
 import { Cell } from "../game/tile";
 import { materialMapping } from "../renderers/TileRenderer";
+
+import "./CellBar.scss";
+import classNames from "classnames";
+import { RectAreaLight } from "three";
 
 export interface CellBarProps {
   bar: Constructor<Cell>[];
@@ -13,22 +16,16 @@ export interface CellBarProps {
 
 function CellBar({ bar, index, onIndexClicked }: CellBarProps) {
   return (
-    <CellBarContainer className="cell-bar">
+    <div className="cell-bar">
       { bar.map((cellType, i) => (
         <div key={i}>
           <CellBarItem type={cellType} isSelected={index === i} onClick={() => onIndexClicked(i) } />
           <HotkeyButton hotkey={String(i + 1)} onClick={() => onIndexClicked(i) } />
         </div>
       )) }
-    </CellBarContainer>
+    </div>
   )
 }
-
-const CellBarContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-
 
 export interface CellBarItemProps {
   children?: React.ReactNode;
@@ -37,31 +34,11 @@ export interface CellBarItemProps {
   onClick: () => void;
 }
 
-const CellBarItemDiv = styled.div<CellBarItemProps>`
-  transform: ${props => props.isSelected ? "scale(1.2)" : "scale(1)"};
-  transition: transform 0.025s;
-  width: 60px;
-  height: 60px;
-  border: 1px solid darkgrey;
-  border-radius: 2px;
-  margin: 0 5px;
-  color: white;
-  text-shadow:
-   -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-     1px 1px 0 #000;
-  font-size: 12px;
-  font-family: sans-serif;
-  cursor: pointer;
-  background-image:
-    ${props => {
-      const material = materialMapping().get(props.type)!;
-      const color = material.color.getStyle();
-      return `linear-gradient(${color}, ${color})`;
-    }},
-    ${props => {
-      const material = materialMapping().get(props.type)!;
+function CellBarItem({ type, isSelected, onClick }: CellBarItemProps) {
+  const style: React.CSSProperties = React.useMemo(() => {
+    const material = materialMapping().get(type)!;
+    const color = material.color.getStyle();
+    const url = (() => {
       const image = material.map!.image;
       if (image != null) {
         if (image instanceof HTMLCanvasElement) {
@@ -72,17 +49,18 @@ const CellBarItemDiv = styled.div<CellBarItemProps>`
       } else {
         return "url()";
       }
-    }};
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-blend-mode: multiply;
-  image-rendering: pixelated;
-`;
-
-function CellBarItem({ type, isSelected, onClick }: CellBarItemProps) {
+    })();
+    const backgroundImage = `linear-gradient(${color}, ${color}), ${url}`;
+    return {
+      backgroundImage
+    };
+  }, [type]);
   return (
-    <CellBarItemDiv type={type} isSelected={isSelected} onClick={onClick}>{type.displayName}</CellBarItemDiv>
+    <div
+      className={classNames("cell-bar-item", { selected: isSelected })}
+      onClick={onClick}
+      style={style}
+    >{type.displayName}</div>
   );
 }
 

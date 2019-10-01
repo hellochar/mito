@@ -1,0 +1,37 @@
+.cell-bar {
+  display: flex;
+  flex-direction: row;
+  margin: 10px;
+
+  .mito-hud-button-hotkey {
+    background: white;
+    margin-top: 10px;
+  }
+
+  .cell-bar-item {
+    &.selected {
+      transform: scale(1.2);
+    }
+    transform: scale(1);
+    transition: transform 0.025s;
+    width: 60px;
+    height: 60px;
+    border: 1px solid darkgrey;
+    border-radius: 2px;
+    margin: 0 5px;
+    color: white;
+    text-shadow:
+    -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
+    font-size: 12px;
+    font-family: sans-serif;
+    cursor: pointer;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-blend-mode: multiply;
+    image-rendering: pixelated;
+  }
+}

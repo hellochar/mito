@@ -22,7 +22,7 @@ export interface Season {
 
 const SEASON_ORDER: Season["name"][] = ["spring", "summer", "fall", "winter"];
 
-export const TIME_PER_YEAR = 30 * 60 * 1; // 30 fps * 60 seconds/minute * 15 minutes
+export const TIME_PER_YEAR = 30 * 60 * 6; // 30 fps * 60 seconds/minute * 6 minutes
 export const TIME_PER_SEASON = TIME_PER_YEAR / 4;
 
 export class World {

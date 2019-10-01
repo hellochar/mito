@@ -73,13 +73,6 @@
     }
 }
 
-.cell-bar {
-    .mito-hud-button-hotkey {
-        background: white;
-        margin-top: 10px;
-    }
-}
-
 .ui-popup {
     position: absolute;
     animation: popIn 0.2s both;
@@ -187,10 +180,6 @@
         background: hsl(111, 70%, 27%);
         border-bottom: 1px solid grey;
         margin-bottom: 10px;
-    }
-
-    .cell-bar {
-        margin: 10px;
     }
 
     .mito-inventory-indicator {
