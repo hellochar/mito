@@ -78,7 +78,7 @@ export function hookUpAudio(ctx: SketchAudioContext) {
       blopBuffer = audioBuffer;
     },
     (xhr: ProgressEvent) => {
-      devlog((xhr.loaded / xhr.total * 100) + '% loaded');
+      // devlog((xhr.loaded / xhr.total * 100) + '% loaded');
     },
     (err: any) => {
       devlog('An error happened');
@@ -90,7 +90,7 @@ export function hookUpAudio(ctx: SketchAudioContext) {
       suckWaterBuffer = audioBuffer;
     },
     (xhr: ProgressEvent) => {
-      devlog((xhr.loaded / xhr.total * 100) + '% loaded');
+      // devlog((xhr.loaded / xhr.total * 100) + '% loaded');
     },
     (err: any) => {
       devlog('An error happened');

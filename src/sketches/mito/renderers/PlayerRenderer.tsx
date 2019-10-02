@@ -21,7 +21,6 @@ export class PlayerRenderer extends Renderer<Player> {
         color: new Color("white"),
         side: DoubleSide,
       }));
-    devlog("created player renderer");
     lerp2(this.mesh.position, this.target.pos, 1);
     this.mesh.position.z = 2;
     this.scene.add(this.mesh);

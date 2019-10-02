@@ -4,7 +4,6 @@ import { OrthographicCamera, Scene, Vector2, WebGLRenderer, Vector3 } from "thre
 
 import { parse } from "query-string";
 
-import devlog from "../../common/devlog";
 import { map, lerp2 } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../../sketch";
 import { ActionBuild, ActionMove } from "./action";
@@ -351,7 +350,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
 
     this.renderer.render(this.scene, this.camera);
     if (Boolean(parse(window.location.search).debug) && this.frameCount % 100 === 0) {
-      this.perfDebug();
+      // this.perfDebug();
       this.logRenderInfo();
     }
   }

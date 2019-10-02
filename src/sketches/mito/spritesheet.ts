@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import devlog from "../../common/devlog";
 import lazy from "../../common/lazy";
 
 const spriteSize = 16; // 16x16 sprites
@@ -46,7 +45,7 @@ export function textureFromSpritesheet(x: number, y: number, backgroundColor = "
         spriteSize,
       );
       texture.needsUpdate = true;
-      devlog("updated spritesheet for", x, y);
+      // devlog("updated spritesheet for", x, y);
     }
     if (spritesheetLoaded) {
       drawSpriteToCanvas();
