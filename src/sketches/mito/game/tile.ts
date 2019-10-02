@@ -8,6 +8,7 @@ import { hasInventory, HasInventory, Inventory } from "../inventory";
 import { params } from "../params";
 import { World } from "./world";
 import { Steppable } from "./entity";
+import { traitMod } from "../../../evolution/traits";
 
 export interface HasEnergy {
   energy: number;
@@ -310,22 +311,9 @@ export class Cell extends Tile implements HasEnergy {
     const neighbors = Array.from(tileNeighbors.values());
     const neighborsAndSelf = [...neighbors, this];
     for (const tile of neighborsAndSelf) {
-      if (hasInventory(tile) && !(tile instanceof Fruit)) {
-        // eat the sugar on your tile to stay alive
-        if (this.energy < params.cellEnergyMax) {
-          const wantedEnergy = params.cellEnergyMax - this.energy;
-          const wantedSugar = Math.min(
-            wantedEnergy / params.cellEnergyMax,
-            tile.inventory.sugar,
-          );
-          if (wantedEnergy > 100 && wantedSugar > 0) {
-            tile.inventory.add(0, -wantedSugar);
-            const gotEnergy = wantedSugar * params.cellEnergyMax;
-            this.energy += gotEnergy;
-          }
-        } else {
-          break; // we're all full, eat no more
-        }
+      const ate = this.stepEat(tile);
+      if (!ate) {
+        break;
       }
     }
     if (this.energy < params.cellEnergyMax) {
@@ -380,6 +368,30 @@ export class Cell extends Tile implements HasEnergy {
     }
   }
 
+  stepEat(tile: Tile) {
+    if (hasInventory(tile) && !(tile instanceof Fruit)) {
+      // eat the sugar on your tile to stay alive
+      if (this.energy < params.cellEnergyMax) {
+        const wantedEnergy = params.cellEnergyMax - this.energy;
+        // normally this number is 0.0001 - AKA, 1 energy = 0.0001 sugar.
+        // if this number goes up, we become less energy efficient
+        // if this number goes down, we are more energy efficient
+        const energyToSugarConversion = traitMod(this.world.traits.energyEfficiency, 1 / params.cellEnergyMax, 1 / 1.5);
+        const sugarToEat = Math.min(
+          wantedEnergy * energyToSugarConversion,
+          tile.inventory.sugar,
+        );
+        if (wantedEnergy > 100 && sugarToEat > 0) {
+          tile.inventory.add(0, -sugarToEat);
+          const gotEnergy = sugarToEat / energyToSugarConversion;
+          this.energy += gotEnergy;
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
   // stepStress(tileNeighbors: Map<Vector2, Tile>) {
   //     // start with +y down for gravity
   //     const totalForce = new Vector2(0, 1);
@@ -421,9 +433,10 @@ export class Cell extends Tile implements HasEnergy {
     const aboveLeft = tileNeighbors.get(DIRECTIONS.nw)!;
     const aboveRight = tileNeighbors.get(DIRECTIONS.ne)!;
 
-    this.droopY += params.droop;
+    const droopAmount = traitMod(this.world.traits.structuralStability, params.droop, 1 / 1.5);
+    this.droopY += droopAmount;
     if (this.energy < params.cellEnergyMax / 2) {
-      this.droopY += params.droop;
+      this.droopY += droopAmount;
     }
 
     let hasSupportBelow = false;
@@ -471,7 +484,11 @@ export class GrowingCell extends Cell {
 
 export class Tissue extends Cell implements HasInventory {
   static displayName = "Tissue";
-  public inventory = new Inventory(params.tissueInventoryCapacity, this);
+  public inventory: Inventory;
+  constructor(pos: Vector2, world: World) {
+    super(pos, world);
+    this.inventory = new Inventory(Math.floor(traitMod(world.traits.carryCapacity, params.tissueInventoryCapacity, 1.5)), this);
+  }
 }
 
 interface IHasTilePairs {
@@ -522,6 +539,8 @@ export class Leaf extends Cell {
         this.averageEfficiency += efficiency;
         this.averageSpeed += speed;
 
+        const leafReactionRate = traitMod(this.world.traits.photosynthesis, 0.01, 1.5);
+
         // in prime conditions:
         //      our rate of conversion is speed * params.leafReactionRate
         //      we get 1 sugar at 1/efficiencyRatio (> 1) water
@@ -530,7 +549,7 @@ export class Leaf extends Cell {
         //      on conversion, we use up all the available water and get the corresponding amount of sugar
         const bestEfficiencyWater = params.leafSugarPerReaction / efficiency;
         const waterToConvert = Math.min(tissue.inventory.water, bestEfficiencyWater);
-        const chance = speed * params.leafReactionRate * waterToConvert / bestEfficiencyWater;
+        const chance = speed * leafReactionRate * waterToConvert / bestEfficiencyWater;
         if (Math.random() < chance) {
           this.didConvert = true;
           const sugarConverted = waterToConvert * efficiency;
@@ -563,7 +582,7 @@ export class Root extends Cell {
     super.step();
     if (this.cooldown <= 0) {
       this.stepWaterTransfer();
-      this.cooldown += params.rootTurnsPerTransfer;
+      this.cooldown += traitMod(this.world.traits.rootAbsorption, params.rootTurnsPerTransfer, 1 / 1.5);
     }
     this.cooldown -= 1;
   }
@@ -588,8 +607,11 @@ export class Root extends Cell {
         //     }
         // }
         this.activeNeighbors.push(dir);
-        const { water } = tile.inventory.give(this.inventory, 1, 0);
-        this.waterTransferAmount += water + Math.random() * 0.0001;
+        // only do it once
+        if (this.waterTransferAmount === 0) {
+          const { water } = tile.inventory.give(this.inventory, 1, 0);
+          this.waterTransferAmount += water + Math.random() * 0.0001;
+        }
       }
     }
   }
@@ -656,7 +678,8 @@ function isFractional(x: number) {
 
 export class Transport extends Tissue {
   static displayName = "Transport";
-  public cooldown = 0;
+  public cooldownWater = 0;
+  public cooldownSugar = 0;
 
   constructor(pos: Vector2, world: World, public dir: Vector2) {
     super(pos, world);
@@ -672,20 +695,32 @@ export class Transport extends Tissue {
     // transport hungers at double speed
     this.energy -= 1;
     super.step();
-    if (this.cooldown <= 0) {
-      this.cooldown += params.transportTurnsPerMove;
+    let waterToTransport = 0;
+    let sugarToTransport = 0;
+    if (this.cooldownWater <= 0) {
+      waterToTransport++;
+      const turnsPerWater = Math.floor(traitMod(this.world.traits.activeTransportWater, 20, 1 / 1.5));
+      this.cooldownWater += turnsPerWater;
+    }
+    if (this.cooldownSugar <= 0) {
+      sugarToTransport++;
+      const turnsPerSugar = Math.floor(traitMod(this.world.traits.activeTransportSugar, 20, 1 / 1.5));
+      this.cooldownSugar += turnsPerSugar;
+    }
 
+    if (waterToTransport > 0 || sugarToTransport > 0) {
       const targetTile = this.getTarget();
       if (targetTile) {
-        this.inventory.give(targetTile.inventory, 1, 1);
+        this.inventory.give(targetTile.inventory, waterToTransport, sugarToTransport);
       }
 
       const fromTile = this.getFrom();
       if (fromTile) {
-        fromTile.inventory.give(this.inventory, 1, 1);
+        fromTile.inventory.give(this.inventory, waterToTransport, sugarToTransport);
       }
     }
-    this.cooldown -= 1;
+    this.cooldownWater -= 1;
+    this.cooldownSugar -= 1;
   }
 
   public getTarget() {

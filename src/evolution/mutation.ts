@@ -1,4 +1,4 @@
-import { Gene, DNATuple, DNA } from "./species";
+import { Gene, DNATuple, DNA } from "./gene";
 
 export function mutateRandomNewGene(): Gene {
   const tuplePlus = randomDNATuple();

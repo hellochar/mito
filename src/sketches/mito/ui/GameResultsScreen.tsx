@@ -21,7 +21,7 @@ interface GameResultsScreenProps {
 function FruitInfo({ fruit }: { fruit: Fruit }) {
   return (
     <div className="fruit-info">
-      <div className="fruit-visual">{ fruit.isMature() ? <Glow /> : null }<img src="assets/images/fruit.png" /></div>
+      <div className="fruit-visual">{ fruit.isMature() ? <Glow /> : null }<img alt="" src="assets/images/fruit.png" /></div>
       { fruit.isMature()
         ? <><span className="matured-info success">Matured</span>&nbsp;at { fruit.timeMatured }, Mutation Points earned: 1</>
         : <span className="matured-info in-progress">{ (fruit.getPercentMatured() * 100).toFixed(0) }% maturity</span>
@@ -34,7 +34,7 @@ function GameWonScreen({ results }: GameResultsScreenProps) {
   const matureFruit = results.fruits.filter((f) => f.isMature());
   return (
     <>
-      <div className="character-party-container"><img className="character" src="assets/images/character.png"></img></div>
+      <div className="character-party-container"><img alt="" className="character" src="assets/images/character.png"></img></div>
       <h1>You {matureFruit.length >= 3 ? "thrived" : "survived"}!</h1>
       <h2>
         {matureFruit.length} Mutation Points earned.

@@ -1,9 +1,7 @@
 import * as React from "react";
 
 import Mito from "..";
-import { World } from "../game";
-import { Tile, Transport } from "../game/tile";
-import { findPositionsThroughNonObstacles, findPositionsThroughTissue } from "../pathfinding";
+import { Tile } from "../game/tile";
 import TileHighlight from "../tutorial/tileHighlight";
 import { HoveredTileInfo } from "./HoveredTileInfo";
 import PointHighlight from "../tutorial/PointHighlight";
@@ -46,13 +44,13 @@ export class Hover extends React.Component<HoverProps> {
   // }
 }
 
-class PathHighlight extends React.PureComponent<{ world: World, tile: Tile, scene: THREE.Scene, walkable: "tissue" | "non-obstacles" }> {
-  render() {
-    const path = this.props.walkable === "non-obstacles"
-      ? findPositionsThroughNonObstacles(this.props.world, this.props.tile.pos)
-      : findPositionsThroughTissue(this.props.world, this.props.tile.pos);
-    return <>
-      {path.map(([x, y]) => <TileHighlight x={x} y={y} scene={this.props.scene} />)}
-    </>;
-  }
-}
+// class PathHighlight extends React.PureComponent<{ world: World, tile: Tile, scene: THREE.Scene, walkable: "tissue" | "non-obstacles" }> {
+//   render() {
+//     const path = this.props.walkable === "non-obstacles"
+//       ? findPositionsThroughNonObstacles(this.props.world, this.props.tile.pos)
+//       : findPositionsThroughTissue(this.props.world, this.props.tile.pos);
+//     return <>
+//       {path.map(([x, y]) => <TileHighlight x={x} y={y} scene={this.props.scene} />)}
+//     </>;
+//   }
+// }

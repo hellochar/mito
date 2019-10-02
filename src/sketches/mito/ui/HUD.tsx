@@ -7,6 +7,7 @@ import CellBar from "./CellBar";
 import { TIME_PER_YEAR, Season } from "../game";
 
 import "./SeasonsTracker.scss";
+import { TraitType } from "../../../evolution/traits";
 
 function BarMarker({percent}: {percent: number}) {
   const style = {
@@ -49,7 +50,16 @@ function SeasonsTracker({ time, season }: { time: number, season: Season }) {
 export interface HUDProps {
   mito: Mito;
 }
-export class HUD extends React.Component<HUDProps> {
+
+export interface HUDState {
+  traitsPanelOpen: boolean;
+}
+
+export class HUD extends React.Component<HUDProps, HUDState> {
+  state: HUDState = {
+    traitsPanelOpen: true,
+  };
+
   get mito() { return this.props.mito; }
 
   get world() { return this.mito.world; }
@@ -68,6 +78,7 @@ export class HUD extends React.Component<HUDProps> {
     return (
       <>
         <SeasonsTracker time={this.world.time} season={this.world.season} />
+        {this.maybeRenderTraits()}
         <div className={classnames("mito-inventory", { hidden: false })}>
           {isMaxedEl}
           <div className="mito-inventory-container">
@@ -78,6 +89,20 @@ export class HUD extends React.Component<HUDProps> {
         </div>
       </>
     );
+  }
+
+  maybeRenderTraits() {
+    if (this.state.traitsPanelOpen) {
+      return (
+        <div style={{ position: "absolute", right: 10, top: 50, textAlign: "left", background: "white", padding: 10 }}>
+          {
+            (Object.keys(this.world.traits) as TraitType[]).map((trait) => {
+              return <div key={trait}>{trait}: {this.world.traits[trait]}</div>;
+            })
+          }
+        </div>
+      );
+    }
   }
 
   renderInventory() {

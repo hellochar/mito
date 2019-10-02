@@ -8,13 +8,14 @@ import { params } from "../params";
 import { Cell, Fruit, GrowingCell, Tile, Transport } from "./tile";
 import { World } from "./world";
 import { Steppable } from "./entity";
+import { traitMod } from "../../../evolution/traits";
 
 export class Player implements Steppable {
   public inventory = new Inventory(params.maxResources, this, Math.round(params.maxResources / 3), Math.round(params.maxResources / 3));
   private action?: Action;
   private events = new EventEmitter();
   public mapActions?: (player: Player, action: Action) => Action | undefined;
-  public speed = 0.20;
+  public speed: number;
   // public dropWater = false;
   // public dropSugar = false;
 
@@ -23,6 +24,7 @@ export class Player implements Steppable {
   }
 
   public constructor(public posFloat: Vector2, public world: World) {
+    this.speed = traitMod(world.traits.walkSpeed, 0.15, 1.5);
   }
 
   public setAction(action: Action) {

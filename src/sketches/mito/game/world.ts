@@ -10,6 +10,7 @@ import { Player } from "./player";
 import { Air, Cell, DeadCell, hasEnergy, Rock, Soil, Tile, Tissue, Fruit } from "./tile";
 import { Entity, isSteppable } from "./entity";
 import { GameResult } from "..";
+import { Traits, traitMod } from "../../../evolution/traits";
 
 export class StepStats {
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) { }
@@ -27,13 +28,25 @@ export const TIME_PER_SEASON = TIME_PER_YEAR / 4;
 
 export class World {
   public time: number = 0;
-  public width = 50;
-  public height = 100;
-  public readonly player = new Player(new Vector2(this.width / 2, this.height / 2), this);
-  private gridEnvironment: Tile[][];
-  private gridCells: Array<Array<Cell | null>>;
-  private neighborCache: Array<Array<Map<Vector2, Tile>>>;
-  private wipResult: Omit<GameResult, "status">;
+  public readonly width = 50;
+  public readonly height = 100;
+  public readonly player: Player;
+  private readonly gridEnvironment: Tile[][];
+  private readonly gridCells: Array<Array<Cell | null>>;
+  private readonly neighborCache: Array<Array<Map<Vector2, Tile>>>;
+  private readonly wipResult: Omit<GameResult, "status">;
+  public readonly traits: Traits = {
+    activeTransportSugar: 0,
+    activeTransportWater: 0,
+    carryCapacity: 1,
+    energyEfficiency: 0,
+    photosynthesis: 0,
+    rootAbsorption: 0,
+    structuralStability: 0,
+    walkSpeed: -2,
+    diffuseSugar: 3,
+    diffuseWater: 3,
+  };
 
   get season() {
     const name = SEASON_ORDER[Math.floor(this.time / TIME_PER_SEASON)];
@@ -49,6 +62,9 @@ export class World {
       fruits: [],
       world: this,
     };
+    Cell.diffusionWater = traitMod(this.traits.diffuseWater, params.cellDiffusionWater, 2);
+    Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, params.cellDiffusionSugar, 2);
+    this.player = new Player(new Vector2(this.width / 2, this.height / 2), this);
     this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
       const pos = new Vector2(x, y);
 

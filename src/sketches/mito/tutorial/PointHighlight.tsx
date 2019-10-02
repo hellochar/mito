@@ -3,7 +3,6 @@ import * as THREE from "three";
 
 import lazy from "../../../common/lazy";
 import { SceneObject } from "./sceneObject";
-import { Animate } from "./Animate";
 
 export const POINT_HIGHLIGHT = lazy(() => {
   const geometry = new THREE.CircleBufferGeometry(0.1, 20);

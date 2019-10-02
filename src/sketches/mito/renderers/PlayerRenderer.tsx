@@ -1,6 +1,5 @@
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
 
-import devlog from "../../../common/devlog";
 import { Player } from "../game";
 import { Mito } from "../index";
 import { textureFromSpritesheet } from "../spritesheet";
