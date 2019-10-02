@@ -2,6 +2,8 @@ import * as React from "react";
 import * as THREE from "three";
 import { OrthographicCamera, Scene, Vector2, WebGLRenderer, Vector3 } from "three";
 
+import { parse } from "query-string";
+
 import devlog from "../../common/devlog";
 import { map, lerp2 } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../../sketch";
@@ -91,21 +93,24 @@ export class Mito extends ISketch {
       this.keyMap.delete(event.key!);
     },
     wheel: (e: WheelEvent) => {
-      if (e.deltaX + e.deltaY < 0) {
-        this.setCellBarIndex(this.cellBarIndex - 1);
+      if (e.shiftKey) {
+        // on my mouse, one scroll is + or - 125
+        const delta = -(e.deltaX + e.deltaY) / 125 / 20;
+        const currZoom = this.camera.zoom;
+        const scalar = Math.pow(2, delta);
+        // console.log(currZoom);
+        // zoom of 2 is zooming in
+        // const newZoom = Math.min(Math.max(currZoom * scalar, 1), 2.5);
+        const newZoom = currZoom * scalar;
+        this.camera.zoom = newZoom;
+        this.camera.updateProjectionMatrix();
       } else {
-        this.setCellBarIndex(this.cellBarIndex + 1);
+        if (e.deltaX + e.deltaY < 0) {
+          this.setCellBarIndex(this.cellBarIndex - 1);
+        } else {
+          this.setCellBarIndex(this.cellBarIndex + 1);
+        }
       }
-      // // on my mouse, one scroll is + or - 125
-      // const delta = -(e.deltaX + e.deltaY) / 125 / 20;
-      // const currZoom = this.camera.zoom;
-      // const scalar = Math.pow(2, delta);
-      // // console.log(currZoom);
-      // // zoom of 2 is zooming in
-      // // const newZoom = Math.min(Math.max(currZoom * scalar, 1), 2.5);
-      // const newZoom = currZoom * scalar;
-      // this.camera.zoom = newZoom;
-      // this.camera.updateProjectionMatrix();
     },
   };
 
@@ -187,9 +192,10 @@ export class Mito extends ISketch {
   }
 
   public logRenderInfo() {
-    devlog(
+    console.log(
       `Geometries in memory: ${this.renderer.info.memory.geometries}
 Textures in memory: ${this.renderer.info.memory.textures}
+Number of Programs: ${this.renderer.info.programs!.length}
 # Render Calls: ${this.renderer.info.render.calls}
 # Render Lines: ${this.renderer.info.render.lines}
 # Render Points: ${this.renderer.info.render.points}
@@ -200,11 +206,13 @@ Textures in memory: ${this.renderer.info.memory.textures}
 
   public perfDebug() {
     // count how many have autoUpdate enabled
-    let yes = 0, no = 0; this.scene.traverse((o) => { if (o.matrixAutoUpdate) { yes++ } else { no++ } });
-    console.log("yes", yes, "no", no);
+    let yes = 0, no = 0;
+    this.scene.traverse((o) => { if (o.matrixAutoUpdate) { yes++ } else { no++ } });
+    console.log("matrixAutoUpdate: yes", yes, ", no", no);
 
     // count how many vertices of each type there are
-    const s = new Map(); this.scene.traverse((o) => { const k = (s.get(o.name || o.constructor.name) || []); s.set(o.name || o.constructor.name, k); k.push(o) })
+    const s = new Map();
+    this.scene.traverse((o) => { const k = (s.get(o.name || o.constructor.name) || []); s.set(o.name || o.constructor.name, k); k.push(o) })
     console.log(s);
   }
 
@@ -342,7 +350,10 @@ Textures in memory: ${this.renderer.info.memory.textures}
     lerp2(this.camera.position, target, 0.3);
 
     this.renderer.render(this.scene, this.camera);
-    // this.perfDebug();
+    if (Boolean(parse(window.location.search).debug) && this.frameCount % 100 === 0) {
+      this.perfDebug();
+      this.logRenderInfo();
+    }
   }
   public keysToMovement(keys: Set<string>): ActionMove | null {
     const dir = new Vector2();

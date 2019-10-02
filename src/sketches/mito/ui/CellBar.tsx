@@ -6,7 +6,7 @@ import { materialMapping } from "../renderers/TileRenderer";
 
 import "./CellBar.scss";
 import classNames from "classnames";
-import { RectAreaLight } from "three";
+import { spritesheetLoaded } from "../spritesheet";
 
 export interface CellBarProps {
   bar: Constructor<Cell>[];
@@ -19,7 +19,7 @@ function CellBar({ bar, index, onIndexClicked }: CellBarProps) {
     <div className="cell-bar">
       { bar.map((cellType, i) => (
         <div key={i}>
-          <CellBarItem type={cellType} isSelected={index === i} onClick={() => onIndexClicked(i) } />
+          <CellBarItem type={cellType} isSelected={index === i} onClick={() => onIndexClicked(i) } spritesheetLoaded={spritesheetLoaded} />
           <HotkeyButton hotkey={String(i + 1)} onClick={() => onIndexClicked(i) } />
         </div>
       )) }
@@ -32,29 +32,32 @@ export interface CellBarItemProps {
   type: Constructor<Cell>;
   isSelected: boolean;
   onClick: () => void;
+  spritesheetLoaded: boolean;
 }
 
-function CellBarItem({ type, isSelected, onClick }: CellBarItemProps) {
+function CellBarItem({ type, isSelected, onClick, spritesheetLoaded }: CellBarItemProps) {
   const style: React.CSSProperties = React.useMemo(() => {
     const material = materialMapping().get(type)!;
+    const image = material.map!.image;
     const color = material.color.getStyle();
     const url = (() => {
-      const image = material.map!.image;
       if (image != null) {
-        if (image instanceof HTMLCanvasElement) {
-          return `url(${image.toDataURL()})`;
+        if (image instanceof HTMLCanvasElement && spritesheetLoaded) {
+          return image.toDataURL();
         } else if (image instanceof Image) {
-          return `url(${image.src})`;
+          return image.src;
+        } else {
+          return "";
         }
       } else {
-        return "url()";
+        return "";
       }
     })();
-    const backgroundImage = `linear-gradient(${color}, ${color}), ${url}`;
+    const backgroundImage = `url(${url}), linear-gradient(${color}, ${color})`;
     return {
       backgroundImage
     };
-  }, [type]);
+  }, [spritesheetLoaded, type]);
   return (
     <div
       className={classNames("cell-bar-item", { selected: isSelected })}
