@@ -8,7 +8,7 @@ const PARAMS_DEFAULT = {
   rootTurnsPerTransfer: 20,
   leafReactionRate: 0.01,
   leafSugarPerReaction: 1,
-  cellGestationTurns: 0,
+  cellGestationTurns: 20,
   cellDiffusionWater: 0.002,
   cellDiffusionSugar: 0.002,
   soilDarknessBase: 0.2,

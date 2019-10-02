@@ -35,6 +35,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (this.target instanceof GrowingCell) {
       this.growingRenderer = new TileRenderer(this.target.completedCell, this.scene, this.mito);
       this.mesh = this.growingRenderer.mesh;
+      this.mesh.scale.set(0.01, 0.01, 1);
     } else {
       this.mesh = new TileMesh(this);
     }
@@ -99,8 +100,8 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
   update() {
     if (this.target instanceof GrowingCell) {
       // const s = this.steps(1.001 - this.target.timeRemaining / params.cellGestationTurns, 0.05);
-      const s = map(1.001 - this.target.timeRemaining / this.target.timeToBuild, 0, 1, 0.2, 1);
-      lerp2(this.mesh.scale, { x: s, y: s }, 0.1);
+      const s = 1 - this.target.timeRemaining / this.target.timeToBuild;
+      lerp2(this.mesh.scale, { x: s, y: s }, 0.5);
       // this.mesh.scale.x = s;
       // this.mesh.scale.y = s;
     } else if (this.target instanceof Fruit) {

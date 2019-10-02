@@ -38,14 +38,15 @@ export class World {
   public readonly traits: Traits = {
     activeTransportSugar: 0,
     activeTransportWater: 0,
-    carryCapacity: 1,
+    carryCapacity: 0,
     energyEfficiency: 0,
     photosynthesis: 0,
     rootAbsorption: 0,
     structuralStability: 0,
-    walkSpeed: -2,
-    diffuseSugar: 3,
-    diffuseWater: 3,
+    walkSpeed: 0,
+    diffuseSugar: 0,
+    diffuseWater: 0,
+    buildTime: 0,
   };
 
   get season() {
@@ -64,6 +65,7 @@ export class World {
     };
     Cell.diffusionWater = traitMod(this.traits.diffuseWater, params.cellDiffusionWater, 2);
     Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, params.cellDiffusionSugar, 2);
+    Cell.turnsToBuild = Math.floor(traitMod(this.traits.buildTime, params.cellGestationTurns, 1 / 2));
     this.player = new Player(new Vector2(this.width / 2, this.height / 2), this);
     this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
       const pos = new Vector2(x, y);

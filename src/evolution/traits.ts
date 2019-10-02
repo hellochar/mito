@@ -48,6 +48,10 @@ export type Traits = {
    * How easily this cell passively diffuses sugar. Higher means faster diffusion.
    */
   diffuseSugar: TraitValue;
+  /**
+   * How quickly this cell builds.
+   */
+  buildTime: TraitValue;
 };
 
 export type TraitDiff = Partial<Traits> & {
@@ -68,6 +72,7 @@ export function emptyTraits(): Traits {
     walkSpeed: 0,
     diffuseWater: 0,
     diffuseSugar: 0,
+    buildTime: 0,
   };
 }
 
