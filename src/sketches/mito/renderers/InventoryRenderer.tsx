@@ -139,7 +139,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
       }
       const p = resourceArray[resourceArray.length - 1];
       const fract = resource;
-      particles.commit(p.x + this.target.carrier.pos.x, p.y + this.target.carrier.pos.y, 10, fract);
+      particles.commit(p.x + this.target.carrier.pos.x, p.y + this.target.carrier.pos.y, 10, map(Math.sqrt(fract), 0, 1, 0.2, 1));
     }
   }
 
@@ -153,11 +153,18 @@ export class InventoryRenderer extends Renderer<Inventory> {
       const goTowardsCenterStrength = 0.1 + r.length() * 0.1;
       vx += -r.x * goTowardsCenterStrength;
       vy += -r.y * goTowardsCenterStrength;
-      if (this.mito.world.player.pos.equals(this.target.carrier.pos)) {
-        const avoidPlayerStrength = Math.max(Math.min(map(r.lengthSq(), 0, 1, 3, -5), 3), 0);
-        const v = r.clone().multiplyScalar(avoidPlayerStrength * 0.2);
-        vx += v.x;
-        vy += v.y;
+      const player = this.mito.world.player;
+      if (player.pos.equals(this.target.carrier.pos)) {
+        const playerX = player.posFloat.x - player.pos.x;
+        const playerY = player.posFloat.y - player.pos.y;
+        const offsetX = r.x - playerX;
+        const offsetY = r.y - playerY;
+        const mag2 = offsetX * offsetX + offsetY * offsetY;
+        const avoidPlayerStrength = Math.max(Math.min(map(mag2, 0, 1, 3, -5), 3), 0);
+        const accelerationX = offsetX * avoidPlayerStrength * 0.2;
+        const accelerationY = offsetY * avoidPlayerStrength * 0.2;
+        vx += accelerationX;
+        vy += accelerationY;
       }
       for (const l of resources) {
         if (r === l) {
