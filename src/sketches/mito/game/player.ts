@@ -80,6 +80,7 @@ export class Player implements Steppable {
       }
     }
     const actionSuccessful = this.attemptAction(this.action);
+    this.maybeMoveWithTransports();
     // if (this.dropWater) {
     //   this.attemptAction(ACTION_KEYMAP.q);
     // }
@@ -90,6 +91,13 @@ export class Player implements Steppable {
       this.events.emit("action", this.action);
     }
     this.action = undefined;
+  }
+
+  private maybeMoveWithTransports() {
+    const tile = this.currentTile();
+    if (tile instanceof Transport) {
+      this.posFloat.add(tile.dir.clone().setLength(this.speed * 0.15));
+    }
   }
 
   public attemptAction(action: Action): boolean {
