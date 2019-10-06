@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 import devlog from "../../common/devlog";
-import { SketchAudioContext } from "../../sketch";
+import { SketchAudioContext } from "../sketch";
 
 function sourceElement(assetName: string, type: string) {
   const source = document.createElement("source");

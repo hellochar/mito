@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FullPageSketch } from "./fullPageSketch";
+import { FullPageSketch } from "./sketches/fullPageSketch";
 import Mito, { GameResult } from "./sketches/mito";
 import { OverWorldMap } from "./overworld/OverWorldMap";
 import { OverWorld } from "./overworld/overWorld";

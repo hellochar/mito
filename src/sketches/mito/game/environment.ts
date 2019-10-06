@@ -1,6 +1,5 @@
 import { Vector2 } from "three";
 
-import lazy from "../../../common/lazy";
 import { Noise } from "../../../common/perlin";
 import { map } from "../../../math";
 import { params } from "../params";

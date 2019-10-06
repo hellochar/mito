@@ -5,7 +5,7 @@ import { OrthographicCamera, Scene, Vector2, WebGLRenderer, Vector3 } from "thre
 import { parse } from "query-string";
 
 import { map, lerp2 } from "../../math/index";
-import { ISketch, SketchAudioContext } from "../../sketch";
+import { ISketch, SketchAudioContext } from "../sketch";
 import { ActionBuild, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
 import { Constructor } from "./constructor";
