@@ -1,11 +1,21 @@
 import { Gene } from "./gene";
 
 export interface Species {
-  id: string;
-  displayName: string;
-  cells: Cell[];
+  name: string;
+  genes: Gene[];
+  // cells: Cell[];
   freeMutationPoints: number;
-  descendantsIds: string[]; // species ids
+  descendants: Species[];
+  parent?: Species;
+}
+
+export function newBaseSpecies(name = "newBaseSpecies"): Species {
+  return {
+    name,
+    genes: [],
+    freeMutationPoints: 0,
+    descendants: [],
+  };
 }
 
 export interface Cell {

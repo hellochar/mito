@@ -15,20 +15,22 @@ function HexTileInfo({ tile, onClickPlay }: HexTileInfoProps) {
     onClickPlay(tile);
   };
 
+  const { height, flora } = tile.info;
+
   const playButtonElement =
-    tile.info.height === -1 || tile.info.conquered ? null : (
+    (height === -1 || flora != null) ? null : (
       <div className="play-button" onClick={handleClickPlay}>
         Populate
       </div>
     );
 
-  const header = tile.info.conquered ? (
-    <h1>Populated</h1>
+  const header = flora != null ? (
+    <h1>Inhabited by {flora.species}<small>{flora.mutationPointsPerEpoch} MP / epoch</small></h1>
   ) : tile.info.height === -1 ? (
     <h1>Deep Water</h1>
   ) : (
-    <h1>Unexplored</h1>
-  );
+        <h1>Unexplored</h1>
+      );
 
   const stringifyInfo = { ...tile.info };
   delete stringifyInfo.world;

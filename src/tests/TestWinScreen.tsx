@@ -5,9 +5,10 @@ import { World } from "../sketches/mito/game";
 import { Temperate } from "../sketches/mito/game/environment";
 import { Fruit } from "../sketches/mito/game/tile";
 import { Vector2 } from "three";
+import { newBaseSpecies } from "../evolution/species";
 
 export function TestWinScreen() {
-  const world = new World(Temperate());
+  const world = new World(Temperate(), newBaseSpecies());
   world.time = 150;
   const f1 = new Fruit(new Vector2(0, 0), world);
   f1.committedResources.add(50, 50);
@@ -25,5 +26,5 @@ export function TestWinScreen() {
     fruits: [f1, f2, f3],
     world,
   };
-  return <GameResultsScreen results={mockResults} onDone={() => {}} />;
+  return <GameResultsScreen results={mockResults} onDone={() => { }} />;
 }

@@ -9,10 +9,13 @@ import "./OverWorldMap.scss";
 import { Vector2 } from "three";
 import OverWorldModal from "./OverWorldModal";
 import HexTileInfo from "./HexTileInfo";
+import PhylogeneticTree from "../evolution/PhylogeneticTree";
+import { Species } from "../evolution/species";
 
 const C = Math.sqrt(3) / 2;
 
 interface OverWorldMapProps {
+  rootSpecies: Species;
   overWorld: OverWorld;
   onPlayLevel: (level: HexTile) => void;
 }
@@ -27,12 +30,14 @@ interface OverWorldMapState {
   cameraState: CameraState;
   pressedKeys: { [code: string]: boolean };
   highlightedTile?: HexTile;
+  leftPanelOpen?: boolean;
 }
 
 export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMapState> {
   state: OverWorldMapState = {
     cameraState: { scale: 48, dX: 0, dY: 0 },
     pressedKeys: {},
+    leftPanelOpen: true,
   };
 
   private canvas: HTMLCanvasElement | null = null;
@@ -64,6 +69,12 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
 
   private handleKeyDown = (e: KeyboardEvent) => {
     if (!e.repeat) {
+      if (e.code === "Tab") {
+        this.setState({
+          leftPanelOpen: !this.state.leftPanelOpen
+        });
+        e.preventDefault();
+      }
       const newPressedKeys = { ...this.state.pressedKeys, [e.code]: true };
       this.setState({
         pressedKeys: newPressedKeys,
@@ -150,8 +161,19 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
       <div className="overworld-map-container">
         <canvas ref={this.handleCanvasRef} onClick={this.handleCanvasClick} />
         {this.maybeRenderHighlightedTile()}
+        {this.maybeRenderPhylogeneticTreePanel()}
       </div>
     );
+  }
+
+  maybeRenderPhylogeneticTreePanel() {
+    if (this.state.leftPanelOpen) {
+      return (
+        <div className="panel-left">
+          <PhylogeneticTree rootSpecies={this.props.rootSpecies} />
+        </div>
+      );
+    }
   }
 
   maybeRenderHighlightedTile() {

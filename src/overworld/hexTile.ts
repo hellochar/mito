@@ -25,7 +25,6 @@ export class HexTile {
     soilType: "average",
     temperature: "temperate",
     wind: "low",
-    conquered: false,
     visible: false,
   };
   get k() {
@@ -48,5 +47,5 @@ export class HexTile {
       y: 2 * C * j + C * i,
     };
   }
-  constructor(public i: number, public j: number) {}
+  constructor(public i: number, public j: number) { }
 }

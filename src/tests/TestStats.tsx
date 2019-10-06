@@ -5,6 +5,7 @@ import { Tile, Air, Soil, Rock, Fountain } from "../sketches/mito/game/tile";
 import { hasInventory } from "../sketches/mito/inventory";
 import { PlotData, Layout } from "plotly.js";
 import { findBuildCandidateTiles } from "../sketches/mito/game/worldUtils";
+import { newBaseSpecies } from "../evolution/species";
 
 type Visitor = (tiles: Tile[], world: World) => number;
 interface Visitors {
@@ -26,7 +27,7 @@ interface Trial {
 }
 class Experiment {
   trials: Trial[] = [];
-  constructor(public visitors: Visitors) {}
+  constructor(public visitors: Visitors) { }
   recordDataFor(world: World) {
     const trial = visit(world, this.visitors);
     this.trials.push(trial);
@@ -37,7 +38,7 @@ class Experiment {
 }
 
 class ExperimentSuite {
-  constructor(public experiments: Experiment[]) {}
+  constructor(public experiments: Experiment[]) { }
 
   recordDataFor(world: World) {
     for (const e of this.experiments) {
@@ -84,7 +85,7 @@ function runTests(environmentFn: () => Environment, id: string) {
   ]);
   for (let i = 0; i < 20; i++) {
     console.time("trial " + i);
-    const world = new World(environmentFn());
+    const world = new World(environmentFn(), newBaseSpecies());
     suite.recordDataFor(world);
     console.timeEnd("trial " + i);
   }
@@ -156,7 +157,7 @@ function TestStats() {
   React.useEffect(() => {
     var script = document.createElement("script");
     script.src = "https://cdn.plot.ly/plotly-latest.min.js";
-    script.addEventListener("load", function() {
+    script.addEventListener("load", function () {
       runTests(Temperate, "temperate");
       runTests(Rocky, "rocky");
       runTests(Desert, "desert");

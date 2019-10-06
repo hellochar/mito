@@ -10,10 +10,11 @@ import { Player } from "./player";
 import { Air, Cell, DeadCell, hasEnergy, Rock, Soil, Tile, Tissue, Fruit } from "./tile";
 import { Entity, isSteppable } from "./entity";
 import { GameResult } from "..";
-import { Traits, traitMod } from "../../../evolution/traits";
+import { Traits, traitMod, getTraits } from "../../../evolution/traits";
+import { Species } from "../../../evolution/species";
 
 export class StepStats {
-  constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
+  constructor(public deleted: Entity[] = [], public added: Entity[] = []) { }
 }
 
 export interface Season {
@@ -35,19 +36,8 @@ export class World {
   private readonly gridCells: Array<Array<Cell | null>>;
   private readonly neighborCache: Array<Array<Map<Vector2, Tile>>>;
   private readonly wipResult: Omit<GameResult, "status">;
-  public readonly traits: Traits = {
-    activeTransportSugar: 0,
-    activeTransportWater: 0,
-    carryCapacity: 0,
-    energyEfficiency: 0,
-    photosynthesis: 0,
-    rootAbsorption: 0,
-    structuralStability: 0,
-    walkSpeed: 0,
-    diffuseSugar: 0,
-    diffuseWater: 0,
-    buildTime: 0,
-  };
+  public readonly species: Species;
+  public readonly traits: Traits;
 
   get season() {
     const name = SEASON_ORDER[Math.floor(this.time / TIME_PER_SEASON)];
@@ -58,11 +48,13 @@ export class World {
     };
   }
 
-  constructor(public environment: Environment) {
+  constructor(public environment: Environment, species: Species) {
     this.wipResult = {
       fruits: [],
       world: this,
     };
+    this.species = species;
+    this.traits = getTraits(this.species.genes);
     Cell.diffusionWater = traitMod(this.traits.diffuseWater, params.cellDiffusionWater, 2);
     Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, params.cellDiffusionSugar, 2);
     Cell.turnsToBuild = Math.floor(traitMod(this.traits.buildTime, params.cellGestationTurns, 1 / 2));
@@ -366,7 +358,7 @@ export class World {
     // offset first rain event by 300 turns
     const isRaining =
       (this.time + this.environment.climate.turnsBetweenRainfall - 200) %
-        this.environment.climate.turnsBetweenRainfall <
+      this.environment.climate.turnsBetweenRainfall <
       this.environment.climate.rainDuration;
     if (isRaining) {
       const x = THREE.Math.randInt(0, this.width - 1);

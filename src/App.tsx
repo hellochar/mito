@@ -6,26 +6,35 @@ import { OverWorldMap } from "./overworld/OverWorldMap";
 import { OverWorld } from "./overworld/overWorld";
 import { HexTile } from "./overworld/hexTile";
 import GameResultsScreen from "./sketches/mito/ui/GameResultsScreen";
+import { Species, newBaseSpecies } from "./evolution/species";
 
 export interface AppState {
   overWorld: OverWorld;
   activeLevel?: HexTile;
   activeGameResult?: GameResult;
+  rootSpecies: Species;
 }
 
 class App extends React.PureComponent<{}, AppState> {
+  // static contextType = AppContext;
+  // context!: React.ContextType<typeof AppContext>;
+
   constructor(props: {}) {
     super(props);
     const overWorld = OverWorld.generateRectangle(100, 50);
     const activeLevel = overWorld.getStartTile();
+    const rootSpecies = newBaseSpecies("plantum originus");
+    rootSpecies.freeMutationPoints = 25;
+    rootSpecies.descendants = [newBaseSpecies("foo"), newBaseSpecies("bar")];
     this.state = {
       overWorld,
-      activeLevel,
+      activeLevel: undefined,
+      rootSpecies,
     };
   }
 
   handlePlayLevel = (level: HexTile) => {
-    if (level.info.visible && !level.info.conquered) {
+    if (level.info.visible) {
       this.setState({ activeLevel: level });
     }
   };
@@ -34,7 +43,10 @@ class App extends React.PureComponent<{}, AppState> {
     this.setState({ activeGameResult: result });
     if (result.status === "won" && this.state.activeLevel != null) {
       const { activeLevel } = this.state;
-      activeLevel.info.conquered = true;
+      activeLevel.info.flora = {
+        species: result.world.species,
+        mutationPointsPerEpoch: result.fruits.filter((x) => x.isMature()).length,
+      };
 
       for (const n of activeLevel.neighbors) {
         n.info.visible = true;
@@ -61,13 +73,13 @@ class App extends React.PureComponent<{}, AppState> {
 
   maybeRenderOverWorldMap() {
     if (this.state.activeLevel == null) {
-      return <OverWorldMap overWorld={this.state.overWorld} onPlayLevel={this.handlePlayLevel} />;
+      return <OverWorldMap overWorld={this.state.overWorld} rootSpecies={this.state.rootSpecies} onPlayLevel={this.handlePlayLevel} />;
     }
   }
 
   maybeRenderLevel() {
     if (this.state.activeLevel != null && this.state.activeGameResult == null) {
-      return <FullPageSketch sketchClass={Mito} otherArgs={[this.state.activeLevel, this.handleWinLoss]} />;
+      return <FullPageSketch sketchClass={Mito} otherArgs={[this.state.activeLevel, this.state.rootSpecies, this.handleWinLoss]} />;
     }
   }
 

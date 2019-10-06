@@ -1,0 +1,75 @@
+.phylogenetic-tree {
+  color: black;
+  padding: 10px;
+
+  .tree-nodes {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tree-node {
+    $generation-distance: 100px;
+
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    .descendants-container {
+      margin-bottom: $generation-distance;
+      display: flex;
+      flex-wrap: nowrap;
+
+      &::after {
+        content: "";
+        height: 1px;
+        width: 100%;
+        position: absolute;
+        background: grey;
+      }
+
+      >.tree-node {
+        &::after {
+          content: "";
+          width: 1px;
+          height: $generation-distance;
+          position: absolute;
+          background: grey;
+          top: 100%;
+          left: 50%;
+        }
+
+        &~.tree-node {
+          margin-left: 20px;
+        }
+      }
+    }
+
+    .species-info {
+      border: 1px solid grey;
+      border-radius: 100%;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        height: 32px;
+        flex-shrink: 0;
+        image-rendering: pixelated;
+      }
+
+      .species-info-name {
+        font-weight: bold;
+        text-align: center;
+      }
+    }
+  }
+}

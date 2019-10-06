@@ -17,6 +17,7 @@ import { NewPlayerTutorial } from "./tutorial";
 import { GameStack, Hover, HUD } from "./ui";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { HexTile } from "../../overworld/hexTile";
+import { Species } from "../../evolution/species";
 
 export interface GameResult {
   status: "won" | "lost";
@@ -25,7 +26,7 @@ export interface GameResult {
 }
 
 export class WorldDOMElement {
-  constructor(public mito: Mito, public positionFn: () => Vector2, public renderFn: () => JSX.Element) {}
+  constructor(public mito: Mito, public positionFn: () => Vector2, public renderFn: () => JSX.Element) { }
 
   render() {
     const worldPosition = this.positionFn();
@@ -118,11 +119,12 @@ export class Mito extends ISketch {
     renderer: WebGLRenderer,
     context: SketchAudioContext,
     level: HexTile,
+    species: Species,
     public onWinLoss: (result: GameResult) => void
   ) {
     super(renderer, context);
     if (level.info.world == null) {
-      level.info.world = new World(level.info.environment!);
+      level.info.world = new World(level.info.environment!, species);
     }
     this.world = level.info.world;
 

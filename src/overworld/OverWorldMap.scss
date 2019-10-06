@@ -14,4 +14,27 @@
     width: 100%;
     height: 100%;
   }
+
+  .panel-left {
+    border-radius: 5px;
+    bottom: 10px;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    min-width: 200px;
+    animation: opacifyIn 0.2s both;
+
+    @keyframes opacifyIn {
+      from {
+        opacity: 0;
+        transform: translateX(-80px) scale(0.75);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+  }
 }
