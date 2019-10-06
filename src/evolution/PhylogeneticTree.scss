@@ -1,3 +1,8 @@
+$generation-distance: 100px;
+$species-info-size: 100px;
+$nub-size: 50px;
+$animation-distance: 10px;
+
 .phylogenetic-tree {
   color: black;
   padding: 10px;
@@ -18,10 +23,6 @@
   }
 
   .tree-node {
-    $generation-distance: 100px;
-    $species-info-size: 100px;
-    $nub-size: 50px;
-
     display: flex;
     flex-direction: column;
     position: relative;
@@ -37,22 +38,12 @@
       // nub
       &::before {
         content: "";
-        height: $nub-size;
+        height: $nub-size + $animation-distance;
         width: 1px;
         position: absolute;
         left: 50%;
         background: gray;
-        bottom: 0;
-      }
-
-      // horizontal connector line
-      &::after {
-        // content: "";
-        // height: 1px;
-        // left: $species-info-size / 2;
-        // right: $species-info-size / 2;
-        // bottom: $nub-size;
-        // background: grey;
+        bottom: -$animation-distance;
       }
 
       >.tree-node {
@@ -61,13 +52,15 @@
         &::before {
           content: "";
           width: 1px;
-          height: $generation-distance - $nub-size;
+          height: $generation-distance - $nub-size + $animation-distance;
           position: absolute;
           background: grey;
-          top: 100%;
+          top: calc(100% - #{$animation-distance});
           left: 50%;
         }
 
+
+        // horizontal connector
         &::after {
           content: '';
           position: absolute;
@@ -96,6 +89,20 @@
       }
     }
 
+    .species-info-animation {
+      animation: floatAround 2s ease-in-out alternate infinite;
+
+      @keyframes floatAround {
+        from {
+          transform: translateY(-$animation-distance / 2);
+        }
+
+        to {
+          transform: translateY($animation-distance / 2);
+        }
+      }
+    }
+
     .species-info {
       border: 1px solid grey;
       border-radius: 100%;
@@ -109,6 +116,11 @@
       box-shadow: 0 4px 8px rgba(64, 64, 64, 0.2);
       background: rgb(251, 254, 251);
       cursor: pointer;
+      transition: all 0.1s;
+
+      &:hover {
+        transform: scale(1.1);
+      }
 
       img {
         height: 32px;

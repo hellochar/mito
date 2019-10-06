@@ -33,10 +33,12 @@ function TreeNode({ species }: { species: Species }) {
         onOuterAction={() => setPopoverIsOpen(false)}
         body={<div className="trait-container"><h3>Traits</h3><TraitDisplay traits={traits} /></div>}
       >
-        <div className="species-info" onClick={() => setPopoverIsOpen(!popoverIsOpen)}>
-          <img src="/assets/images/character.png" alt="" />
-          <div className="species-info-name">{species.name}</div>
-          <div>{species.freeMutationPoints} MP</div>
+        <div className="species-info-animation">
+          <div className="species-info" onClick={() => setPopoverIsOpen(!popoverIsOpen)}>
+            <img src="/assets/images/character.png" alt="" />
+            <div className="species-info-name">{species.name}</div>
+            <div>{species.freeMutationPoints} MP</div>
+          </div>
         </div>
       </Popover>
     </div>
