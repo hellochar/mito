@@ -7,12 +7,16 @@ import * as serviceWorker from './serviceWorker';
 
 import './index.scss';
 import { TestWinScreen } from './tests/TestWinScreen';
+import TestStats from './tests/TestStats';
 
 ReactDOM.render(
   <BrowserRouter>
     <Switch>
       <Route path="/test-win">
         <TestWinScreen />
+      </Route>
+      <Route path="/test-stats">
+        <TestStats />
       </Route>
       <Route exact path="/">
         <App />

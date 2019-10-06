@@ -22,7 +22,7 @@ export interface Environment {
 
 export type FillFunction = (pos: Vector2, world: World) => Tile | undefined;
 
-export const Temperate = lazy(() => {
+export const Temperate = () => {
   const noiseWater = new Noise();
   const noiseRock = new Noise();
   const noiseHeight = new Noise();
@@ -69,9 +69,9 @@ export const Temperate = lazy(() => {
     ],
   };
   return environment;
-});
+};
 
-export const Desert = lazy(() => {
+export const Desert = () => {
   const noiseHeight = new Noise();
   const noiseRock = new Noise();
 
@@ -105,9 +105,9 @@ export const Desert = lazy(() => {
     ],
   };
   return e;
-});
+};
 
-export const Rocky = lazy(() => {
+export const Rocky = () => {
   const noiseRock = new Noise();
   const noiseHeight = new Noise();
 
@@ -143,7 +143,7 @@ export const Rocky = lazy(() => {
     ],
   };
   return e;
-});
+};
 
 export const ALL_ENVIRONMENTS = {
   Temperate,

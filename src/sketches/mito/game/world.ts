@@ -88,7 +88,7 @@ export class World {
     const playerX = this.player.pos.x;
     const firstSoil = this.gridEnvironment[playerX].find((t) => !(t instanceof Air))
     if (firstSoil) {
-      this.player.pos.y = firstSoil.pos.y;
+      this.player.posFloat.y = firstSoil.pos.y;
     }
 
     const radius = 2.5;
@@ -446,6 +446,19 @@ export class World {
       }
     });
     devlog("sugar", totalSugar, "water", totalWater, "energy", totalEnergy);
+  }
+
+  public environmentTiles() {
+    const self = this;
+    return {
+      *[Symbol.iterator]() {
+        for (const row of self.gridEnvironment) {
+          for (const t of row) {
+            yield t;
+          }
+        }
+      }
+    }
   }
 }
 

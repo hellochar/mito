@@ -1,10 +1,10 @@
 import * as React from "react";
 
 import { Action } from "../action";
-import { World } from "../game";
-import { Air, Leaf, Root, Soil, Tile, Tissue } from "../game/tile";
+import { Air, Leaf, Root, Soil, Tissue } from "../game/tile";
 import TileHighlight from "./tileHighlight";
 import { Tutorial } from "./tutorial";
+import { findBuildCandidateTiles } from "../game/worldUtils";
 
 export class TutorialBuildTissue extends Tutorial {
   state = {
@@ -43,27 +43,6 @@ export class TutorialBuildTissue extends Tutorial {
   isFulfilled() {
     return this.state.counter >= 3;
   }
-}
-
-function findBuildCandidateTiles(
-  world: World,
-  predicate?: ((tile: Tile) => boolean)) {
-  const entityPredicate: (tile: Tile) => boolean = (t) => (world.player.isWalkable(t));
-  const candidates: Set<Tile> = new Set();
-  for (const entity of world.entities()) {
-    if (entity instanceof Tile && entityPredicate(entity)) {
-      for (const [, neighbor] of world.tileNeighbors(entity.pos)) {
-        if (!(neighbor instanceof Tissue) && !neighbor.isObstacle) {
-          if (predicate == null) {
-            candidates.add(neighbor);
-          } else if (predicate(neighbor)) {
-            candidates.add(neighbor);
-          }
-        }
-      }
-    }
-  }
-  return candidates;
 }
 
 export class TutorialBuildRoot extends Tutorial {
