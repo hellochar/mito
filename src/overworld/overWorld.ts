@@ -24,10 +24,7 @@ export class OverWorld {
     const { info } = tile;
     info.height = OverWorld.randomHeight(tile, noise);
 
-    info.environment =
-      info.height < 2 ? Temperate() :
-        info.height < 4 ? Rocky() :
-          Desert();
+    info.environment = info.height < 2 ? Temperate() : info.height < 4 ? Rocky() : Desert();
   }
 
   static generateFilledHex(maxDist: number = 20): OverWorld {
@@ -68,8 +65,7 @@ export class OverWorld {
         }
         const tile = new HexTile(i, j);
         const { x, y } = tile.cartesian;
-        if (x < -width / 2 || x > width / 2 ||
-          y < -height / 2 || y > height / 2) {
+        if (x < -width / 2 || x > width / 2 || y < -height / 2 || y > height / 2) {
           continue;
         }
 
@@ -89,9 +85,7 @@ export class OverWorld {
 
     // make an initial tile visible
     const tiles = Array.from(storage);
-    this.startTile = tiles
-      .filter(t => t.info.height === 0)
-      .sort((t1, t2) => t1.magnitude - t2.magnitude)[0];
+    this.startTile = tiles.filter((t) => t.info.height === 0).sort((t1, t2) => t1.magnitude - t2.magnitude)[0];
     this.startTile.info.visible = true;
   }
 

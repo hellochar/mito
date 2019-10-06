@@ -1,8 +1,8 @@
-$color-primary-0: #599532;	// Main Primary color */
-$color-primary-1: #B3E095;
-$color-primary-2: #82BB5D;
+$color-primary-0: #599532; // Main Primary color */
+$color-primary-1: #b3e095;
+$color-primary-2: #82bb5d;
 $color-primary-3: #377013;
-$color-primary-4: #1D4B00;
+$color-primary-4: #1d4b00;
 
 .game-results-screen {
   width: 100%;
@@ -17,88 +17,121 @@ $color-primary-4: #1D4B00;
     flex-direction: column;
 
     > * {
-        animation: fadeIn 0.25s ease both;
+      animation: fadeIn 0.25s ease both;
 
-        @for $i from 2 through 10 {
-            &:nth-child(#{$i}) {
-                animation-delay: #{($i - 2) * 0.5 + 2}s;
-            }
+      @for $i from 2 through 10 {
+        &:nth-child(#{$i}) {
+          animation-delay: #{($i - 2) * 0.5 + 2}s;
         }
+      }
 
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translate(0, 50px) scale(0.5); }
-            100% { opacity: 1; transform: translate(0, 0) scale(1); }
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+          transform: translate(0, 50px) scale(0.5);
         }
+        100% {
+          opacity: 1;
+          transform: translate(0, 0) scale(1);
+        }
+      }
     }
   }
 
   &.won {
-    background: linear-gradient(135deg, $color-primary-0, $color-primary-1, $color-primary-2, $color-primary-2, $color-primary-2);
-	// animation: gradientBG 15s ease infinite;
+    background: linear-gradient(
+      135deg,
+      $color-primary-0,
+      $color-primary-1,
+      $color-primary-2,
+      $color-primary-2,
+      $color-primary-2
+    );
+    // animation: gradientBG 15s ease infinite;
   }
 
   .character-party-container {
-      height: 100px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      animation: none !important;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: none !important;
 
-      .character {
-          height: 72px;
-          image-rendering: pixelated;
-          animation: walkIn 2s ease-in-out, dance 6s 2s ease infinite;
+    .character {
+      height: 72px;
+      image-rendering: pixelated;
+      animation: walkIn 2s ease-in-out, dance 6s 2s ease infinite;
 
-        @keyframes walkIn {
-            0% { transform: translate(-52vw, 0) scale(1); }
-            100% { transform: translate(0, 0) scale(1); }
+      @keyframes walkIn {
+        0% {
+          transform: translate(-52vw, 0) scale(1);
         }
-        @keyframes dance {
-            0% { transform: translateY(0) }
-            2% { transform: translateY(-50px) }
-            4% { transform: translateY(0) }
-            6% { transform: translateY(-50px) }
-            8% { transform: translateY(0) }
-            10% { transform: translateY(-50px) }
-            12% { transform: translateY(0) }
-            100% { transform: translateY(0) }
+        100% {
+          transform: translate(0, 0) scale(1);
         }
       }
+      @keyframes dance {
+        0% {
+          transform: translateY(0);
+        }
+        2% {
+          transform: translateY(-50px);
+        }
+        4% {
+          transform: translateY(0);
+        }
+        6% {
+          transform: translateY(-50px);
+        }
+        8% {
+          transform: translateY(0);
+        }
+        10% {
+          transform: translateY(-50px);
+        }
+        12% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+    }
   }
 
   h1 {
-      font-size: 3em;
-      color: black;
-      margin-bottom: 0.333em;
-      text-align: center;
+    font-size: 3em;
+    color: black;
+    margin-bottom: 0.333em;
+    text-align: center;
   }
 
   h2 {
-      font-size: 1.5em;
-      text-align: center;
-      margin-bottom: 0.5em;
+    font-size: 1.5em;
+    text-align: center;
+    margin-bottom: 0.5em;
   }
 
   h5 {
-      font-family: sans-serif;
-      font-weight: lighter;
-      font-size: 1em;
-      color: #444444;
-      padding: 0 0 10px 5px;
-      border-bottom: 1px solid #444444;
+    font-family: sans-serif;
+    font-weight: lighter;
+    font-size: 1em;
+    color: #444444;
+    padding: 0 0 10px 5px;
+    border-bottom: 1px solid #444444;
   }
 
   .fruit-info {
-      margin: 30px 0;
-      font-size: 1.25em;
-      color: #333333;
-      display: flex;
-      align-items: center;
+    margin: 30px 0;
+    font-size: 1.25em;
+    color: #333333;
+    display: flex;
+    align-items: center;
 
-      .matured-info {
-          font-weight: bold;
-          color: black;
-      }
+    .matured-info {
+      font-weight: bold;
+      color: black;
+    }
   }
 
   .fruit-visual {
@@ -107,8 +140,8 @@ $color-primary-4: #1D4B00;
     display: flex;
 
     img {
-        width: 2em;
-        height: 2em;
+      width: 2em;
+      height: 2em;
     }
   }
 
@@ -122,57 +155,57 @@ $color-primary-4: #1D4B00;
 }
 
 @keyframes gradientBG {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .glow {
-    $size: 40px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: $size;
-    width: $size;
-    border-radius: 50%;
+  $size: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: $size;
+  width: $size;
+  border-radius: 50%;
 
-      &:before,
-      &:after,
-      span {
-        position: absolute;
-        content: '';
-        height: 100%;
-        width: 100%;
-        top: 0%;
-        left: 0%;
-        border-radius: 50%;
-        box-shadow: 0 0 15px yellow;
-        animation: glow-grow 2s ease-out infinite;
-      }
-      &:after {
-        animation-delay: .66s;
-      }
-      span{
-        animation-delay: 1.33s;
-        }
-      @keyframes glow-grow {
-        0% {
-          opacity: 0;
-          transform: scale(1);
-        }
-        80% {
-          opacity: 1;
-        }
-        100% {
-          transform: scale(2);
-          opacity: 0;
-        }
-      }
+  &:before,
+  &:after,
+  span {
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 100%;
+    top: 0%;
+    left: 0%;
+    border-radius: 50%;
+    box-shadow: 0 0 15px yellow;
+    animation: glow-grow 2s ease-out infinite;
+  }
+  &:after {
+    animation-delay: 0.66s;
+  }
+  span {
+    animation-delay: 1.33s;
+  }
+  @keyframes glow-grow {
+    0% {
+      opacity: 0;
+      transform: scale(1);
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
 }

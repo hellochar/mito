@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import { FullPageSketch } from './fullPageSketch';
-import Mito, { GameResult } from './sketches/mito';
-import { OverWorldMap } from './overworld/OverWorldMap';
+import { FullPageSketch } from "./fullPageSketch";
+import Mito, { GameResult } from "./sketches/mito";
+import { OverWorldMap } from "./overworld/OverWorldMap";
 import { OverWorld } from "./overworld/overWorld";
-import { HexTile } from './overworld/hexTile';
-import GameResultsScreen from './sketches/mito/ui/GameResultsScreen';
+import { HexTile } from "./overworld/hexTile";
+import GameResultsScreen from "./sketches/mito/ui/GameResultsScreen";
 
 export interface AppState {
   overWorld: OverWorld;
@@ -52,9 +52,9 @@ class App extends React.PureComponent<{}, AppState> {
   render() {
     return (
       <div className="App">
-        { this.maybeRenderOverWorldMap() }
-        { this.maybeRenderLevel() }
-        { this.maybeRenderGameResult() }
+        {this.maybeRenderOverWorldMap()}
+        {this.maybeRenderLevel()}
+        {this.maybeRenderGameResult()}
       </div>
     );
   }

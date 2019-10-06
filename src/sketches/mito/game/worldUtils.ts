@@ -2,10 +2,8 @@ import { World } from ".";
 
 import { Tile, Tissue } from "./tile";
 
-export function findBuildCandidateTiles(
-  world: World,
-  predicate?: ((tile: Tile) => boolean)) {
-  const entityPredicate: (tile: Tile) => boolean = (t) => (world.player.isWalkable(t));
+export function findBuildCandidateTiles(world: World, predicate?: (tile: Tile) => boolean) {
+  const entityPredicate: (tile: Tile) => boolean = (t) => world.player.isWalkable(t);
   const candidates: Set<Tile> = new Set();
   for (const entity of world.entities()) {
     if (entity instanceof Tile && entityPredicate(entity)) {

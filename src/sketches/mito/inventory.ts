@@ -17,7 +17,7 @@ export class Inventory {
     public capacity: number,
     public carrier: HasPosition,
     public water: number = 0,
-    public sugar: number = 0,
+    public sugar: number = 0
   ) {
     this.validate();
   }
@@ -73,8 +73,8 @@ export class Inventory {
     if (spaceNeeded > spaceAvailable) {
       // scale down the amount to give
       // give less than capacity
-      water = Math.floor(water / spaceNeeded * spaceAvailable);
-      sugar = Math.floor(sugar / spaceNeeded * spaceAvailable);
+      water = Math.floor((water / spaceNeeded) * spaceAvailable);
+      sugar = Math.floor((sugar / spaceNeeded) * spaceAvailable);
     }
     this.change(-water, -sugar);
     other.change(water, sugar);
@@ -102,8 +102,8 @@ export class Inventory {
     const spaceAvailable = this.space();
     if (spaceNeeded > spaceAvailable) {
       // scale down the amount to give
-      water = water / spaceNeeded * spaceAvailable;
-      sugar = sugar / spaceNeeded * spaceAvailable;
+      water = (water / spaceNeeded) * spaceAvailable;
+      sugar = (sugar / spaceNeeded) * spaceAvailable;
     }
     this.change(water, sugar);
   }
@@ -116,8 +116,12 @@ export class Inventory {
     this.sugar = newSugar;
 
     // fixup if needed
-    if (this.water < 0) { this.water = 0; }
-    if (this.sugar < 0) { this.sugar = 0; }
+    if (this.water < 0) {
+      this.water = 0;
+    }
+    if (this.sugar < 0) {
+      this.sugar = 0;
+    }
     if (this.water + this.sugar > this.capacity) {
       if (this.water > this.sugar) {
         this.water = this.capacity - this.sugar;
@@ -157,6 +161,6 @@ export interface HasInventory {
   inventory: Inventory;
 }
 
-export function hasInventory<T>(obj?: T): obj is (HasInventory & T) {
-  return obj != null && ((obj as any).inventory instanceof Inventory);
+export function hasInventory<T>(obj?: T): obj is HasInventory & T {
+  return obj != null && (obj as any).inventory instanceof Inventory;
 }

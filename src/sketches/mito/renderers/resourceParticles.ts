@@ -15,7 +15,7 @@ export class ResourceParticles extends Points {
   constructor(params: MaterialParams) {
     super();
     this.geometry = ResourceParticles.newGeometry();
-    this.material = new ResourceParticleMaterial(params)
+    this.material = new ResourceParticleMaterial(params);
     this.frustumCulled = false;
   }
   private index = 0;
@@ -28,9 +28,9 @@ export class ResourceParticles extends Points {
     this.index++;
   }
   endFrame() {
-    const positions = (this.geometry.attributes.position as BufferAttribute);
+    const positions = this.geometry.attributes.position as BufferAttribute;
     positions.needsUpdate = true;
-    const sizes = (this.geometry.attributes.size as BufferAttribute);
+    const sizes = this.geometry.attributes.size as BufferAttribute;
     sizes.needsUpdate = true;
     this.geometry.setDrawRange(0, this.index);
   }

@@ -18,9 +18,7 @@ function Expand({ children, shrunkElements }: ExpandProps) {
     <div>
       <div className="expand-button" onClick={handleExpandClick}>
         {shrunkElements}
-        <div className="expand-caret">
-          {expanded ? "▼" : "▶" }
-        </div>
+        <div className="expand-caret">{expanded ? "▼" : "▶"}</div>
       </div>
       {expanded ? <div>{children}</div> : null}
     </div>

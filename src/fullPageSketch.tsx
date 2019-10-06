@@ -22,7 +22,7 @@ export class FullPageSketch extends React.Component<ISketchRouteProps, {}> {
     } else {
       this.exitFullscreen();
     }
-  }
+  };
 
   private exitFullscreen() {
     if (document.webkitExitFullscreen) {

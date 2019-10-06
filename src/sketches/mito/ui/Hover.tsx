@@ -17,12 +17,14 @@ export class Hover extends React.Component<HoverProps> {
   public render() {
     const { highlightedTile } = this.props.mito;
     const highlightedPosition = this.props.mito.getHighlightPosition();
-    return <>
-      <HoveredTileInfo tile={highlightedTile} />
-      <PointHighlight x={highlightedPosition.x} y={highlightedPosition.y} scene={this.scene} />
-      {this.maybeRenderTileHighlight(highlightedTile)}
-      {/* {this.maybeRenderPath()} */}
-    </>;
+    return (
+      <>
+        <HoveredTileInfo tile={highlightedTile} />
+        <PointHighlight x={highlightedPosition.x} y={highlightedPosition.y} scene={this.scene} />
+        {this.maybeRenderTileHighlight(highlightedTile)}
+        {/* {this.maybeRenderPath()} */}
+      </>
+    );
   }
 
   public maybeRenderTileHighlight(tile?: Tile) {

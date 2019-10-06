@@ -67,14 +67,17 @@ export abstract class Tile implements Steppable {
     } else {
       let minDarkness = this.darkness;
       for (const [, t] of neighbors) {
-        const contrib = Math.max(0.2, map(this.pos.y, this.world.height / 2, this.world.height, params.soilDarknessBase, 1));
+        const contrib = Math.max(
+          0.2,
+          map(this.pos.y, this.world.height / 2, this.world.height, params.soilDarknessBase, 1)
+        );
         const darknessFromNeighbor = t instanceof Rock ? Infinity : t.darkness + contrib;
         if (t instanceof Cell) {
           minDarkness = 0;
         } else {
           minDarkness = Math.min(minDarkness, darknessFromNeighbor);
         }
-      };
+      }
       this.darkness = minDarkness;
       const cellHere = this.world.cellAt(this.pos.x, this.pos.y) != null;
       if (cellHere) {
@@ -151,19 +154,18 @@ function allowPull(receiver: any, recieverType: Constructor<any>, giver: any, gi
 }
 
 function canPullResources(receiver: any, giver: any): giver is HasInventory {
-  return hasInventory(receiver) && hasInventory(giver) && (
-
+  return (
+    hasInventory(receiver) &&
+    hasInventory(giver) &&
     // allow ancestors and children to exchange resources with each other (e.g. Soil and Fountain)
-    (receiver instanceof giver.constructor || giver instanceof receiver.constructor) ||
-
-    // allow all Cells to give to each other
-    (receiver instanceof Cell && giver instanceof Cell) ||
-
-    // allow air to give to soil
-    allowPull(receiver, Soil, giver, Air)
+    (receiver instanceof giver.constructor ||
+      giver instanceof receiver.constructor ||
+      // allow all Cells to give to each other
+      (receiver instanceof Cell && giver instanceof Cell) ||
+      // allow air to give to soil
+      allowPull(receiver, Soil, giver, Air))
   );
 }
-
 
 const noiseCo2 = new Noise();
 export class Air extends Tile {
@@ -184,7 +186,12 @@ export class Air extends Tile {
     const scaleX = map(this.pos.y, this.world.height / 2, 0, 4, 9);
     // const offset = noiseCo2.perlin3(94.2321 - this.pos.x / scaleX, 3221 - this.pos.y / 2.5, world.time / 5 + 93.1) * 0.2;
     const time = this.world == null ? 0 : this.world.time;
-    const offset = noiseCo2.perlin3(94.231 + (this.pos.x - this.world.width / 2) / scaleX, 2312 + this.pos.y / 8, time / 1000 + 93.1) * 0.25;
+    const offset =
+      noiseCo2.perlin3(
+        94.231 + (this.pos.x - this.world.width / 2) / scaleX,
+        2312 + this.pos.y / 8,
+        time / 1000 + 93.1
+      ) * 0.25;
     // don't compute dark/light or water diffusion
     return Math.max(Math.min(base + offset, 1), Math.min(0.4, this.world.environment.floorCo2 * 0.75));
   }
@@ -210,10 +217,7 @@ export class Air extends Tile {
   }
 
   canDiffuse(dir: Vector2, tile: Tile): tile is Tile & HasInventory {
-    return dir !== DIRECTIONS.s &&
-      dir !== DIRECTIONS.sw &&
-      dir !== DIRECTIONS.se &&
-      super.canDiffuse(dir, tile);
+    return dir !== DIRECTIONS.s && dir !== DIRECTIONS.sw && dir !== DIRECTIONS.se && super.canDiffuse(dir, tile);
   }
 
   public co2() {
@@ -317,7 +321,7 @@ export class Cell extends Tile implements HasEnergy {
       }
     }
     if (this.energy < params.cellEnergyMax) {
-      const energeticNeighbors = neighborsAndSelf.filter((t) => hasEnergy(t)) as any as HasEnergy[];
+      const energeticNeighbors = (neighborsAndSelf.filter((t) => hasEnergy(t)) as any) as HasEnergy[];
       for (const neighbor of energeticNeighbors) {
         if (this.energy < params.cellEnergyMax) {
           let energyTransfer = 0;
@@ -377,10 +381,7 @@ export class Cell extends Tile implements HasEnergy {
         // if this number goes up, we become less energy efficient
         // if this number goes down, we are more energy efficient
         const energyToSugarConversion = traitMod(this.world.traits.energyEfficiency, 1 / params.cellEnergyMax, 1 / 1.5);
-        const sugarToEat = Math.min(
-          wantedEnergy * energyToSugarConversion,
-          tile.inventory.sugar,
-        );
+        const sugarToEat = Math.min(wantedEnergy * energyToSugarConversion, tile.inventory.sugar);
         if (wantedEnergy > 100 && sugarToEat > 0) {
           tile.inventory.add(0, -sugarToEat);
           const gotEnergy = sugarToEat / energyToSugarConversion;
@@ -451,7 +452,9 @@ export class Cell extends Tile implements HasEnergy {
       }
     }
 
-    const springNeighborCells = [aboveLeft, above, aboveRight, left, right, this].filter((n) => n instanceof Cell) as Cell[];
+    const springNeighborCells = [aboveLeft, above, aboveRight, left, right, this].filter(
+      (n) => n instanceof Cell
+    ) as Cell[];
 
     // special case - if there's no support and nothing below me, just start freefalling
     if (!hasSupportBelow && springNeighborCells.length === 1) {
@@ -487,7 +490,10 @@ export class Tissue extends Cell implements HasInventory {
   public inventory: Inventory;
   constructor(pos: Vector2, world: World) {
     super(pos, world);
-    this.inventory = new Inventory(Math.floor(traitMod(world.traits.carryCapacity, params.tissueInventoryCapacity, 1.5)), this);
+    this.inventory = new Inventory(
+      Math.floor(traitMod(world.traits.carryCapacity, params.tissueInventoryCapacity, 1.5)),
+      this
+    );
   }
 }
 
@@ -523,8 +529,7 @@ export class Leaf extends Cell {
 
     for (const [dir, tile] of neighbors) {
       const oppositeTile = this.world.tileAt(this.pos.x - dir.x, this.pos.y - dir.y);
-      if (tile instanceof Air &&
-        oppositeTile instanceof Tissue) {
+      if (tile instanceof Air && oppositeTile instanceof Tissue) {
         numAir += 1;
         this.tilePairs.push(dir);
         const air = tile;
@@ -549,14 +554,13 @@ export class Leaf extends Cell {
         //      on conversion, we use up all the available water and get the corresponding amount of sugar
         const bestEfficiencyWater = params.leafSugarPerReaction / efficiency;
         const waterToConvert = Math.min(tissue.inventory.water, bestEfficiencyWater);
-        const chance = speed * leafReactionRate * waterToConvert / bestEfficiencyWater;
+        const chance = (speed * leafReactionRate * waterToConvert) / bestEfficiencyWater;
         if (Math.random() < chance) {
           this.didConvert = true;
           const sugarConverted = waterToConvert * efficiency;
           tissue.inventory.add(-waterToConvert, sugarConverted);
           this.sugarConverted += sugarConverted;
         }
-
       }
     }
     if (numAir > 0) {
@@ -594,8 +598,10 @@ export class Root extends Cell {
     const neighbors = this.world.tileNeighbors(this.pos);
     for (const [dir, tile] of neighbors) {
       // const oppositeTile = this.world.tileAt(this.pos.x - dir.x, this.pos.y - dir.y);
-      if (tile instanceof Soil
-                /* && oppositeTile instanceof Tissue*/) {
+      if (
+        tile instanceof Soil
+        /* && oppositeTile instanceof Tissue*/
+      ) {
         // this.tilePairs.push(dir);
         // const transferAmount = Math.ceil(Math.max(0, soilWater - tissueWater) / 2);
         // if (tile.inventory.water > 0) {
@@ -635,7 +641,7 @@ export class Fruit extends Cell {
       this.timeMatured = this.world.time;
     }
     this.committedResources.off("get", this.handleGetResources);
-  }
+  };
 
   // aggressively take the inventory from neighbors
   step() {
@@ -684,7 +690,7 @@ export class Transport extends Tissue {
   constructor(pos: Vector2, world: World, public dir: Vector2) {
     super(pos, world);
     if (isFractional(dir.x) || isFractional(dir.y)) {
-      throw new Error("build transport with fractional dir " + dir.x + ', ' + dir.y);
+      throw new Error("build transport with fractional dir " + dir.x + ", " + dir.y);
     }
   }
 
@@ -741,8 +747,12 @@ export class Transport extends Tissue {
 export class Vein extends Tissue {
   static displayName = "Vein";
   // static diffusionWater = 0;
-  static get diffusionWater() { return params.veinDiffusion; }
-  static get diffusionSugar() { return params.veinDiffusion; }
+  static get diffusionWater() {
+    return params.veinDiffusion;
+  }
+  static get diffusionSugar() {
+    return params.veinDiffusion;
+  }
   public inventory = new Inventory(8, this);
   // diffusionNeighbors(neighbors: Map<Vector2, Tile>) {
   //     return super.diffusionNeighbors(neighbors).filter((t) => t instanceof Vein);

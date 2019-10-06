@@ -4,20 +4,20 @@ const C = Math.sqrt(3) / 2;
 
 export class HexTile {
   /**
-  * store neighbors at angles [30, 90, 150, 210, 270, 330]
-  *
-  * 30: (1, 0, -1)
-  *
-  * 90: (0, 1, -1)
-  *
-  * 150: (-1, 1, 0)
-  *
-  * 210: (-1, 0, 1)
-  *
-  * 270: (0, -1, 1)
-  *
-  * 330: (1, -1, 0)
-  */
+   * store neighbors at angles [30, 90, 150, 210, 270, 330]
+   *
+   * 30: (1, 0, -1)
+   *
+   * 90: (0, 1, -1)
+   *
+   * 150: (-1, 1, 0)
+   *
+   * 210: (-1, 0, 1)
+   *
+   * 270: (0, -1, 1)
+   *
+   * 330: (1, -1, 0)
+   */
   neighbors: HexTile[] = new Array(6);
   info: LevelInfo = {
     height: 0,
@@ -45,8 +45,8 @@ export class HexTile {
     // y = 2Cj + Ci
     return {
       x: 1.5 * i,
-      y: 2 * C * j + C * i
+      y: 2 * C * j + C * i,
     };
   }
-  constructor(public i: number, public j: number) { }
+  constructor(public i: number, public j: number) {}
 }

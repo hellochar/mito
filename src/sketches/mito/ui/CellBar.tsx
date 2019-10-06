@@ -17,14 +17,19 @@ export interface CellBarProps {
 function CellBar({ bar, index, onIndexClicked }: CellBarProps) {
   return (
     <div className="cell-bar">
-      { bar.map((cellType, i) => (
+      {bar.map((cellType, i) => (
         <div key={i}>
-          <CellBarItem type={cellType} isSelected={index === i} onClick={() => onIndexClicked(i) } spritesheetLoaded={spritesheetLoaded} />
-          <HotkeyButton hotkey={String(i + 1)} onClick={() => onIndexClicked(i) } />
+          <CellBarItem
+            type={cellType}
+            isSelected={index === i}
+            onClick={() => onIndexClicked(i)}
+            spritesheetLoaded={spritesheetLoaded}
+          />
+          <HotkeyButton hotkey={String(i + 1)} onClick={() => onIndexClicked(i)} />
         </div>
-      )) }
+      ))}
     </div>
-  )
+  );
 }
 
 export interface CellBarItemProps {
@@ -55,15 +60,13 @@ function CellBarItem({ type, isSelected, onClick, spritesheetLoaded }: CellBarIt
     })();
     const backgroundImage = `url(${url}), linear-gradient(${color}, ${color})`;
     return {
-      backgroundImage
+      backgroundImage,
     };
   }, [spritesheetLoaded, type]);
   return (
-    <div
-      className={classNames("cell-bar-item", { selected: isSelected })}
-      onClick={onClick}
-      style={style}
-    >{type.displayName}</div>
+    <div className={classNames("cell-bar-item", { selected: isSelected })} onClick={onClick} style={style}>
+      {type.displayName}
+    </div>
   );
 }
 
@@ -90,4 +93,3 @@ function HotkeyButton({ hotkey, onClick, ...restProps }: HotkeyButtonProps) {
 }
 
 export default CellBar;
-

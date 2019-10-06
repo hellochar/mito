@@ -2,7 +2,7 @@ export function lerp(a: number, b: number, x: number) {
   return a + (b - a) * x;
 }
 
-export function lerp2(v: { x: number, y: number }, t: { x: number, y: number }, l: number) {
+export function lerp2(v: { x: number; y: number }, t: { x: number; y: number }, l: number) {
   v.x = v.x * (1 - l) + t.x * l;
   v.y = v.y * (1 - l) + t.y * l;
 }
@@ -16,7 +16,7 @@ export function sampleArray<T>(a: T[]) {
 }
 
 export function triangleWaveApprox(t: number) {
-  return 8 / (Math.PI * Math.PI) * (Math.sin(t) - (1 / 9) * Math.sin(3 * t) + (1 / 25) * Math.sin(5 * t));
+  return (8 / (Math.PI * Math.PI)) * (Math.sin(t) - (1 / 9) * Math.sin(3 * t) + (1 / 25) * Math.sin(5 * t));
 }
 
 // mod account for negatives
@@ -26,7 +26,7 @@ export function mod(t: number, m: number) {
 
 // perfect triangle wave that goes from [0, 1, 0] in x = [0, 1, 2]
 export function mirroredRepeat(x: number) {
-  return (1. - (Math.abs(mod(x * 2., 4.) - 2.) - 1.)) / 2.;
+  return (1 - (Math.abs(mod(x * 2, 4) - 2) - 1)) / 2;
 }
 
 export function logistic(x: number) {

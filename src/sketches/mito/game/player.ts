@@ -1,6 +1,14 @@
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
-import { Action, ActionBuild, ActionDeconstruct, ActionDrop, ActionMove, ActionMultiple, ActionPickup } from "../action";
+import {
+  Action,
+  ActionBuild,
+  ActionDeconstruct,
+  ActionDrop,
+  ActionMove,
+  ActionMultiple,
+  ActionPickup,
+} from "../action";
 import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
@@ -11,7 +19,12 @@ import { Steppable } from "./entity";
 import { traitMod } from "../../../evolution/traits";
 
 export class Player implements Steppable {
-  public inventory = new Inventory(params.maxResources, this, Math.round(params.maxResources / 3), Math.round(params.maxResources / 3));
+  public inventory = new Inventory(
+    params.maxResources,
+    this,
+    Math.round(params.maxResources / 3),
+    Math.round(params.maxResources / 3)
+  );
   private action?: Action;
   private events = new EventEmitter();
   public mapActions?: (player: Player, action: Action) => Action | undefined;
@@ -31,7 +44,7 @@ export class Player implements Steppable {
     if (this.action != null) {
       this.action = {
         type: "multiple",
-        actions: [this.action, action]
+        actions: [this.action, action],
       };
     } else {
       this.action = action;
@@ -124,7 +137,10 @@ export class Player implements Steppable {
     }
   }
   public verifyMove(action: ActionMove) {
-    const target = this.posFloat.clone().add(action.dir.clone().setLength(this.speed)).round();
+    const target = this.posFloat
+      .clone()
+      .add(action.dir.clone().setLength(this.speed))
+      .round();
     return this.isWalkable(target);
   }
 
@@ -191,18 +207,21 @@ export class Player implements Steppable {
     }
     const waterCost = 1;
     const sugarCost = 1;
-    const tileAlreadyExists = targetTile instanceof cellType && !((cellType as any) === Transport && targetTile instanceof Transport);
-    if (!tileAlreadyExists &&
+    const tileAlreadyExists =
+      targetTile instanceof cellType && !((cellType as any) === Transport && targetTile instanceof Transport);
+    if (
+      !tileAlreadyExists &&
       !targetTile.isObstacle &&
       this.inventory.water >= waterCost &&
-      this.inventory.sugar >= sugarCost) {
+      this.inventory.sugar >= sugarCost
+    ) {
       this.inventory.add(-waterCost, -sugarCost);
       const newTile = new cellType(position, this.world, ...args);
       newTile.args = args;
       build.audio.currentTime = 0;
       build.gain.gain.cancelScheduledValues(0);
       build.gain.gain.value = 0.2;
-      build.gain.gain.exponentialRampToValueAtTime(0.0001, build.gain.context.currentTime + 0.50);
+      build.gain.gain.exponentialRampToValueAtTime(0.0001, build.gain.context.currentTime + 0.5);
       return newTile;
     } else {
       return undefined;
@@ -244,7 +263,11 @@ export class Player implements Steppable {
       return true;
     }
     if (existingCell) {
-      this.attemptDeconstruct({ type: "deconstruct", position: action.position, force: true });
+      this.attemptDeconstruct({
+        type: "deconstruct",
+        position: action.position,
+        force: true,
+      });
     }
     const matureCell = this.tryConstructingNewCell(action.position, action.cellType, action.args);
     if (matureCell != null) {

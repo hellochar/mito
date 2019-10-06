@@ -25,7 +25,7 @@ export interface GameResult {
 }
 
 export class WorldDOMElement {
-  constructor(public mito: Mito, public positionFn: () => Vector2, public renderFn: () => JSX.Element) { }
+  constructor(public mito: Mito, public positionFn: () => Vector2, public renderFn: () => JSX.Element) {}
 
   render() {
     const worldPosition = this.positionFn();
@@ -34,13 +34,9 @@ export class WorldDOMElement {
     const top = pixelPosition.y;
     const style: React.CSSProperties = {
       left,
-      top
+      top,
     };
-    return (
-      <div style={style}>
-        {this.renderFn()}
-      </div>
-    );
+    return <div style={style}>{this.renderFn()}</div>;
   }
 }
 
@@ -118,7 +114,12 @@ export class Mito extends ISketch {
   }
 
   private worldRenderer: WorldRenderer;
-  constructor(renderer: WebGLRenderer, context: SketchAudioContext, level: HexTile, public onWinLoss: (result: GameResult) => void) {
+  constructor(
+    renderer: WebGLRenderer,
+    context: SketchAudioContext,
+    level: HexTile,
+    public onWinLoss: (result: GameResult) => void
+  ) {
     super(renderer, context);
     if (level.info.world == null) {
       level.info.world = new World(level.info.environment!);
@@ -155,11 +156,11 @@ export class Mito extends ISketch {
       return;
     }
 
-    if (['1', '2', '3', '4', '5'].indexOf(key) !== -1) {
-      const index = key.charCodeAt(0) - '1'.charCodeAt(0);
+    if (["1", "2", "3", "4", "5"].indexOf(key) !== -1) {
+      const index = key.charCodeAt(0) - "1".charCodeAt(0);
       this.cellBarIndex = index;
     }
-  }
+  };
 
   public setCellBarIndex(i: number) {
     this.cellBarIndex = ((i % this.cellBar.length) + this.cellBar.length) % this.cellBar.length;
@@ -170,16 +171,16 @@ export class Mito extends ISketch {
     for (const e of this.worldDomElements) {
       worldDomElementComponents.push(e.render());
     }
-    return <>
-      <HUD mito={this} />
-      <GameStack mito={this} />
-      {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
-      {/* <ParamsGUI /> */}
-      <Hover mito={this} />
-      <div className="world-dom-components">
-        { worldDomElementComponents }
-      </div>
-    </>;
+    return (
+      <>
+        <HUD mito={this} />
+        <GameStack mito={this} />
+        {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
+        {/* <ParamsGUI /> */}
+        <Hover mito={this} />
+        <div className="world-dom-components">{worldDomElementComponents}</div>
+      </>
+    );
   }
 
   public updateAmbientAudio() {
@@ -199,19 +200,30 @@ Number of Programs: ${this.renderer.info.programs!.length}
 # Render Lines: ${this.renderer.info.render.lines}
 # Render Points: ${this.renderer.info.render.points}
 # Render Tris: ${this.renderer.info.render.triangles}
-`,
+`
     );
   }
 
   public perfDebug() {
     // count how many have autoUpdate enabled
-    let yes = 0, no = 0;
-    this.scene.traverse((o) => { if (o.matrixAutoUpdate) { yes++ } else { no++ } });
+    let yes = 0,
+      no = 0;
+    this.scene.traverse((o) => {
+      if (o.matrixAutoUpdate) {
+        yes++;
+      } else {
+        no++;
+      }
+    });
     console.log("matrixAutoUpdate: yes", yes, ", no", no);
 
     // count how many vertices of each type there are
     const s = new Map();
-    this.scene.traverse((o) => { const k = (s.get(o.name || o.constructor.name) || []); s.set(o.name || o.constructor.name, k); k.push(o) })
+    this.scene.traverse((o) => {
+      const k = s.get(o.name || o.constructor.name) || [];
+      s.set(o.name || o.constructor.name, k);
+      k.push(o);
+    });
     console.log(s);
   }
 
@@ -237,17 +249,11 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   private getCameraNormCoordinates(clientX: number, clientY: number) {
-    return new THREE.Vector2(
-      clientX / this.canvas.width * 2 - 1,
-      -clientY / this.canvas.height * 2 + 1,
-    );
+    return new THREE.Vector2((clientX / this.canvas.width) * 2 - 1, (-clientY / this.canvas.height) * 2 + 1);
   }
 
   public getHighlightVector(clientX = this.mouse.x, clientY = this.mouse.y) {
-    const offset = new Vector2(
-      clientX - this.canvas.width / 2,
-      clientY - this.canvas.height / 2,
-    );
+    const offset = new Vector2(clientX - this.canvas.width / 2, clientY - this.canvas.height / 2);
 
     offset.setLength(0.75);
     return offset;
@@ -255,7 +261,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
 
   public getHighlightPosition(clientX = this.mouse.x, clientY = this.mouse.y) {
     const offset = this.getHighlightVector(clientX, clientY);
-    const {x, y} = this.world.player.posFloat;
+    const { x, y } = this.world.player.posFloat;
 
     offset.x += x;
     offset.y += y;
@@ -344,7 +350,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     const mouseNorm = this.getCameraNormCoordinates(this.mouse.x, this.mouse.y);
     const target = new THREE.Vector2(
       this.world.player.posFloat.x + mouseNorm.x / 2,
-      this.world.player.posFloat.y - mouseNorm.y / 2,
+      this.world.player.posFloat.y - mouseNorm.y / 2
     );
     lerp2(this.camera.position, target, 0.3);
 
@@ -421,7 +427,6 @@ Number of Programs: ${this.renderer.info.programs!.length}
       };
       this.world.player.setAction(action);
     }
-
   }
   static expansionTiles: Array<Constructor<Cell>> = [Tissue, Root, Vein];
 }

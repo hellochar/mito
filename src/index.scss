@@ -1,58 +1,63 @@
 @import "~normalize.css";
 
-@import './variables';
-@import './sketches/mito/index.scss';
-@import './fullPageSketch.scss';
-@import './sketchComponent.scss';
+@import "./variables";
+@import "./sketches/mito/index.scss";
+@import "./fullPageSketch.scss";
+@import "./sketchComponent.scss";
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: $palatino-family;
-    margin: 0;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $palatino-family;
+  margin: 0;
 }
 
 a {
-    color: $dark-gray1;
-    text-decoration: none;
-    transition: border-bottom .05s;
+  color: $dark-gray1;
+  text-decoration: none;
+  transition: border-bottom 0.05s;
 
-    &:hover {
-        border-bottom: 3px solid $black;
-    }
+  &:hover {
+    border-bottom: 3px solid $black;
+  }
 
-    &:active {
-        position: relative;
-        top: 1px;
-    }
+  &:active {
+    position: relative;
+    top: 1px;
+  }
 }
 
 body {
-    font-family: $palatino-family;
+  font-family: $palatino-family;
 }
 
 p {
-    font-weight: 400;
-    font-style: normal;
-    font-size: 21px;
-    line-height: 1.58;
-    font-family: $georgia-family;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 21px;
+  line-height: 1.58;
+  font-family: $georgia-family;
 }
 
 figure {
-    margin: 0;
+  margin: 0;
 }
 
 h1 ~ p {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 p ~ p {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 #root {
-    overflow: hidden;
+  overflow: hidden;
 }

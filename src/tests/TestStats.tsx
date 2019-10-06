@@ -1,19 +1,19 @@
-import React from 'react';
-import { World } from '../sketches/mito/game';
-import { Temperate, Environment, Rocky, Desert } from '../sketches/mito/game/environment';
-import { Tile, Air, Soil, Rock, Fountain } from '../sketches/mito/game/tile';
-import { hasInventory } from '../sketches/mito/inventory';
-import { PlotData, Layout } from 'plotly.js';
-import { findBuildCandidateTiles } from '../sketches/mito/game/worldUtils';
+import React from "react";
+import { World } from "../sketches/mito/game";
+import { Temperate, Environment, Rocky, Desert } from "../sketches/mito/game/environment";
+import { Tile, Air, Soil, Rock, Fountain } from "../sketches/mito/game/tile";
+import { hasInventory } from "../sketches/mito/inventory";
+import { PlotData, Layout } from "plotly.js";
+import { findBuildCandidateTiles } from "../sketches/mito/game/worldUtils";
 
 type Visitor = (tiles: Tile[], world: World) => number;
 interface Visitors {
   [name: string]: Visitor;
-};
+}
 
 function visit(world: World, visitors: Visitors): Trial {
   const tiles = Array.from(world.environmentTiles());
-  const results: Trial = {}
+  const results: Trial = {};
   for (const [name, visitor] of Object.entries(visitors)) {
     const result = visitor(tiles, world);
     results[name] = result;
@@ -22,7 +22,7 @@ function visit(world: World, visitors: Visitors): Trial {
 }
 
 interface Trial {
-  [key: string]: number
+  [key: string]: number;
 }
 class Experiment {
   trials: Trial[] = [];
@@ -50,16 +50,16 @@ function runTests(environmentFn: () => Environment, id: string) {
   console.log("running");
   const suite = new ExperimentSuite([
     new Experiment({
-      countAir: (t) => t.filter(tile => tile.constructor === Air).length,
+      countAir: (t) => t.filter((tile) => tile.constructor === Air).length,
     }),
     new Experiment({
-      countSoil: (t) => t.filter(tile => tile.constructor === Soil).length,
+      countSoil: (t) => t.filter((tile) => tile.constructor === Soil).length,
     }),
     new Experiment({
-      countRock: (t) => t.filter(tile => tile.constructor === Rock).length,
+      countRock: (t) => t.filter((tile) => tile.constructor === Rock).length,
     }),
     new Experiment({
-      countFountain: (t) => t.filter(tile => tile.constructor === Fountain).length,
+      countFountain: (t) => t.filter((tile) => tile.constructor === Fountain).length,
     }),
     new Experiment({
       playerY: (_, w) => w.player.pos.y,
@@ -74,11 +74,11 @@ function runTests(environmentFn: () => Environment, id: string) {
           }
         }
         return water;
-      }
+      },
     }),
     new Experiment({
       countWaters: (t) => {
-        return t.reduce((w, tile) => (w + (hasInventory(tile) ? tile.inventory.water : 0)), 0);
+        return t.reduce((w, tile) => w + (hasInventory(tile) ? tile.inventory.water : 0), 0);
       },
     }),
   ]);
@@ -109,17 +109,17 @@ function plotStackedBar(experiments: Experiment[], divId: string) {
       const e = experiments[idx];
       const trial = e.trials[i];
       const value = trial[name];
-      y.push(value)
+      y.push(value);
     }
     const trace: Partial<PlotData> = {
       x,
       y,
       name,
-      type: "bar"
+      type: "bar",
     };
     data.push(trace);
   }
-  var layout: Partial<Layout> = { barmode: 'stack' };
+  var layout: Partial<Layout> = { barmode: "stack" };
 
   const div = document.createElement("div");
   const el = document.getElementById(divId)!;
@@ -134,7 +134,7 @@ function plotHistogram(stats: Experiment, divId: string) {
   for (const name of stats.visitorNames()) {
     var trace: Partial<PlotData> = {
       x: stats.trials.map((t) => t[name]),
-      type: 'histogram',
+      type: "histogram",
       name: name,
     };
     data.push(trace);
@@ -152,12 +152,11 @@ function plotHistogram(stats: Experiment, divId: string) {
   window.Plotly.newPlot(div, data, layout);
 }
 
-
 function TestStats() {
   React.useEffect(() => {
-    var script = document.createElement('script');
+    var script = document.createElement("script");
     script.src = "https://cdn.plot.ly/plotly-latest.min.js";
-    script.addEventListener('load', function () {
+    script.addEventListener("load", function() {
       runTests(Temperate, "temperate");
       runTests(Rocky, "rocky");
       runTests(Desert, "desert");

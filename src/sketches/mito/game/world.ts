@@ -13,7 +13,7 @@ import { GameResult } from "..";
 import { Traits, traitMod } from "../../../evolution/traits";
 
 export class StepStats {
-  constructor(public deleted: Entity[] = [], public added: Entity[] = []) { }
+  constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
 }
 
 export interface Season {
@@ -67,47 +67,53 @@ export class World {
     Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, params.cellDiffusionSugar, 2);
     Cell.turnsToBuild = Math.floor(traitMod(this.traits.buildTime, params.cellGestationTurns, 1 / 2));
     this.player = new Player(new Vector2(this.width / 2, this.height / 2), this);
-    this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
-      const pos = new Vector2(x, y);
+    this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) =>
+      new Array(this.height).fill(undefined).map((__, y) => {
+        const pos = new Vector2(x, y);
 
-      let tile: Tile | undefined;
-      for (const fillFunction of environment.fill) {
-        const t = fillFunction(pos, this);
-        if (t != null) {
-          tile = t;
-          break;
+        let tile: Tile | undefined;
+        for (const fillFunction of environment.fill) {
+          const t = fillFunction(pos, this);
+          if (t != null) {
+            tile = t;
+            break;
+          }
         }
-      }
-      if (tile == null) {
-        tile = new Air(pos, this);
-      }
-      return tile;
-    })));
+        if (tile == null) {
+          tile = new Air(pos, this);
+        }
+        return tile;
+      })
+    );
 
     // always drop player on the Soil Air interface
     const playerX = this.player.pos.x;
-    const firstSoil = this.gridEnvironment[playerX].find((t) => !(t instanceof Air))
+    const firstSoil = this.gridEnvironment[playerX].find((t) => !(t instanceof Air));
     if (firstSoil) {
       this.player.posFloat.y = firstSoil.pos.y;
     }
 
     const radius = 2.5;
-    this.gridCells = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
-      const pos = new Vector2(x, y);
-      // add a "seed" of tissue around the player
-      if (this.player.pos.distanceTo(pos) < radius) {
-        // prevent Rocks underneath the seed
-        if (this.gridEnvironment instanceof Rock) {
-          this.gridEnvironment[x][y] = new Soil(new Vector2(x, y), 0, this);
+    this.gridCells = new Array(this.width).fill(undefined).map((_, x) =>
+      new Array(this.height).fill(undefined).map((__, y) => {
+        const pos = new Vector2(x, y);
+        // add a "seed" of tissue around the player
+        if (this.player.pos.distanceTo(pos) < radius) {
+          // prevent Rocks underneath the seed
+          if (this.gridEnvironment instanceof Rock) {
+            this.gridEnvironment[x][y] = new Soil(new Vector2(x, y), 0, this);
+          }
+          return new Tissue(pos, this);
+        } else {
+          return null;
         }
-        return new Tissue(pos, this);
-      } else {
-        return null;
-      }
-    })));
-    this.neighborCache = new Array(this.width).fill(undefined).map((_, x) => (new Array(this.height).fill(undefined).map((__, y) => {
-      return this.computeTileNeighbors(x, y);
-    })));
+      })
+    );
+    this.neighborCache = new Array(this.width).fill(undefined).map((_, x) =>
+      new Array(this.height).fill(undefined).map((__, y) => {
+        return this.computeTileNeighbors(x, y);
+      })
+    );
     this.fillCachedEntities();
 
     // // auto-add Roots
@@ -295,7 +301,8 @@ export class World {
     // also, entities can interact with other entities, there is no lock-step buffer state,
     // which means you can get weird artifacts like "water suddenly moves 20 squares".
     // to combat this we alternatingly reverse the tile iteration order.
-    let x = 0, y = 0;
+    let x = 0,
+      y = 0;
     for (x = 0; x < this.width; x++) {
       for (y = (x + this.time) % 2; y < this.height; y += 2) {
         // checkerboard
@@ -357,7 +364,10 @@ export class World {
 
   public stepWeather() {
     // offset first rain event by 300 turns
-    const isRaining = (this.time + this.environment.climate.turnsBetweenRainfall - 200) % this.environment.climate.turnsBetweenRainfall < this.environment.climate.rainDuration;
+    const isRaining =
+      (this.time + this.environment.climate.turnsBetweenRainfall - 200) %
+        this.environment.climate.turnsBetweenRainfall <
+      this.environment.climate.rainDuration;
     if (isRaining) {
       const x = THREE.Math.randInt(0, this.width - 1);
       const t = this.tileAt(x, 0);
@@ -370,9 +380,9 @@ export class World {
   public computeSunlight() {
     // sunlight is special - we step downards from the top; neighbors don't affect the calculation so we don't have buffering problems
     // 0 to PI = daytime, PI to 2PI = nighttime
-    const sunAngle = this.time * Math.PI * 2 / 1000;
+    const sunAngle = (this.time * Math.PI * 2) / 1000;
     const directionalBias = Math.sin(sunAngle + Math.PI / 2);
-    const sunAmount = Math.atan(Math.sin(sunAngle) * 12) / (Math.PI / 2) * 0.5 + 0.5;
+    const sunAmount = (Math.atan(Math.sin(sunAngle) * 12) / (Math.PI / 2)) * 0.5 + 0.5;
     for (let y = 0; y <= this.height * 0.6; y++) {
       for (let x = 0; x < this.width; x++) {
         const t = this.environmentTileAt(x, y);
@@ -385,15 +395,19 @@ export class World {
             const tileRight = this.tileAt(x + 1, y - 1);
             const tileLeft = this.tileAt(x - 1, y - 1);
             const upSunlight = tileUp instanceof Air ? tileUp.sunlightCached / sunAmount : tileUp == null ? 1 : 0;
-            const rightSunlight = tileRight instanceof Air ? tileRight.sunlightCached / sunAmount : tileRight == null ? 1 : 0;
-            const leftSunlight = tileLeft instanceof Air ? tileLeft.sunlightCached / sunAmount : tileLeft == null ? 1 : 0;
+            const rightSunlight =
+              tileRight instanceof Air ? tileRight.sunlightCached / sunAmount : tileRight == null ? 1 : 0;
+            const leftSunlight =
+              tileLeft instanceof Air ? tileLeft.sunlightCached / sunAmount : tileLeft == null ? 1 : 0;
             if (directionalBias > 0) {
               // positive light travels to the right
               sunlight = rightSunlight * directionalBias + upSunlight * (1 - directionalBias);
             } else {
-              sunlight = leftSunlight * -directionalBias + upSunlight * (1 - (-directionalBias));
+              sunlight = leftSunlight * -directionalBias + upSunlight * (1 - -directionalBias);
             }
-            sunlight = sunlight * (1 - params.sunlightDiffusion) + ((upSunlight + rightSunlight + leftSunlight) / 3) * params.sunlightDiffusion;
+            sunlight =
+              sunlight * (1 - params.sunlightDiffusion) +
+              ((upSunlight + rightSunlight + leftSunlight) / 3) * params.sunlightDiffusion;
           }
           // have at least a bit
           sunlight = params.sunlightReintroduction + sunlight * (1 - params.sunlightReintroduction);
@@ -457,13 +471,15 @@ export class World {
             yield t;
           }
         }
-      }
-    }
+      },
+    };
   }
 }
 
 function shuffle<T>(array: T[]) {
-  let currentIndex = array.length, temporaryValue, randomIndex;
+  let currentIndex = array.length,
+    temporaryValue,
+    randomIndex;
   // While there remain elements to shuffle...
   while (0 !== currentIndex) {
     // Pick a remaining element...

@@ -12,7 +12,7 @@ export const ACTION_KEYMAP: { [key: string]: Action } = {
     sugar: 1,
     water: 0, // hack hack we can assume max 100 water, it's fine
   },
-  ' ': {
+  " ": {
     type: "pickup",
     sugar: 1,
     water: 1,

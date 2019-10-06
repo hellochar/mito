@@ -51,10 +51,7 @@ export function pathFrom(positions: Array<[number, number]>) {
 function findPositions(grid: Grid, start: Vector2, target: Vector2) {
   const finder = new AStarFinder({ diagonalMovement: DiagonalMovement.Always });
   // positions comes back as an array of [x, y] positions that are all adjacent to each other
-  return finder.findPath(
-    start.x, start.y,
-    target.x, target.y,
-    grid) as Array<[number, number]>;
+  return finder.findPath(start.x, start.y, target.x, target.y, grid) as Array<[number, number]>;
 }
 
 function newGrid(width: number, height: number, fn: (x: number, y: number, grid: Grid) => void) {

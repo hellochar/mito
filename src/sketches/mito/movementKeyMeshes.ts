@@ -28,10 +28,7 @@ function createFontMesh(char: string) {
     transparent: true,
     side: THREE.DoubleSide,
   });
-  const mesh = new THREE.Mesh(
-    fontMeshGeometry,
-    mat,
-  );
+  const mesh = new THREE.Mesh(fontMeshGeometry, mat);
   return mesh;
 }
 export const MOVEMENT_KEY_MESHES: Map<string, THREE.Mesh> = new Map();

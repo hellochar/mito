@@ -10,7 +10,8 @@ export class PlayerRenderer extends Renderer<Player> {
   public mesh: Mesh;
   constructor(target: Player, scene: Scene, mito: Mito) {
     super(target, scene, mito);
-    this.mesh = new Mesh(new PlaneBufferGeometry(0.75, 0.75),
+    this.mesh = new Mesh(
+      new PlaneBufferGeometry(0.75, 0.75),
       // new THREE.CircleBufferGeometry(0.5, 20),
       new MeshBasicMaterial({
         transparent: true,
@@ -19,7 +20,8 @@ export class PlayerRenderer extends Renderer<Player> {
         map: textureFromSpritesheet(29, 12, "transparent"),
         color: new Color("white"),
         side: DoubleSide,
-      }));
+      })
+    );
     lerp2(this.mesh.position, this.target.pos, 1);
     this.mesh.position.z = 2;
     this.scene.add(this.mesh);

@@ -19,7 +19,7 @@ export class TutorialBuildTissue extends Tutorial {
           x={candidate.pos.x}
           y={candidate.pos.y}
           scene={this.props.scene}
-        />,
+        />
       );
     }
 
@@ -29,10 +29,10 @@ export class TutorialBuildTissue extends Tutorial {
 
         <div className="tutorial-build tutorial-build-tissue">
           Build <b>Tissue (T) to grow</b>.
-                </div>
+        </div>
       </>
     );
-  };
+  }
 
   onActionPerformed(action: Action) {
     if (action.type === "build" && action.cellType === Tissue) {
@@ -62,7 +62,7 @@ export class TutorialBuildRoot extends Tutorial {
           x={candidate.pos.x}
           y={candidate.pos.y}
           scene={this.props.scene}
-        />,
+        />
       );
     }
 
@@ -72,10 +72,10 @@ export class TutorialBuildRoot extends Tutorial {
 
         <div className="tutorial-build tutorial-build-root">
           Great job! Now, build <b>Roots (R) to gather water</b>.
-                </div>
+        </div>
       </>
     );
-  };
+  }
 
   onActionPerformed(action: Action) {
     if (action.type === "build" && action.cellType === Root) {
@@ -105,7 +105,7 @@ export class TutorialBuildLeaf extends Tutorial {
           x={candidate.pos.x}
           y={candidate.pos.y}
           scene={this.props.scene}
-        />,
+        />
       );
     }
 
@@ -115,10 +115,10 @@ export class TutorialBuildLeaf extends Tutorial {
 
         <div className="tutorial-build tutorial-build-leaf">
           Fantastic. build <b>Leaf (F) to convert Water to Sugar</b>.
-                </div>
+        </div>
       </>
     );
-  };
+  }
 
   onActionPerformed(action: Action) {
     if (action.type === "build" && action.cellType === Leaf) {

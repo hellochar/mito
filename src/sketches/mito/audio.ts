@@ -73,7 +73,7 @@ export function hookUpAudio(ctx: SketchAudioContext) {
   const loader = new THREE.AudioLoader();
 
   loader.load(
-    'assets/audio/Blop-Mark_DiAngelo-79054334.mp3',
+    "assets/audio/Blop-Mark_DiAngelo-79054334.mp3",
     (audioBuffer: THREE.AudioBuffer) => {
       blopBuffer = audioBuffer;
     },
@@ -81,11 +81,11 @@ export function hookUpAudio(ctx: SketchAudioContext) {
       // devlog((xhr.loaded / xhr.total * 100) + '% loaded');
     },
     (err: any) => {
-      devlog('An error happened');
-    },
+      devlog("An error happened");
+    }
   );
   loader.load(
-    'assets/audio/suckwater.wav',
+    "assets/audio/suckwater.wav",
     (audioBuffer: THREE.AudioBuffer) => {
       suckWaterBuffer = audioBuffer;
     },
@@ -93,7 +93,7 @@ export function hookUpAudio(ctx: SketchAudioContext) {
       // devlog((xhr.loaded / xhr.total * 100) + '% loaded');
     },
     (err: any) => {
-      devlog('An error happened');
-    },
+      devlog("An error happened");
+    }
   );
 }

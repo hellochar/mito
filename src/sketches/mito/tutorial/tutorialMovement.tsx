@@ -21,12 +21,10 @@ export default class TutorialMovement extends Tutorial {
       <>
         {keyHints}
 
-        <div className="guide-movement">
-          Use WASD, QEZC.
-                </div>
+        <div className="guide-movement">Use WASD, QEZC.</div>
       </>
     );
-  };
+  }
 
   onActionPerformed(action: Action) {
     if (action.type === "move") {

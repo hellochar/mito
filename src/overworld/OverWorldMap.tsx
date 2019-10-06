@@ -43,7 +43,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     if (ref != null) {
       this.handleResize();
     }
-  }
+  };
 
   private handleCanvasClick = (e: React.MouseEvent) => {
     if (this.canvas != null) {
@@ -56,11 +56,11 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
         }
       }
     }
-  }
+  };
 
   private onPlayLevel = (level: HexTile) => {
     this.props.onPlayLevel(level);
-  }
+  };
 
   private handleKeyDown = (e: KeyboardEvent) => {
     if (!e.repeat) {
@@ -76,7 +76,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     delete newPressedKeys[e.code];
     this.setState({
       pressedKeys: newPressedKeys,
-    })
+    });
   };
 
   private handleResize = () => {
@@ -85,19 +85,19 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
       this.canvas.height = window.innerHeight;
       this.drawMap();
     }
-  }
+  };
 
   private updateCamera = () => {
     const panSpeed = 20;
     let offset = new Vector2();
     for (const key in this.state.pressedKeys) {
-      if (key === 'KeyW' || key === 'ArrowUp') {
+      if (key === "KeyW" || key === "ArrowUp") {
         offset.y += panSpeed;
-      } else if (key === 'KeyS' || key === 'ArrowDown') {
+      } else if (key === "KeyS" || key === "ArrowDown") {
         offset.y -= panSpeed;
-      } else if (key === 'KeyA' || key === 'ArrowLeft') {
+      } else if (key === "KeyA" || key === "ArrowLeft") {
         offset.x += panSpeed;
-      } else if (key === 'KeyD' || key === 'ArrowRight') {
+      } else if (key === "KeyD" || key === "ArrowRight") {
         offset.x -= panSpeed;
       }
     }
@@ -110,12 +110,12 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
         cameraState: {
           ...cameraState,
           dX: cameraState.dX + offset.x,
-          dY: cameraState.dY + offset.y
-        }
+          dY: cameraState.dY + offset.y,
+        },
       });
     }
     this.rafId = requestAnimationFrame(this.updateCamera);
-  }
+  };
 
   private drawMap() {
     if (this.canvas != null) {
@@ -128,16 +128,16 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDown);
-    document.addEventListener('keyup', this.handleKeyUp);
-    window.addEventListener('resize', this.handleResize);
+    document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("keyup", this.handleKeyUp);
+    window.addEventListener("resize", this.handleResize);
     this.rafId = requestAnimationFrame(this.updateCamera);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
-    document.removeEventListener('keyup', this.handleKeyUp);
-    window.removeEventListener('resize', this.handleResize);
+    document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener("keyup", this.handleKeyUp);
+    window.removeEventListener("resize", this.handleResize);
     cancelAnimationFrame(this.rafId!);
   }
 
@@ -165,7 +165,12 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
   }
 }
 
-function getClickedHexTile(overWorld: OverWorld, canvas: HTMLCanvasElement, camera: CameraState, event: React.MouseEvent) {
+function getClickedHexTile(
+  overWorld: OverWorld,
+  canvas: HTMLCanvasElement,
+  camera: CameraState,
+  event: React.MouseEvent
+) {
   const { scale, dX, dY } = camera;
   const cX = canvas.width / 2 + dX;
   const cY = canvas.height / 2 + dY;
@@ -214,7 +219,7 @@ function drawTile(canvas: HTMLCanvasElement, camera: CameraState, tile: HexTile)
   const { scale } = camera;
   const [px, py] = pixelPosition(tile, camera);
 
-  const c = canvas.getContext('2d')!;
+  const c = canvas.getContext("2d")!;
   if (tile.info.visible) {
     c.fillStyle = colorScale(tile.info.height);
     drawHex(c, px, py, scale);

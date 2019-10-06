@@ -46,8 +46,8 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
     super(props);
     this.state = {
       frameCount: props.sketch.frameCount,
-    }
-  };
+    };
+  }
 
   componentDidMount() {
     window.addEventListener("resize", this.handleWindowResize);
@@ -138,7 +138,7 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
       });
       this.frameId = requestAnimationFrame(this.loop);
     }
-  }
+  };
 
   private handleWindowResize = () => {
     const { renderer } = this.props.sketch;
@@ -146,7 +146,7 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
     if (this.props.sketch.resize != null) {
       this.props.sketch.resize(renderer.domElement.width, renderer.domElement.height);
     }
-  }
+  };
 
   private updateRendererCanvasToMatchParent(renderer: THREE.WebGLRenderer) {
     const parent = renderer.domElement.parentElement;
@@ -176,21 +176,26 @@ export class SketchComponent extends React.Component<ISketchComponentProps, ISke
       try {
         // create dependencies, setup sketch, and move to success state
         // we are responsible for live-updating the global user volume.
-        const AudioContextConstructor: typeof AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
-        const audioContext = this.audioContext = new AudioContextConstructor() as SketchAudioContext;
+        const AudioContextConstructor: typeof AudioContext =
+          (window as any).AudioContext || (window as any).webkitAudioContext;
+        const audioContext = (this.audioContext = new AudioContextConstructor() as SketchAudioContext);
         (THREE.AudioContext as any).setContext(audioContext);
         this.userVolume = audioContext.createGain();
         this.userVolume.gain.setValueAtTime(0.8, 0);
         this.userVolume.connect(audioContext.destination);
-        const audioContextGain = audioContext.gain = audioContext.createGain();
+        const audioContextGain = (audioContext.gain = audioContext.createGain());
         audioContextGain.connect(this.userVolume);
         document.addEventListener("visibilitychange", this.handleVisibilityChange);
 
-        const renderer = new THREE.WebGLRenderer({ alpha: true, preserveDrawingBuffer: true, antialias: true });
+        const renderer = new THREE.WebGLRenderer({
+          alpha: true,
+          preserveDrawingBuffer: true,
+          antialias: true,
+        });
         ref.appendChild(renderer.domElement);
 
         const otherArgs = this.props.otherArgs || [];
-        const sketch = new (this.props.sketchClass)(renderer, this.audioContext, ...otherArgs);
+        const sketch = new this.props.sketchClass(renderer, this.audioContext, ...otherArgs);
         this.setState({ status: { type: "success", sketch: sketch } });
       } catch (e) {
         this.setState({ status: { type: "error", error: e } });
@@ -206,7 +211,7 @@ export class SketchComponent extends React.Component<ISketchComponentProps, ISke
       }
       this.setState({ status: { type: "loading" } });
     }
-  }
+  };
 
   public render() {
     if (this.userVolume != null && this.audioContext != null) {
@@ -232,7 +237,13 @@ export class SketchComponent extends React.Component<ISketchComponentProps, ISke
     const { status } = this.state;
     if (status.type === "success") {
       // key on id to not destroy and re-create the component somehow
-      return <SketchSuccessComponent key={this.props.sketchClass.id} sketch={status.sketch} eventsOnBody={this.props.eventsOnBody} />;
+      return (
+        <SketchSuccessComponent
+          key={this.props.sketchClass.id}
+          sketch={status.sketch}
+          eventsOnBody={this.props.eventsOnBody}
+        />
+      );
     } else if (status.type === "error") {
       const errorElement = this.props.errorElement || this.renderDefaultErrorElement(status.error.message);
       return errorElement;
@@ -245,7 +256,7 @@ export class SketchComponent extends React.Component<ISketchComponentProps, ISke
     return (
       <p className="sketch-error">
         Oops - something went wrong! Make sure you're using Chrome, or are on your desktop.
-                <pre>{message}</pre>
+        <pre>{message}</pre>
       </p>
     );
   }
@@ -263,7 +274,7 @@ export class SketchComponent extends React.Component<ISketchComponentProps, ISke
     const volumeEnabled = !this.state.volumeEnabled;
     this.setState({ volumeEnabled });
     window.localStorage.setItem("sketch-volumeEnabled", JSON.stringify(volumeEnabled));
-  }
+  };
 
   private handleVisibilityChange = () => {
     if (this.audioContext != null) {
@@ -273,5 +284,5 @@ export class SketchComponent extends React.Component<ISketchComponentProps, ISke
         this.audioContext.resume();
       }
     }
-  }
+  };
 }

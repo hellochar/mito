@@ -16,12 +16,7 @@ interface NewPlayerTutorialState {
 }
 
 export class NewPlayerTutorial extends React.PureComponent<NewPlayerTutorialProps, NewPlayerTutorialState> {
-  static STEPS = [
-    TutorialMovement,
-    TutorialBuildTissue,
-    TutorialBuildRoot,
-    TutorialBuildLeaf,
-  ];
+  static STEPS = [TutorialMovement, TutorialBuildTissue, TutorialBuildRoot, TutorialBuildLeaf];
 
   state = {
     time: 0,
@@ -36,11 +31,11 @@ export class NewPlayerTutorial extends React.PureComponent<NewPlayerTutorialProp
         // BUILD_HOTKEYS.v = Vein;
       }
     });
-  }
+  };
   public tutorialRef: Tutorial | null = null;
   handleCurrentTutorialRef = (ref: Tutorial) => {
     this.tutorialRef = ref;
-  }
+  };
 
   isFinished() {
     return this.state.step >= NewPlayerTutorial.STEPS.length;

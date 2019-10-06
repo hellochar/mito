@@ -46,4 +46,12 @@ export interface ActionMultiple {
   actions: Action[];
 }
 
-export type Action = ActionStill | ActionMove | ActionBuild | ActionDeconstruct | ActionDrop | ActionNone | ActionMultiple | ActionPickup;
+export type Action =
+  | ActionStill
+  | ActionMove
+  | ActionBuild
+  | ActionDeconstruct
+  | ActionDrop
+  | ActionNone
+  | ActionMultiple
+  | ActionPickup;

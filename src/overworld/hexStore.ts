@@ -1,7 +1,7 @@
 import { HexTile } from "./hexTile";
 
 export class HexStore {
-  tiles: { [k: string]: HexTile; } = {};
+  tiles: { [k: string]: HexTile } = {};
 
   private hash(i: number, j: number) {
     return `${i},${j}`;

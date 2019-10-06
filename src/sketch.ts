@@ -28,17 +28,17 @@ export abstract class ISketch {
   public elements?: JSX.Element[];
   public events?: UIEventReciever;
   /**
-  * milliseconds since sketch started running.
-  */
+   * milliseconds since sketch started running.
+   */
   public timeElapsed = 0;
 
   public frameCount = 0;
 
-  constructor(public renderer: THREE.WebGLRenderer, public audioContext: SketchAudioContext) { }
+  constructor(public renderer: THREE.WebGLRenderer, public audioContext: SketchAudioContext) {}
 
   /**
-  * height / width
-  */
+   * height / width
+   */
   get aspectRatio() {
     return this.renderer.domElement.height / this.renderer.domElement.width;
   }
@@ -61,7 +61,7 @@ export abstract class ISketch {
 }
 
 export interface SketchConstructor {
-  new(renderer: THREE.WebGLRenderer, audioContext: SketchAudioContext, ...otherArgs: any[]): ISketch;
+  new (renderer: THREE.WebGLRenderer, audioContext: SketchAudioContext, ...otherArgs: any[]): ISketch;
 
   id?: string;
 }

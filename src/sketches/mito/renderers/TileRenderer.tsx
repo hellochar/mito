@@ -1,11 +1,44 @@
 import React from "react";
-import { ArrowHelper, Audio, BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Scene, Vector2, Vector3 } from "three";
+import {
+  ArrowHelper,
+  Audio,
+  BufferGeometry,
+  Color,
+  DoubleSide,
+  Float32BufferAttribute,
+  Line,
+  LineBasicMaterial,
+  Mesh,
+  MeshBasicMaterial,
+  Object3D,
+  PlaneBufferGeometry,
+  Scene,
+  Vector2,
+  Vector3,
+} from "three";
 
 import lazy from "../../../common/lazy";
 import { map, lerp2 } from "../../../math/index";
 import { blopBuffer, suckWaterBuffer } from "../audio";
 import { Constructor } from "../constructor";
-import { Air, Cell, DeadCell, Fountain, Fruit, GrowingCell, hasEnergy, hasTilePairs, Leaf, Rock, Root, Soil, Tile, Tissue, Transport, Vein } from "../game/tile";
+import {
+  Air,
+  Cell,
+  DeadCell,
+  Fountain,
+  Fruit,
+  GrowingCell,
+  hasEnergy,
+  hasTilePairs,
+  Leaf,
+  Rock,
+  Root,
+  Soil,
+  Tile,
+  Tissue,
+  Transport,
+  Vein,
+} from "../game/tile";
 import { Mito, WorldDOMElement } from "../index";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
@@ -80,14 +113,21 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
     if (this.target instanceof Fruit) {
       const fruit = this.target;
-      this.worldDomElement = mito.addWorldDOMElement(() => this.target.pos, () => {
-        return (
-          <div className="fruit-indicator">
-            <div>{fruit.committedResources.water.toFixed(1)}/{Fruit.neededResources / 2} water</div>
-            <div>{fruit.committedResources.sugar.toFixed(1)}/{Fruit.neededResources / 2} sugar</div>
-          </div>
-        );
-      });
+      this.worldDomElement = mito.addWorldDOMElement(
+        () => this.target.pos,
+        () => {
+          return (
+            <div className="fruit-indicator">
+              <div>
+                {fruit.committedResources.water.toFixed(1)}/{Fruit.neededResources / 2} water
+              </div>
+              <div>
+                {fruit.committedResources.sugar.toFixed(1)}/{Fruit.neededResources / 2} sugar
+              </div>
+            </div>
+          );
+        }
+      );
     }
   }
 
@@ -205,7 +245,9 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
   }
 
-  hasActiveNeighbors(t: any): t is {
+  hasActiveNeighbors(
+    t: any
+  ): t is {
     activeNeighbors: Vector2[];
   } {
     return Array.isArray(t.activeNeighbors);
@@ -213,7 +255,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   static lineGeometry = (() => {
     const g = new BufferGeometry();
-    g.addAttribute('position', new Float32BufferAttribute([0, 0, 0, 0, 1, 0], 3));
+    g.addAttribute("position", new Float32BufferAttribute([0, 0, 0, 0, 1, 0], 3));
     return g;
   })();
   private makeLine(dir: Vector3, origin: Vector3, length: number, color: number) {
@@ -249,71 +291,103 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
 export const materialMapping = lazy(() => {
   const materials = new Map<Constructor<Tile>, MeshBasicMaterial>();
-  materials.set(Air, new MeshBasicMaterial({
-    side: DoubleSide,
-    depthWrite: false,
-  }));
-  materials.set(Soil, new MeshBasicMaterial({
-    map: textureFromSpritesheet(8, 11),
-    // map: textureFromSpritesheet(41, 26),
-    // map: textureFromSpritesheet(679 / 16, 438 / 16),
-    side: DoubleSide,
-    // color: new Color(0xcccccc),
-    color: new Color("rgb(112, 89, 44)"),
-    depthWrite: false,
-  }));
-  materials.set(Fountain, new MeshBasicMaterial({
-    map: textureFromSpritesheet(56 / 16, 38 / 16),
-    side: DoubleSide,
-  }));
-  materials.set(Rock, new MeshBasicMaterial({
-    map: textureFromSpritesheet(26, 20),
-    side: DoubleSide,
-    color: new Color("rgb(63, 77, 84)"),
-  }));
-  materials.set(DeadCell, new MeshBasicMaterial({
-    map: textureFromSpritesheet(137 / 16, 374 / 16),
-    side: DoubleSide,
-    color: new Color("rgb(128, 128, 128)"),
-  }));
-  materials.set(Tissue, new MeshBasicMaterial({
-    map: textureFromSpritesheet(6, 31),
-    side: DoubleSide,
-    color: new Color(0x30ae25),
-  }));
+  materials.set(
+    Air,
+    new MeshBasicMaterial({
+      side: DoubleSide,
+      depthWrite: false,
+    })
+  );
+  materials.set(
+    Soil,
+    new MeshBasicMaterial({
+      map: textureFromSpritesheet(8, 11),
+      // map: textureFromSpritesheet(41, 26),
+      // map: textureFromSpritesheet(679 / 16, 438 / 16),
+      side: DoubleSide,
+      // color: new Color(0xcccccc),
+      color: new Color("rgb(112, 89, 44)"),
+      depthWrite: false,
+    })
+  );
+  materials.set(
+    Fountain,
+    new MeshBasicMaterial({
+      map: textureFromSpritesheet(56 / 16, 38 / 16),
+      side: DoubleSide,
+    })
+  );
+  materials.set(
+    Rock,
+    new MeshBasicMaterial({
+      map: textureFromSpritesheet(26, 20),
+      side: DoubleSide,
+      color: new Color("rgb(63, 77, 84)"),
+    })
+  );
+  materials.set(
+    DeadCell,
+    new MeshBasicMaterial({
+      map: textureFromSpritesheet(137 / 16, 374 / 16),
+      side: DoubleSide,
+      color: new Color("rgb(128, 128, 128)"),
+    })
+  );
+  materials.set(
+    Tissue,
+    new MeshBasicMaterial({
+      map: textureFromSpritesheet(6, 31),
+      side: DoubleSide,
+      color: new Color(0x30ae25),
+    })
+  );
   materials.set(Transport, materials.get(Tissue)!);
   // materialMapping.set(Transport, new MeshBasicMaterial({
   //     map: arrowUpMaterial(),
   //     side: DoubleSide,
   //     color: new Color("rgb(42, 138, 25)"),
   // }));
-  materials.set(Leaf, new MeshBasicMaterial({
-    // map: textureFromSpritesheet(9, 31),
-    map: textureFromSpritesheet(55 / 16, 280 / 16),
-    // map: textureFromSpritesheet(16, 10),
-    side: DoubleSide,
-  }));
-  materials.set(Root, new MeshBasicMaterial({
-    // map: textureFromSpritesheet(0, 31),
-    map: textureFromSpritesheet(59 / 16, 327 / 16),
-    side: DoubleSide,
-  }));
-  materials.set(Fruit, new MeshBasicMaterial({
-    map: fruitTexture,
-    side: DoubleSide,
-    transparent: true,
-  }));
-  materials.set(Vein, new MeshBasicMaterial({
-    map: textureFromSpritesheet(Math.floor(184 / 16), Math.floor(152 / 16)),
-    side: DoubleSide,
-  }));
+  materials.set(
+    Leaf,
+    new MeshBasicMaterial({
+      // map: textureFromSpritesheet(9, 31),
+      map: textureFromSpritesheet(55 / 16, 280 / 16),
+      // map: textureFromSpritesheet(16, 10),
+      side: DoubleSide,
+    })
+  );
+  materials.set(
+    Root,
+    new MeshBasicMaterial({
+      // map: textureFromSpritesheet(0, 31),
+      map: textureFromSpritesheet(59 / 16, 327 / 16),
+      side: DoubleSide,
+    })
+  );
+  materials.set(
+    Fruit,
+    new MeshBasicMaterial({
+      map: fruitTexture,
+      side: DoubleSide,
+      transparent: true,
+    })
+  );
+  materials.set(
+    Vein,
+    new MeshBasicMaterial({
+      map: textureFromSpritesheet(Math.floor(184 / 16), Math.floor(152 / 16)),
+      side: DoubleSide,
+    })
+  );
 
   return materials;
 });
 
 function getMaterial(tile: Tile) {
   // careful - creates a new instance per tile
-  return materialMapping().get(tile.constructor as Constructor<Tile>)!.clone();
+  return materialMapping()
+    .get(tile.constructor as Constructor<Tile>)!
+    .clone();
 }
 
 // const AIR_COLORSCALE = [

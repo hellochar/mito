@@ -10,40 +10,46 @@ import { ResourceParticles } from "./resourceParticles";
 
 // we represent Resources as dots of certain colors.
 export class InventoryRenderer extends Renderer<Inventory> {
-  static WaterParticles = lazy(() => new ResourceParticles(
-    {
-      color: new Color("rgb(9, 12, 255)"),
-      size: 45,
-      opacity: 0.75,
-    },
-    // new PointsMaterial({
-    //     // map: textureFromSpritesheet(0, 1),
-    //     transparent: true,
-    //     opacity: 0.75,
-    //     // color: new Color("rgb(12, 41, 255)"),
-    //     // color: new Color("rgb(29, 42, 255)"),
-    //     color: new Color("rgb(9, 12, 255)"),
-    //     size: .12,
-    //     side: DoubleSide,
-    // })
-  ));
+  static WaterParticles = lazy(
+    () =>
+      new ResourceParticles(
+        {
+          color: new Color("rgb(9, 12, 255)"),
+          size: 45,
+          opacity: 0.75,
+        }
+        // new PointsMaterial({
+        //     // map: textureFromSpritesheet(0, 1),
+        //     transparent: true,
+        //     opacity: 0.75,
+        //     // color: new Color("rgb(12, 41, 255)"),
+        //     // color: new Color("rgb(29, 42, 255)"),
+        //     color: new Color("rgb(9, 12, 255)"),
+        //     size: .12,
+        //     side: DoubleSide,
+        // })
+      )
+  );
 
-  static SugarParticles = lazy(() => new ResourceParticles(
-    {
-      color: new Color("yellow"),
-      size: 85,
-      opacity: 0.9,
-      map: textureFromSpritesheet(42, 12, "transparent"),
-    },
-    // new PointsMaterial({
-    //     map: textureFromSpritesheet(42, 12, "transparent"),
-    //     transparent: true,
-    //     opacity: 0.9,
-    //     color: "yellow",
-    //     size: .12,
-    //     side: DoubleSide,
-    // })
-  ));
+  static SugarParticles = lazy(
+    () =>
+      new ResourceParticles(
+        {
+          color: new Color("yellow"),
+          size: 85,
+          opacity: 0.9,
+          map: textureFromSpritesheet(42, 12, "transparent"),
+        }
+        // new PointsMaterial({
+        //     map: textureFromSpritesheet(42, 12, "transparent"),
+        //     transparent: true,
+        //     opacity: 0.9,
+        //     color: "yellow",
+        //     size: .12,
+        //     side: DoubleSide,
+        // })
+      )
+  );
 
   static startFrame() {
     InventoryRenderer.WaterParticles().startFrame();
@@ -107,7 +113,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
       v.y += (Math.random() - 0.5) * 0.1;
       this.sugars.push(v);
     }
-  }
+  };
 
   private handleGiveResources = () => {
     let wantedMeshes = Math.ceil(this.target.water);
@@ -119,7 +125,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
     if (this.sugars.length > wantedMeshes) {
       this.sugars.splice(wantedMeshes, this.sugars.length - wantedMeshes);
     }
-  }
+  };
 
   private updateNumParticles(resource: number) {
     // while (resourceArray.length < wantedMeshes) {
@@ -139,14 +145,20 @@ export class InventoryRenderer extends Renderer<Inventory> {
       }
       const p = resourceArray[resourceArray.length - 1];
       const fract = resource;
-      particles.commit(p.x + this.target.carrier.pos.x, p.y + this.target.carrier.pos.y, 10, map(Math.sqrt(fract), 0, 1, 0.2, 1));
+      particles.commit(
+        p.x + this.target.carrier.pos.x,
+        p.y + this.target.carrier.pos.y,
+        10,
+        map(Math.sqrt(fract), 0, 1, 0.2, 1)
+      );
     }
   }
 
   private simulateResourcePositions() {
     const resources = this.waters.concat(this.sugars);
     for (const r of resources) {
-      let vx = 0, vy = 0;
+      let vx = 0,
+        vy = 0;
       const angle = performance.now() / 3000 + this.animationOffset;
       vx += Math.cos(angle) * 0.02;
       // vel.y += Math.sin(performance.now() / 3000) * 0.1;

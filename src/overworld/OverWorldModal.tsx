@@ -21,9 +21,7 @@ function OverWorldModal({ tile, camera, children }: OverWorldModalProps) {
   };
   return (
     <div className="overworld-modal" style={container}>
-      <div className="overworld-modal-positioner">
-        {children}
-      </div>
+      <div className="overworld-modal-positioner">{children}</div>
     </div>
   );
 }

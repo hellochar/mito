@@ -1,10 +1,10 @@
-import React from 'react';
-import GameResultsScreen from '../sketches/mito/ui/GameResultsScreen';
-import { GameResult } from '../sketches/mito';
-import { World } from '../sketches/mito/game';
-import { Temperate } from '../sketches/mito/game/environment';
-import { Fruit } from '../sketches/mito/game/tile';
-import { Vector2 } from 'three';
+import React from "react";
+import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
+import { GameResult } from "../sketches/mito";
+import { World } from "../sketches/mito/game";
+import { Temperate } from "../sketches/mito/game/environment";
+import { Fruit } from "../sketches/mito/game/tile";
+import { Vector2 } from "three";
 
 export function TestWinScreen() {
   const world = new World(Temperate());
@@ -25,5 +25,5 @@ export function TestWinScreen() {
     fruits: [f1, f2, f3],
     world,
   };
-  return <GameResultsScreen results={mockResults} onDone={() => { }} />;
+  return <GameResultsScreen results={mockResults} onDone={() => {}} />;
 }
