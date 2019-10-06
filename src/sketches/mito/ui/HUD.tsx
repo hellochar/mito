@@ -8,6 +8,7 @@ import { TIME_PER_YEAR, Season } from "../game";
 
 import "./SeasonsTracker.scss";
 import { TraitType } from "../../../evolution/traits";
+import TraitDisplay from "../../../evolution/TraitDisplay";
 
 function BarMarker({ percent }: { percent: number }) {
   const style = {
@@ -118,13 +119,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
             padding: 10,
           }}
         >
-          {(Object.keys(this.world.traits) as TraitType[]).map((trait) => {
-            return (
-              <div key={trait}>
-                {trait}: {this.world.traits[trait]}
-              </div>
-            );
-          })}
+          <TraitDisplay traits={this.world.traits} />
         </div>
       );
     }

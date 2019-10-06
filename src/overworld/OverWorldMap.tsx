@@ -139,15 +139,15 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
   }
 
   componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown);
-    document.addEventListener("keyup", this.handleKeyUp);
+    this.canvas!.addEventListener("keydown", this.handleKeyDown);
+    this.canvas!.addEventListener("keyup", this.handleKeyUp);
     window.addEventListener("resize", this.handleResize);
     this.rafId = requestAnimationFrame(this.updateCamera);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-    document.removeEventListener("keyup", this.handleKeyUp);
+    this.canvas!.removeEventListener("keydown", this.handleKeyDown);
+    this.canvas!.removeEventListener("keyup", this.handleKeyUp);
     window.removeEventListener("resize", this.handleResize);
     cancelAnimationFrame(this.rafId!);
   }
@@ -159,7 +159,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
   render() {
     return (
       <div className="overworld-map-container">
-        <canvas ref={this.handleCanvasRef} onClick={this.handleCanvasClick} />
+        <canvas tabIndex={-1} ref={this.handleCanvasRef} onClick={this.handleCanvasClick} />
         {this.maybeRenderHighlightedTile()}
         {this.maybeRenderPhylogeneticTreePanel()}
       </div>

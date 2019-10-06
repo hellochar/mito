@@ -15,29 +15,49 @@
 
   .tree-node {
     $generation-distance: 100px;
+    $species-info-size: 100px;
+    $nub-size: 10px;
 
     display: flex;
     flex-direction: column;
     position: relative;
+    align-items: center;
 
     .descendants-container {
-      margin-bottom: $generation-distance;
+      padding-bottom: $generation-distance;
       display: flex;
       flex-wrap: nowrap;
+      position: relative;
 
+      // nub
+      &::before {
+        content: "";
+        height: $nub-size;
+        width: 1px;
+        position: absolute;
+        left: 50%;
+        background: gray;
+        bottom: 0;
+      }
+
+      // horizontal connector line
       &::after {
         content: "";
         height: 1px;
-        width: 100%;
+        left: $species-info-size / 2;
+        right: $species-info-size / 2;
+        bottom: $nub-size;
         position: absolute;
         background: grey;
       }
 
       >.tree-node {
+
+        // vertical descendant line
         &::after {
           content: "";
           width: 1px;
-          height: $generation-distance;
+          height: $generation-distance - $nub-size;
           position: absolute;
           background: grey;
           top: 100%;
@@ -53,12 +73,13 @@
     .species-info {
       border: 1px solid grey;
       border-radius: 100%;
-      width: 100px;
-      height: 100px;
+      width: $species-info-size;
+      height: $species-info-size;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      position: relative;
 
       img {
         height: 32px;
@@ -67,9 +88,19 @@
       }
 
       .species-info-name {
-        font-weight: bold;
+        font-style: italic;
+        font-size: 20px;
+        line-height: 24px;
         text-align: center;
+        background: none;
+        border: none;
       }
     }
   }
+}
+
+.trait-container {
+  background: white;
+  border-radius: 5px;
+  padding: 10px;
 }

@@ -76,6 +76,8 @@ export function emptyTraits(): Traits {
   };
 }
 
+export const TRAIT_NAMES = Object.keys(emptyTraits()) as TraitType[];
+
 /**
  * Mutates source.
  * @param source source

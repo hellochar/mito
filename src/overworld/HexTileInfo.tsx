@@ -29,7 +29,7 @@ function HexTileInfo({ tile, onClickPlay }: HexTileInfoProps) {
   ) : tile.info.height === -1 ? (
     <h1>Deep Water</h1>
   ) : (
-        <h1>Unexplored</h1>
+        <h1>Uninhabited</h1>
       );
 
   const stringifyInfo = { ...tile.info };
