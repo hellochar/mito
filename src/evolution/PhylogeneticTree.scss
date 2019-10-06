@@ -1,22 +1,26 @@
 .phylogenetic-tree {
   color: black;
   padding: 10px;
+  display: flex;
+  margin: auto;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
 
-  .tree-nodes {
+  .title {
     position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: bold;
+    color: #333333;
   }
 
   .tree-node {
     $generation-distance: 100px;
     $species-info-size: 100px;
-    $nub-size: 10px;
+    $nub-size: 50px;
 
     display: flex;
     flex-direction: column;
@@ -28,6 +32,7 @@
       display: flex;
       flex-wrap: nowrap;
       position: relative;
+      align-items: flex-end;
 
       // nub
       &::before {
@@ -42,19 +47,18 @@
 
       // horizontal connector line
       &::after {
-        content: "";
-        height: 1px;
-        left: $species-info-size / 2;
-        right: $species-info-size / 2;
-        bottom: $nub-size;
-        position: absolute;
-        background: grey;
+        // content: "";
+        // height: 1px;
+        // left: $species-info-size / 2;
+        // right: $species-info-size / 2;
+        // bottom: $nub-size;
+        // background: grey;
       }
 
       >.tree-node {
 
         // vertical descendant line
-        &::after {
+        &::before {
           content: "";
           width: 1px;
           height: $generation-distance - $nub-size;
@@ -64,9 +68,31 @@
           left: 50%;
         }
 
-        &~.tree-node {
-          margin-left: 20px;
+        &::after {
+          content: '';
+          position: absolute;
+          top: calc(100% + #{$generation-distance} - #{$nub-size});
+          border-bottom: 1px solid grey;
         }
+
+        // [connector] sibling-to-sibling:last-child
+        &:last-of-type::after {
+          width: 50%;
+          left: 0;
+        }
+
+        // [connector] sibling-to-sibling:first-child
+        &:first-of-type::after {
+          width: 50%;
+          right: 0;
+        }
+
+        // [connector] sibling-to-sibling:middle-child(ren)
+        &:not(:first-of-type):not(:last-of-type)::after {
+          width: 100%;
+        }
+
+        padding: 0 10px;
       }
     }
 
@@ -80,6 +106,9 @@
       justify-content: center;
       align-items: center;
       position: relative;
+      box-shadow: 0 4px 8px rgba(64, 64, 64, 0.2);
+      background: rgb(251, 254, 251);
+      cursor: pointer;
 
       img {
         height: 32px;

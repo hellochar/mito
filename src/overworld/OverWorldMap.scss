@@ -23,6 +23,8 @@
     top: 10px;
     background: rgba(255, 255, 255, 0.8);
     min-width: 200px;
+    max-width: 50vw;
+    overflow: hidden;
     animation: opacifyIn 0.2s both;
 
     @keyframes opacifyIn {

@@ -46,7 +46,7 @@ function TreeNode({ species }: { species: Species }) {
 function PhylogeneticTree({ rootSpecies }: PhylogeneticTreeProps) {
   return (
     <div className="phylogenetic-tree">
-      <h1>Phylogenetic Tree</h1>
+      <div className="title">Phylogenetic Tree</div>
       <div className="tree-nodes">
         <TreeNode species={rootSpecies} />
       </div>
