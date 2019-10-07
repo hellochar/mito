@@ -1,4 +1,5 @@
 import { Gene } from "./gene";
+import { mutateRandomNewGene } from "./mutation";
 
 export interface Species {
   name: string;
@@ -12,7 +13,7 @@ export interface Species {
 export function newBaseSpecies(name = "newBaseSpecies"): Species {
   return {
     name,
-    genes: [],
+    genes: [mutateRandomNewGene(), mutateRandomNewGene(), mutateRandomNewGene()],
     freeMutationPoints: 0,
     descendants: [],
   };

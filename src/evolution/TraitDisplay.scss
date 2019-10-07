@@ -1,0 +1,21 @@
+@import "../variables";
+
+.trait-display {
+  padding: 10px;
+
+  .uninteresting-traits {
+    color: #555555;
+  }
+
+  .expand {
+    color: #555555;
+  }
+
+  .green {
+    color: green;
+  }
+
+  .red {
+    color: red;
+  }
+}

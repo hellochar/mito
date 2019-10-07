@@ -1,3 +1,5 @@
+@import "../../../variables";
+
 $color-primary-0: #599532; // Main Primary color */
 $color-primary-1: #b3e095;
 $color-primary-2: #82bb5d;
@@ -16,7 +18,7 @@ $color-primary-4: #1d4b00;
     display: flex;
     flex-direction: column;
 
-    > * {
+    >* {
       animation: fadeIn 0.25s ease both;
 
       @for $i from 2 through 10 {
@@ -30,6 +32,7 @@ $color-primary-4: #1d4b00;
           opacity: 0;
           transform: translate(0, 50px) scale(0.5);
         }
+
         100% {
           opacity: 1;
           transform: translate(0, 0) scale(1);
@@ -39,14 +42,12 @@ $color-primary-4: #1d4b00;
   }
 
   &.won {
-    background: linear-gradient(
-      135deg,
-      $color-primary-0,
-      $color-primary-1,
-      $color-primary-2,
-      $color-primary-2,
-      $color-primary-2
-    );
+    background: linear-gradient(135deg,
+        $color-primary-0,
+        $color-primary-1,
+        $color-primary-2,
+        $color-primary-2,
+        $color-primary-2);
     // animation: gradientBG 15s ease infinite;
   }
 
@@ -66,32 +67,41 @@ $color-primary-4: #1d4b00;
         0% {
           transform: translate(-52vw, 0) scale(1);
         }
+
         100% {
           transform: translate(0, 0) scale(1);
         }
       }
+
       @keyframes dance {
         0% {
           transform: translateY(0);
         }
+
         2% {
           transform: translateY(-50px);
         }
+
         4% {
           transform: translateY(0);
         }
+
         6% {
           transform: translateY(-50px);
         }
+
         8% {
           transform: translateY(0);
         }
+
         10% {
           transform: translateY(-50px);
         }
+
         12% {
           transform: translateY(0);
         }
+
         100% {
           transform: translateY(0);
         }
@@ -113,7 +123,7 @@ $color-primary-4: #1d4b00;
   }
 
   h5 {
-    font-family: sans-serif;
+    font-family: $arial-family;
     font-weight: lighter;
     font-size: 1em;
     color: #444444;
@@ -158,9 +168,11 @@ $color-primary-4: #1d4b00;
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -189,20 +201,25 @@ $color-primary-4: #1d4b00;
     box-shadow: 0 0 15px yellow;
     animation: glow-grow 2s ease-out infinite;
   }
+
   &:after {
     animation-delay: 0.66s;
   }
+
   span {
     animation-delay: 1.33s;
   }
+
   @keyframes glow-grow {
     0% {
       opacity: 0;
       transform: scale(1);
     }
+
     80% {
       opacity: 1;
     }
+
     100% {
       transform: scale(2);
       opacity: 0;

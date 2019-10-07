@@ -109,7 +109,7 @@ export function getTraitInfluence(gene: Gene): TraitDiff {
     traitDiff[traitTypePlus] = 1;
   }
 
-  const traitTypeMinus = dnaPairToTraitType(gene[0]);
+  const traitTypeMinus = dnaPairToTraitType(gene[1]);
   if (traitTypeMinus != null) {
     traitDiff[traitTypeMinus] = -1;
   }

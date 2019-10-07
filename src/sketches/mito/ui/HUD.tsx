@@ -7,7 +7,6 @@ import CellBar from "./CellBar";
 import { TIME_PER_YEAR, Season } from "../game";
 
 import "./SeasonsTracker.scss";
-import { TraitType } from "../../../evolution/traits";
 import TraitDisplay from "../../../evolution/TraitDisplay";
 
 function BarMarker({ percent }: { percent: number }) {

@@ -22,7 +22,7 @@ class App extends React.PureComponent<{}, AppState> {
   constructor(props: {}) {
     super(props);
     const overWorld = OverWorld.generateRectangle(100, 50);
-    const activeLevel = overWorld.getStartTile();
+    // const activeLevel = overWorld.getStartTile();
     const rootSpecies = newBaseSpecies("plantum originus");
     rootSpecies.freeMutationPoints = 25;
     const s3 = newBaseSpecies("s3");

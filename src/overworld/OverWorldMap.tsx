@@ -7,7 +7,7 @@ import { OverWorld } from "./overWorld";
 
 import "./OverWorldMap.scss";
 import { Vector2 } from "three";
-import OverWorldModal from "./OverWorldModal";
+import OverWorldPopover from "./OverWorldPopover";
 import HexTileInfo from "./HexTileInfo";
 import PhylogeneticTree from "../evolution/PhylogeneticTree";
 import { Species } from "../evolution/species";
@@ -31,6 +31,7 @@ interface OverWorldMapState {
   pressedKeys: { [code: string]: boolean };
   highlightedTile?: HexTile;
   leftPanelOpen?: boolean;
+  activelyMutatingSpecies?: Species;
 }
 
 export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMapState> {
@@ -61,6 +62,12 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
         }
       }
     }
+  };
+
+  private handleStartMutate = (s: Species) => {
+    this.setState({
+      activelyMutatingSpecies: s
+    });
   };
 
   private onPlayLevel = (level: HexTile) => {
@@ -139,15 +146,15 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
   }
 
   componentDidMount() {
-    this.canvas!.addEventListener("keydown", this.handleKeyDown);
-    this.canvas!.addEventListener("keyup", this.handleKeyUp);
+    document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("keyup", this.handleKeyUp);
     window.addEventListener("resize", this.handleResize);
     this.rafId = requestAnimationFrame(this.updateCamera);
   }
 
   componentWillUnmount() {
-    this.canvas!.removeEventListener("keydown", this.handleKeyDown);
-    this.canvas!.removeEventListener("keyup", this.handleKeyUp);
+    document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener("keyup", this.handleKeyUp);
     window.removeEventListener("resize", this.handleResize);
     cancelAnimationFrame(this.rafId!);
   }
@@ -162,15 +169,20 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
         <canvas tabIndex={-1} ref={this.handleCanvasRef} onClick={this.handleCanvasClick} />
         {this.maybeRenderHighlightedTile()}
         {this.maybeRenderPhylogeneticTreePanel()}
+        {this.maybeRenderMutationModal()}
       </div>
     );
+  }
+
+  maybeRenderMutationModal() {
+
   }
 
   maybeRenderPhylogeneticTreePanel() {
     if (this.state.leftPanelOpen) {
       return (
         <div className="panel-left">
-          <PhylogeneticTree rootSpecies={this.props.rootSpecies} />
+          <PhylogeneticTree onMutate={this.handleStartMutate} rootSpecies={this.props.rootSpecies} />
         </div>
       );
     }
@@ -179,9 +191,9 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
   maybeRenderHighlightedTile() {
     if (this.state.highlightedTile != null) {
       return (
-        <OverWorldModal camera={this.state.cameraState} tile={this.state.highlightedTile}>
+        <OverWorldPopover camera={this.state.cameraState} tile={this.state.highlightedTile}>
           <HexTileInfo tile={this.state.highlightedTile} onClickPlay={this.onPlayLevel} />
-        </OverWorldModal>
+        </OverWorldPopover>
       );
     }
   }

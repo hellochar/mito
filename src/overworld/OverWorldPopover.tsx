@@ -4,15 +4,15 @@ import { CameraState } from "./OverWorldMap";
 import { HexTile } from "./hexTile";
 import { pixelPosition } from "./hexMath";
 
-import "./OverWorldModal.scss";
+import "./OverWorldPopover.scss";
 
-interface OverWorldModalProps {
+interface OverWorldPopoverProps {
   camera: CameraState;
   tile: HexTile;
   children: React.ReactNode;
 }
 
-function OverWorldModal({ tile, camera, children }: OverWorldModalProps) {
+function OverWorldPopover({ tile, camera, children }: OverWorldPopoverProps) {
   const [px, py] = pixelPosition(tile, camera);
   // this element is put in the center
   const container: React.CSSProperties = {
@@ -20,10 +20,10 @@ function OverWorldModal({ tile, camera, children }: OverWorldModalProps) {
     top: py,
   };
   return (
-    <div className="overworld-modal" style={container}>
-      <div className="overworld-modal-positioner">{children}</div>
+    <div className="overworld-popover" style={container}>
+      <div className="overworld-popover-positioner">{children}</div>
     </div>
   );
 }
 
-export default OverWorldModal;
+export default OverWorldPopover;

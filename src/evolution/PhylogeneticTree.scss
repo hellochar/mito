@@ -1,7 +1,7 @@
 $generation-distance: 100px;
 $species-info-size: 100px;
 $nub-size: 50px;
-$animation-distance: 10px;
+$animation-distance: 0px;
 
 .phylogenetic-tree {
   color: black;
@@ -20,6 +20,7 @@ $animation-distance: 10px;
     transform: translateX(-50%);
     font-weight: bold;
     color: #333333;
+    font-size: 1.5em;
   }
 
   .tree-node {
@@ -140,8 +141,67 @@ $animation-distance: 10px;
   }
 }
 
-.trait-container {
+.species-details-container {
   background: white;
   border-radius: 5px;
   padding: 10px;
+  box-shadow: 0 8px 8px rgba(64, 64, 64, 0.2);
+
+  .genes-to-traits {
+    display: flex;
+  }
+
+  .mutate-button {
+    width: 100%;
+    padding: 10px;
+    font-size: 24px;
+    background: purple;
+    border-radius: 5px;
+    border: 1px solid grey;
+    margin-top: 10px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .arrow {
+    margin: 30px;
+    font-size: 48px;
+    color: darken(purple, 5%);
+    align-self: center;
+    pointer-events: none;
+  }
+
+  .genes-details {
+    display: flex;
+    flex-direction: column;
+    width: 230px;
+
+    h3 {
+      margin-bottom: 10px;
+    }
+
+    .gene-display {
+      border: 1px solid rgba(64, 64, 64, 0.2);
+      border-radius: 10px;
+      height: 100%;
+      align-self: stretch;
+    }
+  }
+
+  .traits-details {
+    display: flex;
+    flex-direction: column;
+    width: 230px;
+
+    h3 {
+      margin-bottom: 10px;
+    }
+
+    .trait-display {
+      border: 1px solid rgba(64, 64, 64, 0.2);
+      border-radius: 10px;
+      height: 100%;
+      align-self: stretch;
+    }
+  }
 }

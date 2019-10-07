@@ -1,0 +1,30 @@
+@import "../variables";
+
+.gene-display {
+  .genes-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 225px;
+  }
+
+  .gene {
+    border: 1px solid lightgrey;
+    border-radius: 2px;
+    padding: 2px;
+    font-family: $arial-family;
+    width: 65px;
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .tuple-plus {
+      color: green;
+    }
+
+    .tuple-minus {
+      color: red;
+    }
+  }
+}

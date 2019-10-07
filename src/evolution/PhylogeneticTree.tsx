@@ -5,24 +5,45 @@ import { Species } from "./species";
 import Popover from "react-popover";
 import TraitDisplay from "./TraitDisplay";
 import { getTraits } from "./traits";
+import GeneDisplay from "./GeneDisplay";
 
 interface PhylogeneticTreeProps {
   rootSpecies: Species;
+  onMutate: (s: Species) => void;
 }
 
-function TreeNode({ species }: { species: Species }) {
+function SpeciesDetails({ species, onMutate }: { species: Species, onMutate: (species: Species) => void }) {
+  const traits = React.useMemo(() => {
+    return getTraits(species.genes);
+  }, [species.genes]);
+
+  return (
+    <div className="species-details-container">
+      <div className="genes-to-traits">
+        <div className="genes-details">
+          <h3>Genes</h3>
+          <GeneDisplay genes={species.genes} mutationPoints={species.freeMutationPoints} />
+        </div>
+        <div className="arrow">⇒</div>
+        <div className="traits-details">
+          <h3>Traits</h3>
+          <TraitDisplay traits={traits} />
+        </div>
+      </div>
+      <button className="mutate-button" onClick={() => onMutate(species)}>Mutate</button>
+    </div>
+  );
+}
+
+function TreeNode({ species, onMutate }: { species: Species, onMutate: (m: Species) => void }) {
   const [popoverIsOpen, setPopoverIsOpen] = React.useState(false);
 
   const descendants = species.descendants.length > 0
     ? (
       <div className="descendants-container">
-        {species.descendants.map((s) => <TreeNode species={s} />)}
+        {species.descendants.map((s, i) => <TreeNode key={i} species={s} onMutate={onMutate} />)}
       </div>
     ) : null;
-
-  const traits = React.useMemo(() => {
-    return getTraits(species.genes);
-  }, [species.genes]);
 
   return (
     <div className="tree-node">
@@ -31,7 +52,7 @@ function TreeNode({ species }: { species: Species }) {
         isOpen={popoverIsOpen}
         preferPlace="right"
         onOuterAction={() => setPopoverIsOpen(false)}
-        body={<div className="trait-container"><h3>Traits</h3><TraitDisplay traits={traits} /></div>}
+        body={<SpeciesDetails species={species} onMutate={onMutate} />}
       >
         <div className="species-info-animation">
           <div className="species-info" onClick={() => setPopoverIsOpen(!popoverIsOpen)}>
@@ -45,12 +66,12 @@ function TreeNode({ species }: { species: Species }) {
   );
 }
 
-function PhylogeneticTree({ rootSpecies }: PhylogeneticTreeProps) {
+function PhylogeneticTree({ rootSpecies, onMutate }: PhylogeneticTreeProps) {
   return (
     <div className="phylogenetic-tree">
       <div className="title">Phylogenetic Tree</div>
       <div className="tree-nodes">
-        <TreeNode species={rootSpecies} />
+        <TreeNode species={rootSpecies} onMutate={onMutate} />
       </div>
     </div>
   )

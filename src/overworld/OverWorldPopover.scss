@@ -1,9 +1,9 @@
-.overworld-modal {
+.overworld-popover {
   z-index: 1;
   position: absolute;
   display: flex;
 
-  .overworld-modal-positioner {
+  .overworld-popover-positioner {
     position: absolute;
     left: 20px;
     align-self: center;
