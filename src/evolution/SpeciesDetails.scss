@@ -1,0 +1,52 @@
+@import "../variables";
+
+.species-details-container {
+  display: flex;
+  justify-content: center;
+
+  .genes-to-traits {
+    display: flex;
+  }
+
+  .arrow {
+    margin: 30px;
+    font-size: 48px;
+    color: darken(purple, 5%);
+    align-self: center;
+    pointer-events: none;
+  }
+
+  .genes-details {
+    display: flex;
+    flex-direction: column;
+    width: 230px;
+
+    h3 {
+      margin-bottom: 10px;
+    }
+
+    .gene-display {
+      border: 1px solid rgba(64, 64, 64, 0.2);
+      border-radius: 10px;
+      height: 100%;
+      align-self: stretch;
+    }
+  }
+
+  .traits-details {
+    display: flex;
+    flex-direction: column;
+    width: 230px;
+
+    h3 {
+      margin-bottom: 10px;
+    }
+
+    .trait-display {
+      border: 1px solid rgba(64, 64, 64, 0.2);
+      border-radius: 10px;
+      height: 100%;
+      align-self: stretch;
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { scaleLinear } from "d3-scale";
 import React from "react";
+import Modal from "react-modal";
 
 import { HexTile } from "./hexTile";
 import { roundCubeCoordinates, pixelPosition } from "./hexMath";
@@ -11,6 +12,8 @@ import OverWorldPopover from "./OverWorldPopover";
 import HexTileInfo from "./HexTileInfo";
 import PhylogeneticTree from "../evolution/PhylogeneticTree";
 import { Species } from "../evolution/species";
+import GeneDisplay from "../evolution/GeneDisplay";
+import MutationScreen from "./MutationScreen";
 
 const C = Math.sqrt(3) / 2;
 
@@ -35,11 +38,16 @@ interface OverWorldMapState {
 }
 
 export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMapState> {
-  state: OverWorldMapState = {
-    cameraState: { scale: 48, dX: 0, dY: 0 },
-    pressedKeys: {},
-    leftPanelOpen: true,
-  };
+
+  constructor(props: OverWorldMapProps) {
+    super(props);
+    this.state = {
+      cameraState: { scale: 48, dX: 0, dY: 0 },
+      pressedKeys: {},
+      leftPanelOpen: true,
+      activelyMutatingSpecies: props.rootSpecies,
+    };
+  }
 
   private canvas: HTMLCanvasElement | null = null;
   private rafId?: number;
@@ -175,7 +183,18 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
   }
 
   maybeRenderMutationModal() {
-
+    const maybeMutationScreen = this.state.activelyMutatingSpecies != null ? (
+      <MutationScreen species={this.state.activelyMutatingSpecies} />
+    ) : null;
+    return (
+      <Modal
+        isOpen={this.state.activelyMutatingSpecies != null}
+        onRequestClose={() => this.setState({ activelyMutatingSpecies: undefined })}
+        className="mutation-screen-portal"
+      >
+        {maybeMutationScreen}
+      </Modal>
+    );
   }
 
   maybeRenderPhylogeneticTreePanel() {
