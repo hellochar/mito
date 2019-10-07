@@ -1,0 +1,16 @@
+.character {
+  flex-shrink: 0;
+  image-rendering: pixelated;
+
+  &.small {
+    height: 32px;
+  }
+
+  &.medium {
+    height: 64px;
+  }
+
+  &.large {
+    height: 72px;
+  }
+}

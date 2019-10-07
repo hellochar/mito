@@ -59,8 +59,6 @@ $color-primary-4: #1d4b00;
     animation: none !important;
 
     .character {
-      height: 72px;
-      image-rendering: pixelated;
       animation: walkIn 2s ease-in-out, dance 6s 2s ease infinite;
 
       @keyframes walkIn {

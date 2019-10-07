@@ -1,11 +1,17 @@
-  .purple-button {
-    width: 100%;
-    padding: 10px;
-    font-size: 24px;
-    background: purple;
-    border-radius: 5px;
-    border: 1px solid grey;
-    margin-top: 10px;
-    color: white;
-    cursor: pointer;
+@import "../variables";
+
+.purple-button {
+  width: 100%;
+  padding: 10px;
+  font-size: 24px;
+  background: purple;
+  border-radius: 5px;
+  border: 1px solid grey;
+  margin-top: 10px;
+  color: white;
+  cursor: pointer;
+
+  &:disabled {
+    background: $gray3;
   }
+}

@@ -1,30 +1,38 @@
 @import "../variables";
 
-.gene-display {
-  .genes-container {
-    display: flex;
-    flex-wrap: wrap;
-    width: 225px;
+.genes-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 225px;
+}
+
+.gene {
+  user-select: none;
+  border: 1px solid lightgrey;
+  border-radius: 2px;
+  padding: 2px;
+  // font-family: $arial-family;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 1px;
+  // font-family: $georgia-family;
+  // text-transform: lowercase;
+  font-weight: bold;
+  width: 65px;
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .tuple-plus {
+    color: green;
   }
 
-  .gene {
-    border: 1px solid lightgrey;
-    border-radius: 2px;
-    padding: 2px;
-    font-family: $arial-family;
-    width: 65px;
-    margin: 5px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  .tuple-minus {
+    color: red;
+  }
 
-    .tuple-plus {
-      color: green;
-    }
-
-    .tuple-minus {
-      color: red;
-    }
+  .dna {
+    display: inline-block;
   }
 }

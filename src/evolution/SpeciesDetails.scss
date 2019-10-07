@@ -1,52 +1,53 @@
 @import "../variables";
 
-.species-details-container {
+.species-details {
   display: flex;
   justify-content: center;
+  flex-direction: column;
+}
 
-  .genes-to-traits {
-    display: flex;
+.genes-to-traits {
+  display: flex;
+}
+
+.arrow {
+  margin: 30px;
+  font-size: 48px;
+  color: darken(purple, 5%);
+  align-self: center;
+  pointer-events: none;
+}
+
+.genes-details {
+  display: flex;
+  flex-direction: column;
+  width: 230px;
+
+  h3 {
+    margin-bottom: 10px;
   }
 
-  .arrow {
-    margin: 30px;
-    font-size: 48px;
-    color: darken(purple, 5%);
-    align-self: center;
-    pointer-events: none;
+  .gene-display {
+    border: 1px solid rgba(64, 64, 64, 0.2);
+    border-radius: 10px;
+    height: 100%;
+    align-self: stretch;
+  }
+}
+
+.traits-details {
+  display: flex;
+  flex-direction: column;
+  width: 230px;
+
+  h3 {
+    margin-bottom: 10px;
   }
 
-  .genes-details {
-    display: flex;
-    flex-direction: column;
-    width: 230px;
-
-    h3 {
-      margin-bottom: 10px;
-    }
-
-    .gene-display {
-      border: 1px solid rgba(64, 64, 64, 0.2);
-      border-radius: 10px;
-      height: 100%;
-      align-self: stretch;
-    }
-  }
-
-  .traits-details {
-    display: flex;
-    flex-direction: column;
-    width: 230px;
-
-    h3 {
-      margin-bottom: 10px;
-    }
-
-    .trait-display {
-      border: 1px solid rgba(64, 64, 64, 0.2);
-      border-radius: 10px;
-      height: 100%;
-      align-self: stretch;
-    }
+  .trait-display {
+    border: 1px solid rgba(64, 64, 64, 0.2);
+    border-radius: 10px;
+    height: 100%;
+    align-self: stretch;
   }
 }

@@ -4,6 +4,7 @@ import "./PhylogeneticTree.scss";
 import { Species } from "./species";
 import Popover from "react-popover";
 import SpeciesDetails from "./SpeciesDetails";
+import Character from "../common/Character";
 
 interface PhylogeneticTreeProps {
   rootSpecies: Species;
@@ -32,12 +33,12 @@ function TreeNode({ species, onMutate }: { species: Species, onMutate: (m: Speci
         isOpen={popoverIsOpen}
         preferPlace="right"
         onOuterAction={() => setPopoverIsOpen(false)}
-        body={<SpeciesDetails species={species} onMutate={handleOnMutate} />}
+        body={<SpeciesDetails species={species} onMutate={handleOnMutate} onClick={() => { }} />}
         className="species-detail-popover"
       >
         <div className="species-info-animation">
           <div className="species-info" onClick={() => setPopoverIsOpen(!popoverIsOpen)}>
-            <img src="/assets/images/character.png" alt="" />
+            <Character size="small" />
             <div className="species-info-name">{species.name}</div>
             <div>{species.freeMutationPoints} MP</div>
           </div>
