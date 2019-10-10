@@ -12,7 +12,6 @@ import OverWorldPopover from "./OverWorldPopover";
 import HexTileInfo from "./HexTileInfo";
 import PhylogeneticTree from "../evolution/PhylogeneticTree";
 import { Species } from "../evolution/species";
-import GeneDisplay from "../evolution/GeneDisplay";
 import MutationScreen from "./MutationScreen";
 
 const C = Math.sqrt(3) / 2;
@@ -75,6 +74,17 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
   private handleStartMutate = (s: Species) => {
     this.setState({
       activelyMutatingSpecies: s
+    });
+  };
+
+  private handleCommit = (newSpecies: Species) => {
+    if (this.state.activelyMutatingSpecies == null) {
+      throw new Error("created new species with no actively mutating one!");
+    }
+    this.state.activelyMutatingSpecies.descendants.push(newSpecies);
+    newSpecies.parent = this.state.activelyMutatingSpecies;
+    this.setState({
+      activelyMutatingSpecies: undefined,
     });
   };
 
@@ -184,10 +194,11 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
 
   maybeRenderMutationModal() {
     const maybeMutationScreen = this.state.activelyMutatingSpecies != null ? (
-      <MutationScreen species={this.state.activelyMutatingSpecies} />
+      <MutationScreen species={this.state.activelyMutatingSpecies} onCommit={this.handleCommit} />
     ) : null;
     return (
       <Modal
+        ariaHideApp={false}
         isOpen={this.state.activelyMutatingSpecies != null}
         onRequestClose={() => this.setState({ activelyMutatingSpecies: undefined })}
         className="mutation-screen-portal"

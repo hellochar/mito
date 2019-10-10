@@ -1,5 +1,5 @@
 import React from "react";
-import { Gene, DNATuple } from "./gene";
+import { Gene } from "./gene";
 import { dnaPairToTraitType } from "./traits";
 
 import "./GeneDisplay.scss";

@@ -4,6 +4,10 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
+
+  .button {
+    margin-top: 10px;
+  }
 }
 
 .genes-to-traits {

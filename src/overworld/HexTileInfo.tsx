@@ -4,6 +4,7 @@ import { HexTile } from "./hexTile";
 import Expand from "../common/Expand";
 
 import "./HexTileInfo.scss";
+import { Button } from "../evolution/Button";
 
 interface HexTileInfoProps {
   tile: HexTile;
@@ -19,9 +20,9 @@ function HexTileInfo({ tile, onClickPlay }: HexTileInfoProps) {
 
   const playButtonElement =
     (height === -1 || flora != null) ? null : (
-      <div className="play-button" onClick={handleClickPlay}>
+      <Button color="green" className="play-button" onClick={handleClickPlay}>
         Populate
-      </div>
+      </Button>
     );
 
   const header = flora != null ? (

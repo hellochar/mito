@@ -1,11 +1,11 @@
-import React, { HTMLProps } from "react";
+import React from "react";
 import { Species } from "./species";
 import TraitDisplay from "./TraitDisplay";
 import { getTraits } from "./traits";
 import GeneDisplay, { GeneDisplayProps } from "./GeneDisplay";
 
 import "./SpeciesDetails.scss";
-import { PurpleButton } from "./PurpleButton";
+import { Button } from "./Button";
 
 export interface SpeciesDetailsProps {
   species: Species;
@@ -31,7 +31,7 @@ function SpeciesDetails({ species, onClick, onMutate }: SpeciesDetailsProps) {
         <TraitDisplay traits={traits} />
       </div>
     </div>
-    {onMutate ? <PurpleButton onClick={() => onMutate(species)}>Mutate</PurpleButton> : null}
+    {onMutate ? <Button onClick={() => onMutate(species)}>Mutate</Button> : null}
   </div>);
 }
 

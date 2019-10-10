@@ -4,13 +4,13 @@ import { Species } from "../evolution/species";
 
 import "./MutationScreen.scss";
 import SpeciesDetails from "../evolution/SpeciesDetails";
-import { PurpleButton } from "../evolution/PurpleButton";
+import { Button } from "../evolution/Button";
 import { mutateRandomNewGene, mutatePosition, mutateSwapDNA } from "../evolution/mutation";
 import { Gene } from "../evolution/gene";
 import Character from "../common/Character";
 import classNames from "classnames";
 
-function MutationScreen({ species }: { species: Species }) {
+function MutationScreen({ species, onCommit }: { species: Species, onCommit: (newSpecies: Species) => void }) {
   const [pool, setPool] = React.useState(species.freeMutationPoints);
 
   const [newSpecies, setNewSpecies] = React.useState<Species>({
@@ -30,6 +30,8 @@ function MutationScreen({ species }: { species: Species }) {
   }
   type ClickMode = ClickModeSwap | ClickModeReroll | undefined;
   const [clickMode, setClickMode] = React.useState<ClickMode>();
+  const isSwapping = clickMode && clickMode.type === "swap";
+  const isRerolling = clickMode && clickMode.type === "reroll";
 
   const newGeneCost = newSpecies.genes.length + 1;
 
@@ -42,11 +44,19 @@ function MutationScreen({ species }: { species: Species }) {
   };
 
   const startSwapClickMode = () => {
-    setClickMode({ type: "swap" });
+    if (isSwapping) {
+      setClickMode(undefined);
+    } else {
+      setClickMode({ type: "swap" });
+    }
   };
 
   const startRerollClickMode = () => {
-    setClickMode({ type: "reroll" });
+    if (isRerolling) {
+      setClickMode(undefined);
+    } else {
+      setClickMode({ type: "reroll" });
+    }
   };
 
   function reroll(gene: Gene, position: number) {
@@ -80,6 +90,7 @@ function MutationScreen({ species }: { species: Species }) {
         genes: newGenes
       };
     });
+    setClickMode(undefined);
   }
 
   const handleGeneClick = (gene: Gene, position: number) => {
@@ -96,28 +107,48 @@ function MutationScreen({ species }: { species: Species }) {
     }
   };
 
-  const maybeClickInstructions = clickMode && (
-    clickMode.type === "swap" ? (
-      <div>
-        Click the two DNA you want to swap
-      </div>
-    ) : clickMode.type === "reroll" ? (
-      <div>
-        Click the DNA you want to reroll
-      </div>
-    ) : null
-  );
+  const handleNewSpeciesName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewSpecies(s => ({
+      ...s,
+      name: e.target.value,
+    }));
+  }
+
+  const handleCommit = () => {
+    onCommit(newSpecies);
+  };
+
+  const isGenesChanged = React.useMemo(() => {
+    const genes1 = species.genes;
+    const genes2 = newSpecies.genes;
+
+    const isDifferentLengths = genes1.length !== genes2.length;
+    return isDifferentLengths || genes1.some((_, i) => genes1[i] !== genes2[i]);
+  }, [newSpecies.genes, species.genes]);
 
   return (
     <div className={classNames("mutation-screen", { "click-mode-active": clickMode != null })}>
-      <h1>Mutating <Character size="medium" /><span className="name">{species.name}</span></h1>
-      <div className="pool">{pool}/{species.freeMutationPoints} MP</div>
-      {maybeClickInstructions}
-      <SpeciesDetails species={newSpecies} onClick={handleGeneClick} />
-      <div className="buttons">
-        <PurpleButton onClick={handleNewGene} disabled={pool < newGeneCost}>+ New Gene ({newGeneCost} MP)</PurpleButton>
-        <PurpleButton onClick={startSwapClickMode} disabled={pool < 2}>Swap two DNA (2 MP)</PurpleButton>
-        <PurpleButton onClick={startRerollClickMode} disabled={pool < 1}>Re-roll Point (1 MP)</PurpleButton>
+      <div className="mutation-screen-content">
+        <h1><Character size="medium" /><span className="name">{species.name}</span></h1>
+
+        <div className="buttons">
+          <div className="pool">{pool}/{species.freeMutationPoints} MP</div>
+          <Button onClick={handleNewGene} disabled={pool < newGeneCost}>+ New Gene ({newGeneCost} MP)</Button>
+          <Button className={classNames({ "is-cancel": isSwapping })} onClick={startSwapClickMode} disabled={!isSwapping && pool < 2}>
+            {isSwapping ? "Cancel" : "Swap DNA (2 MP)"}
+          </Button>
+          <Button className={classNames({ "is-cancel": isRerolling })} onClick={startRerollClickMode} disabled={!isRerolling && pool < 1}>
+            {isRerolling ? "Cancel" : "Re-roll Point (1 MP)"}
+          </Button>
+        </div>
+        <SpeciesDetails species={newSpecies} onClick={handleGeneClick} />
+        {isGenesChanged ? (
+          <>
+            <div className="arrow">⇓</div>
+            <h1><Character size="medium" /><input type="text" className="name" value={newSpecies.name} onChange={handleNewSpeciesName} /></h1>
+            <Button className="commit" color="green" onClick={handleCommit}>Commit</Button>
+          </>
+        ) : null}
       </div>
     </div>
   );

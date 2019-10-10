@@ -1,0 +1,31 @@
+@import "../variables";
+
+.button {
+  width: 100%;
+  padding: 10px;
+  font-size: 24px;
+  border-radius: 5px;
+  border: 1px solid grey;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &.purple {
+    background: purple;
+    color: $light-gray5;
+  }
+
+  &.green {
+    background: darkgreen;
+    color: white;
+  }
+
+  &:disabled {
+    background: $gray3;
+  }
+}
+
+@media (max-width: 768px) {
+  .button {
+    font-size: 16px;
+  }
+}

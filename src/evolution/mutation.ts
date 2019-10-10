@@ -22,7 +22,7 @@ export function mutateSwapDNA(gene1: Gene, position1: number, gene2: Gene, posit
 
 export function mutatePosition(gene: Gene, position: number): Gene {
   const geneStr = gene.join("");
-  const newGeneStr = geneStr.substr(0, position) + randomDNA() + geneStr.substr(position + 1);
+  const newGeneStr = geneStr.substr(0, position) + randomNewDNA(geneStr.charAt(position) as DNA) + geneStr.substr(position + 1);
   const newGene = strToGene(newGeneStr);
   return newGene;
 }
@@ -35,6 +35,14 @@ function randomDNATuple(): DNATuple {
   const dna1 = randomDNA();
   const dna2 = randomDNA();
   return (dna1 + dna2) as DNATuple;
+}
+
+function randomNewDNA(old: DNA) {
+  let d: DNA;
+  do {
+    d = randomDNA();
+  } while (d === old);
+  return d;
 }
 
 function randomDNA(): DNA {
