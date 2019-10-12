@@ -13,6 +13,8 @@ import HexTileInfo from "./HexTileInfo";
 import PhylogeneticTree from "../evolution/PhylogeneticTree";
 import { Species } from "../evolution/species";
 import MutationScreen from "../evolution/MutationScreen";
+import { GiFamilyTree } from "react-icons/gi";
+import classNames from "classnames";
 
 const C = Math.sqrt(3) / 2;
 
@@ -94,12 +96,16 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     this.props.onPlayLevel(level);
   };
 
+  private toggleLeftPanelOpen = () => {
+    this.setState({
+      leftPanelOpen: !this.state.leftPanelOpen
+    });
+  };
+
   private handleKeyDown = (e: KeyboardEvent) => {
     if (!e.repeat) {
       if (e.code === "Tab") {
-        this.setState({
-          leftPanelOpen: !this.state.leftPanelOpen
-        });
+        this.toggleLeftPanelOpen();
         e.preventDefault();
       }
       const newPressedKeys = { ...this.state.pressedKeys, [e.code]: true };
@@ -211,14 +217,14 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
   }
 
   maybeRenderPhylogeneticTreePanel() {
-    if (this.state.leftPanelOpen) {
-      return (
-        <div className="panel-left">
+    return (
+      <div className={classNames("panel-left", { open: this.state.leftPanelOpen })}>
+        {this.state.leftPanelOpen ? (
           <PhylogeneticTree onMutate={this.handleStartMutate} rootSpecies={this.props.rootSpecies} />
-          <div className="panel-left-handle">Open/Close</div>
-        </div>
-      );
-    }
+        ) : null}
+        <button className="panel-left-handle" onClick={this.toggleLeftPanelOpen}><GiFamilyTree className="icon" /></button>
+      </div>
+    );
   }
 
   maybeRenderHighlightedTile() {

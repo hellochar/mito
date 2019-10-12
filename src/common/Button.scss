@@ -11,6 +11,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  transition: all 0.2s;
+
+  &:not(:disabled) {
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &:active {
+      left: 2px;
+      top: 2px;
+    }
+  }
 
   &.purple {
     background: purple;
@@ -24,6 +37,19 @@
 
   &:disabled {
     background: $gray3;
+
+    // special handling for MP
+    .mp .mp-icon {
+      background: $gray3;
+    }
+  }
+
+  .mp .mp-icon {
+    padding: 0.1em;
+    width: 1em;
+    height: 1em;
+    margin-left: 0;
+    margin-right: -0.2em;
   }
 }
 

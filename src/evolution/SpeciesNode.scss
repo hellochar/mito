@@ -1,0 +1,134 @@
+@import "../variables";
+
+$generation-distance: 100px;
+$species-info-size: 100px;
+$nub-size: 50px;
+$animation-distance: 8px;
+
+.species-node {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
+
+  .descendants-container {
+    padding-bottom: $generation-distance;
+    display: flex;
+    flex-wrap: nowrap;
+    position: relative;
+    align-items: flex-end;
+
+    // nub
+    &::before {
+      content: "";
+      height: $nub-size + $animation-distance;
+      width: 1px;
+      position: absolute;
+      left: 50%;
+      background: gray;
+      bottom: -$animation-distance;
+    }
+
+    >.species-node {
+
+      // vertical descendant line
+      &::before {
+        content: "";
+        width: 1px;
+        height: $generation-distance - $nub-size + $animation-distance;
+        position: absolute;
+        background: grey;
+        top: calc(100% - #{$animation-distance});
+        left: 50%;
+      }
+
+
+      // horizontal connector
+      &::after {
+        content: '';
+        position: absolute;
+        top: calc(100% + #{$generation-distance} - #{$nub-size});
+        border-bottom: 1px solid grey;
+      }
+
+      // [connector] sibling-to-sibling:last-child
+      &:last-of-type::after {
+        width: 50%;
+        left: 0;
+      }
+
+      // [connector] sibling-to-sibling:first-child
+      &:first-of-type::after {
+        width: 50%;
+        right: 0;
+      }
+
+      // [connector] sibling-to-sibling:middle-child(ren)
+      &:not(:first-of-type):not(:last-of-type)::after {
+        width: 100%;
+      }
+
+      padding: 0 10px;
+    }
+  }
+
+  .species-info-animation {
+    animation: floatAround 2s ease-in-out alternate infinite;
+
+    @keyframes floatAround {
+      from {
+        transform: translateY(-$animation-distance / 2);
+      }
+
+      to {
+        transform: translateY($animation-distance / 2);
+      }
+    }
+  }
+
+  .species-info {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: $species-info-size;
+    height: $species-info-size;
+    background: rgb(251, 254, 251);
+    border: 1px solid grey;
+    border-radius: 100%;
+    box-shadow: 2px 4px 6px 2px rgba(64, 64, 64, 0.2);
+    cursor: pointer;
+    transition: all 0.1s;
+    user-select: none;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &:active {
+      left: 2px;
+      top: 2px;
+      box-shadow: none;
+    }
+
+    .species-info-name {
+      font-style: italic;
+      font-size: 20px;
+      line-height: 24px;
+      text-align: center;
+      background: none;
+      border: none;
+      white-space: nowrap;
+      position: absolute;
+      bottom: 100%;
+    }
+  }
+}
+
+.species-detail-popover {
+  background: white;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 8px 8px rgba(64, 64, 64, 0.2);
+}

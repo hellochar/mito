@@ -2,8 +2,12 @@
   flex-shrink: 0;
   image-rendering: pixelated;
 
-  &.small {
+  &.xs {
     height: 32px;
+  }
+
+  &.small {
+    height: 48px;
   }
 
   &.medium {

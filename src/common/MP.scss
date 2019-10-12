@@ -5,13 +5,13 @@
   align-items: center;
 
   .mp-icon {
+    // border-radius: 2px;
     border-radius: 100%;
-    box-shadow: 0 0 1px 1px $violet4;
     background: purple;
+    padding: 0.25em;
+    width: calc(1em + 0.5em);
+    height: calc(1em + 0.5em);
     fill: white;
     margin-left: 0.2em;
-    padding: 2px;
-    width: calc(1em + 4px);
-    height: calc(1em + 4px);
   }
 }

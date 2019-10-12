@@ -134,11 +134,26 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
 
         <div className="buttons">
           <MP className="pool" amount={pool} total={species.freeMutationPoints} />
-          <Button onClick={handleNewGene} disabled={pool < newGeneCost}>New Gene (<MP amount={newGeneCost} />)</Button>
-          <Button className={classNames({ "is-cancel": isSwapping })} onClick={startSwapClickMode} disabled={!isSwapping && pool < 2}>
+          <Button
+            onClick={handleNewGene}
+            disabled={pool < newGeneCost}
+          >
+            New Gene (<MP amount={newGeneCost} />)
+          </Button>
+
+          <Button
+            className={classNames({ "is-cancel": isSwapping })}
+            onClick={startSwapClickMode}
+            disabled={(!isSwapping && pool < 2) || newSpecies.genes.length === 0}
+          >
             {isSwapping ? "Cancel" : <>Swap DNA (<MP amount={2} />)</>}
           </Button>
-          <Button className={classNames({ "is-cancel": isRerolling })} onClick={startRerollClickMode} disabled={!isRerolling && pool < 1}>
+
+          <Button
+            className={classNames({ "is-cancel": isRerolling })}
+            onClick={startRerollClickMode}
+            disabled={(!isRerolling && pool < 1) || newSpecies.genes.length === 0}
+          >
             {isRerolling ? "Cancel" : <>Re-roll DNA (<MP amount={1} />)</>}
           </Button>
         </div>

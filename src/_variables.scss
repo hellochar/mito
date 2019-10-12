@@ -1,6 +1,17 @@
-$palatino-family: Palatino, Palatino Linotype, Palatino LT STD, Book Antiqua, serif;
-$georgia-family: Georgia, Cambria, "Times New Roman", Times, serif;
-$arial-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+$palatino-family: Palatino,
+Palatino Linotype,
+Palatino LT STD,
+Book Antiqua,
+serif;
+$georgia-family: Georgia,
+Cambria,
+"Times New Roman",
+Times,
+serif;
+$arial-family: Arial,
+Helvetica Neue,
+Helvetica,
+sans-serif;
 
 $black: #10161a !default;
 
@@ -111,3 +122,27 @@ $sepia2: #7d5125 !default;
 $sepia3: #96622d !default;
 $sepia4: #b07b46 !default;
 $sepia5: #c99765 !default;
+
+@keyframes opacifyAndSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-80px) scale(0.75);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes opacifyIn {
+  from {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -36,6 +36,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  animation: opacifyIn 0.2s both;
 
   .tuple-plus {
     color: $green2;

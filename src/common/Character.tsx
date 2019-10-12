@@ -3,7 +3,7 @@ import React from "react";
 
 import "./Character.scss";
 
-function Character(props: JSX.IntrinsicElements["img"] & { size?: "small" | "medium" | "large" }) {
+function Character(props: JSX.IntrinsicElements["img"] & { size?: "xs" | "small" | "medium" | "large" }) {
   const { size, ...otherProps } = props;
   return (
     <img
