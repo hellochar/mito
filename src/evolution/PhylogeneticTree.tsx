@@ -5,6 +5,7 @@ import { Species } from "./species";
 import Popover from "react-popover";
 import SpeciesDetails from "./SpeciesDetails";
 import Character from "../common/Character";
+import MP from "../common/MP";
 
 interface PhylogeneticTreeProps {
   rootSpecies: Species;
@@ -26,6 +27,12 @@ function TreeNode({ species, onMutate }: { species: Species, onMutate: (m: Speci
       </div>
     ) : null;
 
+  const popoverBody = (
+    <div className="species-detail-popover">
+      <SpeciesDetails species={species} onMutate={handleOnMutate} onClick={() => { }} />
+    </div>
+  );
+
   return (
     <div className="tree-node">
       {descendants}
@@ -33,15 +40,14 @@ function TreeNode({ species, onMutate }: { species: Species, onMutate: (m: Speci
         isOpen={popoverIsOpen}
         preferPlace="right"
         onOuterAction={() => setPopoverIsOpen(false)}
-        body={<SpeciesDetails species={species} onMutate={handleOnMutate} onClick={() => { }} />}
-        className="species-detail-popover"
+        body={popoverBody}
       >
-        <div className="species-info-animation">
-          <div className="species-info" onClick={() => setPopoverIsOpen(!popoverIsOpen)}>
-            <Character size="small" />
-            <div className="species-info-name">{species.name}</div>
-            <div>{species.freeMutationPoints} MP</div>
+        <div className="species-info" onClick={() => setPopoverIsOpen(!popoverIsOpen)}>
+          <div className="species-info-name">{species.name}</div>
+          <div className="species-info-animation">
+            <Character size="large" />
           </div>
+          <MP amount={species.freeMutationPoints} />
         </div>
       </Popover>
     </div>

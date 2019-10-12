@@ -20,7 +20,7 @@
 
   h1 {
     text-align: center;
-    margin-top: 40px;
+    margin-top: 20px;
     margin-bottom: 20px;
 
     .character {
@@ -53,7 +53,7 @@
 
   .buttons {
     display: flex;
-    margin: 30px 0 20px;
+    margin-bottom: 20px;
 
     .button.is-cancel {
       background: $light-gray1;

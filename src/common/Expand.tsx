@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 
 import "./Expand.scss";
+import classNames from "classnames";
 
 interface ExpandProps {
+  className?: string;
   children: React.ReactNode;
   shrunkElements: React.ReactNode;
 }
 
-function Expand({ children, shrunkElements }: ExpandProps) {
+function Expand({ className, children, shrunkElements }: ExpandProps) {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
@@ -15,7 +17,7 @@ function Expand({ children, shrunkElements }: ExpandProps) {
   };
 
   return (
-    <div className="expand">
+    <div className={classNames(className, "expand")}>
       <div className="expand-button" onClick={handleExpandClick}>
         {shrunkElements}
         <div className="expand-caret">{expanded ? "▼" : "▶"}</div>

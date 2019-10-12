@@ -28,13 +28,20 @@ export interface GeneDisplayProps {
 }
 
 function GeneDisplay({ genes, onClick }: GeneDisplayProps) {
+  const geneContent = genes.length > 0 ? (
+    <div className="genes-container">
+      {genes.map((gene, i) => (
+        <GeneComponent key={i} gene={gene} onClick={(p) => onClick(gene, p)} />
+      ))}
+    </div>
+  ) : (
+      <div className="genes-empty">
+        No genes.
+      </div>
+    );
   return (
     <div className="gene-display">
-      <div className="genes-container">
-        {genes.map((gene, i) => (
-          <GeneComponent key={i} gene={gene} onClick={(p) => onClick(gene, p)} />
-        ))}
-      </div>
+      {geneContent}
     </div>
   )
 }

@@ -1,16 +1,17 @@
 import React from "react";
 
-import { Species } from "../evolution/species";
+import { Species } from "./species";
 
 import "./MutationScreen.scss";
-import SpeciesDetails from "../evolution/SpeciesDetails";
-import { Button } from "../evolution/Button";
-import { mutateRandomNewGene, mutatePosition, mutateSwapDNA } from "../evolution/mutation";
-import { Gene } from "../evolution/gene";
+import { Button } from "../common/Button";
+import { mutateRandomNewGene, mutatePosition, mutateSwapDNA } from "./mutation";
+import { Gene } from "./gene";
 import Character from "../common/Character";
 import classNames from "classnames";
+import MP from "../common/MP";
+import GenesToTraits from "./GenesToTraits";
 
-function MutationScreen({ species, onCommit }: { species: Species, onCommit: (newSpecies: Species) => void }) {
+function MutationScreen({ species, onCommit }: { species: Species, onCommit: (newSpecies: Species, newPool: number) => void }) {
   const [pool, setPool] = React.useState(species.freeMutationPoints);
 
   const [newSpecies, setNewSpecies] = React.useState<Species>({
@@ -115,7 +116,7 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
   }
 
   const handleCommit = () => {
-    onCommit(newSpecies);
+    onCommit(newSpecies, pool);
   };
 
   const isGenesChanged = React.useMemo(() => {
@@ -132,16 +133,17 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
         <h1><Character size="medium" /><span className="name">{species.name}</span></h1>
 
         <div className="buttons">
-          <div className="pool">{pool}/{species.freeMutationPoints} MP</div>
-          <Button onClick={handleNewGene} disabled={pool < newGeneCost}>+ New Gene ({newGeneCost} MP)</Button>
+          <MP className="pool" amount={pool} total={species.freeMutationPoints} />
+          <Button onClick={handleNewGene} disabled={pool < newGeneCost}>New Gene (<MP amount={newGeneCost} />)</Button>
           <Button className={classNames({ "is-cancel": isSwapping })} onClick={startSwapClickMode} disabled={!isSwapping && pool < 2}>
-            {isSwapping ? "Cancel" : "Swap DNA (2 MP)"}
+            {isSwapping ? "Cancel" : <>Swap DNA (<MP amount={2} />)</>}
           </Button>
           <Button className={classNames({ "is-cancel": isRerolling })} onClick={startRerollClickMode} disabled={!isRerolling && pool < 1}>
-            {isRerolling ? "Cancel" : "Re-roll Point (1 MP)"}
+            {isRerolling ? "Cancel" : <>Re-roll DNA (<MP amount={1} />)</>}
           </Button>
         </div>
-        <SpeciesDetails species={newSpecies} onClick={handleGeneClick} />
+
+        <GenesToTraits genes={newSpecies.genes} onClick={handleGeneClick} />
         {isGenesChanged ? (
           <>
             <div className="arrow">⇓</div>

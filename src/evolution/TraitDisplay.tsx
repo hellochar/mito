@@ -1,44 +1,40 @@
 import React from "react";
 import classNames from "classnames";
 
-import { Traits, TRAIT_NAMES } from "./traits";
+import { Traits, TRAIT_TYPES, displayName } from "./traits";
 import Expand from "../common/Expand";
 
 import "./TraitDisplay.scss";
 
 function TraitDisplay({ traits }: { traits: Traits }) {
-  const interestingTraits = TRAIT_NAMES.filter((name) => traits[name] !== 0);
-  const restTraits = TRAIT_NAMES.filter((name) => traits[name] === 0);
-  const restTraitEls = restTraits.map((trait) => (
-    <div className="trait" key={trait}>
-      {trait}: {traits[trait]}
-    </div>
-  ));
-  let children: React.ReactNode;
-  if (interestingTraits.length > 0) {
-    interestingTraits.sort((a, b) => traits[b] - traits[a]);
-    children = <>
-      <div className="interesting-traits">
-        {interestingTraits.map((trait) => (
-          <div className={classNames("trait", { green: traits[trait] > 0, red: traits[trait] < 0 })} key={trait}>
-            {trait}: {traits[trait]}
-          </div>
-        ))}
+  const nonzeroTraits = TRAIT_TYPES.filter((name) => traits[name] !== 0);
+  nonzeroTraits.sort((a, b) => traits[b] - traits[a]);
+  const nonzeroTraitEl = nonzeroTraits.length > 0 ? (
+    <div className="interesting-traits">{nonzeroTraits.map((trait) => (
+      <div className={classNames("trait", { green: traits[trait] > 0, red: traits[trait] < 0 })} key={trait}>
+        {displayName(trait)}: {traits[trait]}
       </div>
-      <Expand shrunkElements={<div className="expand">All Traits</div>}>
-        <div className="uninteresting-traits">
-          {restTraitEls}
+    ))}</div>
+  ) : (
+      <div className="no-interesting-traits">All traits are zero.</div>
+    );
+
+  const zeroTraits = TRAIT_TYPES.filter((name) => traits[name] === 0);
+  const zeroTraitEl = (
+    <div className="zero-traits">
+      {zeroTraits.map((trait) => (
+        <div className="trait" key={trait}>
+          {displayName(trait)}: {traits[trait]}
         </div>
-      </Expand>
-    </>
-  } else {
-    children = <div className="all-traits">
-      {restTraitEls}
+      ))}
     </div>
-  }
+  );
   return (
     <div className="trait-display">
-      {children}
+      {nonzeroTraitEl}
+      <Expand shrunkElements={<div className="expand-toggle">Show All</div>}>
+        {zeroTraitEl}
+      </Expand>
     </div>
   );
 }

@@ -4,7 +4,8 @@ import { HexTile } from "./hexTile";
 import Expand from "../common/Expand";
 
 import "./HexTileInfo.scss";
-import { Button } from "../evolution/Button";
+import { Button } from "../common/Button";
+import MP from "../common/MP";
 
 interface HexTileInfoProps {
   tile: HexTile;
@@ -26,7 +27,7 @@ function HexTileInfo({ tile, onClickPlay }: HexTileInfoProps) {
     );
 
   const header = flora != null ? (
-    <h1>Inhabited by {flora.species}<small>{flora.mutationPointsPerEpoch} MP / epoch</small></h1>
+    <h1>Inhabited by {flora.species}<small><MP amount={flora.mutationPointsPerEpoch} /> per epoch</small></h1>
   ) : tile.info.height === -1 ? (
     <h1>Deep Water</h1>
   ) : (

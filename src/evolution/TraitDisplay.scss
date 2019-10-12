@@ -3,19 +3,26 @@
 .trait-display {
   padding: 10px;
 
-  .uninteresting-traits {
-    color: #555555;
+  .no-interesting-traits {
+    color: $gray1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .expand {
-    color: #555555;
+  .zero-traits {
+    color: $gray3;
+  }
+
+  .expand-toggle {
+    color: $gray3;
   }
 
   .green {
-    color: green;
+    color: $green2;
   }
 
   .red {
-    color: red;
+    color: $red3;
   }
 }

@@ -1,7 +1,7 @@
 $generation-distance: 100px;
 $species-info-size: 100px;
 $nub-size: 50px;
-$animation-distance: 0px;
+$animation-distance: 8px;
 
 .phylogenetic-tree {
   color: black;
@@ -21,6 +21,12 @@ $animation-distance: 0px;
     font-weight: bold;
     color: #333333;
     font-size: 1.5em;
+    width: 100%;
+    text-align: center;
+  }
+
+  .tree-nodes {
+    margin: auto;
   }
 
   .tree-node {
@@ -105,17 +111,17 @@ $animation-distance: 0px;
     }
 
     .species-info {
-      border: 1px solid grey;
-      border-radius: 100%;
-      width: $species-info-size;
-      height: $species-info-size;
+      position: relative;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      position: relative;
-      box-shadow: 0 4px 8px rgba(64, 64, 64, 0.2);
+      width: $species-info-size;
+      height: $species-info-size;
       background: rgb(251, 254, 251);
+      border: 1px solid grey;
+      border-radius: 100%;
+      box-shadow: 2px 4px 6px 2px rgba(64, 64, 64, 0.2);
       cursor: pointer;
       transition: all 0.1s;
 
@@ -130,6 +136,9 @@ $animation-distance: 0px;
         text-align: center;
         background: none;
         border: none;
+        white-space: nowrap;
+        position: absolute;
+        bottom: 100%;
       }
     }
   }

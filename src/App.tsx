@@ -25,11 +25,11 @@ class App extends React.PureComponent<{}, AppState> {
     // const activeLevel = overWorld.getStartTile();
     const rootSpecies = newBaseSpecies("plantum originus");
     rootSpecies.freeMutationPoints = 25;
-    const s3 = newBaseSpecies("s3");
-    s3.descendants = [newBaseSpecies("ya"), newBaseSpecies("no"), newBaseSpecies("whoa")];
-    let s: Species;
-    rootSpecies.descendants = [s = newBaseSpecies("foo"), newBaseSpecies("bar"), s3];
-    s.descendants = [newBaseSpecies("1"), newBaseSpecies("2")]
+    // const s3 = newBaseSpecies("s3");
+    // s3.descendants = [newBaseSpecies("ya"), newBaseSpecies("no"), newBaseSpecies("whoa")];
+    // let s: Species;
+    // rootSpecies.descendants = [s = newBaseSpecies("foo"), newBaseSpecies("bar"), s3];
+    // s.descendants = [newBaseSpecies("1"), newBaseSpecies("2")]
     this.state = {
       overWorld,
       activeLevel: undefined,

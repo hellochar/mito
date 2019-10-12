@@ -1,5 +1,18 @@
 @import "../variables";
 
+.gene-display {
+  position: relative;
+}
+
+.genes-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  color: $gray1;
+}
+
 .genes-container {
   display: flex;
   flex-wrap: wrap;
@@ -25,11 +38,11 @@
   align-items: center;
 
   .tuple-plus {
-    color: green;
+    color: $green2;
   }
 
   .tuple-minus {
-    color: red;
+    color: $red3;
   }
 
   .dna {

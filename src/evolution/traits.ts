@@ -1,4 +1,5 @@
 import { Gene, DNATuple } from "./gene";
+import capitalize from "../common/capitalize";
 
 export type TraitValue = -3 | -2 | -1 | 0 | 1 | 2 | 3;
 
@@ -76,7 +77,16 @@ export function emptyTraits(): Traits {
   };
 }
 
-export const TRAIT_NAMES = Object.keys(emptyTraits()) as TraitType[];
+export const TRAIT_TYPES = Object.keys(emptyTraits()) as TraitType[];
+
+export function displayName(trait: TraitType) {
+  const splits = trait.split(/([A-Z])+/g);
+  let displayName = capitalize(splits[0]);
+  for (let i = 1; i < splits.length; i += 2) {
+    displayName += " " + splits[i] + splits[i + 1];
+  }
+  return displayName;
+}
 
 /**
  * Mutates source.

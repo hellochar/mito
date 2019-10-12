@@ -8,6 +8,7 @@ import { TIME_PER_YEAR, Season } from "../game";
 
 import "./SeasonsTracker.scss";
 import TraitDisplay from "../../../evolution/TraitDisplay";
+import capitalize from "../../../common/capitalize";
 
 function BarMarker({ percent }: { percent: number }) {
   const style = {
@@ -21,10 +22,6 @@ function SeasonBead({ percent }: { percent: number }) {
     left: `${(percent * 100).toFixed(2)}%`,
   };
   return <div className="season-bead" style={style} />;
-}
-
-function capitalize(s: String) {
-  return s.substr(0, 1).toLocaleUpperCase() + s.substr(1);
 }
 
 function SeasonsTracker({ time, season }: { time: number; season: Season }) {

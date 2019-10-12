@@ -12,7 +12,7 @@ import OverWorldPopover from "./OverWorldPopover";
 import HexTileInfo from "./HexTileInfo";
 import PhylogeneticTree from "../evolution/PhylogeneticTree";
 import { Species } from "../evolution/species";
-import MutationScreen from "./MutationScreen";
+import MutationScreen from "../evolution/MutationScreen";
 
 const C = Math.sqrt(3) / 2;
 
@@ -44,7 +44,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
       cameraState: { scale: 48, dX: 0, dY: 0 },
       pressedKeys: {},
       leftPanelOpen: true,
-      activelyMutatingSpecies: props.rootSpecies,
+      // activelyMutatingSpecies: props.rootSpecies,
     };
   }
 
@@ -77,11 +77,13 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     });
   };
 
-  private handleCommit = (newSpecies: Species) => {
+  private handleCommit = (newSpecies: Species, newPool: number) => {
     if (this.state.activelyMutatingSpecies == null) {
       throw new Error("created new species with no actively mutating one!");
     }
     this.state.activelyMutatingSpecies.descendants.push(newSpecies);
+    // eslint-disable-next-line react/no-direct-mutation-state
+    this.state.activelyMutatingSpecies.freeMutationPoints = newPool;
     newSpecies.parent = this.state.activelyMutatingSpecies;
     this.setState({
       activelyMutatingSpecies: undefined,
@@ -213,6 +215,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
       return (
         <div className="panel-left">
           <PhylogeneticTree onMutate={this.handleStartMutate} rootSpecies={this.props.rootSpecies} />
+          <div className="panel-left-handle">Open/Close</div>
         </div>
       );
     }

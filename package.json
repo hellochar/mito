@@ -40,6 +40,7 @@
     "react-scripts": "3.0.1",
     "reselect": "^4.0.0",
     "simplex-noise": "^2.4.0",
+    "string.prototype.matchall": "^4.0.0",
     "three": "^0.104.0",
     "typescript": "3.6.3"
   },
