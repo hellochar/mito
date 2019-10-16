@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/mito/static/css/main.ffe46deb.chunk.css",
-    "main.js": "/mito/static/js/main.545f5fac.chunk.js",
-    "main.js.map": "/mito/static/js/main.545f5fac.chunk.js.map",
+    "main.css": "/mito/static/css/main.2530ded3.chunk.css",
+    "main.js": "/mito/static/js/main.3448287a.chunk.js",
+    "main.js.map": "/mito/static/js/main.3448287a.chunk.js.map",
     "runtime~main.js": "/mito/static/js/runtime~main.b6c7ce18.js",
     "runtime~main.js.map": "/mito/static/js/runtime~main.b6c7ce18.js.map",
-    "static/js/2.eee3e94c.chunk.js": "/mito/static/js/2.eee3e94c.chunk.js",
-    "static/js/2.eee3e94c.chunk.js.map": "/mito/static/js/2.eee3e94c.chunk.js.map",
+    "static/js/2.ed2fbcca.chunk.js": "/mito/static/js/2.ed2fbcca.chunk.js",
+    "static/js/2.ed2fbcca.chunk.js.map": "/mito/static/js/2.ed2fbcca.chunk.js.map",
     "index.html": "/mito/index.html",
-    "precache-manifest.49bde946e4a4342f6d347d3f14baad19.js": "/mito/precache-manifest.49bde946e4a4342f6d347d3f14baad19.js",
+    "precache-manifest.14a8bfc1223738584bdddaa012f3ecab.js": "/mito/precache-manifest.14a8bfc1223738584bdddaa012f3ecab.js",
     "service-worker.js": "/mito/service-worker.js",
-    "static/css/main.ffe46deb.chunk.css.map": "/mito/static/css/main.ffe46deb.chunk.css.map"
+    "static/css/main.2530ded3.chunk.css.map": "/mito/static/css/main.2530ded3.chunk.css.map"
   }
 }
