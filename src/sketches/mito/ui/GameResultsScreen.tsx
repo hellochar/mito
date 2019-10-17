@@ -6,6 +6,8 @@ import { Fruit } from "../game/tile";
 import "./GameResultsScreen.scss";
 import Character from "../../../common/Character";
 
+import fruitSrc from "assets/images/fruit.png";
+
 function Glow() {
   return (
     <div className="glow">
@@ -24,7 +26,7 @@ function FruitInfo({ fruit }: { fruit: Fruit }) {
     <div className="fruit-info">
       <div className="fruit-visual">
         {fruit.isMature() ? <Glow /> : null}
-        <img alt="" src="assets/images/fruit.png" />
+        <img alt="" src={fruitSrc} />
       </div>
       {fruit.isMature() ? (
         <>
