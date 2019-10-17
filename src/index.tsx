@@ -5,6 +5,8 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
+import 'react-dropdown/style.css'
+
 import "./index.scss";
 import { TestWinScreen } from "./tests/TestWinScreen";
 import TestStats from "./tests/TestStats";

@@ -2,11 +2,28 @@
 
 .hex-tile-info-container {
   margin: 10px;
-  width: 320px;
+  width: 380px;
 
   .details {
     text-transform: uppercase;
     font-size: 12px;
     font-family: $arial-family;
+  }
+
+  .play-selector {
+    display: flex;
+
+    .Dropdown-root {
+      align-self: center;
+      margin-right: 10px;
+
+      font-style: italic;
+      white-space: nowrap;
+    }
+
+    .button {
+      width: auto;
+      padding: 10px 20px;
+    }
   }
 }

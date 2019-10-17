@@ -11,8 +11,10 @@ import { Species, newBaseSpecies } from "./evolution/species";
 export interface AppState {
   overWorld: OverWorld;
   activeLevel?: HexTile;
+  activeSpecies?: Species;
   activeGameResult?: GameResult;
   rootSpecies: Species;
+  epoch: number;
 }
 
 class App extends React.PureComponent<{}, AppState> {
@@ -34,14 +36,19 @@ class App extends React.PureComponent<{}, AppState> {
       overWorld,
       activeLevel: undefined,
       rootSpecies,
+      epoch: 1,
     };
   }
 
-  handlePlayLevel = (level: HexTile) => {
+  handlePlayLevel = (level: HexTile, species: Species) => {
     if (level.info.visible) {
-      this.setState({ activeLevel: level });
+      this.setState({ activeLevel: level, activeSpecies: species });
     }
   };
+
+  handleNextEpoch = () => {
+    this.setState({ epoch: this.state.epoch + 1 });
+  }
 
   handleWinLoss = (result: GameResult) => {
     this.setState({ activeGameResult: result });
@@ -77,13 +84,21 @@ class App extends React.PureComponent<{}, AppState> {
 
   maybeRenderOverWorldMap() {
     if (this.state.activeLevel == null) {
-      return <OverWorldMap overWorld={this.state.overWorld} rootSpecies={this.state.rootSpecies} onPlayLevel={this.handlePlayLevel} />;
+      return (
+        <OverWorldMap
+          epoch={this.state.epoch}
+          overWorld={this.state.overWorld}
+          rootSpecies={this.state.rootSpecies}
+          onPlayLevel={this.handlePlayLevel}
+          onNextEpoch={this.handleNextEpoch}
+        />
+      );
     }
   }
 
   maybeRenderLevel() {
     if (this.state.activeLevel != null && this.state.activeGameResult == null) {
-      return <FullPageSketch sketchClass={Mito} otherArgs={[this.state.activeLevel, this.state.rootSpecies, this.handleWinLoss]} />;
+      return <FullPageSketch sketchClass={Mito} otherArgs={[this.state.activeLevel, this.state.activeSpecies, this.handleWinLoss]} />;
     }
   }
 

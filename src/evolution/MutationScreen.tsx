@@ -10,11 +10,13 @@ import Character from "../common/Character";
 import classNames from "classnames";
 import MP from "../common/MP";
 import GenesToTraits from "./GenesToTraits";
+import uuid from "uuid";
 
 function MutationScreen({ species, onCommit }: { species: Species, onCommit: (newSpecies: Species, newPool: number) => void }) {
   const [pool, setPool] = React.useState(species.freeMutationPoints);
 
   const [newSpecies, setNewSpecies] = React.useState<Species>({
+    id: uuid(),
     descendants: [],
     freeMutationPoints: 0,
     genes: [...species.genes],

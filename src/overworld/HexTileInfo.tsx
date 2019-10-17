@@ -1,4 +1,5 @@
 import React from "react";
+import Dropdown, { Option } from 'react-dropdown';
 
 import { HexTile } from "./hexTile";
 import Expand from "../common/Expand";
@@ -6,24 +7,42 @@ import Expand from "../common/Expand";
 import "./HexTileInfo.scss";
 import { Button } from "../common/Button";
 import MP from "../common/MP";
+import { Species, lineage } from "evolution/species";
 
 interface HexTileInfoProps {
   tile: HexTile;
-  onClickPlay: (level: HexTile) => void;
+  onClickPlay: (level: HexTile, species: Species) => void;
+  rootSpecies: Species;
 }
 
-function HexTileInfo({ tile, onClickPlay }: HexTileInfoProps) {
+function HexTileInfo({ tile, onClickPlay, rootSpecies }: HexTileInfoProps) {
+  const allSpecies = React.useMemo(() => lineage(rootSpecies), [rootSpecies]);
+
+  const [selectedSpecies, setSelectedSpecies] = React.useState(allSpecies[0].id);
+
   const handleClickPlay = () => {
-    onClickPlay(tile);
+    onClickPlay(tile, allSpecies.find((s) => s.id === selectedSpecies)!);
   };
 
   const { height, flora } = tile.info;
 
+  const options: Option[] = allSpecies.map((s) => ({
+    value: s.id,
+    label: s.name,
+  }));
+
+  const handleDropdownChange = (option: Option) => {
+    setSelectedSpecies(option.value);
+  };
+
   const playButtonElement =
     (height === -1 || flora != null) ? null : (
-      <Button color="green" className="play-button" onClick={handleClickPlay}>
-        Populate
+      <div className="play-selector">
+        <Dropdown options={options} value={selectedSpecies} onChange={handleDropdownChange} />
+        <Button color="green" className="play-button" onClick={handleClickPlay}>
+          Populate
       </Button>
+      </div>
     );
 
   const header = flora != null ? (

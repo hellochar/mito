@@ -182,19 +182,19 @@ export class World {
     // if replacing a tile with inventory, try giving resources to neighbors of the same type
     if (hasInventory(oldTile)) {
       // one mechanic - push water to nearby tiles
-      // const neighbors = this.tileNeighbors(position);
-      // for (const neighbor of neighbors.values()) {
-      //     if (hasInventory(neighbor) && neighbor instanceof oldTile.constructor) {
-      //         oldTile.inventory.give(neighbor.inventory, oldTile.inventory.water, oldTile.inventory.sugar);
-      //     }
-      //     if (oldTile.inventory.water === 0 && oldTile.inventory.sugar === 0) {
-      //         // we're all done
-      //         break;
-      //     }
-      // }
-      if (hasInventory(tile)) {
-        oldTile.inventory.give(tile.inventory, oldTile.inventory.water, oldTile.inventory.sugar);
+      const neighbors = this.tileNeighbors(position);
+      for (const neighbor of neighbors.values()) {
+        if (hasInventory(neighbor) && neighbor instanceof oldTile.constructor) {
+          oldTile.inventory.give(neighbor.inventory, oldTile.inventory.water, oldTile.inventory.sugar);
+        }
+        if (oldTile.inventory.water === 0 && oldTile.inventory.sugar === 0) {
+          // we're all done
+          break;
+        }
       }
+      // if (hasInventory(tile)) {
+      //   oldTile.inventory.give(tile.inventory, oldTile.inventory.water, oldTile.inventory.sugar);
+      // }
       if (oldTile.inventory.water !== 0 || oldTile.inventory.sugar !== 0) {
         console.warn("lost", oldTile.inventory, "resources to building");
         oldTile.inventory.add(-oldTile.inventory.water, -oldTile.inventory.sugar);

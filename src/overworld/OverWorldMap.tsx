@@ -21,7 +21,9 @@ const C = Math.sqrt(3) / 2;
 interface OverWorldMapProps {
   rootSpecies: Species;
   overWorld: OverWorld;
-  onPlayLevel: (level: HexTile) => void;
+  onPlayLevel: (level: HexTile, species: Species) => void;
+  onNextEpoch: () => void;
+  epoch: number;
 }
 
 export interface CameraState {
@@ -92,8 +94,8 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     });
   };
 
-  private onPlayLevel = (level: HexTile) => {
-    this.props.onPlayLevel(level);
+  private onPlayLevel = (level: HexTile, species: Species) => {
+    this.props.onPlayLevel(level, species);
   };
 
   private toggleLeftPanelOpen = () => {
@@ -196,6 +198,15 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
         {this.maybeRenderHighlightedTile()}
         {this.maybeRenderPhylogeneticTreePanel()}
         {this.maybeRenderMutationModal()}
+        {this.renderEpoch()}
+      </div>
+    );
+  }
+
+  renderEpoch() {
+    return (
+      <div className="epoch-display">
+        Epoch {this.props.epoch}
       </div>
     );
   }
@@ -231,7 +242,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     if (this.state.highlightedTile != null) {
       return (
         <OverWorldPopover camera={this.state.cameraState} tile={this.state.highlightedTile}>
-          <HexTileInfo tile={this.state.highlightedTile} onClickPlay={this.onPlayLevel} />
+          <HexTileInfo rootSpecies={this.props.rootSpecies} tile={this.state.highlightedTile} onClickPlay={this.onPlayLevel} />
         </OverWorldPopover>
       );
     }
