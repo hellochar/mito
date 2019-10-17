@@ -288,11 +288,46 @@ const colorScale = scaleLinear<string, string>()
   .domain([-1, 0, 1, 5, 6])
   .range(["rgb(0, 60, 255)", "lightblue", "yellow", "orange"]);
 
+// const FOREST_IMAGE = (() => {
+//   const img = new Image();
+//   img.src = "/assets/crusades/forest.png";
+//   return img;
+// })();
+// const WATER_IMAGE = (() => {
+//   const img = new Image();
+//   img.src = "/assets/crusades/water.png";
+//   return img;
+// })();
+// const PLAINS_IMAGE = (() => {
+//   const img = new Image();
+//   img.src = "/assets/crusades/plains.png";
+//   return img;
+// })();
+// const MOUNTAIN_IMAGE = (() => {
+//   const img = new Image();
+//   img.src = "/assets/crusades/mountain.png";
+//   return img;
+// })();
+
+// const TYPE_TO_IMG_MAP = {
+//   "forest": FOREST_IMAGE,
+//   "mountain": MOUNTAIN_IMAGE,
+//   "plains": PLAINS_IMAGE,
+//   "water": WATER_IMAGE,
+// };
+
 function drawTile(canvas: HTMLCanvasElement, camera: CameraState, tile: HexTile) {
   const { scale } = camera;
   const [px, py] = pixelPosition(tile, camera);
 
   const c = canvas.getContext("2d")!;
+
+  // const sourceWidth = 1280;
+  // const sourceHeight = 1110;
+  // const ratio = sourceHeight / sourceWidth;
+  // const img = TYPE_TO_IMG_MAP[tile.crusaderType];
+  // c.drawImage(img, px, py, scale * 2, scale * ratio * 2);
+
   if (tile.info.visible) {
     c.fillStyle = colorScale(tile.info.height);
     drawHex(c, px, py, scale);

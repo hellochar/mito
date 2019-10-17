@@ -137,6 +137,8 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   private static ONE = new Vector2(1, 1);
   private growingRenderer?: TileRenderer;
+  private static HOT_COLOR = new Color("orange");
+  private static COLD_COLOR = new Color("lightblue");
   update() {
     if (this.target instanceof GrowingCell) {
       // const s = this.steps(1.001 - this.target.timeRemaining / params.cellGestationTurns, 0.05);
@@ -171,6 +173,11 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     if (hasEnergy(this.target)) {
       mat.color.lerp(new Color(0), 1 - this.target.energy / params.cellEnergyMax);
+    }
+    if (this.target.temperature > 66) {
+      mat.color.lerp(TileRenderer.HOT_COLOR, map(this.target.temperature, 66, 100, 0, 1));
+    } else if (this.target.temperature < 33) {
+      mat.color.lerp(TileRenderer.COLD_COLOR, map(this.target.temperature, 33, 0, 0, 1));
     }
     if (this.inventoryRenderer != null) {
       if (lightAmount > 0) {

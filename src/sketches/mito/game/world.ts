@@ -343,6 +343,7 @@ export class World {
       }
     });
     this.computeSunlight();
+    // this.computeTemperature();
     this.stepWeather();
     this.time++;
     this.fillCachedEntities();
@@ -407,6 +408,14 @@ export class World {
           sunlight *= sunAmount;
           t.sunlightCached = sunlight;
         }
+      }
+    }
+  }
+
+  public computeTemperature() {
+    for (const t of this.entities()) {
+      if (t instanceof Tile && t.nextTemperature != null) {
+        t.temperature = t.nextTemperature;
       }
     }
   }

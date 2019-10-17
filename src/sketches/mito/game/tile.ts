@@ -23,6 +23,8 @@ export abstract class Tile implements Steppable {
   static fallAmount = 0;
   public isObstacle = false;
   public darkness = Infinity;
+  public temperature = 50;
+  public nextTemperature?: number;
   get diffusionWater(): number {
     return (this.constructor as any).diffusionWater;
   }
@@ -58,6 +60,7 @@ export abstract class Tile implements Steppable {
     const neighbors = this.world.tileNeighbors(this.pos);
     this.stepDarkness(neighbors);
     this.stepDiffusion(neighbors);
+    // this.stepTemperature(neighbors);
     this.stepGravity();
   }
 
@@ -104,6 +107,18 @@ export abstract class Tile implements Steppable {
           }
         }
       }
+    }
+  }
+
+  stepTemperature(neighbors: Map<Vector2, Tile>) {
+    let averageTemperature = 0;
+    for (const [, tile] of neighbors) {
+      averageTemperature += tile.temperature;
+    }
+    averageTemperature /= neighbors.size;
+    this.nextTemperature = this.temperature * 0.5 + averageTemperature * 0.5;
+    if (this.world.season.name === "spring") {
+      this.nextTemperature -= 0.1;
     }
   }
 
@@ -205,8 +220,10 @@ export class Air extends Tile {
       return;
     }
     this.stepGravity();
-    this.stepDiffusion(this.world.tileNeighbors(this.pos));
+    const neighbors = this.world.tileNeighbors(this.pos);
+    this.stepDiffusion(neighbors);
     this.stepEvaporation();
+    // this.stepTemperature(neighbors);
     this._co2 = this.computeCo2();
   }
 

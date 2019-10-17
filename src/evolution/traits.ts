@@ -53,6 +53,26 @@ export type Traits = {
    * How quickly this cell builds.
    */
   buildTime: TraitValue;
+  // /**
+  //  * How well this cell still works at high temperatures.
+  //  */
+  // heatTolerance: TraitValue;
+  // /**
+  //  * How well this cell still works at low temperatures.
+  //  */
+  // coldTolerance: TraitValue;
+  // /**
+  //  * How many resources a seed needs to be considered "matured". Lower is less resources.
+  //  */
+  // seedNeededResources: TraitValue;
+  // /**
+  //  * How quickly a seed finishes growing. Higher is faster growth.
+  //  */
+  // seedGrowthSpeed: TraitValue;
+  // /**
+  //  * How many mutation points a seed gives. Higher is more mutation.
+  //  */
+  // seedMutationPoints: TraitValue;
 };
 
 export type TraitDiff = Partial<Traits> & {
@@ -150,6 +170,14 @@ export function dnaPairToTraitType(dnaTuple: DNATuple): TraitType | undefined {
       return "diffuseSugar";
     case "GC":
       return "diffuseWater";
+    case "GG":
+      return "buildTime";
+    case "GT":
+
+    case "TA":
+    case "TC":
+    case "TG":
+    case "TT":
 
     default:
       return undefined;

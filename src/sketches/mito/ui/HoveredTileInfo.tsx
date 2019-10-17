@@ -73,6 +73,7 @@ export class HoveredTileInfo extends React.Component<HoveredTileInfoProps> {
     return (
       <div className="info-tile">
         <div className="info-tile-name">{(tile.constructor as Constructor<Tile>).displayName}</div>
+        <div className="info-tile-temperature">{tile.temperature.toFixed(2)}</div>
         {energyInfo}
       </div>
     );
