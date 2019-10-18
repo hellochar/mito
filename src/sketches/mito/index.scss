@@ -76,11 +76,13 @@
 .ui-popup {
   position: absolute;
   animation: popIn 0.2s both;
+
   @keyframes popIn {
     from {
       transform: translate(-50%, -50%) scale(0.75);
       opacity: 0;
     }
+
     to {
       transform: translate(-50%, -50%) scale(1);
       opactiy: 0.95;
@@ -138,6 +140,7 @@
 .popup-autoplace {
   pointer-events: none;
   opacity: 0.5;
+
   .popup-content.popup-text {
     margin-top: 80%;
     padding: 5px;
@@ -168,6 +171,7 @@
   border-top-right-radius: 2px;
   border: 1px solid grey;
   background: rgba(255, 255, 255, 0.25);
+  pointer-events: none;
 
   &.hidden {
     transform: translateX(-50%) translateY(170%);
@@ -220,17 +224,17 @@
 
     .mito-inventory-bar-water {
       background: hsl(242, 81%, 42%);
-      transition: width 0.2s;
+      transition: width 0.05s;
     }
 
     .mito-inventory-bar-sugar {
       background: hsl(41, 73%, 67%);
-      transition: width 0.2s;
+      transition: width 0.05s;
     }
 
     .mito-inventory-bar-empty {
       box-shadow: 0 5px 6px inset rgba(0, 0, 0, 0.25);
-      transition: width 0.2s;
+      transition: width 0.05s;
     }
   }
 }
@@ -307,7 +311,7 @@
   z-index: 1;
   position: absolute;
 
-  > * {
+  >* {
     pointer-events: none;
     position: absolute;
   }
@@ -340,6 +344,7 @@
     font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
     padding-right: 5px;
   }
+
   .info-energy {
     font-size: 0.75em;
   }
@@ -355,6 +360,7 @@
     from {
       transform: scale(0.01, 0.01);
     }
+
     to {
       transform: scale(1, 1);
     }
@@ -365,11 +371,13 @@
       color: darkgreen;
     }
   }
+
   &.tutorial-build-root {
     b {
       color: rgb(183, 94, 36);
     }
   }
+
   &.tutorial-build-leaf {
     b {
       color: yellowgreen;

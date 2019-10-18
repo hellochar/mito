@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@rehooks/component-size": "^1.0.3",
+    "@rooks/use-boundingclientrect-ref": "^3.4.0",
+    "@rooks/use-mouse": "^3.4.0",
     "@types/classnames": "^2.2.7",
     "@types/d3-scale": "^2.1.1",
     "@types/dat.gui": "^0.7.2",

@@ -988,6 +988,21 @@
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
 
+"@rehooks/component-size@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@rehooks/component-size/-/component-size-1.0.3.tgz#823eabeb42084893d46d43e3a9d1d0e34252b3cb"
+  integrity sha512-pnYld+8SSF2vXwdLOqBGUyOrv/SjzwLjIUcs/4c1JJgR0q4E9eBtBfuZMD6zUD51fvSehSsbnlQMzotSmPTXPg==
+
+"@rooks/use-boundingclientrect-ref@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@rooks/use-boundingclientrect-ref/-/use-boundingclientrect-ref-3.4.0.tgz#8f63622987009776ff152b485f724aff5538aa15"
+  integrity sha512-zEQu65F1aKePslSwgesAADOC/9GiZXNQ0EPuOXv6MuvWrxt2lGnEOKmzkj01UPmim2+fbVbTopzq1hq7pLLBrA==
+
+"@rooks/use-mouse@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@rooks/use-mouse/-/use-mouse-3.4.0.tgz#c4ad2821c4240b1e22df24e9ef3be89235d7b557"
+  integrity sha512-5QuPr5DR3EuxSJuIcvrWhDSAjjDyzlZEuYOu26F7K6VWAASmT9tnn6RhwubYcYkhOlA1M3ohdUsaFSuday5hwA==
+
 "@svgr/babel-plugin-add-jsx-attribute@^4.2.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@svgr/babel-plugin-add-jsx-attribute/-/babel-plugin-add-jsx-attribute-4.2.0.tgz#dadcb6218503532d6884b210e7f3c502caaa44b1"

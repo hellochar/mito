@@ -8,7 +8,7 @@ export interface ISketchRouteProps {
   otherArgs?: any[];
 }
 
-export class FullPageSketch extends React.Component<ISketchRouteProps, {}> {
+export class FullPageSketch extends React.PureComponent<ISketchRouteProps, {}> {
   public render() {
     return (
       <div className="full-page-sketch" ref={this.handleDivRef}>

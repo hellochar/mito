@@ -7,6 +7,8 @@ import { OverWorld } from "./overworld/overWorld";
 import { HexTile } from "./overworld/hexTile";
 import GameResultsScreen from "./sketches/mito/ui/GameResultsScreen";
 import { Species, newBaseSpecies } from "./evolution/species";
+import { createSelector } from "reselect";
+import { MousePositionContext } from "common/useMousePosition";
 
 export interface AppState {
   overWorld: OverWorld;
@@ -15,6 +17,7 @@ export interface AppState {
   activeGameResult?: GameResult;
   rootSpecies: Species;
   epoch: number;
+  mousePosition: { x: number, y: number };
 }
 
 class App extends React.PureComponent<{}, AppState> {
@@ -37,7 +40,23 @@ class App extends React.PureComponent<{}, AppState> {
       activeLevel: undefined,
       rootSpecies,
       epoch: 1,
+      mousePosition: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
     };
+  }
+
+
+  handleMousePosition = (e: MouseEvent) => {
+    this.setState({
+      mousePosition: { x: e.clientX, y: e.clientY },
+    });
+  }
+
+  componentDidMount() {
+    document.addEventListener("mousemove", this.handleMousePosition);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("mousemove", this.handleMousePosition);
   }
 
   handlePlayLevel = (level: HexTile, species: Species) => {
@@ -74,11 +93,13 @@ class App extends React.PureComponent<{}, AppState> {
 
   render() {
     return (
-      <div className="App">
-        {this.maybeRenderOverWorldMap()}
-        {this.maybeRenderLevel()}
-        {this.maybeRenderGameResult()}
-      </div>
+      <MousePositionContext.Provider value={this.state.mousePosition}>
+        <div className="App">
+          {this.maybeRenderOverWorldMap()}
+          {this.maybeRenderLevel()}
+          {this.maybeRenderGameResult()}
+        </div>
+      </MousePositionContext.Provider>
     );
   }
 
@@ -96,9 +117,15 @@ class App extends React.PureComponent<{}, AppState> {
     }
   }
 
+  private otherArgsSelector = createSelector(
+    (s: AppState) => s.activeLevel,
+    (s: AppState) => s.activeSpecies,
+    (level, species) => [level, species, this.handleWinLoss]
+  );
+
   maybeRenderLevel() {
     if (this.state.activeLevel != null && this.state.activeGameResult == null) {
-      return <FullPageSketch sketchClass={Mito} otherArgs={[this.state.activeLevel, this.state.activeSpecies, this.handleWinLoss]} />;
+      return <FullPageSketch sketchClass={Mito} otherArgs={this.otherArgsSelector(this.state)} />;
     }
   }
 

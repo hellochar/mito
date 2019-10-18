@@ -41,7 +41,7 @@ interface OverWorldMapState {
   activelyMutatingSpecies?: Species;
 }
 
-export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMapState> {
+export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWorldMapState> {
 
   constructor(props: OverWorldMapProps) {
     super(props);

@@ -9,6 +9,7 @@ import { TIME_PER_YEAR, Season } from "../game";
 import "./SeasonsTracker.scss";
 import TraitDisplay from "../../../evolution/TraitDisplay";
 import capitalize from "../../../common/capitalize";
+import DynamicNumber from "common/DynamicNumber";
 
 function BarMarker({ percent }: { percent: number }) {
   const style = {
@@ -124,9 +125,9 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   renderInventory() {
     return (
       <div className="mito-inventory-indicator">
-        <span className="mito-inventory-water">{this.inventory.water.toFixed(2)} water</span>
+        <span className="mito-inventory-water"><DynamicNumber speed={0.5} value={this.inventory.water} /> water</span>
         &nbsp;
-        <span className="mito-inventory-sugar">{this.inventory.sugar.toFixed(2)} sugar</span>
+        <span className="mito-inventory-sugar"><DynamicNumber speed={0.5} value={this.inventory.sugar} /> sugar</span>
       </div>
     );
   }

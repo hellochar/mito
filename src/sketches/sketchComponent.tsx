@@ -38,7 +38,7 @@ interface SketchSuccessComponentProps {
   sketch: ISketch;
   eventsOnBody?: boolean;
 }
-class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps, { frameCount: number }> {
+class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentProps, { frameCount: number }> {
   private frameId?: number;
   private lastTimestamp = 0;
   private stop = false;
@@ -163,7 +163,7 @@ export interface ISketchComponentState {
   volumeEnabled: boolean;
 }
 
-export class SketchComponent extends React.Component<ISketchComponentProps, ISketchComponentState> {
+export class SketchComponent extends React.PureComponent<ISketchComponentProps, ISketchComponentState> {
   public state: ISketchComponentState = {
     status: { type: "loading" },
     volumeEnabled: JSON.parse(window.localStorage.getItem("sketch-volumeEnabled") || "true"),

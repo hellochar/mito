@@ -1,0 +1,9 @@
+.look-at-mouse {
+  display: inline-block;
+  position: relative;
+
+  .look-at-mouse-transform {
+    width: 100%;
+    height: 100%;
+  }
+}

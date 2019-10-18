@@ -11,6 +11,7 @@ $color-primary-4: #1d4b00;
   height: 100%;
   position: absolute;
   padding: 100px;
+  overflow: auto;
 
   .game-results-content {
     max-width: 800px;

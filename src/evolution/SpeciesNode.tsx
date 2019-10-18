@@ -6,6 +6,7 @@ import Character from "../common/Character";
 import MP from "../common/MP";
 
 import "./SpeciesNode.scss";
+import LookAtMouse from "common/LookAtMouse";
 
 export interface SpeciesNodeProps {
   species: Species;
@@ -35,13 +36,15 @@ function SpeciesNode({ species, onMutate }: SpeciesNodeProps) {
     <div className="species-node">
       {descendants}
       <Popover isOpen={popoverIsOpen} preferPlace="right" onOuterAction={() => setPopoverIsOpen(false)} body={popoverBody}>
-        <div className="species-info" onClick={() => setPopoverIsOpen(!popoverIsOpen)}>
-          <div className="species-info-name">{species.name}</div>
-          <div className="species-info-animation">
-            <Character size="small" />
+        <LookAtMouse zScale={5}>
+          <div className="species-info" onClick={() => setPopoverIsOpen(!popoverIsOpen)}>
+            <div className="species-info-name">{species.name}</div>
+            <div className="species-info-animation">
+              <Character size="small" />
+            </div>
+            <MP amount={species.freeMutationPoints} />
           </div>
-          <MP amount={species.freeMutationPoints} />
-        </div>
+        </LookAtMouse>
       </Popover>
     </div>
   );

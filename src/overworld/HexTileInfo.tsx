@@ -46,7 +46,7 @@ function HexTileInfo({ tile, onClickPlay, rootSpecies }: HexTileInfoProps) {
     );
 
   const header = flora != null ? (
-    <h1>Inhabited by {flora.species}<small><MP amount={flora.mutationPointsPerEpoch} /> per epoch</small></h1>
+    <h1>Inhabited by {flora.species.name}<small><MP amount={flora.mutationPointsPerEpoch} /> per epoch</small></h1>
   ) : tile.info.height === -1 ? (
     <h1>Deep Water</h1>
   ) : (
