@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { ISketch, SketchAudioContext, SketchConstructor, UI_EVENTS } from "./sketch";
 
 import { FaVolumeOff, FaVolumeUp } from "react-icons/fa";
+import Ticker from "global/ticker";
 
 export interface ISketchComponentProps extends React.DOMAttributes<HTMLDivElement> {
   eventsOnBody?: boolean;
@@ -73,7 +74,7 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
     //     event.preventDefault();
     // });
 
-    this.frameId = requestAnimationFrame(this.loop);
+    this.frameId = Ticker.addAnimation(this.loop);
   }
 
   render() {
@@ -98,7 +99,7 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
       this.props.sketch.destroy();
     }
     if (this.frameId != null) {
-      cancelAnimationFrame(this.frameId);
+      Ticker.removeAnimation(this.frameId);
     }
     this.props.sketch.renderer.dispose();
     window.removeEventListener("resize", this.handleWindowResize);
@@ -129,14 +130,15 @@ class SketchSuccessComponent extends React.Component<SketchSuccessComponentProps
       console.error(e);
     }
 
-    // careful - sketch.animate might have triggered a whole React update loop
+    // careful - sketch.animate() might have triggered a whole React update loop
     // and made this component unmount.
     if (!this.stop) {
       // force new render()
       this.setState({
         frameCount: this.props.sketch.frameCount,
       });
-      this.frameId = requestAnimationFrame(this.loop);
+    } else {
+      Ticker.removeAnimation(this.frameId!);
     }
   };
 

@@ -15,6 +15,7 @@ import { Species } from "../evolution/species";
 import MutationScreen from "../evolution/MutationScreen";
 import { GiFamilyTree } from "react-icons/gi";
 import classNames from "classnames";
+import Ticker from "global/ticker";
 
 const C = Math.sqrt(3) / 2;
 
@@ -173,7 +174,6 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
         },
       });
     }
-    this.rafId = requestAnimationFrame(this.updateCamera);
   };
 
   private drawMap() {
@@ -191,7 +191,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     document.addEventListener("keyup", this.handleKeyUp);
     document.addEventListener("wheel", this.handleWheel);
     window.addEventListener("resize", this.handleResize);
-    this.rafId = requestAnimationFrame(this.updateCamera);
+    this.rafId = Ticker.addAnimation(this.updateCamera);
   }
 
   componentWillUnmount() {
@@ -199,7 +199,7 @@ export class OverWorldMap extends React.Component<OverWorldMapProps, OverWorldMa
     document.removeEventListener("keyup", this.handleKeyUp);
     document.removeEventListener("wheel", this.handleWheel);
     window.removeEventListener("resize", this.handleResize);
-    cancelAnimationFrame(this.rafId!);
+    Ticker.removeAnimation(this.rafId!);
   }
 
   componentDidUpdate() {
