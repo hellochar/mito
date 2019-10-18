@@ -27,18 +27,6 @@ export class HexTile {
     wind: "low",
     visible: false,
   };
-  get crusaderType(): "forest" | "plains" | "mountain" | "water" {
-    if (this.info.height < -2) {
-      return "water";
-    }
-    if (this.info.height < 2.5) {
-      return "plains";
-    }
-    if (this.info.height < 4) {
-      return "forest";
-    }
-    return "mountain";
-  }
 
   get k() {
     return -(this.i + this.j);
