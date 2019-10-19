@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useReducer } from "react";
 
 import { FullPageSketch } from "./sketches/fullPageSketch";
 import Mito, { GameResult } from "./sketches/mito";
