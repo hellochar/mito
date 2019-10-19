@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, HashRouter } from "react-router-dom";
 
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
@@ -12,7 +12,7 @@ import { TestWinScreen } from "./tests/TestWinScreen";
 import TestStats from "./tests/TestStats";
 
 ReactDOM.render(
-  <BrowserRouter>
+  <HashRouter>
     <Switch>
       <Route path="/test-win">
         <TestWinScreen />
@@ -27,7 +27,7 @@ ReactDOM.render(
         <Redirect to="/" />
       </Route>
     </Switch>
-  </BrowserRouter>,
+  </HashRouter>,
 
   document.getElementById("root")
 );
