@@ -41,7 +41,7 @@ function HexTileInfo({ tile, onClickPlay, rootSpecies }: HexTileInfoProps) {
         <Dropdown options={options} value={selectedSpecies} onChange={handleDropdownChange} />
         <Button color="green" className="play-button" onClick={handleClickPlay}>
           Populate
-      </Button>
+        </Button>
       </div>
     );
 

@@ -1,4 +1,5 @@
 import { ALL_ENVIRONMENTS } from "./game/environment";
+import { parse, stringify } from "query-string";
 
 const PARAMS_DEFAULT = {
   isRealtime: true,
@@ -29,8 +30,9 @@ type Params = typeof PARAMS_DEFAULT;
 
 export const params = { ...PARAMS_DEFAULT };
 
-if (window.location.hash.length > 0) {
-  const urlHashParams: object = JSON.parse(decodeURI(window.location.hash.substr(1)));
+const search = parse(window.location.search);
+if (search.params != null) {
+  const urlHashParams: object = JSON.parse(search.params as string);
   Object.assign(params, urlHashParams);
 }
 
@@ -44,9 +46,12 @@ export function updateParamsHash() {
     }
   }
   if (Object.keys(nonDefaultParams).length > 0) {
-    window.location.hash = encodeURI(JSON.stringify(nonDefaultParams));
+    const stringified = stringify({
+      ...(parse(window.location.search)),
+      params: nonDefaultParams,
+    });
+    window.location.search = stringified;
   } else {
-    window.location.hash = "";
   }
 }
 updateParamsHash();
