@@ -60,7 +60,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private originalColor: Color;
   private audio?: Audio;
   private lastAudioValueTracker = 0;
-  private pairsLines: Object3D[] = [];
+  private pairsLines = new Object3D();
   private worldDomElement?: WorldDOMElement;
 
   constructor(target: T, scene: Scene, mito: Mito) {
@@ -217,36 +217,39 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       }
       this.lastAudioValueTracker = newAudioValueTracker;
     }
+    this.mesh.remove(this.pairsLines);
+  }
+
+  updateHover() {
+    this.mesh.add(this.pairsLines);
     if (hasTilePairs(this.target)) {
       const pairColor = this.target instanceof Leaf ? 0xffc90e : new Color("rgb(9, 12, 255)").getHex();
       const pairs = this.target.tilePairs;
-      if (pairs.length !== this.pairsLines.length) {
+      if (pairs.length !== this.pairsLines.children.length) {
         // redo pairs
-        this.pairsLines.forEach((line) => this.mesh.remove(line));
-        this.pairsLines = pairs.map((dir) => {
+        this.pairsLines.remove(...this.pairsLines.children);
+        pairs.forEach((dir) => {
           const length = dir.length() * 2 - 0.25;
           const arrowDir = new Vector3(dir.x, dir.y, 0).normalize();
           const arrowHelper = this.makeLine(arrowDir, arrowDir.clone().multiplyScalar(-length / 2), length, pairColor);
-          this.mesh.add(arrowHelper);
-          return arrowHelper;
+          this.pairsLines.add(arrowHelper);
         });
       }
     }
     if (this.hasActiveNeighbors(this.target)) {
       const color = this.target instanceof Root ? new Color("rgb(9, 12, 255)").getHex() : 0xffffff;
       const lines = this.target.activeNeighbors;
-      if (lines.length !== this.pairsLines.length) {
+      if (lines.length !== this.pairsLines.children.length) {
         // redo pairs
-        this.pairsLines.forEach((line) => this.mesh.remove(line));
-        this.pairsLines = lines.map((dir) => {
+        this.pairsLines.remove(...this.pairsLines.children);
+        lines.forEach((dir) => {
           const length = dir.length() - 0.25;
           const arrowDir = new Vector3(dir.x, dir.y, 0).normalize();
           const arrowHelper =
             this.target instanceof Root
               ? this.makeLine(arrowDir, new Vector3(), length, color)
               : new ArrowHelper(arrowDir, new Vector3(0, 0, 5), length, color);
-          this.mesh.add(arrowHelper);
-          return arrowHelper;
+          this.pairsLines.add(arrowHelper);
         });
       }
     }

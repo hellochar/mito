@@ -19,6 +19,7 @@ import { WorldRenderer } from "./renderers/WorldRenderer";
 import { HexTile } from "../../overworld/hexTile";
 import { Species } from "../../evolution/species";
 import VignetteCapturer from "common/vignette";
+import { TileRenderer } from "./renderers/TileRenderer";
 
 export interface GameResult {
   status: "won" | "lost";
@@ -357,6 +358,9 @@ Number of Programs: ${this.renderer.info.programs!.length}
     this.worldRenderer.update();
 
     this.highlightedTile = this.getHighlightedTile();
+    if (this.highlightedTile != null) {
+      (this.worldRenderer.getOrCreateRenderer(this.highlightedTile) as TileRenderer).updateHover();
+    }
 
     const mouseNorm = this.getCameraNormCoordinates(this.mouse.x, this.mouse.y);
     const target = new THREE.Vector2(

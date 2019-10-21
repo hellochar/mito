@@ -97,6 +97,10 @@ export function emptyTraits(): Traits {
   };
 }
 
+export function isInteresting(traits: Traits) {
+  return TRAIT_TYPES.some((name) => traits[name] !== 0);
+}
+
 export const TRAIT_TYPES = Object.keys(emptyTraits()) as TraitType[];
 
 export function displayName(trait: TraitType) {

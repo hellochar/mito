@@ -18,15 +18,14 @@ function CellBar({ bar, index, onIndexClicked }: CellBarProps) {
   return (
     <div className="cell-bar">
       {bar.map((cellType, i) => (
-        <div key={i}>
-          <CellBarItem
-            type={cellType}
-            isSelected={index === i}
-            onClick={() => onIndexClicked(i)}
-            spritesheetLoaded={spritesheetLoaded}
-          />
-          <HotkeyButton hotkey={String(i + 1)} onClick={() => onIndexClicked(i)} />
-        </div>
+        <CellBarItem
+          key={i}
+          hotkey={String(i + 1)}
+          type={cellType}
+          isSelected={index === i}
+          onClick={() => onIndexClicked(i)}
+          spritesheetLoaded={spritesheetLoaded}
+        />
       ))}
     </div>
   );
@@ -38,9 +37,10 @@ export interface CellBarItemProps {
   isSelected: boolean;
   onClick: () => void;
   spritesheetLoaded: boolean;
+  hotkey: string;
 }
 
-function CellBarItem({ type, isSelected, onClick, spritesheetLoaded }: CellBarItemProps) {
+function CellBarItem({ type, hotkey, isSelected, onClick, spritesheetLoaded }: CellBarItemProps) {
   const style: React.CSSProperties = React.useMemo(() => {
     const material = materialMapping().get(type)!;
     const image = material.map!.image;
@@ -64,8 +64,11 @@ function CellBarItem({ type, isSelected, onClick, spritesheetLoaded }: CellBarIt
     };
   }, [spritesheetLoaded, type]);
   return (
-    <div className={classNames("cell-bar-item", { selected: isSelected })} onClick={onClick} style={style}>
-      {type.displayName}
+    <div className={classNames("cell-bar-item", { selected: isSelected })}>
+      <div className="cell-bar-item-icon" onClick={onClick} style={style}>
+        {type.displayName}
+      </div>
+      <HotkeyButton hotkey={hotkey} onClick={onClick} />
     </div>
   );
 }

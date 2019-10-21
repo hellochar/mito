@@ -6,10 +6,13 @@ import { params } from "../params";
 import CellBar from "./CellBar";
 import { TIME_PER_YEAR, Season } from "../game";
 
-import "./SeasonsTracker.scss";
 import TraitDisplay from "../../../evolution/TraitDisplay";
 import capitalize from "../../../common/capitalize";
 import DynamicNumber from "common/DynamicNumber";
+import { isInteresting } from "evolution/traits";
+
+import "./SeasonsTracker.scss";
+import "./HUD.scss";
 
 function BarMarker({ percent }: { percent: number }) {
   const style = {
@@ -104,18 +107,9 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   }
 
   maybeRenderTraits() {
-    if (this.state.traitsPanelOpen) {
+    if (this.state.traitsPanelOpen && isInteresting(this.world.traits)) {
       return (
-        <div
-          style={{
-            position: "absolute",
-            right: 10,
-            top: 50,
-            textAlign: "left",
-            background: "white",
-            padding: 10,
-          }}
-        >
+        <div className="hud-panel-right">
           <TraitDisplay traits={this.world.traits} />
         </div>
       );
