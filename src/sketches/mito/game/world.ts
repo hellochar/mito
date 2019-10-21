@@ -151,6 +151,22 @@ export class World {
     }
   }
 
+  public cells() {
+    const { gridCells, width, height } = this;
+    return {
+      *[Symbol.iterator]() {
+        for (let x = 0; x < width; x++) {
+          for (let y = 0; y < height; y++) {
+            const g = gridCells[x][y];
+            if (g != null) {
+              yield g;
+            }
+          }
+        }
+      },
+    };
+  }
+
   public cellAt(x: number, y: number): Cell | null {
     if (this.isValidPosition(x, y)) {
       return this.gridCells[x][y];

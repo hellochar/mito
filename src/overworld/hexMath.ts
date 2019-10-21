@@ -1,5 +1,5 @@
 import { HexTile } from "./hexTile";
-import { CameraState } from "./OverWorldMap";
+import { CameraState } from "./map/OverWorldMap";
 
 export function roundCubeCoordinates(i: number, j: number, k: number) {
   var rx = Math.round(i);

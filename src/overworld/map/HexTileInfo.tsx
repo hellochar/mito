@@ -1,12 +1,12 @@
 import React from "react";
 import Dropdown, { Option } from 'react-dropdown';
 
-import { HexTile } from "./hexTile";
-import Expand from "../common/Expand";
+import { HexTile } from "../hexTile";
+import Expand from "../../common/Expand";
 
 import "./HexTileInfo.scss";
-import { Button } from "../common/Button";
-import MP from "../common/MP";
+import { Button } from "../../common/Button";
+import MP from "../../common/MP";
 import { Species, lineage } from "evolution/species";
 
 interface HexTileInfoProps {

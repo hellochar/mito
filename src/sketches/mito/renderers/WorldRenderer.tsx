@@ -10,7 +10,7 @@ import { TransportRenderer } from "./TransportRenderer";
 import { TileRenderer } from "./TileRenderer";
 import { InventoryRenderer } from "./InventoryRenderer";
 
-function createRendererFor<E extends Entity>(object: E, scene: Scene, mito: Mito): Renderer<Entity> {
+export function createRendererFor<E extends Entity>(object: E, scene: Scene, mito: Mito): Renderer<Entity> {
   if (object instanceof Player) {
     return new PlayerRenderer(object, scene, mito);
   } else if (object instanceof Transport) {

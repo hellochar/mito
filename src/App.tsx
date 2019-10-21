@@ -2,7 +2,7 @@ import React, { useReducer } from "react";
 
 import { FullPageSketch } from "./sketches/fullPageSketch";
 import Mito, { GameResult } from "./sketches/mito";
-import { OverWorldMap } from "./overworld/OverWorldMap";
+import { OverWorldMap } from "./overworld/map/OverWorldMap";
 import { OverWorld } from "./overworld/overWorld";
 import { HexTile } from "./overworld/hexTile";
 import GameResultsScreen from "./sketches/mito/ui/GameResultsScreen";

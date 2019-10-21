@@ -9,7 +9,7 @@ import { ISketch, SketchAudioContext } from "../sketch";
 import { ActionBuild, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
 import { Constructor } from "./constructor";
-import { World } from "./game";
+import { World, TIME_PER_SEASON } from "./game";
 import { Cell, Fruit, Root, Tissue, Transport, Vein, Leaf, Tile } from "./game/tile";
 import { ACTION_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
@@ -18,6 +18,7 @@ import { GameStack, Hover, HUD } from "./ui";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { HexTile } from "../../overworld/hexTile";
 import { Species } from "../../evolution/species";
+import VignetteCapturer from "common/vignette";
 
 export interface GameResult {
   status: "won" | "lost";
@@ -115,6 +116,9 @@ export class Mito extends ISketch {
   }
 
   private worldRenderer: WorldRenderer;
+  private vignetteCapturer = new VignetteCapturer(this);
+  private vignettes: HTMLCanvasElement[] = [];
+
   constructor(
     renderer: WebGLRenderer,
     context: SketchAudioContext,
@@ -237,6 +241,11 @@ Number of Programs: ${this.renderer.info.programs!.length}
     // this.world.player.dropWater = this.keyMap.has("q");
     // this.world.player.dropSugar = this.keyMap.has("e");
     this.world.step();
+
+    if (this.world.time % (TIME_PER_SEASON / 27) === 0) {
+      const v = this.vignetteCapturer.capture();
+      this.vignettes.push(v);
+    }
 
     if (this.tutorialRef) {
       this.tutorialRef.setState({ time: this.world.time });

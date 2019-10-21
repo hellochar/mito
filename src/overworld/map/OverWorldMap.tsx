@@ -1,21 +1,21 @@
-import { scaleLinear } from "d3-scale";
 import React from "react";
 import Modal from "react-modal";
 
-import { HexTile } from "./hexTile";
-import { roundCubeCoordinates, pixelPosition } from "./hexMath";
-import { OverWorld } from "./overWorld";
+import { HexTile } from "../hexTile";
+import { roundCubeCoordinates } from "../hexMath";
+import { OverWorld } from "../overWorld";
 
 import "./OverWorldMap.scss";
 import { Vector2 } from "three";
 import OverWorldPopover from "./OverWorldPopover";
 import HexTileInfo from "./HexTileInfo";
-import PhylogeneticTree from "../evolution/PhylogeneticTree";
-import { Species } from "../evolution/species";
-import MutationScreen from "../evolution/MutationScreen";
+import PhylogeneticTree from "../../evolution/PhylogeneticTree";
+import { Species } from "../../evolution/species";
+import MutationScreen from "../../evolution/MutationScreen";
 import { GiFamilyTree } from "react-icons/gi";
 import classNames from "classnames";
 import Ticker from "global/ticker";
+import HexTileSprite from "./hexTileSprite";
 
 const C = Math.sqrt(3) / 2;
 
@@ -43,6 +43,8 @@ interface OverWorldMapState {
 
 export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWorldMapState> {
 
+  private hexTileSprites: Map<HexTile, HexTileSprite> = new Map();
+
   constructor(props: OverWorldMapProps) {
     super(props);
     this.state = {
@@ -51,6 +53,10 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
       leftPanelOpen: true,
       // activelyMutatingSpecies: props.rootSpecies,
     };
+    for (const tile of props.overWorld) {
+      const sprite = new HexTileSprite(tile);
+      this.hexTileSprites.set(tile, sprite);
+    }
   }
 
   private canvas: HTMLCanvasElement | null = null;
@@ -180,8 +186,8 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     if (this.canvas != null) {
       const context = this.canvas.getContext("2d")!;
       context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      for (const tile of this.props.overWorld) {
-        drawTile(this.canvas, this.state.cameraState, tile);
+      for (const sprite of this.hexTileSprites.values()) {
+        sprite.draw(context, this.state.cameraState);
       }
     }
   }
@@ -295,41 +301,4 @@ function getClickedHexTile(
   const rounded = roundCubeCoordinates(i, j, k);
 
   return overWorld.tileAt(rounded.i, rounded.j);
-}
-
-function drawHex(c: CanvasRenderingContext2D, x: number, y: number, r: number) {
-  c.strokeStyle = "rgb(112, 112, 112)";
-  c.beginPath();
-  c.moveTo(x + r, y);
-  for (let i = 1; i < 6; i++) {
-    const angle = (i / 6) * Math.PI * 2;
-    c.lineTo(x + Math.cos(angle) * r, y + Math.sin(angle) * r);
-  }
-  c.closePath();
-  c.fill();
-  c.stroke();
-}
-
-const colorScale = scaleLinear<string, string>()
-  .domain([-1, 0, 1, 5, 6])
-  .range(["rgb(0, 60, 255)", "lightblue", "yellow", "orange"]);
-
-function drawTile(canvas: HTMLCanvasElement, camera: CameraState, tile: HexTile) {
-  const { scale } = camera;
-  const [px, py] = pixelPosition(tile, camera);
-
-  const c = canvas.getContext("2d")!;
-
-  if (tile.info.visible) {
-    c.fillStyle = colorScale(tile.info.height);
-    drawHex(c, px, py, scale);
-    c.font = "12px serif";
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    c.fillStyle = "#666";
-    c.fillText(tile.info.height + "", px, py, scale);
-  } else {
-    c.fillStyle = "grey";
-    drawHex(c, px, py, scale);
-  }
 }
