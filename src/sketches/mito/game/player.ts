@@ -169,9 +169,8 @@ export class Player implements Steppable {
 
   public attemptMove(action: ActionMove) {
     if (this.verifyMove(action)) {
-      footsteps.audio.currentTime = Math.random() * 0.05;
       footsteps.gain.gain.cancelScheduledValues(0);
-      footsteps.gain.gain.value = 1.0;
+      footsteps.gain.gain.value = 0.5;
       footsteps.gain.gain.linearRampToValueAtTime(0, footsteps.gain.context.currentTime + 0.05);
       // do the move
       this.posFloat.add(action.dir.clone().setLength(this.speed));

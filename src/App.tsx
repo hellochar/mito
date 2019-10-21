@@ -27,8 +27,8 @@ class App extends React.PureComponent<{}, AppState> {
   constructor(props: {}) {
     super(props);
     const overWorld = OverWorld.generateRectangle(100, 50);
-    // const activeLevel = overWorld.getStartTile();
     const rootSpecies = newBaseSpecies("plantum originus");
+    const activeLevel = overWorld.getStartTile();
     rootSpecies.freeMutationPoints = 25;
     // const s3 = newBaseSpecies("s3");
     // s3.descendants = [newBaseSpecies("ya"), newBaseSpecies("no"), newBaseSpecies("whoa")];
@@ -37,7 +37,8 @@ class App extends React.PureComponent<{}, AppState> {
     // s.descendants = [newBaseSpecies("1"), newBaseSpecies("2")]
     this.state = {
       overWorld,
-      activeLevel: undefined,
+      activeLevel,
+      activeSpecies: rootSpecies,
       rootSpecies,
       epoch: 1,
       mousePosition: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
