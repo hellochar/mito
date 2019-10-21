@@ -2,17 +2,17 @@ import { Action, ActionMove } from "./action";
 import { DIRECTIONS } from "./directions";
 
 export const ACTION_KEYMAP: { [key: string]: Action } = {
-  q: {
+  KeyQ: {
     type: "drop",
     sugar: 0,
     water: 1, // hack hack we can assume max 100 water, it's fine
   },
-  e: {
+  keyE: {
     type: "drop",
     sugar: 1,
     water: 0, // hack hack we can assume max 100 water, it's fine
   },
-  " ": {
+  Space: {
     type: "pickup",
     sugar: 1,
     water: 1,
@@ -20,19 +20,19 @@ export const ACTION_KEYMAP: { [key: string]: Action } = {
 };
 
 export const MOVEMENT_KEYS: { [key: string]: ActionMove } = {
-  w: {
+  KeyW: {
     type: "move",
     dir: DIRECTIONS.n,
   },
-  a: {
+  KeyA: {
     type: "move",
     dir: DIRECTIONS.w,
   },
-  s: {
+  KeyS: {
     type: "move",
     dir: DIRECTIONS.s,
   },
-  d: {
+  KeyD: {
     type: "move",
     dir: DIRECTIONS.e,
   },

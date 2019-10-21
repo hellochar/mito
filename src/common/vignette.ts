@@ -44,8 +44,8 @@ class VignetteCapturer {
     // webgl render to a renderTarget
     const camera = this.cameraEncompassingBounds([minBounds, maxBounds]);
     const { renderer } = this.mito;
-    renderer.clearTarget(renderTarget, true, true, true);
     renderer.setRenderTarget(renderTarget);
+    renderer.clear(true, true, true);
     renderer.render(scene, camera);
     renderer.setRenderTarget(null);
 

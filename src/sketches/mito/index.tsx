@@ -81,14 +81,14 @@ export class Mito extends ISketch {
     },
     keydown: (event: KeyboardEvent) => {
       this.firstActionTakenYet = true;
-      const key = event.key!;
-      this.keyMap.add(key);
+      const code = event.code;
+      this.keyMap.add(code);
       if (!event.repeat) {
-        this.handleKeyDown(key);
+        this.handleKeyDown(code);
       }
     },
     keyup: (event: KeyboardEvent) => {
-      this.keyMap.delete(event.key!);
+      this.keyMap.delete(event.code);
     },
     wheel: (e: WheelEvent) => {
       if (e.shiftKey) {
@@ -147,8 +147,15 @@ export class Mito extends ISketch {
 
     hookUpAudio(this.audioContext);
     this.updateAmbientAudio();
+    this.attachWindowEvents();
     (window as any).mito = this;
     (window as any).THREE = THREE;
+  }
+
+  private attachWindowEvents() {
+    window.addEventListener("blur", () => {
+      this.keyMap.clear();
+    });
   }
 
   handleKeyDown = (key: string) => {
