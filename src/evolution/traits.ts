@@ -53,26 +53,26 @@ export type Traits = {
    * How quickly this cell builds.
    */
   buildTime: TraitValue;
-  // /**
-  //  * How well this cell still works at high temperatures.
-  //  */
-  // heatTolerance: TraitValue;
-  // /**
-  //  * How well this cell still works at low temperatures.
-  //  */
-  // coldTolerance: TraitValue;
-  // /**
-  //  * How many resources a seed needs to be considered "matured". Lower is less resources.
-  //  */
-  // seedNeededResources: TraitValue;
-  // /**
-  //  * How quickly a seed finishes growing. Higher is faster growth.
-  //  */
-  // seedGrowthSpeed: TraitValue;
-  // /**
-  //  * How many mutation points a seed gives. Higher is more mutation.
-  //  */
-  // seedMutationPoints: TraitValue;
+  /**
+   * How well this cell still works at high temperatures.
+   */
+  heatTolerant: TraitValue;
+  /**
+   * How well this cell still works at low temperatures.
+   */
+  coldTolerant: TraitValue;
+  /**
+   * How many resources a seed needs to be considered "matured". Lower is less resources.
+   */
+  fruitNeededResources: TraitValue;
+  /**
+   * How quickly a seed finishes growing. Higher is faster growth.
+   */
+  fruitGrowthSpeed: TraitValue;
+  /**
+   * How many mutation points a seed gives. Higher is more mutation.
+   */
+  fruitMutationPoints: TraitValue;
 };
 
 export type TraitDiff = Partial<Traits> & {
@@ -94,6 +94,11 @@ export function emptyTraits(): Traits {
     diffuseWater: 0,
     diffuseSugar: 0,
     buildTime: 0,
+    heatTolerant: 0,
+    coldTolerant: 0,
+    fruitGrowthSpeed: 0,
+    fruitMutationPoints: 0,
+    fruitNeededResources: 0,
   };
 }
 
@@ -177,14 +182,16 @@ export function dnaPairToTraitType(dnaTuple: DNATuple): TraitType | undefined {
     case "GG":
       return "buildTime";
     case "GT":
+      return "heatTolerant";
 
     case "TA":
+      return "coldTolerant";
     case "TC":
+      return "fruitGrowthSpeed";
     case "TG":
+      return "fruitMutationPoints";
     case "TT":
-
-    default:
-      return undefined;
+      return "fruitNeededResources";
   }
 }
 

@@ -7,7 +7,7 @@ import { parse } from "query-string";
 import { map, lerp2 } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { ActionBuild, ActionMove } from "./action";
-import { drums, hookUpAudio, strings, footsteps } from "./audio";
+import { drums, hookUpAudio, strings } from "./audio";
 import { Constructor } from "./constructor";
 import { World, TIME_PER_SEASON } from "./game";
 import { Cell, Fruit, Root, Tissue, Transport, Vein, Leaf, Tile } from "./game/tile";

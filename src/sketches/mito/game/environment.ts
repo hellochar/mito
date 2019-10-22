@@ -28,14 +28,14 @@ export const Temperate = () => {
 
   const environment: Environment = {
     climate: {
-      turnsBetweenRainfall: 800,
+      turnsBetweenRainfall: 1200,
       rainDuration: 50,
       waterPerDroplet: 2,
     },
     evaporationRate: 0.0002,
     evaporationBottom: 0.6,
-    floorCo2: 0.5,
-    waterGravityPerTurn: 0.001,
+    floorCo2: 0.3333,
+    waterGravityPerTurn: 0.01,
     fill: [
       (pos, world) => {
         const { x, y } = pos;
@@ -83,7 +83,7 @@ export const Desert = () => {
   const e: Environment = {
     climate: {
       rainDuration: 220,
-      turnsBetweenRainfall: 3000,
+      turnsBetweenRainfall: 3300,
       waterPerDroplet: 8,
     },
     evaporationRate: 0.002,
@@ -117,7 +117,7 @@ export const Rocky = () => {
 
   const e: Environment = {
     climate: {
-      turnsBetweenRainfall: 1200,
+      turnsBetweenRainfall: 2500,
       rainDuration: 120,
       waterPerDroplet: 3,
     },

@@ -6,7 +6,7 @@ import { Constructor } from "../constructor";
 import { DIRECTIONS } from "../directions";
 import { hasInventory, HasInventory, Inventory } from "../inventory";
 import { params } from "../params";
-import { World } from "./world";
+import { World, TIME_PER_SEASON } from "./world";
 import { Steppable } from "./entity";
 import { traitMod } from "../../../evolution/traits";
 
@@ -40,6 +40,11 @@ export abstract class Tile implements Steppable {
   public readonly timeMade: number;
 
   public pos: Vector2;
+
+  public get age() {
+    return this.world.time - this.timeMade;
+  }
+
   public constructor(pos: Vector2, public readonly world: World) {
     this.pos = pos.clone();
     if (world == null) {
@@ -128,15 +133,14 @@ export abstract class Tile implements Steppable {
 
   diffuseWater(giver: HasInventory) {
     if (hasInventory(this)) {
+      const diffusionAmount = (giver.inventory.water - this.inventory.water) * this.diffusionWater;
       if (params.soilDiffusionType === "continuous") {
-        const diffusionAmount = (giver.inventory.water - this.inventory.water) * this.diffusionWater;
         giver.inventory.give(this.inventory, diffusionAmount, 0);
       } else {
-        const waterDiff = giver.inventory.water - this.inventory.water;
-        const chanceToHappenScalar = Math.min(waterDiff, 1);
-        if (Math.random() < waterDiff * this.diffusionWater * chanceToHappenScalar) {
-          giver.inventory.give(this.inventory, 1, 0);
-        }
+        giver.inventory.give(this.inventory, randRound(diffusionAmount), 0);
+        // if (Math.random() < waterDiff * this.diffusionWater * chanceToHappenScalar) {
+        //   giver.inventory.give(this.inventory, 1, 0);
+        // }
       }
     }
   }
@@ -144,24 +148,42 @@ export abstract class Tile implements Steppable {
   diffuseSugar(giver: HasInventory) {
     if (hasInventory(this)) {
       const diffusionAmount = (giver.inventory.sugar - this.inventory.sugar) * this.diffusionSugar;
-      giver.inventory.give(this.inventory, 0, diffusionAmount);
+      if (params.soilDiffusionType === "continuous") {
+        giver.inventory.give(this.inventory, 0, diffusionAmount);
+      } else {
+        giver.inventory.give(this.inventory, 0, randRound(diffusionAmount));
+      }
     }
+    // if (hasInventory(this)) {
+    //   const diffusionAmount = (giver.inventory.sugar - this.inventory.sugar) * this.diffusionSugar;
+    //   giver.inventory.give(this.inventory, 0, diffusionAmount);
+    // }
   }
 
   stepGravity() {
     const fallAmount = this.fallAmount;
     const lowerNeighbor = this.world.tileAt(this.pos.x, this.pos.y + 1);
-    if (fallAmount > 0 && this.world.time % Math.floor(1 / fallAmount) < 1) {
-      if (hasInventory(lowerNeighbor) && canPullResources(lowerNeighbor, this)) {
-        this.inventory.give(lowerNeighbor.inventory, 1, 0);
-      }
-    }
-    // if (hasInventory(lowerNeighbor) && fallAmount > 0 && canPullResources(lowerNeighbor, this)) {
-    //     this.inventory.give(lowerNeighbor.inventory,
-    //         params.soilDiffusionType === "continuous" ? fallAmount : randRound(fallAmount),
-    //         0);
+    // if (fallAmount > 0 && this.age % Math.floor(1 / fallAmount) < 1) {
+    //   if (hasInventory(lowerNeighbor) && canPullResources(lowerNeighbor, this)) {
+    //     this.inventory.give(lowerNeighbor.inventory, 1, 0);
+    //   }
     // }
+    if (hasInventory(lowerNeighbor) && fallAmount > 0 && canPullResources(lowerNeighbor, this)) {
+      this.inventory.give(lowerNeighbor.inventory,
+        params.soilDiffusionType === "continuous" ? fallAmount : randRound(fallAmount),
+        0);
+    }
   }
+}
+
+/**
+ * Get a random integer between floor(x) and ceil(x) such that, over many iterations,
+ * randRound(x) gives an average of x.
+ */
+function randRound(x: number) {
+  const ix = Math.floor(x);
+  const fx = x - ix;
+  return ix + (Math.random() < fx ? 1 : 0);
 }
 
 function allowPull(receiver: any, recieverType: Constructor<any>, giver: any, giverType: Constructor<any>) {
@@ -651,6 +673,9 @@ export class Fruit extends Cell {
   static readonly neededResources = 100;
   public committedResources = new Inventory(Fruit.neededResources, this);
   public timeMatured?: number;
+  static turnsToBuild = 0;
+  static TURNS_TO_MATURE = TIME_PER_SEASON / 3 * 2; // takes two months to mature
+  static ONE_TURN_COMMIT_MAX = Fruit.neededResources / Fruit.TURNS_TO_MATURE;
 
   constructor(pos: Vector2, world: World) {
     super(pos, world);
@@ -660,31 +685,32 @@ export class Fruit extends Cell {
   handleGetResources = () => {
     if (this.timeMatured == null && this.isMature()) {
       this.timeMatured = this.world.time;
+      this.committedResources.off("get", this.handleGetResources);
     }
-    this.committedResources.off("get", this.handleGetResources);
   };
 
   // aggressively take the inventory from neighbors
   step() {
-    if (this.world.time % 3 !== 0) {
+    const dt = 3;
+    if (this.world.time % dt !== 0) {
       return;
     }
     super.step();
     const neighbors = this.world.tileNeighbors(this.pos);
     for (const [, neighbor] of neighbors) {
-      if (hasInventory(neighbor) && neighbor instanceof Cell) {
-        const wantedWater = Fruit.neededResources / 2 - this.committedResources.water;
-        const wantedSugar = Fruit.neededResources / 2 - this.committedResources.sugar;
+      if (hasInventory(neighbor) && neighbor instanceof Cell && !(neighbor instanceof Fruit)) {
+        const wantedWater = Math.min(Fruit.neededResources / 2 - this.committedResources.water, 1);
+        const wantedSugar = Math.min(Fruit.neededResources / 2 - this.committedResources.sugar, 1);
 
         neighbor.inventory.give(this.inventory, wantedWater, wantedSugar);
       }
     }
-    this.commitResources();
+    this.commitResources(dt);
   }
 
-  commitResources() {
-    const wantedWater = Math.min(Fruit.neededResources / 2 - this.committedResources.water, 0.2);
-    const wantedSugar = Math.min(Fruit.neededResources / 2 - this.committedResources.sugar, 0.2);
+  commitResources(dt: number) {
+    const wantedWater = Math.min(Fruit.neededResources / 2 - this.committedResources.water, Fruit.ONE_TURN_COMMIT_MAX / 2 * dt);
+    const wantedSugar = Math.min(Fruit.neededResources / 2 - this.committedResources.sugar, Fruit.ONE_TURN_COMMIT_MAX / 2 * dt);
     this.inventory.give(this.committedResources, wantedWater, wantedSugar);
   }
 

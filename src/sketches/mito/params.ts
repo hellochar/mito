@@ -4,9 +4,9 @@ import { parse, stringify } from "query-string";
 const PARAMS_DEFAULT = {
   isRealtime: true,
   environment: "Temperate" as keyof typeof ALL_ENVIRONMENTS,
-  cellEnergyMax: 10000,
+  cellEnergyMax: 6750,
   tissueInventoryCapacity: 6,
-  rootTurnsPerTransfer: 20,
+  rootTurnsPerTransfer: 40,
   leafReactionRate: 0.01,
   leafSugarPerReaction: 1,
   cellGestationTurns: 20,

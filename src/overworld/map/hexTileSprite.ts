@@ -4,8 +4,6 @@ import { scaleLinear } from "d3-scale";
 import { pixelPosition } from "overworld/hexMath";
 
 import testVignetteUrl from "assets/images/test-vignette.png";
-import Ticker from "global/ticker";
-import { Vector2, Sprite } from "three";
 
 const testVignette = new Image();
 testVignette.src = testVignetteUrl;

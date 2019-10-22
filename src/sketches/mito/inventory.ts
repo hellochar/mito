@@ -61,6 +61,10 @@ export class Inventory {
     if (other === this) {
       throw new Error("shouldn't give to self");
     }
+    // special case - don't emit events or anything since nothing actually changed
+    if (amountWater === 0 && amountSugar === 0) {
+      return { water: 0, sugar: 0 };
+    }
     // to check:
     // 1) we have enough water and sugar
     //      if we don't, cap water and sugar to the amount available
