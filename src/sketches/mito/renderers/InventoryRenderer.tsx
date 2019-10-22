@@ -127,7 +127,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
     }
   };
 
-  private updateNumParticles(resource: number) {
+  private updateNumParticles(resources: number) {
     // while (resourceArray.length < wantedMeshes) {
     //     this.newParticle(resourceArray);
     // }

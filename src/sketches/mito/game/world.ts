@@ -359,7 +359,7 @@ export class World {
       }
     });
     this.computeSunlight();
-    // this.computeTemperature();
+    this.computeTemperature();
     this.stepWeather();
     this.time++;
     this.fillCachedEntities();
@@ -384,6 +384,10 @@ export class World {
         t.inventory.add(this.environment.climate.waterPerDroplet, 0);
       }
     }
+  }
+
+  getCurrentTemperature(): number {
+    return THREE.Math.mapLinear(-Math.cos(this.time / TIME_PER_YEAR * Math.PI * 2), -1, 1, 0, 100);
   }
 
   public computeSunlight() {

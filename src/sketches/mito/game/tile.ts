@@ -23,8 +23,9 @@ export abstract class Tile implements Steppable {
   static fallAmount = 0;
   public isObstacle = false;
   public darkness = Infinity;
-  public temperature = 50;
+  public temperature: number;
   public nextTemperature?: number;
+
   get diffusionWater(): number {
     return (this.constructor as any).diffusionWater;
   }
@@ -51,6 +52,7 @@ export abstract class Tile implements Steppable {
       throw new Error("null world!");
     }
     this.timeMade = world.time;
+    this.temperature = world.getCurrentTemperature();
   }
 
   public lightAmount() {
@@ -65,7 +67,7 @@ export abstract class Tile implements Steppable {
     const neighbors = this.world.tileNeighbors(this.pos);
     this.stepDarkness(neighbors);
     this.stepDiffusion(neighbors);
-    // this.stepTemperature(neighbors);
+    this.stepTemperature(neighbors);
     this.stepGravity();
   }
 
