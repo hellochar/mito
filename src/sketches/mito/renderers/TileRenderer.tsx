@@ -196,7 +196,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     } else if (this.target.temperature < 33) {
       mat.color.lerp(TileRenderer.COLD_COLOR, map(this.target.temperature, 33, 0, 0, 1));
     }
-    this.originalColor.lerp(new Color(0), map(lightAmount, 0, 1, 0.2, 1));
+    mat.color = new Color(0).lerp(mat.color, map(lightAmount, 0, 1, 0.2, 1));
 
     // audio
     if (this.target instanceof Leaf && this.audio != null) {
