@@ -530,6 +530,7 @@ export class Leaf extends Cell {
   public didConvert = false;
   public sugarConverted = 0;
   public tilePairs: Vector2[] = []; // implied that the opposite direction is connected
+  public totalSugarProduced = 0;
 
   public step() {
     if (this.world.time % 3 !== 0) {
@@ -577,6 +578,7 @@ export class Leaf extends Cell {
           const sugarConverted = waterToConvert * efficiency;
           tissue.inventory.add(-waterToConvert, sugarConverted);
           this.sugarConverted += sugarConverted;
+          this.totalSugarProduced += sugarConverted;
         }
       }
     }
@@ -595,6 +597,7 @@ export class Root extends Cell {
   public activeNeighbors: Vector2[] = [];
   public inventory = new Inventory(params.tissueInventoryCapacity, this);
   cooldown = 0;
+  public totalSucked = 0;
 
   public step() {
     if (this.world.time % 3 !== 0) {
@@ -633,7 +636,8 @@ export class Root extends Cell {
         // only do it once
         if (this.waterTransferAmount === 0) {
           const { water } = tile.inventory.give(this.inventory, 1, 0);
-          this.waterTransferAmount += water + Math.random() * 0.0001;
+          this.waterTransferAmount += water;
+          this.totalSucked += water;
         }
       }
     }

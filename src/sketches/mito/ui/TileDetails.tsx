@@ -6,11 +6,11 @@ import { Air, Cell, Fountain, GrowingCell, hasEnergy, Leaf, Root, Tile } from ".
 import { hasInventory } from "../inventory";
 import { params } from "../params";
 
-interface HoveredTileInfoProps {
+interface TileDetailsProps {
   tile?: Tile;
 }
 
-export class HoveredTileInfo extends React.Component<HoveredTileInfoProps> {
+export class TileDetails extends React.Component<TileDetailsProps> {
   public render() {
     const { tile } = this.props;
     if (!tile) {
@@ -32,16 +32,18 @@ export class HoveredTileInfo extends React.Component<HoveredTileInfoProps> {
   private rootInfo(tile: Tile) {
     return tile instanceof Root ? (
       <div className="info-root">
-        <div>{tile.cooldown} turns until next water suck</div>
-        <div>{tile.waterTransferAmount.toFixed(0)} water transfer per round</div>
+        <div>{tile.totalSucked} water collected.</div>
+        <div>{tile.cooldown} turns until next water suck.</div>
+        <div>{tile.waterTransferAmount.toFixed(0)} water transfer per round.</div>
       </div>
     ) : null;
   }
   private leafInfo(tile: Tile) {
     return tile instanceof Leaf ? (
       <div className="info-leaf">
-        <div>{(1 / (tile.averageSpeed * params.leafReactionRate)).toFixed(0)} turns per reaction</div>
-        <div>{(1 / tile.averageEfficiency).toFixed(2)} water per sugar</div>
+        <div>{tile.totalSugarProduced} sugar produced.</div>
+        <div>{(1 / (tile.averageSpeed * params.leafReactionRate)).toFixed(0)} turns per reaction.</div>
+        <div>{(1 / tile.averageEfficiency).toFixed(2)} water per sugar.</div>
       </div>
     ) : null;
   }

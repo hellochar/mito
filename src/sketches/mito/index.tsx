@@ -11,7 +11,7 @@ import { drums, hookUpAudio, strings, footsteps } from "./audio";
 import { Constructor } from "./constructor";
 import { World, TIME_PER_SEASON } from "./game";
 import { Cell, Fruit, Root, Tissue, Transport, Vein, Leaf, Tile } from "./game/tile";
-import { ACTION_KEYMAP, MOVEMENT_KEYS } from "./keymap";
+import { ACTION_KEYMAP, MOVEMENT_KEYS, CELL_BAR_KEYS } from "./keymap";
 import { params } from "./params";
 import { NewPlayerTutorial } from "./tutorial";
 import { GameStack, Hover, HUD } from "./ui";
@@ -158,21 +158,20 @@ export class Mito extends ISketch {
     });
   }
 
-  handleKeyDown = (key: string) => {
-    if (key === "?") {
+  handleKeyDown = (code: string) => {
+    if (code === "Slash") {
       this.instructionsOpen = !this.instructionsOpen;
       return;
     }
     if (this.instructionsOpen) {
-      if (key === "Escape") {
+      if (code === "Escape") {
         this.instructionsOpen = false;
       }
       return;
     }
 
-    if (["1", "2", "3", "4", "5"].indexOf(key) !== -1) {
-      const index = key.charCodeAt(0) - "1".charCodeAt(0);
-      this.cellBarIndex = index;
+    if (CELL_BAR_KEYS[code] != null) {
+      this.cellBarIndex = CELL_BAR_KEYS[code];
     }
   };
 
