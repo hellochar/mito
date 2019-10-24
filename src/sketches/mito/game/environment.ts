@@ -28,14 +28,14 @@ export const Temperate = () => {
 
   const environment: Environment = {
     climate: {
-      turnsBetweenRainfall: 1200,
+      turnsBetweenRainfall: 800,
       rainDuration: 50,
       waterPerDroplet: 2,
     },
     evaporationRate: 0.0002,
     evaporationBottom: 0.6,
     floorCo2: 0.3333,
-    waterGravityPerTurn: 0.01,
+    waterGravityPerTurn: 0.005,
     fill: [
       (pos, world) => {
         const { x, y } = pos;

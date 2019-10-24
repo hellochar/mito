@@ -11,6 +11,10 @@ export function map(x: number, xStart: number, xStop: number, yStart: number, yS
   return lerp(yStart, yStop, (x - xStart) / (xStop - xStart));
 }
 
+export function clamp(x: number, min: number, max: number) {
+  return x < min ? min : x > max ? max : x;
+}
+
 export function sampleArray<T>(a: T[]) {
   return a[Math.floor(Math.random() * a.length)];
 }

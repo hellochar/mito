@@ -28,16 +28,28 @@ export class Player implements Steppable {
   private action?: Action;
   private events = new EventEmitter();
   public mapActions?: (player: Player, action: Action) => Action | undefined;
-  public speed: number;
+  // public speed: number;
   // public dropWater = false;
   // public dropSugar = false;
+  public baseSpeed: number;
+
+  public get speed() {
+    let s = this.baseSpeed;
+    const tile = this.currentTile();
+    if (tile instanceof Cell) {
+      if (tile.temperature < 33) {
+        s *= 0.25;
+      }
+    }
+    return s;
+  }
 
   get pos() {
     return this.posFloat.clone().round();
   }
 
   public constructor(public posFloat: Vector2, public world: World) {
-    this.speed = traitMod(world.traits.walkSpeed, 0.15, 1.5);
+    this.baseSpeed = traitMod(world.traits.walkSpeed, 0.15, 1.5);
   }
 
   public setAction(action: Action) {
@@ -75,7 +87,7 @@ export class Player implements Steppable {
   }
 
   public currentTile() {
-    return this.world.tileAt(this.pos);
+    return this.world.tileAt(this.pos)!;
   }
 
   public on(event: string, cb: (...args: any[]) => void) {
@@ -169,6 +181,15 @@ export class Player implements Steppable {
 
   public attemptMove(action: ActionMove) {
     if (this.verifyMove(action)) {
+      const t = this.currentTile();
+      if (t instanceof Cell) {
+        if (t.temperature < 40) {
+          t.nextTemperature += 0.2;
+        }
+        else if (t.temperature > 60) {
+          t.nextTemperature -= 0.2;
+        }
+      }
       footsteps.gain.gain.cancelScheduledValues(0);
       footsteps.gain.gain.value = 0.5;
       footsteps.gain.gain.linearRampToValueAtTime(0, footsteps.gain.context.currentTime + 0.05);

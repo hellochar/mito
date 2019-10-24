@@ -12,20 +12,43 @@ import { Entity, isSteppable } from "./entity";
 import { GameResult } from "..";
 import { Traits, traitMod, getTraits } from "../../../evolution/traits";
 import { Species } from "../../../evolution/species";
+import { scaleLinear } from "d3-scale";
+import capitalize from "common/capitalize";
 
 export class StepStats {
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) { }
 }
 
 export interface Season {
-  name: "spring" | "summer" | "fall" | "winter";
   percent: number;
+  name: "spring" | "summer" | "fall" | "winter";
+  month: number;
+  day: number;
+}
+
+export function seasonFromTime(time: number): Season {
+  const name = SEASON_ORDER[Math.floor(time / TIME_PER_SEASON)];
+  const percent = (time % TIME_PER_SEASON) / TIME_PER_SEASON; // percent done with this season
+  const month = Math.floor((time % TIME_PER_SEASON) / TIME_PER_MONTH) + 1;
+  const day = Math.floor((time % TIME_PER_MONTH) / TIME_PER_DAY) + 1;
+  return {
+    name,
+    percent,
+    month,
+    day,
+  };
+}
+
+export function seasonDisplay(s: Season) {
+  return `${capitalize(s.name)}, Month ${s.month}, Day ${s.day}`;
 }
 
 const SEASON_ORDER: Season["name"][] = ["spring", "summer", "fall", "winter"];
 
 export const TIME_PER_YEAR = 30 * 60 * 15; // 30 fps * 60 seconds/minute * 15 minutes
 export const TIME_PER_SEASON = TIME_PER_YEAR / 4;
+export const TIME_PER_MONTH = TIME_PER_SEASON / 3;
+export const TIME_PER_DAY = TIME_PER_MONTH / 3;
 
 export class World {
   public time: number = 0;
@@ -39,13 +62,8 @@ export class World {
   public readonly species: Species;
   public readonly traits: Traits;
 
-  get season() {
-    const name = SEASON_ORDER[Math.floor(this.time / TIME_PER_SEASON)];
-    const percent = (this.time % TIME_PER_SEASON) / TIME_PER_SEASON;
-    return {
-      name,
-      percent,
-    };
+  get season(): Season {
+    return seasonFromTime(this.time);
   }
 
   constructor(public environment: Environment, species: Species) {
@@ -358,8 +376,8 @@ export class World {
         entity.step();
       }
     });
+    this.updateTemperatures();
     this.computeSunlight();
-    this.computeTemperature();
     this.stepWeather();
     this.time++;
     this.fillCachedEntities();
@@ -386,14 +404,28 @@ export class World {
     }
   }
 
+  private temperatureScale = scaleLinear()
+    .domain([0, 1 * TIME_PER_SEASON / 2, // spring
+      1 * TIME_PER_SEASON, 3 * TIME_PER_SEASON / 2, // summer
+      2 * TIME_PER_SEASON, 5 * TIME_PER_SEASON / 2, // fall
+      3 * TIME_PER_SEASON, 7 * TIME_PER_SEASON / 2, // winter
+      4 * TIME_PER_SEASON, // end of winter
+    ])
+    .range([25, 50,
+      66, 75,
+      60, 40,
+      33, 12,
+      0]);
+
   getCurrentTemperature(): number {
-    return THREE.Math.mapLinear(-Math.cos(this.time / TIME_PER_YEAR * Math.PI * 2), -1, 1, 0, 100);
+    return this.temperatureScale(this.time);
+    // return THREE.Math.mapLinear(-Math.cos(this.time / TIME_PER_YEAR * Math.PI * 2), -1, 1, , 100);
   }
 
   public computeSunlight() {
     // sunlight is special - we step downards from the top; neighbors don't affect the calculation so we don't have buffering problems
     // 0 to PI = daytime, PI to 2PI = nighttime
-    const sunAngle = (this.time * Math.PI * 2) / 1000;
+    const sunAngle = (this.time * Math.PI * 2) / TIME_PER_DAY;
     const directionalBias = Math.sin(sunAngle + Math.PI / 2);
     const sunAmount = (Math.atan(Math.sin(sunAngle) * 12) / (Math.PI / 2)) * 0.5 + 0.5;
     for (let y = 0; y <= this.height * 0.6; y++) {
@@ -432,11 +464,9 @@ export class World {
     }
   }
 
-  public computeTemperature() {
-    for (const t of this.entities()) {
-      if (t instanceof Tile && t.nextTemperature != null) {
-        t.temperature = t.nextTemperature;
-      }
+  public updateTemperatures() {
+    for (const t of this.cells()) {
+      t.temperature = t.nextTemperature;
     }
   }
 

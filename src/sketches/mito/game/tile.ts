@@ -24,7 +24,6 @@ export abstract class Tile implements Steppable {
   public isObstacle = false;
   public darkness = Infinity;
   public temperature: number;
-  public nextTemperature?: number;
 
   get diffusionWater(): number {
     return (this.constructor as any).diffusionWater;
@@ -52,7 +51,7 @@ export abstract class Tile implements Steppable {
       throw new Error("null world!");
     }
     this.timeMade = world.time;
-    this.temperature = world.getCurrentTemperature();
+    this.temperature = this.world.getCurrentTemperature();
   }
 
   public lightAmount() {
@@ -67,8 +66,12 @@ export abstract class Tile implements Steppable {
     const neighbors = this.world.tileNeighbors(this.pos);
     this.stepDarkness(neighbors);
     this.stepDiffusion(neighbors);
-    this.stepTemperature(neighbors);
+    this.stepTemperature();
     this.stepGravity();
+  }
+
+  stepTemperature() {
+    this.temperature = this.world.getCurrentTemperature();
   }
 
   stepDarkness(neighbors: Map<Vector2, Tile>) {
@@ -114,18 +117,6 @@ export abstract class Tile implements Steppable {
           }
         }
       }
-    }
-  }
-
-  stepTemperature(neighbors: Map<Vector2, Tile>) {
-    let averageTemperature = 0;
-    for (const [, tile] of neighbors) {
-      averageTemperature += tile.temperature;
-    }
-    averageTemperature /= neighbors.size;
-    this.nextTemperature = this.temperature * 0.5 + averageTemperature * 0.5;
-    if (this.world.season.name === "spring") {
-      this.nextTemperature -= 0.1;
     }
   }
 
@@ -247,6 +238,7 @@ export class Air extends Tile {
     const neighbors = this.world.tileNeighbors(this.pos);
     this.stepDiffusion(neighbors);
     this.stepEvaporation();
+    this.stepTemperature();
     // this.stepTemperature(neighbors);
     this._co2 = this.computeCo2();
   }
@@ -341,6 +333,7 @@ export class Cell extends Tile implements HasEnergy {
   static turnsToBuild = params.cellGestationTurns;
   public energy: number = params.cellEnergyMax;
   public darkness = 0;
+  public nextTemperature = this.temperature;
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
   // public offset = new Vector2();
   public droopY = 0;
@@ -431,6 +424,34 @@ export class Cell extends Tile implements HasEnergy {
         }
       }
       return false;
+    }
+  }
+
+  stepTemperature() {
+    const neighbors = this.world.tileNeighbors(this.pos);
+    let averageTemperature = 0;
+    for (const [, tile] of neighbors) {
+      averageTemperature += tile.temperature;
+    }
+    averageTemperature /= neighbors.size;
+
+    // how quickly we respond to temperature changes
+    const a = 0.1;
+    this.nextTemperature += (averageTemperature - this.temperature) * a;
+
+    const ramp = 4;
+    // if we're cold, try to naturally heat ourselves
+    if (this.temperature < 33 + ramp) {
+      const diff = 33 + ramp - this.temperature;
+      const effort = diff / (5 + diff);
+      this.energy -= 100 * effort;
+      this.nextTemperature += 1 * effort;
+    }
+    if (this.temperature > 66 - ramp) {
+      const diff = this.temperature - 66 - ramp;
+      const effort = diff / (5 + diff);
+      this.energy -= 100 * effort;
+      this.nextTemperature -= 1 * effort;
     }
   }
 

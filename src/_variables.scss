@@ -146,3 +146,10 @@ $sepia5: #c99765 !default;
     transform: scale(1);
   }
 }
+
+@mixin text-outline($size: 1px, $color: $black) {
+  text-shadow: -$size -$size 0 $color,
+  $size -$size 0 $color,
+  -$size $size 0 $color,
+  $size $size 0 $color;
+}

@@ -18,7 +18,7 @@ import {
 } from "three";
 
 import lazy from "../../../common/lazy";
-import { map, lerp2 } from "../../../math/index";
+import { map, lerp2, clamp } from "../../../math/index";
 import { blopBuffer, suckWaterBuffer } from "../audio";
 import { Constructor } from "../constructor";
 import {
@@ -144,12 +144,14 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
     // visibility
     if (lightAmount > 0) {
-      this.scene.add(this.mesh);
+      if (this.mesh.parent == null) {
+        this.scene.add(this.mesh);
+      }
       if (this.inventoryRenderer != null) {
         // will not render without an update
         this.inventoryRenderer.update();
       }
-    } else {
+    } else if (this.mesh.parent != null) {
       this.scene.remove(this.mesh);
     }
 
@@ -191,10 +193,13 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (hasEnergy(this.target)) {
       mat.color.lerp(new Color(0), 1 - this.target.energy / params.cellEnergyMax);
     }
-    if (this.target.temperature > 66) {
-      mat.color.lerp(TileRenderer.HOT_COLOR, map(this.target.temperature, 66, 100, 0, 1));
-    } else if (this.target.temperature < 33) {
-      mat.color.lerp(TileRenderer.COLD_COLOR, map(this.target.temperature, 33, 0, 0, 1));
+
+    const ramp = 2;
+    if (this.target.temperature > 66 - ramp) {
+      // mat.color.lerp(TileRenderer.HOT_COLOR, map(this.target.temperature, 66, 80, 0, 1));
+      mat.color.lerp(TileRenderer.HOT_COLOR, clamp(map(this.target.temperature, 66 - ramp, 66, 0, 1), 0, 1));
+    } else if (this.target.temperature < 33 + ramp) {
+      mat.color.lerp(TileRenderer.COLD_COLOR, clamp(map(this.target.temperature, 33 + ramp, 33, 0, 1), 0, 1));
     }
     mat.color = new Color(0).lerp(mat.color, map(lightAmount, 0, 1, 0.2, 1));
 
