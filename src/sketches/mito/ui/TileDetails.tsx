@@ -113,9 +113,9 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       <div className="info-tile-temperature">
         {/* {tile.temperature} ({tile.temperatureFloat.toFixed(0)} °F) */}
         <div style={{ width: 200, height: "1.15em", border: "1px solid grey", position: "relative" }}>
-          <Bar left={`${32 / 100 * 100}%`} color="blue" />
+          <Bar left={`${32 / 100 * 100}%`} color="lightblue" />
           <Text left={0} fontWeight={tile.temperature === Temperature.Cold ? "bold" : "normal"}>{Temperature.Cold}</Text>
-          <Bar left={`${64 / 100 * 100}%`} color="red" />
+          <Bar left={`${64 / 100 * 100}%`} color="orange" />
           <Text left={`${32 / 100 * 100}%`} fontWeight={tile.temperature === Temperature.Mild ? "bold" : "normal"}>{Temperature.Mild}</Text>
           <Text left={`${64 / 100 * 100}%`} fontWeight={tile.temperature === Temperature.Hot ? "bold" : "normal"}>{Temperature.Hot}</Text>
           <Bar left={`${tile.temperatureFloat / 100 * 100}%`} color="black" width={3}></Bar>
@@ -123,7 +123,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
             position: "absolute",
             left: `${tile.temperatureFloat / 100 * 100}%`,
             transform: "translateX(-50%)",
-            top: "-1em",
+            top: "-1.5em",
             textAlign: "center",
             fontSize: 12,
             fontWeight: "bold",

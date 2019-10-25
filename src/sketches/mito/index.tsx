@@ -45,6 +45,7 @@ export class WorldDOMElement {
 }
 
 export class Mito extends ISketch {
+  static id = "mito";
   public readonly world: World;
   public scene = new Scene();
   private camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);

@@ -1,3 +1,9 @@
+@import "../../variables";
+
+#mito .sketch-elements {
+  font-family: $georgia-family;
+}
+
 .mito-hud {
   text-align: initial;
   background: $white;
