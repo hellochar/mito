@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import * as React from "react";
-
 import { Constructor } from "../constructor";
-import { Air, Cell, Fountain, GrowingCell, hasEnergy, Leaf, Root, Tile } from "../game/tile";
+import { Air, Cell, CellEffect, Fountain, GrowingCell, hasEnergy, Leaf, Root, Tile } from "../game/tile";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
+
 
 interface TileDetailsProps {
   tile?: Tile;
@@ -100,11 +100,19 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   }
   private cellInfo(tile: Tile) {
     if (tile instanceof Cell) {
-      if (tile.droopY * 200 > 1) {
-        return <div className="info-cell">{(tile.droopY * 200).toFixed(0)}% droop</div>;
-      }
+      return (
+        <>
+          {tile.droopY * 200 > 1 ? <div className="info-cell">{(tile.droopY * 200).toFixed(0)}% droop</div> : null}
+          {tile.effects.length > 0 ? <div className="info-cell">{this.cellEffectNames(tile.effects)}</div> : null}
+        </>
+      );
     }
   }
+
+  private cellEffectNames(effects: CellEffect[]) {
+    return effects.map((e) => (e.constructor as Constructor<CellEffect>).displayName).join(", ");
+  }
+
   private growingCellInfo(tile: Tile) {
     if (tile instanceof GrowingCell) {
       return (

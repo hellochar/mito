@@ -1,14 +1,14 @@
 import { Vector2 } from "three";
-
 import { Noise } from "../../../common/perlin";
+import { traitMod } from "../../../evolution/traits";
 import { map } from "../../../math/index";
 import { Constructor } from "../constructor";
 import { DIRECTIONS } from "../directions";
 import { hasInventory, HasInventory, Inventory } from "../inventory";
 import { params } from "../params";
-import { World, TIME_PER_SEASON } from "./world";
-import { Steppable } from "./entity";
-import { traitMod } from "../../../evolution/traits";
+import { Steppable, StopStep } from "./entity";
+import { TIME_PER_SEASON, World } from "./world";
+
 
 export interface HasEnergy {
   energy: number;
@@ -326,6 +326,52 @@ export class Fountain extends Soil {
   }
 }
 
+interface CellEffectConstructor extends Constructor<CellEffect> {
+  stacks?: boolean;
+}
+export abstract class CellEffect {
+  private timeMade!: number;
+  public cell!: Cell;
+  get age() {
+    return this.cell.world.time - this.timeMade;
+  }
+
+  attachTo(cell: Cell) {
+    this.cell = cell;
+    this.timeMade = this.cell.world.time;
+  }
+
+  /**
+   * Return whether to step the next behavior in the chain
+   */
+  abstract step(): void;
+
+  remove() {
+    const index = this.cell.effects.indexOf(this);
+    this.cell.effects.splice(index, 1);
+  }
+}
+
+export class FreezeEffect extends CellEffect {
+  static displayName = "Frozen!";
+  static stacks = false;
+  public readonly turnsToDie = 2000;
+
+  get turnsUntilDeath() {
+    return this.turnsToDie - this.age;
+  }
+
+  step() {
+    if (this.age > this.turnsToDie) {
+      this.cell.die();
+    }
+    if (this.cell.temperature > 33) {
+      this.remove();
+    }
+    throw new StopStep();
+  }
+}
+
 export class Cell extends Tile implements HasEnergy {
   static displayName = "Cell";
   static diffusionWater = params.cellDiffusionWater;
@@ -333,11 +379,30 @@ export class Cell extends Tile implements HasEnergy {
   static turnsToBuild = params.cellGestationTurns;
   public energy: number = params.cellEnergyMax;
   public darkness = 0;
-  public nextTemperature = this.temperature;
+  public nextTemperature: number;
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
   // public offset = new Vector2();
   public droopY = 0;
   public args: any[] = [];
+  public effects: CellEffect[] = [];
+
+  constructor(pos: Vector2, world: World) {
+    super(pos, world);
+    this.temperature = 50;
+    this.nextTemperature = this.temperature;
+  }
+
+  addEffect(effect: CellEffect) {
+    const stacks = (effect.constructor as CellEffectConstructor).stacks;
+    if (!stacks) {
+      // exit early if we found another one and we don't stack
+      if (this.effects.find((e) => e.constructor === effect.constructor) != null) {
+        return;
+      }
+    }
+    effect.attachTo(this);
+    this.effects.push(effect);
+  }
 
   step() {
     if (this.world.time % 3 !== 0) {
@@ -345,6 +410,9 @@ export class Cell extends Tile implements HasEnergy {
     }
     super.step();
     this.energy -= 1;
+    for (const effect of this.effects) {
+      effect.step();
+    }
     const tileNeighbors = this.world.tileNeighbors(this.pos);
     const neighbors = Array.from(tileNeighbors.values());
     const neighborsAndSelf = [...neighbors, this];
@@ -363,7 +431,7 @@ export class Cell extends Tile implements HasEnergy {
           // const targetEnergy = averageEnergy;
           if (neighbor.energy > this.energy) {
             // energyTransfer = Math.floor((neighbor.energy - this.energy) / energeticNeighbors.length);
-            energyTransfer = Math.floor((neighbor.energy - this.energy) * 0.25);
+            energyTransfer = Math.min(neighbor.energy, Math.floor((neighbor.energy - this.energy) * 0.25));
             // if (neighbor.energy - energyTransfer < this.energy + energyTransfer) {
             //     throw new Error("cell energy diffusion: result of transfer gives me more than target");
             // }
@@ -401,9 +469,12 @@ export class Cell extends Tile implements HasEnergy {
     }
 
     if (this.energy <= 0) {
-      // die
-      this.world.setTileAt(this.pos, new DeadCell(this.pos, this.world));
+      this.die();
     }
+  }
+
+  die() {
+    this.world.setTileAt(this.pos, new DeadCell(this.pos, this.world));
   }
 
   stepEat(tile: Tile) {
@@ -439,19 +510,27 @@ export class Cell extends Tile implements HasEnergy {
     const a = 0.1;
     this.nextTemperature += (averageTemperature - this.temperature) * a;
 
-    const ramp = 4;
     // if we're cold, try to naturally heat ourselves
-    if (this.temperature < 33 + ramp) {
-      const diff = 33 + ramp - this.temperature;
-      const effort = diff / (5 + diff);
-      this.energy -= 100 * effort;
-      this.nextTemperature += 1 * effort;
+    if (this.temperature < 33) {
+      const chanceToFreeze = (33 - this.temperature) / 33 * 0.01;
+      if (Math.random() < chanceToFreeze) {
+        this.addEffect(new FreezeEffect());
+      }
+      // const diff = 33 + ramp - this.temperature;
+      // const effort = diff / (5 + diff);
+      // this.energy -= 100 * effort;
+      // this.nextTemperature += 1 * effort;
     }
-    if (this.temperature > 66 - ramp) {
-      const diff = this.temperature - 66 - ramp;
-      const effort = diff / (5 + diff);
-      this.energy -= 100 * effort;
-      this.nextTemperature -= 1 * effort;
+    if (this.temperature > 66) {
+      const chanceToLoseWater = (this.temperature - 66) * 0.01;
+      if (Math.random() < chanceToLoseWater) {
+        if (hasInventory(this)) {
+          this.inventory.add(-1, 0);
+        }
+      }
+      // const effort = diff / (5 + diff);
+      // this.energy -= 100 * effort;
+      // this.nextTemperature -= 1 * effort;
     }
   }
 

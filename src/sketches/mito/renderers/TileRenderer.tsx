@@ -1,50 +1,18 @@
 import React from "react";
-import {
-  ArrowHelper,
-  Audio,
-  BufferGeometry,
-  Color,
-  DoubleSide,
-  Float32BufferAttribute,
-  Line,
-  LineBasicMaterial,
-  Mesh,
-  MeshBasicMaterial,
-  Object3D,
-  PlaneBufferGeometry,
-  Scene,
-  Vector2,
-  Vector3,
-} from "three";
-
+import { ArrowHelper, Audio, BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Scene, Vector2, Vector3 } from "three";
 import lazy from "../../../common/lazy";
-import { map, lerp2, clamp } from "../../../math/index";
+import { clamp, lerp2, map } from "../../../math/index";
 import { blopBuffer, suckWaterBuffer } from "../audio";
 import { Constructor } from "../constructor";
-import {
-  Air,
-  Cell,
-  DeadCell,
-  Fountain,
-  Fruit,
-  GrowingCell,
-  hasEnergy,
-  hasTilePairs,
-  Leaf,
-  Rock,
-  Root,
-  Soil,
-  Tile,
-  Tissue,
-  Transport,
-  Vein,
-} from "../game/tile";
+import { Air, Cell, DeadCell, Fountain, Fruit, GrowingCell, hasEnergy, hasTilePairs, Leaf, Rock, Root, Soil, Tile, Tissue, Transport, Vein } from "../game/tile";
 import { Mito, WorldDOMElement } from "../index";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
 import { fruitTexture, textureFromSpritesheet } from "../spritesheet";
+import { CellEffectsRenderer } from "./CellEffectsRenderer";
 import { InventoryRenderer } from "./InventoryRenderer";
 import { Renderer } from "./Renderer";
+
 
 export class TileMesh extends Mesh {
   static geometry = new PlaneBufferGeometry(1, 1);
@@ -54,6 +22,10 @@ export class TileMesh extends Mesh {
 }
 
 export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
+  public static readonly HOT_COLOR = new Color("orange");
+  public static readonly COLD_COLOR = new Color("lightblue");
+  private static ONE = new Vector2(1, 1);
+
   // public object = new Object3D();
   public mesh: TileMesh;
   private inventoryRenderer?: InventoryRenderer;
@@ -62,6 +34,8 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private lastAudioValueTracker = 0;
   private pairsLines = new Object3D();
   private worldDomElement?: WorldDOMElement;
+  private growingRenderer?: TileRenderer;
+  private cellEffectsRenderer?: CellEffectsRenderer;
 
   constructor(target: T, scene: Scene, mito: Mito) {
     super(target, scene, mito);
@@ -129,16 +103,16 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
         }
       );
     }
+
+    if (this.target instanceof Cell) {
+      this.cellEffectsRenderer = new CellEffectsRenderer(this as unknown as TileRenderer<Cell>);
+    }
   }
 
   steps(x: number, size: number) {
     return Math.floor(x / size) * size;
   }
 
-  private static ONE = new Vector2(1, 1);
-  private growingRenderer?: TileRenderer;
-  private static HOT_COLOR = new Color("orange");
-  private static COLD_COLOR = new Color("lightblue");
   update() {
     const lightAmount = this.target.lightAmount();
 
@@ -233,6 +207,10 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.lastAudioValueTracker = newAudioValueTracker;
     }
     this.mesh.remove(this.pairsLines);
+
+    if (this.cellEffectsRenderer != null) {
+      this.cellEffectsRenderer.update();
+    }
   }
 
   updateHover() {
@@ -310,6 +288,9 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     if (this.inventoryRenderer != null) {
       this.inventoryRenderer.destroy();
+    }
+    if (this.cellEffectsRenderer != null) {
+      this.cellEffectsRenderer.destroy();
     }
   }
 }

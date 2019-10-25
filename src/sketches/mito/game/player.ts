@@ -1,22 +1,14 @@
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
-import {
-  Action,
-  ActionBuild,
-  ActionDeconstruct,
-  ActionDrop,
-  ActionMove,
-  ActionMultiple,
-  ActionPickup,
-} from "../action";
+import { traitMod } from "../../../evolution/traits";
+import { Action, ActionBuild, ActionDeconstruct, ActionDrop, ActionMove, ActionMultiple, ActionPickup } from "../action";
 import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
 import { params } from "../params";
+import { Steppable } from "./entity";
 import { Cell, Fruit, GrowingCell, Tile, Transport } from "./tile";
 import { World } from "./world";
-import { Steppable } from "./entity";
-import { traitMod } from "../../../evolution/traits";
 
 export class Player implements Steppable {
   public inventory = new Inventory(
@@ -35,12 +27,12 @@ export class Player implements Steppable {
 
   public get speed() {
     let s = this.baseSpeed;
-    const tile = this.currentTile();
-    if (tile instanceof Cell) {
-      if (tile.temperature < 33) {
-        s *= 0.25;
-      }
-    }
+    // const tile = this.currentTile();
+    // if (tile instanceof Cell) {
+    //   if (tile.temperature < 33) {
+    //     s *= 0.25;
+    //   }
+    // }
     return s;
   }
 

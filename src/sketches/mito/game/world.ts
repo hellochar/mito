@@ -1,19 +1,19 @@
-import { Vector2 } from "three";
+import capitalize from "common/capitalize";
+import { scaleLinear } from "d3-scale";
 import * as THREE from "three";
-
+import { Vector2 } from "three";
+import { GameResult } from "..";
 import devlog from "../../../common/devlog";
+import { Species } from "../../../evolution/species";
+import { getTraits, traitMod, Traits } from "../../../evolution/traits";
 import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
+import { Entity, isSteppable, step } from "./entity";
 import { Environment } from "./environment";
 import { Player } from "./player";
-import { Air, Cell, DeadCell, hasEnergy, Rock, Soil, Tile, Tissue, Fruit } from "./tile";
-import { Entity, isSteppable } from "./entity";
-import { GameResult } from "..";
-import { Traits, traitMod, getTraits } from "../../../evolution/traits";
-import { Species } from "../../../evolution/species";
-import { scaleLinear } from "d3-scale";
-import capitalize from "common/capitalize";
+import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
+
 
 export class StepStats {
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) { }
@@ -373,7 +373,7 @@ export class World {
     // dear god
     entities.forEach((entity) => {
       if (isSteppable(entity)) {
-        entity.step();
+        step(entity);
       }
     });
     this.updateTemperatures();
