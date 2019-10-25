@@ -1,5 +1,4 @@
 import { Color, Scene, Vector2 } from "three";
-
 import lazy from "../../../common/lazy";
 import { map } from "../../../math";
 import { Mito } from "../index";
@@ -7,6 +6,7 @@ import { Inventory } from "../inventory";
 import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
 import { ResourceParticles } from "./resourceParticles";
+
 
 // we represent Resources as dots of certain colors.
 export class InventoryRenderer extends Renderer<Inventory> {
@@ -203,8 +203,11 @@ export class InventoryRenderer extends Renderer<Inventory> {
     this.commitParticles(InventoryRenderer.WaterParticles(), this.target.water, this.waters);
     this.commitParticles(InventoryRenderer.SugarParticles(), this.target.sugar, this.sugars);
   }
+
   destroy() {
     // no-op
+    this.target.off("get", this.handleGetResources);
+    this.target.off("give", this.handleGiveResources);
   }
 }
 

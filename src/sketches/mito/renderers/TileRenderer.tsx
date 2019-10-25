@@ -29,7 +29,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     [Temperature.Mild]: new Color("white"),
     [Temperature.Cold]: new Color("lightblue").lerp(new Color("white"), 0.5),
     [Temperature.Freezing]: new Color("lightblue"),
-  }
+  } as Record<Temperature, Color>;
 
   private static ONE = new Vector2(1, 1);
 
@@ -174,6 +174,13 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (hasEnergy(this.target)) {
       mat.color.lerp(new Color(0), 1 - this.target.energy / params.cellEnergyMax);
     }
+
+    // const ramp = 2;
+    // if (this.target.temperatureFloat > 64 - ramp) {
+    //   mat.color.lerp(TileRenderer.TEMPERATURE_COLORS.Hot, clamp(map(this.target.temperatureFloat, 64 - ramp, 64, 0, 1), 0, 1));
+    // } else if (this.target.temperatureFloat < 32 + ramp) {
+    //   mat.color.lerp(TileRenderer.TEMPERATURE_COLORS.Cold, clamp(map(this.target.temperatureFloat, 32 + ramp, 32, 0, 1), 0, 1));
+    // }
 
     mat.color = this.lerpColorTemperature(mat.color);
     mat.color = new Color(0).lerp(mat.color, map(lightAmount, 0, 1, 0.2, 1));

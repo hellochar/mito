@@ -1,31 +1,33 @@
-import { randRound } from "math";
-import { Tile } from "./tile";
+import { Cell, Tile } from "./tile";
 
 export enum Temperature {
-  Scorching = 5,
-  Hot = 4,
-  Mild = 3,
-  Cold = 2,
-  Freezing = 1,
+  Scorching = "Scorching",
+  Hot = "Hot",
+  Mild = "Mild",
+  Cold = "Cold",
+  Freezing = "Freezing",
 }
 
-const TEMPERATURE_NAMES = {
-  5: "Scorching",
-  4: "Hot",
-  3: "Mild",
-  2: "Cold",
-  1: "Freezing",
-};
-
-export function temperatureName(t: Temperature) {
-  return TEMPERATURE_NAMES[t];
+export function temperatureFor(t: number) {
+  if (t <= 0) {
+    return Temperature.Freezing;
+  } else if (t <= 32) {
+    return Temperature.Cold;
+  } else if (t <= 64) {
+    return Temperature.Mild;
+  } else if (t <= 96) {
+    return Temperature.Hot;
+  } else {
+    return Temperature.Scorching;
+  }
 }
 
-export function nextTemperature(t: Tile, neighbors: Map<any, Tile>, dt: number): Temperature {
-  let averageTemperature = t.temperature;
+export function nextTemperature(t: Cell, neighbors: Map<any, Tile>, dt: number): number {
+  const temperature = t.temperatureFloat;
+  let averageTemperature = temperature;
   for (const tile of neighbors.values()) {
-    averageTemperature += tile.temperature;
+    averageTemperature += tile.temperatureFloat;
   }
   averageTemperature /= (neighbors.size + 1);
-  return randRound(averageTemperature);
+  return temperature * 0.8 + averageTemperature * 0.2;
 }

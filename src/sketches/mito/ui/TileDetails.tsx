@@ -1,10 +1,11 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import * as React from "react";
 import { Constructor } from "../constructor";
-import { temperatureName } from "../game/temperature";
+import { Temperature } from "../game/temperature";
 import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, hasEnergy, Leaf, Root, Tile } from "../game/tile";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
+import "./TileDetails.scss";
 
 
 interface TileDetailsProps {
@@ -76,11 +77,63 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     return (
       <div className="info-tile">
         <div className="info-tile-name">{(tile.constructor as Constructor<Tile>).displayName}</div>
-        <div className="info-tile-temperature">Temperature: {temperatureName(tile.temperature)}</div>
+        {this.temperatureInfo(tile)}
         {energyInfo}
       </div>
     );
   }
+
+  private temperatureInfo(tile: Tile) {
+    function Bar({ color = "black", left = 0 as number | string, width = 3 }) {
+      return (
+        <div style={{
+          position: "absolute",
+          top: -1,
+          left,
+          width: 1,
+          bottom: 0,
+          borderRight: `${width}px solid ${color}`
+        }} />
+      );
+    }
+    function Text({ children, fontWeight = "normal", left }: { children: React.ReactNode, fontWeight: React.CSSProperties["fontWeight"], left: number | string }) {
+      return (
+        <div style={{
+          position: "absolute",
+          left,
+          width: `${(32 / 100) * 100}%`,
+          textAlign: "center",
+          fontSize: 12,
+          fontWeight: fontWeight,
+          fontFamily: "Arial",
+        }}>{children}</div>
+      );
+    }
+    return (
+      <div className="info-tile-temperature">
+        {/* {tile.temperature} ({tile.temperatureFloat.toFixed(0)} °F) */}
+        <div style={{ width: 200, height: "1.15em", border: "1px solid grey", position: "relative" }}>
+          <Bar left={`${32 / 100 * 100}%`} color="blue" />
+          <Text left={0} fontWeight={tile.temperature === Temperature.Cold ? "bold" : "normal"}>{Temperature.Cold}</Text>
+          <Bar left={`${64 / 100 * 100}%`} color="red" />
+          <Text left={`${32 / 100 * 100}%`} fontWeight={tile.temperature === Temperature.Mild ? "bold" : "normal"}>{Temperature.Mild}</Text>
+          <Text left={`${64 / 100 * 100}%`} fontWeight={tile.temperature === Temperature.Hot ? "bold" : "normal"}>{Temperature.Hot}</Text>
+          <Bar left={`${tile.temperatureFloat / 100 * 100}%`} color="black" width={3}></Bar>
+          <div style={{
+            position: "absolute",
+            left: `${tile.temperatureFloat / 100 * 100}%`,
+            transform: "translateX(-50%)",
+            top: "-1em",
+            textAlign: "center",
+            fontSize: 12,
+            fontWeight: "bold",
+            fontFamily: "Arial",
+          }}>{tile.temperatureFloat.toFixed(0)} °F</div>
+        </div>
+      </div>
+    );
+  }
+
   private inventoryInfo(tile: Tile) {
     if (hasInventory(tile)) {
       const waterInfo =

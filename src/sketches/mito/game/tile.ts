@@ -8,7 +8,7 @@ import { hasInventory, HasInventory, Inventory } from "../inventory";
 import { params } from "../params";
 import { Steppable, StopStep } from "./entity";
 import { Interactable, isInteractable } from "./interactable";
-import { nextTemperature, Temperature } from "./temperature";
+import { nextTemperature, Temperature, temperatureFor } from "./temperature";
 import { TIME_PER_SEASON, World } from "./world";
 
 export interface HasEnergy {
@@ -24,7 +24,10 @@ export abstract class Tile implements Steppable {
   static fallAmount = 0;
   public isObstacle = false;
   public darkness = Infinity;
-  public temperature: Temperature;
+  public temperatureFloat: number;
+  get temperature(): Temperature {
+    return temperatureFor(this.temperatureFloat);
+  }
 
   get diffusionWater(): number {
     return (this.constructor as any).diffusionWater;
@@ -52,7 +55,7 @@ export abstract class Tile implements Steppable {
       throw new Error("null world!");
     }
     this.timeMade = world.time;
-    this.temperature = this.world.getCurrentTemperature();
+    this.temperatureFloat = this.world.getCurrentTemperature();
   }
 
   public lightAmount() {
@@ -72,7 +75,7 @@ export abstract class Tile implements Steppable {
   }
 
   stepTemperature() {
-    this.temperature = this.world.getCurrentTemperature();
+    this.temperatureFloat = this.world.getCurrentTemperature();
   }
 
   stepDarkness(neighbors: Map<Vector2, Tile>) {
@@ -364,7 +367,7 @@ export class FreezeEffect extends CellEffect implements Interactable {
     } else if (this.cell.temperature === Temperature.Freezing) {
       this.percentFrozen += 10 / this.turnsToDie;
     } else {
-      this.percentFrozen -= 1 / this.turnsToDie;
+      this.percentFrozen -= 10 / this.turnsToDie;
     }
     this.onFrozenChanged();
 
@@ -388,7 +391,7 @@ export class Cell extends Tile implements HasEnergy, Interactable {
   static turnsToBuild = params.cellGestationTurns;
   public energy: number = params.cellEnergyMax;
   public darkness = 0;
-  public nextTemperature: Temperature;
+  public nextTemperature: number;
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
   // public offset = new Vector2();
   public droopY = 0;
@@ -397,8 +400,8 @@ export class Cell extends Tile implements HasEnergy, Interactable {
 
   constructor(pos: Vector2, world: World) {
     super(pos, world);
-    this.temperature = Temperature.Mild;
-    this.nextTemperature = this.temperature;
+    this.temperatureFloat = 48;
+    this.nextTemperature = this.temperatureFloat;
   }
 
   addEffect(effect: CellEffect) {
@@ -520,13 +523,13 @@ export class Cell extends Tile implements HasEnergy, Interactable {
   }
 
   stepTemperature() {
-    if (this.age % 20 === 0) {
-      const neighbors = this.world.tileNeighbors(this.pos);
-      this.nextTemperature = nextTemperature(this, neighbors, 1);
-    }
+    // if (this.age % 20 === 0) {
+    const neighbors = this.world.tileNeighbors(this.pos);
+    this.nextTemperature = nextTemperature(this, neighbors, 1);
+    // }
 
     // if we're cold, try to naturally heat ourselves
-    if (this.temperature < Temperature.Mild) {
+    if (this.temperatureFloat <= 32) {
       const chanceToFreeze = (this.temperature === Temperature.Cold ? 0.001 : 0.01);
       if (Math.random() < chanceToFreeze) {
         this.addEffect(new FreezeEffect());

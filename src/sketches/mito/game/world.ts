@@ -1,4 +1,5 @@
 import capitalize from "common/capitalize";
+import { map } from "math";
 import * as THREE from "three";
 import { Vector2 } from "three";
 import { GameResult } from "..";
@@ -11,7 +12,6 @@ import { params } from "../params";
 import { Entity, isSteppable, step } from "./entity";
 import { Environment } from "./environment";
 import { Player } from "./player";
-import { Temperature } from "./temperature";
 import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
 
 
@@ -406,20 +406,20 @@ export class World {
 
   private temperatureScale = {
     spring: {
-      day: Temperature.Mild,
-      night: Temperature.Cold,
+      day: 48,
+      night: 25,
     },
     summer: {
-      day: Temperature.Hot,
-      night: Temperature.Mild,
+      day: 80,
+      night: 48,
     },
     fall: {
-      day: Temperature.Hot,
-      night: Temperature.Cold,
+      day: 76,
+      night: 40,
     },
     winter: {
-      day: Temperature.Cold,
-      night: Temperature.Freezing,
+      day: 32,
+      night: 0,
     },
   };
 
@@ -436,10 +436,14 @@ export class World {
     return (this.sunAngle % (Math.PI * 2)) < Math.PI ? "day" : "night";
   }
 
-  getCurrentTemperature(): Temperature {
+  get sunAmount() {
+    return (Math.atan(Math.sin(this.sunAngle) * 12) / (Math.PI / 2)) * 0.5 + 0.5;
+  }
+
+  getCurrentTemperature() {
     const { name } = this.season;
-    const dayOrNight = this.dayOrNight;
-    return this.temperatureScale[name][dayOrNight];
+    const { day, night } = this.temperatureScale[name];
+    return map(this.sunAmount, 0, 1, night, day);
   }
 
   public computeSunlight() {
@@ -447,7 +451,7 @@ export class World {
     // we don't have buffering problems
     const sunAngle = this.sunAngle;
     const directionalBias = Math.sin(sunAngle + Math.PI / 2);
-    const sunAmount = (Math.atan(Math.sin(sunAngle) * 12) / (Math.PI / 2)) * 0.5 + 0.5;
+    const sunAmount = this.sunAmount;
     for (let y = 0; y <= this.height * 0.6; y++) {
       for (let x = 0; x < this.width; x++) {
         const t = this.environmentTileAt(x, y);
@@ -486,7 +490,7 @@ export class World {
 
   public updateTemperatures() {
     for (const t of this.cells()) {
-      t.temperature = t.nextTemperature;
+      t.temperatureFloat = t.nextTemperature;
     }
   }
 
