@@ -1,7 +1,8 @@
 import { Vector2 } from "three";
-
 import { Constructor } from "./constructor";
+import { Interactable } from "./game/interactable";
 import { Cell } from "./game/tile";
+
 
 export interface ActionStill {
   type: "still";
@@ -46,6 +47,11 @@ export interface ActionMultiple {
   actions: Action[];
 }
 
+export interface ActionInteract {
+  type: "interact";
+  interactable: Interactable;
+}
+
 export type Action =
   | ActionStill
   | ActionMove
@@ -54,4 +60,5 @@ export type Action =
   | ActionDrop
   | ActionNone
   | ActionMultiple
-  | ActionPickup;
+  | ActionPickup
+  | ActionInteract;

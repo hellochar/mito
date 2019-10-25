@@ -1,4 +1,4 @@
-import { lerp } from "math";
+import { lerp, map } from "math";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from "three";
 import { Cell, CellEffect, FreezeEffect } from "../game/tile";
 import { textureFromSpritesheet } from "../spritesheet";
@@ -53,14 +53,14 @@ function createEffectRenderer<T extends CellEffect>(effect: T, tileRenderer: Til
 
 class FreezeEffectRenderer extends Renderer<FreezeEffect> {
   static newMesh = () => {
-    const g = new PlaneBufferGeometry(1.1, 1.1);
+    const g = new PlaneBufferGeometry(0.75, 0.75);
     g.translate(0, 0, 1);
     const material = new MeshBasicMaterial({
       map: textureFromSpritesheet(Math.floor(23 / 16), Math.floor(22 / 16)),
       side: DoubleSide,
-      color: TileRenderer.COLD_COLOR.clone(),
+      color: COLD_BLUE,
       transparent: true,
-      opacity: 0.1,
+      opacity: 0.5,
     });
     return new Mesh(g, material);
   };
@@ -70,19 +70,19 @@ class FreezeEffectRenderer extends Renderer<FreezeEffect> {
     super(target, tileRenderer.scene, tileRenderer.mito);
     this.mesh = FreezeEffectRenderer.newMesh();
     tileRenderer.mesh.add(this.mesh);
-    this.mesh.scale.set(2, 2, 1);
+    this.mesh.scale.set(0.01, 0.01, 1);
   }
 
   update() {
-    const percentDead = 1 - this.target.turnsUntilDeath / this.target.turnsToDie;
-    const material = (this.mesh.material as MeshBasicMaterial);
-    material.color.copy(TileRenderer.COLD_COLOR).lerp(new Color(0), percentDead);
-    material.opacity = lerp(material.opacity, 0.5, 0.05);
-    this.mesh.scale.x = lerp(this.mesh.scale.x, 1, 0.05);
-    this.mesh.scale.y = lerp(this.mesh.scale.y, 1, 0.05);
+    const percentFrozen = this.target.percentFrozen;
+    const s = map(percentFrozen, 0, 1, 0.2, 1);
+    this.mesh.scale.x = lerp(this.mesh.scale.x, s, 0.2);
+    this.mesh.scale.y = lerp(this.mesh.scale.y, s, 0.2);
   }
 
   destroy() {
     this.tileRenderer.mesh.remove(this.mesh);
   }
 }
+
+const COLD_BLUE = new Color("#1E90FF").lerp(new Color(0), 0.5);

@@ -1,5 +1,4 @@
 import capitalize from "common/capitalize";
-import { scaleLinear } from "d3-scale";
 import * as THREE from "three";
 import { Vector2 } from "three";
 import { GameResult } from "..";
@@ -12,6 +11,7 @@ import { params } from "../params";
 import { Entity, isSteppable, step } from "./entity";
 import { Environment } from "./environment";
 import { Player } from "./player";
+import { Temperature } from "./temperature";
 import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
 
 
@@ -404,28 +404,48 @@ export class World {
     }
   }
 
-  private temperatureScale = scaleLinear()
-    .domain([0, 1 * TIME_PER_SEASON / 2, // spring
-      1 * TIME_PER_SEASON, 3 * TIME_PER_SEASON / 2, // summer
-      2 * TIME_PER_SEASON, 5 * TIME_PER_SEASON / 2, // fall
-      3 * TIME_PER_SEASON, 7 * TIME_PER_SEASON / 2, // winter
-      4 * TIME_PER_SEASON, // end of winter
-    ])
-    .range([25, 50,
-      66, 75,
-      60, 40,
-      33, 12,
-      0]);
+  private temperatureScale = {
+    spring: {
+      day: Temperature.Mild,
+      night: Temperature.Cold,
+    },
+    summer: {
+      day: Temperature.Hot,
+      night: Temperature.Mild,
+    },
+    fall: {
+      day: Temperature.Hot,
+      night: Temperature.Cold,
+    },
+    winter: {
+      day: Temperature.Cold,
+      night: Temperature.Freezing,
+    },
+  };
 
-  getCurrentTemperature(): number {
-    return this.temperatureScale(this.time);
-    // return THREE.Math.mapLinear(-Math.cos(this.time / TIME_PER_YEAR * Math.PI * 2), -1, 1, , 100);
+  /**
+   * 0 to 1, where
+   * 0 to 0.5: daytime
+   * 0.5 to 1: nighttime
+   */
+  get sunAngle() {
+    return this.time * Math.PI * 2 / TIME_PER_DAY;
+  }
+
+  get dayOrNight() {
+    return (this.sunAngle % (Math.PI * 2)) < Math.PI ? "day" : "night";
+  }
+
+  getCurrentTemperature(): Temperature {
+    const { name } = this.season;
+    const dayOrNight = this.dayOrNight;
+    return this.temperatureScale[name][dayOrNight];
   }
 
   public computeSunlight() {
-    // sunlight is special - we step downards from the top; neighbors don't affect the calculation so we don't have buffering problems
-    // 0 to PI = daytime, PI to 2PI = nighttime
-    const sunAngle = (this.time * Math.PI * 2) / TIME_PER_DAY;
+    // sunlight is special - we step downards from the top; neighbors don't affect the calculation so
+    // we don't have buffering problems
+    const sunAngle = this.sunAngle;
     const directionalBias = Math.sin(sunAngle + Math.PI / 2);
     const sunAmount = (Math.atan(Math.sin(sunAngle) * 12) / (Math.PI / 2)) * 0.5 + 0.5;
     for (let y = 0; y <= this.height * 0.6; y++) {

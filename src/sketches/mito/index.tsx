@@ -1,25 +1,26 @@
+import VignetteCapturer from "common/vignette";
+import { parse } from "query-string";
 import * as React from "react";
 import * as THREE from "three";
-import { OrthographicCamera, Scene, Vector2, WebGLRenderer, Vector3 } from "three";
-
-import { parse } from "query-string";
-
-import { map, lerp2 } from "../../math/index";
+import { OrthographicCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
+import { Species } from "../../evolution/species";
+import { lerp2, map } from "../../math/index";
+import { HexTile } from "../../overworld/hexTile";
 import { ISketch, SketchAudioContext } from "../sketch";
-import { ActionBuild, ActionMove } from "./action";
+import { ActionBuild, ActionInteract, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
 import { Constructor } from "./constructor";
-import { World, TIME_PER_SEASON } from "./game";
-import { Cell, Fruit, Root, Tissue, Transport, Vein, Leaf, Tile } from "./game/tile";
-import { ACTION_KEYMAP, MOVEMENT_KEYS, CELL_BAR_KEYS } from "./keymap";
+import { TIME_PER_SEASON, World } from "./game";
+import { isInteractable } from "./game/interactable";
+import { Cell, Fruit, Leaf, Root, Tile, Tissue, Transport, Vein } from "./game/tile";
+import { ACTION_KEYMAP, CELL_BAR_KEYS, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
+import { TileRenderer } from "./renderers/TileRenderer";
+import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
 import { GameStack, Hover, HUD } from "./ui";
-import { WorldRenderer } from "./renderers/WorldRenderer";
-import { HexTile } from "../../overworld/hexTile";
-import { Species } from "../../evolution/species";
-import VignetteCapturer from "common/vignette";
-import { TileRenderer } from "./renderers/TileRenderer";
+
+
 
 export interface GameResult {
   status: "won" | "lost";
@@ -429,6 +430,15 @@ Number of Programs: ${this.renderer.info.programs!.length}
     this.firstActionTakenYet = true;
     const target = this.getHighlightedTile();
     if (target == null) {
+      return;
+    }
+
+    if (isInteractable(target)) {
+      const action: ActionInteract = {
+        type: "interact",
+        interactable: target,
+      };
+      this.world.player.setAction(action);
       return;
     }
 

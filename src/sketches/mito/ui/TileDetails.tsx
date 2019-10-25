@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import * as React from "react";
 import { Constructor } from "../constructor";
-import { Air, Cell, CellEffect, Fountain, GrowingCell, hasEnergy, Leaf, Root, Tile } from "../game/tile";
+import { temperatureName } from "../game/temperature";
+import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, hasEnergy, Leaf, Root, Tile } from "../game/tile";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
 
@@ -75,7 +76,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     return (
       <div className="info-tile">
         <div className="info-tile-name">{(tile.constructor as Constructor<Tile>).displayName}</div>
-        <div className="info-tile-temperature">{tile.temperature.toFixed(2)}</div>
+        <div className="info-tile-temperature">Temperature: {temperatureName(tile.temperature)}</div>
         {energyInfo}
       </div>
     );
@@ -103,14 +104,31 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       return (
         <>
           {tile.droopY * 200 > 1 ? <div className="info-cell">{(tile.droopY * 200).toFixed(0)}% droop</div> : null}
-          {tile.effects.length > 0 ? <div className="info-cell">{this.cellEffectNames(tile.effects)}</div> : null}
+          {this.cellEffects(tile)}
         </>
       );
     }
   }
 
-  private cellEffectNames(effects: CellEffect[]) {
-    return effects.map((e) => (e.constructor as Constructor<CellEffect>).displayName).join(", ");
+  private cellEffects(cell: Cell) {
+    const { effects } = cell;
+    if (effects.length > 0) {
+      const descriptors = effects.map((e) => {
+        const name = (e.constructor as Constructor<CellEffect>).displayName;
+        if (e instanceof FreezeEffect) {
+          return `${(e.percentFrozen * 100).toFixed(0)}% ${name}`;
+        } else {
+          return name
+        }
+      }).join(', ');
+      return (
+        <div className="info-cell">
+          {descriptors}
+        </div>
+      );
+    } else {
+      return null;
+    }
   }
 
   private growingCellInfo(tile: Tile) {

@@ -1,14 +1,15 @@
 import { Vector2 } from "three";
 import { Noise } from "../../../common/perlin";
 import { traitMod } from "../../../evolution/traits";
-import { map } from "../../../math/index";
+import { map, randRound } from "../../../math/index";
 import { Constructor } from "../constructor";
 import { DIRECTIONS } from "../directions";
 import { hasInventory, HasInventory, Inventory } from "../inventory";
 import { params } from "../params";
 import { Steppable, StopStep } from "./entity";
+import { Interactable, isInteractable } from "./interactable";
+import { nextTemperature, Temperature } from "./temperature";
 import { TIME_PER_SEASON, World } from "./world";
-
 
 export interface HasEnergy {
   energy: number;
@@ -23,7 +24,7 @@ export abstract class Tile implements Steppable {
   static fallAmount = 0;
   public isObstacle = false;
   public darkness = Infinity;
-  public temperature: number;
+  public temperature: Temperature;
 
   get diffusionWater(): number {
     return (this.constructor as any).diffusionWater;
@@ -167,16 +168,6 @@ export abstract class Tile implements Steppable {
         0);
     }
   }
-}
-
-/**
- * Get a random integer between floor(x) and ceil(x) such that, over many iterations,
- * randRound(x) gives an average of x.
- */
-function randRound(x: number) {
-  const ix = Math.floor(x);
-  const fx = x - ix;
-  return ix + (Math.random() < fx ? 1 : 0);
 }
 
 function allowPull(receiver: any, recieverType: Constructor<any>, giver: any, giverType: Constructor<any>) {
@@ -352,34 +343,52 @@ export abstract class CellEffect {
   }
 }
 
-export class FreezeEffect extends CellEffect {
-  static displayName = "Frozen!";
+export class FreezeEffect extends CellEffect implements Interactable {
+  static displayName = "Frozen";
   static stacks = false;
   public readonly turnsToDie = 2000;
+  public percentFrozen = 0.5;
 
   get turnsUntilDeath() {
     return this.turnsToDie - this.age;
   }
 
+  interact() {
+    this.percentFrozen -= 20 / this.turnsToDie;
+    this.onFrozenChanged();
+  }
+
   step() {
-    if (this.age > this.turnsToDie) {
-      this.cell.die();
+    if (this.cell.temperature === Temperature.Cold) {
+      this.percentFrozen += 1 / this.turnsToDie;
+    } else if (this.cell.temperature === Temperature.Freezing) {
+      this.percentFrozen += 10 / this.turnsToDie;
+    } else {
+      this.percentFrozen -= 1 / this.turnsToDie;
     }
-    if (this.cell.temperature > 33) {
+    this.onFrozenChanged();
+
+    throw new StopStep();
+  }
+
+  onFrozenChanged() {
+    if (this.percentFrozen > 1) {
+      this.cell.die();
+    } else if (this.percentFrozen < 0) {
       this.remove();
     }
-    throw new StopStep();
+
   }
 }
 
-export class Cell extends Tile implements HasEnergy {
+export class Cell extends Tile implements HasEnergy, Interactable {
   static displayName = "Cell";
   static diffusionWater = params.cellDiffusionWater;
   static diffusionSugar = params.cellDiffusionSugar;
   static turnsToBuild = params.cellGestationTurns;
   public energy: number = params.cellEnergyMax;
   public darkness = 0;
-  public nextTemperature: number;
+  public nextTemperature: Temperature;
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
   // public offset = new Vector2();
   public droopY = 0;
@@ -388,7 +397,7 @@ export class Cell extends Tile implements HasEnergy {
 
   constructor(pos: Vector2, world: World) {
     super(pos, world);
-    this.temperature = 50;
+    this.temperature = Temperature.Mild;
     this.nextTemperature = this.temperature;
   }
 
@@ -396,12 +405,24 @@ export class Cell extends Tile implements HasEnergy {
     const stacks = (effect.constructor as CellEffectConstructor).stacks;
     if (!stacks) {
       // exit early if we found another one and we don't stack
-      if (this.effects.find((e) => e.constructor === effect.constructor) != null) {
+      if (this.findEffectOfType(effect.constructor as CellEffectConstructor) != null) {
         return;
       }
     }
     effect.attachTo(this);
     this.effects.push(effect);
+  }
+
+  findEffectOfType(type: CellEffectConstructor) {
+    return this.effects.find((e) => e.constructor === type);
+  }
+
+  interact() {
+    for (const e of this.effects) {
+      if (isInteractable(e)) {
+        e.interact();
+      }
+    }
   }
 
   step() {
@@ -499,38 +520,22 @@ export class Cell extends Tile implements HasEnergy {
   }
 
   stepTemperature() {
-    const neighbors = this.world.tileNeighbors(this.pos);
-    let averageTemperature = 0;
-    for (const [, tile] of neighbors) {
-      averageTemperature += tile.temperature;
+    if (this.age % 20 === 0) {
+      const neighbors = this.world.tileNeighbors(this.pos);
+      this.nextTemperature = nextTemperature(this, neighbors, 1);
     }
-    averageTemperature /= neighbors.size;
-
-    // how quickly we respond to temperature changes
-    const a = 0.1;
-    this.nextTemperature += (averageTemperature - this.temperature) * a;
 
     // if we're cold, try to naturally heat ourselves
-    if (this.temperature < 33) {
-      const chanceToFreeze = (33 - this.temperature) / 33 * 0.01;
+    if (this.temperature < Temperature.Mild) {
+      const chanceToFreeze = (this.temperature === Temperature.Cold ? 0.001 : 0.01);
       if (Math.random() < chanceToFreeze) {
         this.addEffect(new FreezeEffect());
       }
-      // const diff = 33 + ramp - this.temperature;
-      // const effort = diff / (5 + diff);
-      // this.energy -= 100 * effort;
-      // this.nextTemperature += 1 * effort;
-    }
-    if (this.temperature > 66) {
-      const chanceToLoseWater = (this.temperature - 66) * 0.01;
-      if (Math.random() < chanceToLoseWater) {
-        if (hasInventory(this)) {
-          this.inventory.add(-1, 0);
-        }
+    } else if (this.temperature === Temperature.Scorching) {
+      const chanceToLoseWater = 0.01;
+      if (Math.random() < chanceToLoseWater && hasInventory(this)) {
+        this.inventory.add(Math.max(-1, this.inventory.water), 0);
       }
-      // const effort = diff / (5 + diff);
-      // this.energy -= 100 * effort;
-      // this.nextTemperature -= 1 * effort;
     }
   }
 

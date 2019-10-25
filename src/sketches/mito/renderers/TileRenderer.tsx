@@ -1,9 +1,10 @@
 import React from "react";
 import { ArrowHelper, Audio, BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Scene, Vector2, Vector3 } from "three";
 import lazy from "../../../common/lazy";
-import { clamp, lerp2, map } from "../../../math/index";
+import { lerp, lerp2, map } from "../../../math/index";
 import { blopBuffer, suckWaterBuffer } from "../audio";
 import { Constructor } from "../constructor";
+import { Temperature } from "../game/temperature";
 import { Air, Cell, DeadCell, Fountain, Fruit, GrowingCell, hasEnergy, hasTilePairs, Leaf, Rock, Root, Soil, Tile, Tissue, Transport, Vein } from "../game/tile";
 import { Mito, WorldDOMElement } from "../index";
 import { hasInventory } from "../inventory";
@@ -22,8 +23,14 @@ export class TileMesh extends Mesh {
 }
 
 export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
-  public static readonly HOT_COLOR = new Color("orange");
-  public static readonly COLD_COLOR = new Color("lightblue");
+  public static readonly TEMPERATURE_COLORS = {
+    [Temperature.Scorching]: new Color("orange"),
+    [Temperature.Hot]: new Color("orange").lerp(new Color("white"), 0.5),
+    [Temperature.Mild]: new Color("white"),
+    [Temperature.Cold]: new Color("lightblue").lerp(new Color("white"), 0.5),
+    [Temperature.Freezing]: new Color("lightblue"),
+  }
+
   private static ONE = new Vector2(1, 1);
 
   // public object = new Object3D();
@@ -168,13 +175,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       mat.color.lerp(new Color(0), 1 - this.target.energy / params.cellEnergyMax);
     }
 
-    const ramp = 2;
-    if (this.target.temperature > 66 - ramp) {
-      // mat.color.lerp(TileRenderer.HOT_COLOR, map(this.target.temperature, 66, 80, 0, 1));
-      mat.color.lerp(TileRenderer.HOT_COLOR, clamp(map(this.target.temperature, 66 - ramp, 66, 0, 1), 0, 1));
-    } else if (this.target.temperature < 33 + ramp) {
-      mat.color.lerp(TileRenderer.COLD_COLOR, clamp(map(this.target.temperature, 33 + ramp, 33, 0, 1), 0, 1));
-    }
+    mat.color = this.lerpColorTemperature(mat.color);
     mat.color = new Color(0).lerp(mat.color, map(lightAmount, 0, 1, 0.2, 1));
 
     // audio
@@ -211,6 +212,21 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (this.cellEffectsRenderer != null) {
       this.cellEffectsRenderer.update();
     }
+  }
+
+  private temperatureColor: Color = TileRenderer.TEMPERATURE_COLORS[Temperature.Mild];
+  private currentLerp = 0;
+  lerpColorTemperature(color: Color) {
+    const { temperature } = this.target;
+    let tColor = TileRenderer.TEMPERATURE_COLORS[temperature];
+    if (tColor !== this.temperatureColor) {
+      this.currentLerp = 0;
+    }
+    const targetLerp = temperature === Temperature.Mild ? 0 : 0.5;
+    this.temperatureColor = tColor;
+    this.currentLerp = lerp(this.currentLerp, targetLerp, 0.1);
+    color.lerp(this.temperatureColor, this.currentLerp);
+    return color;
   }
 
   updateHover() {

@@ -1,13 +1,13 @@
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
 import { traitMod } from "../../../evolution/traits";
-import { Action, ActionBuild, ActionDeconstruct, ActionDrop, ActionMove, ActionMultiple, ActionPickup } from "../action";
+import { Action, ActionBuild, ActionDeconstruct, ActionDrop, ActionInteract, ActionMove, ActionMultiple, ActionPickup } from "../action";
 import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
 import { params } from "../params";
 import { Steppable } from "./entity";
-import { Cell, Fruit, GrowingCell, Tile, Transport } from "./tile";
+import { Cell, FreezeEffect, Fruit, GrowingCell, Tile, Transport } from "./tile";
 import { World } from "./world";
 
 export class Player implements Steppable {
@@ -26,14 +26,7 @@ export class Player implements Steppable {
   public baseSpeed: number;
 
   public get speed() {
-    let s = this.baseSpeed;
-    // const tile = this.currentTile();
-    // if (tile instanceof Cell) {
-    //   if (tile.temperature < 33) {
-    //     s *= 0.25;
-    //   }
-    // }
-    return s;
+    return this.baseSpeed;
   }
 
   get pos() {
@@ -138,6 +131,8 @@ export class Player implements Steppable {
         return this.attemptPickup(action);
       case "multiple":
         return this.attemptMultiple(action);
+      case "interact":
+        return this.attemptInteract(action);
     }
   }
   public verifyMove(action: ActionMove) {
@@ -155,16 +150,22 @@ export class Player implements Steppable {
     if (!this.world.isValidPosition(pos.x, pos.y)) {
       return false;
     }
-    const targetTile = this.world.tileAt(pos.x, pos.y);
-    if (!(targetTile instanceof Cell) || targetTile == null || targetTile.isObstacle) {
+    const tile = this.world.tileAt(pos.x, pos.y);
+    if (!(tile instanceof Cell) || tile == null || tile.isObstacle) {
       // can't move!
       return false;
+    }
+    if (tile instanceof Cell) {
+      return tile.findEffectOfType(FreezeEffect) == null;
     }
     return true;
   }
 
   public isBuildCandidate(tile: Tile | null): tile is Tile {
     if (tile != null && !tile.isObstacle) {
+      if (tile instanceof Cell) {
+        return tile.findEffectOfType(FreezeEffect) == null;
+      }
       return true;
     } else {
       return false;
@@ -173,15 +174,15 @@ export class Player implements Steppable {
 
   public attemptMove(action: ActionMove) {
     if (this.verifyMove(action)) {
-      const t = this.currentTile();
-      if (t instanceof Cell) {
-        if (t.temperature < 40) {
-          t.nextTemperature += 0.2;
-        }
-        else if (t.temperature > 60) {
-          t.nextTemperature -= 0.2;
-        }
-      }
+      // const t = this.currentTile();
+      // if (t instanceof Cell) {
+      //   if (t.temperature < 40) {
+      //     t.nextTemperature += 0.2;
+      //   }
+      //   else if (t.temperature > 60) {
+      //     t.nextTemperature -= 0.2;
+      //   }
+      // }
       footsteps.gain.gain.cancelScheduledValues(0);
       footsteps.gain.gain.value = 0.5;
       footsteps.gain.gain.linearRampToValueAtTime(0, footsteps.gain.context.currentTime + 0.05);
@@ -357,5 +358,10 @@ export class Player implements Steppable {
       allSuccess = this.attemptAction(action) && allSuccess;
     }
     return allSuccess;
+  }
+
+  public attemptInteract(action: ActionInteract) {
+    action.interactable.interact();
+    return true;
   }
 }

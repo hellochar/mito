@@ -23,6 +23,16 @@ export function triangleWaveApprox(t: number) {
   return (8 / (Math.PI * Math.PI)) * (Math.sin(t) - (1 / 9) * Math.sin(3 * t) + (1 / 25) * Math.sin(5 * t));
 }
 
+/**
+ * Get a random integer between floor(x) and ceil(x) such that, over many iterations,
+ * randRound(x) gives an average of x.
+ */
+export function randRound(x: number) {
+  const ix = Math.floor(x);
+  const fx = x - ix;
+  return ix + (Math.random() < fx ? 1 : 0);
+}
+
 // mod account for negatives
 export function mod(t: number, m: number) {
   return ((t % m) + m) % m;
