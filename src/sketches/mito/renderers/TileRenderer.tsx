@@ -1,4 +1,5 @@
 import { easeCubic } from "d3-ease";
+import Ticker from "global/ticker";
 import { reversed } from "math/easing";
 import React from "react";
 import { ArrowHelper, Audio, BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Scene, Vector2, Vector3 } from "three";
@@ -79,26 +80,10 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.mesh = new TileMesh(this);
     }
     // this.object.name = "TileRenderer Object";
-
-    // if (this.target instanceof Air) {
-    //     const colorIndex = map(this.target.co2(), 0.40, 1.001, 0, AIR_COLORSCALE.length - 1);
-    //     const startColorIndex = Math.floor(colorIndex);
-    //     const startColor = AIR_COLORSCALE[startColorIndex];
-    //     this.originalColor = startColor.clone();
-    //     if (startColorIndex !== AIR_COLORSCALE.length - 1) {
-    //         const alpha = colorIndex - startColorIndex;
-    //         const endColorIndex = startColorIndex + 1;
-    //         const endColor = AIR_COLORSCALE[endColorIndex];
-    //         this.originalColor.lerp(endColor, alpha);
-    //     }
-    // } else {
     this.originalColor = (this.mesh.material as MeshBasicMaterial).color.clone();
-    // }
-    // this.object.add(this.mesh);
     if (hasInventory(this.target)) {
       this.inventoryRenderer = new InventoryRenderer(this.target.inventory, this.scene, this.mito);
       this.inventoryRenderer.animationOffset = (this.target.pos.x + this.target.pos.y) / 2;
-      // this.mesh.add(this.inventoryRenderer.object);
     }
     this.scene.add(this.mesh);
     const zIndex = this.target instanceof Cell ? 1 : 0;
@@ -147,7 +132,25 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   update() {
     const lightAmount = this.target.lightAmount();
+    this.updateVisibility(lightAmount);
+    this.updateSize();
+    this.updateColor(lightAmount);
 
+    // match position
+    if (this.target instanceof Cell) {
+      this.mesh.position.set(this.target.pos.x, this.target.pos.y + this.target.droopY, 1);
+    }
+
+    this.respondToEvents();
+
+    if (this.cellEffectsRenderer != null) {
+      this.cellEffectsRenderer.update();
+    }
+
+    this.animation.update(Ticker.now / 1000);
+  }
+
+  updateVisibility(lightAmount: number) {
     // visibility
     if (lightAmount > 0) {
       if (this.mesh.parent == null) {
@@ -160,13 +163,9 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     } else if (this.mesh.parent != null) {
       this.scene.remove(this.mesh);
     }
+  }
 
-    // match position
-    if (this.target instanceof Cell) {
-      this.mesh.position.set(this.target.pos.x, this.target.pos.y + this.target.droopY, 1);
-    }
-
-    // size animations
+  updateSize() {
     if (this.target instanceof GrowingCell) {
       // const s = this.steps(1.001 - this.target.timeRemaining / params.cellGestationTurns, 0.05);
       const s = 1 - this.target.timeRemaining / this.target.timeToBuild;
@@ -180,8 +179,9 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     } else {
       lerp2(this.mesh.scale, TileRenderer.ONE, 0.1);
     }
+  }
 
-    // color
+  updateColor(lightAmount: number) {
     const mat = this.mesh.material as MeshBasicMaterial;
     if (this.target instanceof Air) {
       const colorIndex = Math.max(0, map(this.target.co2(), 1 / 6, 1.001, 0, AIR_COLORSCALE.length - 1));
@@ -195,14 +195,16 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
         this.originalColor.lerp(endColor, alpha);
       }
     }
-    mat.color = this.originalColor.clone();
+    mat.color.copy(this.originalColor);
     if (hasEnergy(this.target)) {
       mat.color.lerp(new Color(0), 1 - this.target.energy / params.cellEnergyMax);
     }
 
     mat.color = this.lerpColorTemperature(mat.color);
     mat.color = new Color(0).lerp(mat.color, map(lightAmount, 0, 1, 0.2, 1));
+  }
 
+  respondToEvents() {
     // audio
     if (this.target instanceof Leaf && this.audio != null) {
       const newAudioValueTracker = this.target.totalSugarProduced;
@@ -214,7 +216,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
         // this.audio.setRefDistance(2);
         // play blop sound
         this.audio.play();
-        this.animation.set(this.growPulseAnimation(), performance.now() / 1000);
+        this.animation.set(this.growPulseAnimation(), Ticker.now / 1000);
       }
       this.lastAudioValueTracker = newAudioValueTracker;
     }
@@ -231,17 +233,11 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
           this.audio.stop();
         }
         this.audio.play();
-        this.animation.set(this.growPulseAnimation(), performance.now() / 1000);
+        this.animation.set(this.growPulseAnimation(), Ticker.now / 1000);
       }
       this.lastAudioValueTracker = newAudioValueTracker;
     }
     this.mesh.remove(this.pairsLines);
-
-    if (this.cellEffectsRenderer != null) {
-      this.cellEffectsRenderer.update();
-    }
-
-    this.animation.update(performance.now() / 1000);
   }
 
   private temperatureColor: Color = TileRenderer.TEMPERATURE_COLORS[Temperature.Mild];

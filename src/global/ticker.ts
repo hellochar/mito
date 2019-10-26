@@ -4,7 +4,14 @@ class TickerClass {
 
   private tickers: Record<number, (time: number) => void> = {};
 
+  private _time = 0;
+
+  get now() {
+    return this._time;
+  }
+
   tickerLoop = (time: number) => {
+    this._time = time;
     for (const id in this.tickers) {
       const f = this.tickers[id];
       f(time);

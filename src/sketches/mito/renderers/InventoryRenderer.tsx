@@ -155,8 +155,10 @@ export class InventoryRenderer extends Renderer<Inventory> {
   }
 
   private simulateResourcePositions() {
-    const resources = this.waters.concat(this.sugars);
-    for (const r of resources) {
+    const numWaters = this.waters.length;
+    const numResources = numWaters + this.sugars.length;
+    for (let i = 0; i < numResources; i++) {
+      const r = i < numWaters ? this.waters[i] : this.sugars[i - numWaters];
       let vx = 0,
         vy = 0;
       const angle = performance.now() / 3000 + this.animationOffset;
@@ -178,7 +180,8 @@ export class InventoryRenderer extends Renderer<Inventory> {
         vx += accelerationX;
         vy += accelerationY;
       }
-      for (const l of resources) {
+      for (let j = 0; j < numResources; j++) {
+        const l = j < numWaters ? this.waters[j] : this.sugars[j - numWaters];
         if (r === l) {
           break;
         }
