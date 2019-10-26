@@ -398,6 +398,24 @@ export class Cell extends Tile implements HasEnergy, Interactable {
   public args: any[] = [];
   public effects: CellEffect[] = [];
 
+  get tempo() {
+    if (this.temperatureFloat <= 0) {
+      // 50% slower - 1 / 2;
+      return 1 / 2;
+    } else if (this.temperatureFloat <= 32) {
+      // 33% slower - 2 / (2 / 3) = 3
+      return 2 / 3;
+    } else if (this.temperatureFloat <= 64) {
+      return 1;
+    } else if (this.temperatureFloat <= 96) {
+      // 50% faster
+      return 1.5;
+    } else {
+      // 100% faster
+      return 2;
+    }
+  }
+
   constructor(pos: Vector2, world: World) {
     super(pos, world);
     this.temperatureFloat = 48;
@@ -432,8 +450,9 @@ export class Cell extends Tile implements HasEnergy, Interactable {
     if (this.world.time % 3 !== 0) {
       return;
     }
+    const { tempo } = this;
     super.step();
-    this.energy -= 1;
+    this.energy -= 1 * tempo;
     for (const effect of this.effects) {
       effect.step();
     }
@@ -455,7 +474,7 @@ export class Cell extends Tile implements HasEnergy, Interactable {
           // const targetEnergy = averageEnergy;
           if (neighbor.energy > this.energy) {
             // energyTransfer = Math.floor((neighbor.energy - this.energy) / energeticNeighbors.length);
-            energyTransfer = Math.min(neighbor.energy, Math.floor((neighbor.energy - this.energy) * 0.25));
+            energyTransfer = Math.min(neighbor.energy, Math.floor((neighbor.energy - this.energy) * 0.25 * tempo));
             // if (neighbor.energy - energyTransfer < this.energy + energyTransfer) {
             //     throw new Error("cell energy diffusion: result of transfer gives me more than target");
             // }
@@ -627,7 +646,7 @@ export class GrowingCell extends Cell {
       return;
     }
     super.step();
-    this.timeRemaining--;
+    this.timeRemaining -= 1 * this.tempo;
     if (this.timeRemaining <= 0) {
       this.world.setTileAt(this.completedCell.pos, this.completedCell);
     }
@@ -659,7 +678,6 @@ export class Leaf extends Cell {
   public isObstacle = false;
   public averageEfficiency = 0;
   public averageSpeed = 0;
-  public didConvert = false;
   public sugarConverted = 0;
   public tilePairs: Vector2[] = []; // implied that the opposite direction is connected
   public totalSugarProduced = 0;
@@ -669,7 +687,6 @@ export class Leaf extends Cell {
       return;
     }
     super.step();
-    this.didConvert = false;
     const neighbors = this.world.tileNeighbors(this.pos);
     this.averageEfficiency = 0;
     this.averageSpeed = 0;
@@ -706,7 +723,6 @@ export class Leaf extends Cell {
         const waterToConvert = Math.min(tissue.inventory.water, bestEfficiencyWater);
         const chance = (speed * leafReactionRate * waterToConvert) / bestEfficiencyWater;
         if (Math.random() < chance) {
-          this.didConvert = true;
           const sugarConverted = waterToConvert * efficiency;
           tissue.inventory.add(-waterToConvert, sugarConverted);
           this.sugarConverted += sugarConverted;
@@ -723,7 +739,6 @@ export class Leaf extends Cell {
 
 export class Root extends Cell {
   static displayName = "Root";
-  public waterTransferAmount = 0;
   public isObstacle = false;
   // public tilePairs: Vector2[] = []; // implied that the opposite direction is connected
   public activeNeighbors: Vector2[] = [];
@@ -740,14 +755,14 @@ export class Root extends Cell {
       this.stepWaterTransfer();
       this.cooldown += traitMod(this.world.traits.rootAbsorption, params.rootTurnsPerTransfer, 1 / 1.5);
     }
-    this.cooldown -= 1;
+    this.cooldown -= 1 * this.tempo;
   }
 
   private stepWaterTransfer() {
-    this.waterTransferAmount = 0;
     // this.tilePairs = [];
     this.activeNeighbors = [];
     const neighbors = this.world.tileNeighbors(this.pos);
+    let doneOnce = false;
     for (const [dir, tile] of neighbors) {
       // const oppositeTile = this.world.tileAt(this.pos.x - dir.x, this.pos.y - dir.y);
       if (
@@ -765,11 +780,12 @@ export class Root extends Cell {
         //     }
         // }
         this.activeNeighbors.push(dir);
-        // only do it once
-        if (this.waterTransferAmount === 0) {
+        if (!doneOnce) {
           const { water } = tile.inventory.give(this.inventory, 1, 0);
-          this.waterTransferAmount += water;
           this.totalSucked += water;
+          if (water > 0) {
+            doneOnce = true;
+          }
         }
       }
     }
@@ -819,8 +835,8 @@ export class Fruit extends Cell {
   }
 
   commitResources(dt: number) {
-    const wantedWater = Math.min(Fruit.neededResources / 2 - this.committedResources.water, Fruit.ONE_TURN_COMMIT_MAX / 2 * dt);
-    const wantedSugar = Math.min(Fruit.neededResources / 2 - this.committedResources.sugar, Fruit.ONE_TURN_COMMIT_MAX / 2 * dt);
+    const wantedWater = Math.min(Fruit.neededResources / 2 - this.committedResources.water, Fruit.ONE_TURN_COMMIT_MAX / 2 * dt * this.tempo);
+    const wantedSugar = Math.min(Fruit.neededResources / 2 - this.committedResources.sugar, Fruit.ONE_TURN_COMMIT_MAX / 2 * dt * this.tempo);
     this.inventory.give(this.committedResources, wantedWater, wantedSugar);
   }
 
@@ -856,7 +872,7 @@ export class Transport extends Tissue {
       return;
     }
     // transport hungers at double speed
-    this.energy -= 1;
+    this.energy -= 1 * this.tempo;
     super.step();
     let waterToTransport = 0;
     let sugarToTransport = 0;
@@ -882,8 +898,8 @@ export class Transport extends Tissue {
         fromTile.inventory.give(this.inventory, waterToTransport, sugarToTransport);
       }
     }
-    this.cooldownWater -= 1;
-    this.cooldownSugar -= 1;
+    this.cooldownWater -= 1 * this.tempo;
+    this.cooldownSugar -= 1 * this.tempo;
   }
 
   public getTarget() {

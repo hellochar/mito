@@ -26,7 +26,8 @@ export class Player implements Steppable {
   public baseSpeed: number;
 
   public get speed() {
-    return this.baseSpeed;
+    const t = this.currentTile();
+    return this.baseSpeed * (t instanceof Cell ? t.tempo : 1);
   }
 
   get pos() {

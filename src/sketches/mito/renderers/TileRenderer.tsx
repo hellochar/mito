@@ -1,7 +1,9 @@
+import { easeCubic } from "d3-ease";
+import { reversed } from "math/easing";
 import React from "react";
 import { ArrowHelper, Audio, BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Scene, Vector2, Vector3 } from "three";
 import lazy from "../../../common/lazy";
-import { lerp, lerp2, map } from "../../../math/index";
+import { clamp, lerp, lerp2, map } from "../../../math/index";
 import { blopBuffer, suckWaterBuffer } from "../audio";
 import { Constructor } from "../constructor";
 import { Temperature } from "../game/temperature";
@@ -14,6 +16,28 @@ import { CellEffectsRenderer } from "./CellEffectsRenderer";
 import { InventoryRenderer } from "./InventoryRenderer";
 import { Renderer } from "./Renderer";
 
+type Animation = (dt: number) => boolean;
+
+class AnimationController {
+  animation?: Animation;
+  timeStarted?: number;
+
+  set(a: Animation, now: number) {
+    this.animation = a;
+    this.timeStarted = now;
+  }
+
+  update(now: number) {
+    if (this.animation != null && this.timeStarted != null) {
+      const dt = now - this.timeStarted;
+      const ended = this.animation(dt);
+      if (ended) {
+        this.animation = undefined;
+        this.timeStarted = undefined;
+      }
+    }
+  }
+}
 
 export class TileMesh extends Mesh {
   static geometry = new PlaneBufferGeometry(1, 1);
@@ -43,6 +67,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private worldDomElement?: WorldDOMElement;
   private growingRenderer?: TileRenderer;
   private cellEffectsRenderer?: CellEffectsRenderer;
+  private animation = new AnimationController();
 
   constructor(target: T, scene: Scene, mito: Mito) {
     super(target, scene, mito);
@@ -175,20 +200,13 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       mat.color.lerp(new Color(0), 1 - this.target.energy / params.cellEnergyMax);
     }
 
-    // const ramp = 2;
-    // if (this.target.temperatureFloat > 64 - ramp) {
-    //   mat.color.lerp(TileRenderer.TEMPERATURE_COLORS.Hot, clamp(map(this.target.temperatureFloat, 64 - ramp, 64, 0, 1), 0, 1));
-    // } else if (this.target.temperatureFloat < 32 + ramp) {
-    //   mat.color.lerp(TileRenderer.TEMPERATURE_COLORS.Cold, clamp(map(this.target.temperatureFloat, 32 + ramp, 32, 0, 1), 0, 1));
-    // }
-
     mat.color = this.lerpColorTemperature(mat.color);
     mat.color = new Color(0).lerp(mat.color, map(lightAmount, 0, 1, 0.2, 1));
 
     // audio
     if (this.target instanceof Leaf && this.audio != null) {
-      const newAudioValueTracker = this.target.didConvert ? 1 : 0;
-      if (newAudioValueTracker !== this.lastAudioValueTracker && newAudioValueTracker > 0) {
+      const newAudioValueTracker = this.target.totalSugarProduced;
+      if (newAudioValueTracker > this.lastAudioValueTracker) {
         this.audio.setBuffer(blopBuffer);
         const dist = this.target.pos.distanceToSquared(this.mito.world.player.pos);
         const volume = Math.min(1, 1 / (1 + dist / 25)) * this.target.sugarConverted * this.target.sugarConverted;
@@ -196,14 +214,16 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
         // this.audio.setRefDistance(2);
         // play blop sound
         this.audio.play();
+        this.animation.set(this.growPulseAnimation(), performance.now() / 1000);
       }
       this.lastAudioValueTracker = newAudioValueTracker;
     }
     if (this.target instanceof Root && this.audio != null) {
-      const newAudioValueTracker = this.target.waterTransferAmount;
+      const newAudioValueTracker = this.target.totalSucked;
       if (newAudioValueTracker !== this.lastAudioValueTracker) {
         this.audio.setBuffer(suckWaterBuffer);
-        const baseVolume = this.target.waterTransferAmount / (2 + this.target.waterTransferAmount);
+        // const baseVolume = this.target.waterTransferAmount / (2 + this.target.waterTransferAmount);
+        const baseVolume = 1;
         const dist = this.target.pos.distanceToSquared(this.mito.world.player.pos);
         const volume = Math.min(1, 1 / (1 + dist / 25)) * baseVolume;
         this.audio.setVolume(volume);
@@ -211,6 +231,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
           this.audio.stop();
         }
         this.audio.play();
+        this.animation.set(this.growPulseAnimation(), performance.now() / 1000);
       }
       this.lastAudioValueTracker = newAudioValueTracker;
     }
@@ -219,6 +240,8 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (this.cellEffectsRenderer != null) {
       this.cellEffectsRenderer.update();
     }
+
+    this.animation.update(performance.now() / 1000);
   }
 
   private temperatureColor: Color = TileRenderer.TEMPERATURE_COLORS[Temperature.Mild];
@@ -269,6 +292,17 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
         });
       }
     }
+  }
+
+  growPulseAnimation(): Animation {
+    const duration = 0.5;
+    const ease = reversed(easeCubic);
+    return (dt) => {
+      const t = clamp(dt / duration * (this.target as any).tempo || 1, 0, 1);
+      const scale = map(ease(t), 0, 1, 1, 1.3);
+      this.mesh.scale.setScalar(scale);
+      return t >= 1;
+    };
   }
 
   hasActiveNeighbors(

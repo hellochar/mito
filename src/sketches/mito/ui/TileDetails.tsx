@@ -35,8 +35,8 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     return tile instanceof Root ? (
       <div className="info-root">
         <div>{tile.totalSucked} water collected.</div>
-        <div>{tile.cooldown} turns until next water suck.</div>
-        <div>{tile.waterTransferAmount.toFixed(0)} water transfer per round.</div>
+        <div>{tile.cooldown.toFixed(0)} turns until next water suck.</div>
+        {/* <div>{tile.waterTransferAmount.toFixed(0)} water transfer per round.</div> */}
       </div>
     ) : null;
   }
