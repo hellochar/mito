@@ -1,12 +1,13 @@
-import * as React from "react";
-
-import { GameResult } from "..";
-import { Fruit } from "../game/tile";
-
-import "./GameResultsScreen.scss";
-import Character from "../../../common/Character";
-
 import fruitSrc from "assets/images/fruit.png";
+import * as React from "react";
+import { GameResult } from "..";
+import Character from "../../../common/Character";
+import { Fruit } from "../game/tile";
+import { seasonDisplay } from "../game/world";
+import "./GameResultsScreen.scss";
+
+
+
 
 function Glow() {
   return (
@@ -63,7 +64,7 @@ function GameLostScreen({ results }: GameResultsScreenProps) {
   return (
     <>
       <h1>You died!</h1>
-      <div>You survived until {results.world.season.name}!</div>
+      <div>You survived until {seasonDisplay(results.world.season)}!</div>
     </>
   );
 }

@@ -1,4 +1,3 @@
-import capitalize from "common/capitalize";
 import { map } from "math";
 import * as THREE from "three";
 import { Vector2 } from "three";
@@ -21,29 +20,26 @@ export class StepStats {
 
 export interface Season {
   percent: number;
-  name: "spring" | "summer" | "fall" | "winter";
+  season: 0 | 1 | 2 | 3;
   month: number;
-  day: number;
 }
 
 export function seasonFromTime(time: number): Season {
-  const name = SEASON_ORDER[Math.floor(time / TIME_PER_SEASON)];
+  const season = Math.floor(time / TIME_PER_SEASON) as Season["season"];
   const percent = (time % TIME_PER_SEASON) / TIME_PER_SEASON; // percent done with this season
   const month = Math.floor((time % TIME_PER_SEASON) / TIME_PER_MONTH) + 1;
-  const day = Math.floor((time % TIME_PER_MONTH) / TIME_PER_DAY) + 1;
   return {
-    name,
+    season,
     percent,
     month,
-    day,
   };
 }
 
-export function seasonDisplay(s: Season) {
-  return `${capitalize(s.name)}, Month ${s.month}, Day ${s.day}`;
-}
 
-const SEASON_ORDER: Season["name"][] = ["spring", "summer", "fall", "winter"];
+const SEASON_NAMES = ["Spring", "Summer", "Fall", "Winter"];
+export function seasonDisplay(s: Season) {
+  return `${SEASON_NAMES[s.season]}, Month ${s.month}`;
+}
 
 export const TIME_PER_YEAR = 30 * 60 * 15; // 30 fps * 60 seconds/minute * 15 minutes
 export const TIME_PER_SEASON = TIME_PER_YEAR / 4;
@@ -405,20 +401,20 @@ export class World {
   }
 
   private temperatureScale = {
-    spring: {
-      day: 48,
-      night: 25,
-    },
-    summer: {
-      day: 80,
-      night: 48,
-    },
-    fall: {
-      day: 76,
+    0: {
+      day: 60,
       night: 40,
     },
-    winter: {
-      day: 32,
+    1: {
+      day: 80,
+      night: 60,
+    },
+    2: {
+      day: 65,
+      night: 31,
+    },
+    3: {
+      day: 40,
       night: 0,
     },
   };
@@ -441,8 +437,8 @@ export class World {
   }
 
   getCurrentTemperature() {
-    const { name } = this.season;
-    const { day, night } = this.temperatureScale[name];
+    const { season } = this.season;
+    const { day, night } = this.temperatureScale[season];
     return map(this.sunAmount, 0, 1, night, day);
   }
 

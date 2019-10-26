@@ -1,5 +1,5 @@
-import { ALL_ENVIRONMENTS } from "./game/environment";
 import { parse, stringify } from "query-string";
+import { ALL_ENVIRONMENTS } from "./game/environment";
 
 const PARAMS_DEFAULT = {
   isRealtime: true,
@@ -48,7 +48,7 @@ export function updateParamsHash() {
   if (Object.keys(nonDefaultParams).length > 0) {
     const stringified = stringify({
       ...(parse(window.location.search)),
-      params: nonDefaultParams,
+      params: JSON.stringify(nonDefaultParams),
     });
     window.location.search = stringified;
   } else {
