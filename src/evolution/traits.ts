@@ -1,5 +1,5 @@
-import { Gene, DNATuple } from "./gene";
 import capitalize from "../common/capitalize";
+import { DNATuple, Gene } from "./gene";
 
 export type TraitValue = -3 | -2 | -1 | 0 | 1 | 2 | 3;
 
@@ -195,6 +195,12 @@ export function dnaPairToTraitType(dnaTuple: DNATuple): TraitType | undefined {
   }
 }
 
+/**
+ * Use to easily modify a base value by a trait amount.
+ *
+ * Exponent > 1 means base goes up with trait.
+ * Exponent < 1 means base goes down with trait.
+ */
 export function traitMod(val: TraitValue, base: number, exponent: number) {
   return base * Math.pow(exponent, val);
 }

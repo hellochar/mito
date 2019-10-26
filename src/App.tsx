@@ -1,14 +1,14 @@
+import { MousePositionContext } from "common/useMousePosition";
 import React from "react";
-
-import { FullPageSketch } from "./sketches/fullPageSketch";
-import Mito, { GameResult } from "./sketches/mito";
+import { createSelector } from "reselect";
+import { newBaseSpecies, Species } from "./evolution/species";
+import { HexTile } from "./overworld/hexTile";
 import { OverWorldMap } from "./overworld/map/OverWorldMap";
 import { OverWorld } from "./overworld/overWorld";
-import { HexTile } from "./overworld/hexTile";
+import { FullPageSketch } from "./sketches/fullPageSketch";
+import Mito, { GameResult } from "./sketches/mito";
 import GameResultsScreen from "./sketches/mito/ui/GameResultsScreen";
-import { Species, newBaseSpecies } from "./evolution/species";
-import { createSelector } from "reselect";
-import { MousePositionContext } from "common/useMousePosition";
+
 
 export interface AppState {
   overWorld: OverWorld;
@@ -28,8 +28,8 @@ class App extends React.PureComponent<{}, AppState> {
     super(props);
     const overWorld = OverWorld.generateRectangle(100, 50);
     const rootSpecies = newBaseSpecies("plantum originus");
-    const activeLevel = overWorld.getStartTile();
-    rootSpecies.freeMutationPoints = 25;
+    // const activeLevel = overWorld.getStartTile();
+    // rootSpecies.freeMutationPoints = 25;
     // const s3 = newBaseSpecies("s3");
     // s3.descendants = [newBaseSpecies("ya"), newBaseSpecies("no"), newBaseSpecies("whoa")];
     // let s: Species;
@@ -37,7 +37,7 @@ class App extends React.PureComponent<{}, AppState> {
     // s.descendants = [newBaseSpecies("1"), newBaseSpecies("2")]
     this.state = {
       overWorld,
-      activeLevel,
+      // activeLevel,
       activeSpecies: rootSpecies,
       rootSpecies,
       epoch: 1,

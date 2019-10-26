@@ -557,19 +557,17 @@ export class Cell extends Tile implements HasEnergy, Interactable {
   }
 
   stepTemperature() {
-    // if (this.age % 20 === 0) {
     const neighbors = this.world.tileNeighbors(this.pos);
     this.nextTemperature = nextTemperature(this, neighbors, 1);
-    // }
 
     // if we're cold, try to naturally heat ourselves
     if (this.temperatureFloat <= 32) {
-      const chanceToFreeze = (this.temperature === Temperature.Cold ? 0.001 : 0.01);
+      const chanceToFreeze = traitMod(this.world.traits.coldTolerant, (this.temperature === Temperature.Cold ? 0.001 : 0.01), 1 / 1.5);
       if (Math.random() < chanceToFreeze) {
         this.addEffect(new FreezeEffect());
       }
-    } else if (this.temperature === Temperature.Scorching) {
-      const chanceToLoseWater = 0.01;
+    } else if (this.temperatureFloat >= 64) {
+      const chanceToLoseWater = traitMod(this.world.traits.heatTolerant, (this.temperature === Temperature.Hot ? 0.001 : 0.01), 1 / 1.5);
       if (Math.random() < chanceToLoseWater && hasInventory(this)) {
         this.inventory.add(Math.max(-1, this.inventory.water), 0);
       }
@@ -811,16 +809,21 @@ export class Fruit extends Cell {
   static displayName = "Fruit";
   public isObstacle = true;
   public inventory = new Inventory(8, this);
-  static readonly neededResources = 100;
-  public committedResources = new Inventory(Fruit.neededResources, this);
+  public neededResources: number;
+  public committedResources: Inventory;// = new Inventory(Fruit.neededResources, this);
   public timeMatured?: number;
   static turnsToBuild = 0;
-  static TURNS_TO_MATURE = TIME_PER_SEASON / 3 * 2; // takes two months to mature
-  static ONE_TURN_COMMIT_MAX = Fruit.neededResources / Fruit.TURNS_TO_MATURE;
+  public turnsToMature: number; // = TIME_PER_SEASON / 3 * 2; // takes two months to mature
+  get oneTurnCommitMax() {
+    return this.neededResources / this.turnsToMature;
+  }
 
   constructor(pos: Vector2, world: World) {
     super(pos, world);
+    this.neededResources = Math.ceil(traitMod(world.traits.fruitNeededResources, 100, 1 / 1.5) / 2) * 2;
+    this.committedResources = new Inventory(this.neededResources, this);
     this.committedResources.on("get", this.handleGetResources);
+    this.turnsToMature = Math.ceil(traitMod(world.traits.fruitGrowthSpeed, TIME_PER_SEASON / 3 * 2, 1 / 1.5));
   }
 
   handleGetResources = () => {
@@ -840,8 +843,8 @@ export class Fruit extends Cell {
     const neighbors = this.world.tileNeighbors(this.pos);
     for (const [, neighbor] of neighbors) {
       if (hasInventory(neighbor) && neighbor instanceof Cell && !(neighbor instanceof Fruit)) {
-        const wantedWater = Math.min(Fruit.neededResources / 2 - this.committedResources.water, 1);
-        const wantedSugar = Math.min(Fruit.neededResources / 2 - this.committedResources.sugar, 1);
+        const wantedWater = Math.min(this.neededResources / 2 - this.committedResources.water, 1);
+        const wantedSugar = Math.min(this.neededResources / 2 - this.committedResources.sugar, 1);
 
         neighbor.inventory.give(this.inventory, wantedWater, wantedSugar);
       }
@@ -850,8 +853,8 @@ export class Fruit extends Cell {
   }
 
   commitResources(dt: number) {
-    const wantedWater = Math.min(Fruit.neededResources / 2 - this.committedResources.water, Fruit.ONE_TURN_COMMIT_MAX / 2 * dt * this.tempo);
-    const wantedSugar = Math.min(Fruit.neededResources / 2 - this.committedResources.sugar, Fruit.ONE_TURN_COMMIT_MAX / 2 * dt * this.tempo);
+    const wantedWater = Math.min(this.neededResources / 2 - this.committedResources.water, this.oneTurnCommitMax / 2 * dt * this.tempo);
+    const wantedSugar = Math.min(this.neededResources / 2 - this.committedResources.sugar, this.oneTurnCommitMax / 2 * dt * this.tempo);
     this.inventory.give(this.committedResources, wantedWater, wantedSugar);
   }
 
@@ -862,7 +865,7 @@ export class Fruit extends Cell {
 
   isMature() {
     // add 1 buffer for fp errors
-    return this.committedResources.water + this.committedResources.sugar >= Fruit.neededResources - 1;
+    return this.committedResources.water + this.committedResources.sugar >= this.neededResources - 1;
   }
 }
 

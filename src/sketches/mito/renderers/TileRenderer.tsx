@@ -110,10 +110,10 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
           return (
             <div className="fruit-indicator">
               <div>
-                {fruit.committedResources.water.toFixed(1)}/{Fruit.neededResources / 2} water
+                {fruit.committedResources.water.toFixed(1)}/{fruit.neededResources / 2} water
               </div>
               <div>
-                {fruit.committedResources.sugar.toFixed(1)}/{Fruit.neededResources / 2} sugar
+                {fruit.committedResources.sugar.toFixed(1)}/{fruit.neededResources / 2} sugar
               </div>
             </div>
           );
@@ -294,7 +294,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     const duration = 0.5;
     const ease = reversed(easeCubic);
     return (dt) => {
-      const t = clamp(dt / duration * (this.target as any).tempo || 1, 0, 1);
+      const t = clamp(dt / duration * ((this.target as any).tempo || 1), 0, 1);
       const scale = map(ease(t), 0, 1, 1, 1.3);
       this.mesh.scale.setScalar(scale);
       return t >= 1;
