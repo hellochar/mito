@@ -131,25 +131,25 @@ export abstract class Tile implements Steppable {
   diffuseWater(giver: HasInventory) {
     if (hasInventory(this)) {
       const diffusionAmount = (giver.inventory.water - this.inventory.water) * this.diffusionWater;
-      if (params.soilDiffusionType === "continuous") {
-        giver.inventory.give(this.inventory, diffusionAmount, 0);
-      } else {
-        giver.inventory.give(this.inventory, randRound(diffusionAmount), 0);
-        // if (Math.random() < waterDiff * this.diffusionWater * chanceToHappenScalar) {
-        //   giver.inventory.give(this.inventory, 1, 0);
-        // }
-      }
+      // if (params.soilDiffusionType === "continuous") {
+      //   giver.inventory.give(this.inventory, diffusionAmount, 0);
+      // } else {
+      giver.inventory.give(this.inventory, randRound(diffusionAmount), 0);
+      // if (Math.random() < waterDiff * this.diffusionWater * chanceToHappenScalar) {
+      //   giver.inventory.give(this.inventory, 1, 0);
+      // }
+      // }
     }
   }
 
   diffuseSugar(giver: HasInventory) {
     if (hasInventory(this)) {
       const diffusionAmount = (giver.inventory.sugar - this.inventory.sugar) * this.diffusionSugar;
-      if (params.soilDiffusionType === "continuous") {
-        giver.inventory.give(this.inventory, 0, diffusionAmount);
-      } else {
-        giver.inventory.give(this.inventory, 0, randRound(diffusionAmount));
-      }
+      // if (params.soilDiffusionType === "continuous") {
+      //   giver.inventory.give(this.inventory, 0, diffusionAmount);
+      // } else {
+      giver.inventory.give(this.inventory, 0, randRound(diffusionAmount));
+      // }
     }
     // if (hasInventory(this)) {
     //   const diffusionAmount = (giver.inventory.sugar - this.inventory.sugar) * this.diffusionSugar;
@@ -166,9 +166,7 @@ export abstract class Tile implements Steppable {
     //   }
     // }
     if (hasInventory(lowerNeighbor) && fallAmount > 0 && canPullResources(lowerNeighbor, this)) {
-      this.inventory.give(lowerNeighbor.inventory,
-        params.soilDiffusionType === "continuous" ? fallAmount : randRound(fallAmount),
-        0);
+      this.inventory.give(lowerNeighbor.inventory, randRound(fallAmount), 0);
     }
   }
 }

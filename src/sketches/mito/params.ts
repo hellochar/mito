@@ -13,7 +13,6 @@ const PARAMS_DEFAULT = {
   cellDiffusionWater: 0.002,
   cellDiffusionSugar: 0.002,
   soilDarknessBase: 0.2,
-  soilDiffusionType: "discrete",
   soilDiffusionWater: 0.001,
   veinDiffusion: 0.5,
   soilMaxWater: 20,
