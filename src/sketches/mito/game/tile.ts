@@ -105,8 +105,8 @@ export abstract class Tile implements Steppable {
 
   stepDiffusion(neighbors: Map<Vector2, Tile>) {
     if (hasInventory(this)) {
-      for (const [dir, tile] of neighbors) {
-        if (!this.canDiffuse(dir, tile)) {
+      for (const tile of neighbors.values()) {
+        if (!this.canDiffuse(tile)) {
           continue;
         }
         // take water from neighbors that have more water than you
@@ -124,7 +124,7 @@ export abstract class Tile implements Steppable {
     }
   }
 
-  canDiffuse(_dir: Vector2, tile: Tile): tile is Tile & HasInventory {
+  canDiffuse(tile: Tile): tile is Tile & HasInventory {
     return canPullResources(this, tile);
   }
 
@@ -223,26 +223,43 @@ export class Air extends Tile {
   }
 
   step() {
+    // we do NOT call super, to avoid stepping darkness and diffusion.
     if (this.world.time % 3 !== 0) {
       return;
     }
     this.stepGravity();
-    const neighbors = this.world.tileNeighbors(this.pos);
-    this.stepDiffusion(neighbors);
+    this.stepDiffusionCheap();
     this.stepEvaporation();
     this.stepTemperature();
-    // this.stepTemperature(neighbors);
     this._co2 = this.computeCo2();
+  }
+
+  stepDiffusionCheap() {
+    // only take water from left and right
+    const left = this.world.tileAt(this.pos.x - 1, this.pos.y);
+    const right = this.world.tileAt(this.pos.x + 1, this.pos.y);
+    // randomize order to remove directional bias
+    if (Math.random() < 0.5) {
+      this.tryDiffuse(left);
+      this.tryDiffuse(right);
+    } else {
+      this.tryDiffuse(right);
+      this.tryDiffuse(left);
+    }
+  }
+
+  tryDiffuse(t: Tile | null) {
+    if (t != null && this.canDiffuse(t)) {
+      if (t.inventory.water > this.inventory.water) {
+        this.diffuseWater(t);
+      }
+    }
   }
 
   stepEvaporation() {
     if (Math.random() < 0.01 * this.inventory.water) {
       this.inventory.add(-1, 0);
     }
-  }
-
-  canDiffuse(dir: Vector2, tile: Tile): tile is Tile & HasInventory {
-    return dir !== DIRECTIONS.s && dir !== DIRECTIONS.sw && dir !== DIRECTIONS.se && super.canDiffuse(dir, tile);
   }
 
   public co2() {
