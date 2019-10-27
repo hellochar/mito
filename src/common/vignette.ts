@@ -1,8 +1,9 @@
-import Mito from "sketches/mito";
-import { Tile, GrowingCell } from "sketches/mito/game/tile";
-import { WebGLRenderTarget, Vector2, OrthographicCamera, Scene } from "three";
-import { createRendererFor } from "sketches/mito/renderers/WorldRenderer";
 import { map } from "math";
+import Mito from "sketches/mito";
+import { TIME_PER_SEASON } from "sketches/mito/game";
+import { GrowingCell, Tile } from "sketches/mito/game/tile";
+import { createRendererFor } from "sketches/mito/renderers/WorldRenderer";
+import { OrthographicCamera, Scene, Vector2, WebGLRenderTarget } from "three";
 
 /**
  * A Vignette is a visual snapshot of a plant at a specific stage of growth. It's actually
@@ -12,7 +13,6 @@ import { map } from "math";
  *   How big the vignette is.
  */
 class VignetteCapturer {
-
   static renderTarget = new WebGLRenderTarget(1024, 1024);
   static rtBuffer = new Uint8Array(VignetteCapturer.renderTarget.width * VignetteCapturer.renderTarget.height * 4);
   static rtCanvas = (() => {
@@ -21,11 +21,18 @@ class VignetteCapturer {
     c.height = VignetteCapturer.renderTarget.height;
     return c;
   })();
-  public constructor(public readonly mito: Mito, public pxPerTile = 4) {
+  private lastCaptureTime: number = 0;
+
+  public constructor(public readonly mito: Mito, public pxPerTile = 4, public captureInterval = TIME_PER_SEASON / 27) {
+  }
+
+  isTimeForNewCapture() {
+    return this.mito.world.time - this.lastCaptureTime > this.captureInterval;
   }
 
   capture() {
     const { renderTarget, rtBuffer, rtCanvas } = VignetteCapturer;
+    this.lastCaptureTime = this.mito.world.time;
 
     // Cells that form the vignette:
     const picturesqueCells = Array.from(this.mito.world.cells())

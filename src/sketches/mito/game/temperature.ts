@@ -1,3 +1,4 @@
+import { lerp } from "math";
 import { Cell, Tile } from "./tile";
 
 export enum Temperature {
@@ -29,5 +30,6 @@ export function nextTemperature(t: Cell, neighbors: Map<any, Tile>, dt: number):
     averageTemperature += tile.temperatureFloat;
   }
   averageTemperature /= (neighbors.size + 1);
-  return temperature * 0.8 + averageTemperature * 0.2;
+  // TODO maybe overshoot issues?
+  return lerp(temperature, averageTemperature, 0.2 * dt);
 }

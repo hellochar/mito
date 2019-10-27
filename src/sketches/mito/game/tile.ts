@@ -63,22 +63,19 @@ export abstract class Tile implements Steppable {
   }
 
   // test tiles diffusing water around on same-type tiles
-  public step() {
-    if (this.world.time % 3 !== 0) {
-      return;
-    }
+  public step(dt: number) {
     const neighbors = this.world.tileNeighbors(this.pos);
-    this.stepDarkness(neighbors);
-    this.stepDiffusion(neighbors);
-    this.stepTemperature();
-    this.stepGravity();
+    this.stepDarkness(neighbors, dt);
+    this.stepDiffusion(neighbors, dt);
+    this.stepTemperature(dt);
+    this.stepGravity(dt);
   }
 
-  stepTemperature() {
+  stepTemperature(_dt: number) {
     this.temperatureFloat = this.world.getCurrentTemperature();
   }
 
-  stepDarkness(neighbors: Map<Vector2, Tile>) {
+  stepDarkness(neighbors: Map<Vector2, Tile>, _dt: number) {
     if (this instanceof Cell) {
       this.darkness = 0;
     } else {
@@ -103,7 +100,7 @@ export abstract class Tile implements Steppable {
     }
   }
 
-  stepDiffusion(neighbors: Map<Vector2, Tile>) {
+  stepDiffusion(neighbors: Map<Vector2, Tile>, dt: number) {
     if (hasInventory(this)) {
       for (const tile of neighbors.values()) {
         if (!this.canDiffuse(tile)) {
@@ -112,12 +109,12 @@ export abstract class Tile implements Steppable {
         // take water from neighbors that have more water than you
         if (this.diffusionWater != null) {
           if (tile.inventory.water > this.inventory.water) {
-            this.diffuseWater(tile);
+            this.diffuseWater(tile, dt);
           }
         }
         if (this.diffusionSugar != null) {
           if (tile.inventory.sugar > this.inventory.sugar) {
-            this.diffuseSugar(tile);
+            this.diffuseSugar(tile, dt);
           }
         }
       }
@@ -128,9 +125,9 @@ export abstract class Tile implements Steppable {
     return canPullResources(this, tile);
   }
 
-  diffuseWater(giver: HasInventory) {
+  diffuseWater(giver: HasInventory, dt: number) {
     if (hasInventory(this)) {
-      const diffusionAmount = (giver.inventory.water - this.inventory.water) * this.diffusionWater;
+      const diffusionAmount = (giver.inventory.water - this.inventory.water) * this.diffusionWater * dt;
       // if (params.soilDiffusionType === "continuous") {
       //   giver.inventory.give(this.inventory, diffusionAmount, 0);
       // } else {
@@ -142,9 +139,9 @@ export abstract class Tile implements Steppable {
     }
   }
 
-  diffuseSugar(giver: HasInventory) {
+  diffuseSugar(giver: HasInventory, dt: number) {
     if (hasInventory(this)) {
-      const diffusionAmount = (giver.inventory.sugar - this.inventory.sugar) * this.diffusionSugar;
+      const diffusionAmount = (giver.inventory.sugar - this.inventory.sugar) * this.diffusionSugar * dt;
       // if (params.soilDiffusionType === "continuous") {
       //   giver.inventory.give(this.inventory, 0, diffusionAmount);
       // } else {
@@ -157,8 +154,8 @@ export abstract class Tile implements Steppable {
     // }
   }
 
-  stepGravity() {
-    const fallAmount = this.fallAmount;
+  stepGravity(dt: number) {
+    const fallAmount = this.fallAmount * dt;
     const lowerNeighbor = this.world.tileAt(this.pos.x, this.pos.y + 1);
     // if (fallAmount > 0 && this.age % Math.floor(1 / fallAmount) < 1) {
     //   if (hasInventory(lowerNeighbor) && canPullResources(lowerNeighbor, this)) {
@@ -214,7 +211,6 @@ export class Air extends Tile {
         2312 + this.pos.y / 8,
         time / 1000 + 93.1
       ) * 0.25;
-    // don't compute dark/light or water diffusion
     return Math.max(Math.min(base + offset, 1), Math.min(0.4, this.world.environment.floorCo2 * 0.75));
   }
 
@@ -222,42 +218,39 @@ export class Air extends Tile {
     return this.sunlight();
   }
 
-  step() {
+  step(dt: number) {
     // we do NOT call super, to avoid stepping darkness and diffusion.
-    if (this.world.time % 3 !== 0) {
-      return;
-    }
-    this.stepGravity();
-    this.stepDiffusionCheap();
-    this.stepEvaporation();
-    this.stepTemperature();
+    this.stepGravity(dt);
+    this.stepDiffusionCheap(dt);
+    this.stepEvaporation(dt);
+    this.stepTemperature(dt);
     this._co2 = this.computeCo2();
   }
 
-  stepDiffusionCheap() {
+  stepDiffusionCheap(dt: number) {
     // only take water from left and right
     const left = this.world.tileAt(this.pos.x - 1, this.pos.y);
     const right = this.world.tileAt(this.pos.x + 1, this.pos.y);
     // randomize order to remove directional bias
     if (Math.random() < 0.5) {
-      this.tryDiffuse(left);
-      this.tryDiffuse(right);
+      this.tryDiffuse(left, dt);
+      this.tryDiffuse(right, dt);
     } else {
-      this.tryDiffuse(right);
-      this.tryDiffuse(left);
+      this.tryDiffuse(right, dt);
+      this.tryDiffuse(left, dt);
     }
   }
 
-  tryDiffuse(t: Tile | null) {
+  tryDiffuse(t: Tile | null, dt: number) {
     if (t != null && this.canDiffuse(t)) {
       if (t.inventory.water > this.inventory.water) {
-        this.diffuseWater(t);
+        this.diffuseWater(t, dt);
       }
     }
   }
 
-  stepEvaporation() {
-    if (Math.random() < 0.01 * this.inventory.water) {
+  stepEvaporation(dt: number) {
+    if (Math.random() < 0.01 * this.inventory.water * dt) {
       this.inventory.add(-1, 0);
     }
   }
@@ -285,19 +278,16 @@ export class Soil extends Tile implements HasInventory {
     this.inventory.add(water, 0);
   }
 
-  step() {
-    if (this.world.time % 3 !== 0) {
-      return;
-    }
-    super.step();
-    this.stepEvaporation();
+  step(dt: number) {
+    super.step(dt);
+    this.stepEvaporation(dt);
   }
 
-  stepEvaporation() {
+  stepEvaporation(dt: number) {
     const { evaporationRate, evaporationBottom } = this.world.environment;
     const evaporationHeightScalar = map(this.pos.y, this.world.height / 2, this.world.height * evaporationBottom, 1, 0);
     const evaporationAmountScalar = this.inventory.water;
-    if (Math.random() < evaporationRate * evaporationHeightScalar * evaporationAmountScalar) {
+    if (Math.random() < evaporationRate * evaporationHeightScalar * evaporationAmountScalar * dt) {
       this.inventory.add(-1, 0);
     }
   }
@@ -319,13 +309,10 @@ export class Fountain extends Soil {
   constructor(pos: Vector2, water: number = 0, world: World, public turnsPerWater: number) {
     super(pos, water, world);
   }
-  step() {
-    if (this.world.time % 3 !== 0) {
-      return;
-    }
-    super.step();
+  step(dt: number) {
+    super.step(dt);
     if (this.cooldown > 0) {
-      this.cooldown--;
+      this.cooldown -= dt;
     }
     if (this.inventory.space() > 1 && this.cooldown <= 0) {
       // just constantly give yourself water
@@ -353,7 +340,7 @@ export abstract class CellEffect {
   /**
    * Return whether to step the next behavior in the chain
    */
-  abstract step(): void;
+  abstract step(dt: number): void;
 
   remove() {
     const index = this.cell.effects.indexOf(this);
@@ -371,18 +358,18 @@ export class FreezeEffect extends CellEffect implements Interactable {
     return this.turnsToDie - this.age;
   }
 
-  interact() {
-    this.percentFrozen -= 20 / this.turnsToDie;
+  interact(dt: number) {
+    this.percentFrozen -= 20 / this.turnsToDie * dt;
     this.onFrozenChanged();
   }
 
-  step() {
+  step(dt: number) {
     if (this.cell.temperature === Temperature.Cold) {
-      this.percentFrozen += 1 / this.turnsToDie;
+      this.percentFrozen += 1 / this.turnsToDie * dt;
     } else if (this.cell.temperature === Temperature.Freezing) {
-      this.percentFrozen += 10 / this.turnsToDie;
+      this.percentFrozen += 10 / this.turnsToDie * dt;
     } else {
-      this.percentFrozen -= 10 / this.turnsToDie;
+      this.percentFrozen -= 10 / this.turnsToDie * dt;
     }
     this.onFrozenChanged();
 
@@ -453,23 +440,20 @@ export class Cell extends Tile implements HasEnergy, Interactable {
     return this.effects.find((e) => e.constructor === type);
   }
 
-  interact() {
+  interact(dt: number) {
     for (const e of this.effects) {
       if (isInteractable(e)) {
-        e.interact();
+        e.interact(dt);
       }
     }
   }
 
-  step() {
-    if (this.world.time % 3 !== 0) {
-      return;
-    }
+  step(dt: number) {
     const { tempo } = this;
-    super.step();
-    this.energy -= 1 * tempo;
+    super.step(dt);
+    this.energy -= 1 * tempo * dt;
     for (const effect of this.effects) {
-      effect.step();
+      effect.step(dt);
     }
     const tileNeighbors = this.world.tileNeighbors(this.pos);
     const neighbors = Array.from(tileNeighbors.values());
@@ -489,7 +473,7 @@ export class Cell extends Tile implements HasEnergy, Interactable {
           // const targetEnergy = averageEnergy;
           if (neighbor.energy > this.energy) {
             // energyTransfer = Math.floor((neighbor.energy - this.energy) / energeticNeighbors.length);
-            energyTransfer = Math.min(neighbor.energy, Math.floor((neighbor.energy - this.energy) * 0.25 * tempo));
+            energyTransfer = Math.min(neighbor.energy, Math.floor((neighbor.energy - this.energy) * 0.25 * tempo * dt));
             // if (neighbor.energy - energyTransfer < this.energy + energyTransfer) {
             //     throw new Error("cell energy diffusion: result of transfer gives me more than target");
             // }
@@ -511,19 +495,19 @@ export class Cell extends Tile implements HasEnergy, Interactable {
     }
 
     // this.stepStress(tileNeighbors);
-    this.stepDroop(tileNeighbors);
+    this.stepDroop(tileNeighbors, dt);
+    // TODO scale droop by dt
     if (this.droopY > 0.5) {
-      // make the player ride the train!
-      if (this.world.player.pos.equals(this.pos)) {
-        this.world.player.pos.y += 1;
-      }
-      this.world.maybeRemoveCellAt(this.pos);
       if (this.pos.y < this.world.height - 1) {
+        // make the player ride the train!
+        if (this.world.player.pos.equals(this.pos)) {
+          this.world.player.pos.y += 1;
+        }
+        this.world.maybeRemoveCellAt(this.pos);
         this.pos.y += 1;
+        this.droopY -= 1;
+        this.world.setTileAt(this.pos, this);
       }
-      this.droopY -= 1;
-      // lol whatever lets just test it out
-      this.world.setTileAt(this.pos, this);
     }
 
     if (this.energy <= 0) {
@@ -556,18 +540,18 @@ export class Cell extends Tile implements HasEnergy, Interactable {
     }
   }
 
-  stepTemperature() {
+  stepTemperature(dt: number) {
     const neighbors = this.world.tileNeighbors(this.pos);
-    this.nextTemperature = nextTemperature(this, neighbors, 1);
+    this.nextTemperature = nextTemperature(this, neighbors, dt);
 
     // if we're cold, try to naturally heat ourselves
     if (this.temperatureFloat <= 32) {
-      const chanceToFreeze = traitMod(this.world.traits.coldTolerant, (this.temperature === Temperature.Cold ? 0.001 : 0.01), 1 / 1.5);
+      const chanceToFreeze = traitMod(this.world.traits.coldTolerant, (this.temperature === Temperature.Cold ? 0.001 : 0.01), 1 / 1.5) * dt;
       if (Math.random() < chanceToFreeze) {
         this.addEffect(new FreezeEffect());
       }
     } else if (this.temperatureFloat >= 64) {
-      const chanceToLoseWater = traitMod(this.world.traits.heatTolerant, (this.temperature === Temperature.Hot ? 0.001 : 0.01), 1 / 1.5);
+      const chanceToLoseWater = traitMod(this.world.traits.heatTolerant, (this.temperature === Temperature.Hot ? 0.001 : 0.01), 1 / 1.5) * dt;
       if (Math.random() < chanceToLoseWater && hasInventory(this)) {
         this.inventory.add(Math.max(-1, this.inventory.water), 0);
       }
@@ -603,7 +587,7 @@ export class Cell extends Tile implements HasEnergy, Interactable {
   //     this.offset.y += totalForce.y * 0.01;
   // }
 
-  stepDroop(tileNeighbors: Map<Vector2, Tile>) {
+  stepDroop(tileNeighbors: Map<Vector2, Tile>, dt: number) {
     const below = tileNeighbors.get(DIRECTIONS.s)!;
     const belowLeft = tileNeighbors.get(DIRECTIONS.sw)!;
     const belowRight = tileNeighbors.get(DIRECTIONS.se)!;
@@ -615,7 +599,7 @@ export class Cell extends Tile implements HasEnergy, Interactable {
     const aboveLeft = tileNeighbors.get(DIRECTIONS.nw)!;
     const aboveRight = tileNeighbors.get(DIRECTIONS.ne)!;
 
-    const droopAmount = traitMod(this.world.traits.structuralStability, params.droop, 1 / 1.5);
+    const droopAmount = traitMod(this.world.traits.structuralStability, params.droop, 1 / 1.5) * dt;
     this.droopY += droopAmount;
     if (this.energy < params.cellEnergyMax / 2) {
       this.droopY += droopAmount;
@@ -641,6 +625,7 @@ export class Cell extends Tile implements HasEnergy, Interactable {
     if (!hasSupportBelow && springNeighborCells.length === 1) {
       this.droopY += 1;
     } else {
+      // TODO tighten springs scaled by dt
       this.droopY = springNeighborCells.reduce((sum, n) => sum + n.droopY, 0) / springNeighborCells.length;
     }
   }
@@ -654,12 +639,9 @@ export class GrowingCell extends Cell {
     super(pos, world);
     this.timeRemaining = this.timeToBuild = (completedCell.constructor as any).turnsToBuild || 0;
   }
-  step() {
-    if (this.world.time % 3 !== 0) {
-      return;
-    }
-    super.step();
-    this.timeRemaining -= 1 * this.tempo;
+  step(dt: number) {
+    super.step(dt);
+    this.timeRemaining -= 1 * this.tempo * dt;
     if (this.timeRemaining <= 0) {
       this.world.setTileAt(this.completedCell.pos, this.completedCell);
     }
@@ -695,11 +677,8 @@ export class Leaf extends Cell {
   public tilePairs: Vector2[] = []; // implied that the opposite direction is connected
   public totalSugarProduced = 0;
 
-  public step() {
-    if (this.world.time % 3 !== 0) {
-      return;
-    }
-    super.step();
+  public step(dt: number) {
+    super.step(dt);
     const neighbors = this.world.tileNeighbors(this.pos);
     this.averageEfficiency = 0;
     this.averageSpeed = 0;
@@ -724,7 +703,7 @@ export class Leaf extends Cell {
         this.averageEfficiency += efficiency;
         this.averageSpeed += speed;
 
-        const leafReactionRate = traitMod(this.world.traits.photosynthesis, 0.01, 1.5);
+        const leafReactionRate = traitMod(this.world.traits.photosynthesis, 0.01, 1.5) * this.tempo;
 
         // in prime conditions:
         //      our rate of conversion is speed * params.leafReactionRate
@@ -734,7 +713,7 @@ export class Leaf extends Cell {
         //      on conversion, we use up all the available water and get the corresponding amount of sugar
         const bestEfficiencyWater = params.leafSugarPerReaction / efficiency;
         const waterToConvert = Math.min(tissue.inventory.water, bestEfficiencyWater);
-        const chance = (speed * leafReactionRate * waterToConvert) / bestEfficiencyWater;
+        const chance = (speed * leafReactionRate * waterToConvert * dt) / bestEfficiencyWater;
         if (Math.random() < chance) {
           const sugarConverted = waterToConvert * efficiency;
           tissue.inventory.add(-waterToConvert, sugarConverted);
@@ -759,19 +738,16 @@ export class Root extends Cell {
   cooldown = 0;
   public totalSucked = 0;
 
-  public step() {
-    if (this.world.time % 3 !== 0) {
-      return;
-    }
-    super.step();
+  public step(dt: number) {
+    super.step(dt);
     if (this.cooldown <= 0) {
-      this.stepWaterTransfer();
+      this.stepWaterTransfer(dt);
       this.cooldown += traitMod(this.world.traits.rootAbsorption, params.rootTurnsPerTransfer, 1 / 1.5);
     }
-    this.cooldown -= 1 * this.tempo;
+    this.cooldown -= 1 * this.tempo * dt;
   }
 
-  private stepWaterTransfer() {
+  private stepWaterTransfer(_dt: number) {
     // this.tilePairs = [];
     this.activeNeighbors = [];
     const neighbors = this.world.tileNeighbors(this.pos);
@@ -834,17 +810,16 @@ export class Fruit extends Cell {
   };
 
   // aggressively take the inventory from neighbors
-  step() {
-    const dt = 3;
-    if (this.world.time % dt !== 0) {
-      return;
-    }
-    super.step();
+  step(dt: number) {
+    super.step(dt);
+    // how fast Fruit takes resources from surrounding tiles and puts it onto itself
+    // to be committed
+    const maxResourceIntake = 1 * dt * this.tempo;
     const neighbors = this.world.tileNeighbors(this.pos);
     for (const [, neighbor] of neighbors) {
       if (hasInventory(neighbor) && neighbor instanceof Cell && !(neighbor instanceof Fruit)) {
-        const wantedWater = Math.min(this.neededResources / 2 - this.committedResources.water, 1);
-        const wantedSugar = Math.min(this.neededResources / 2 - this.committedResources.sugar, 1);
+        const wantedWater = Math.min(this.neededResources / 2 - this.committedResources.water, maxResourceIntake);
+        const wantedSugar = Math.min(this.neededResources / 2 - this.committedResources.sugar, maxResourceIntake);
 
         neighbor.inventory.give(this.inventory, wantedWater, wantedSugar);
       }
@@ -885,13 +860,10 @@ export class Transport extends Tissue {
     }
   }
 
-  step() {
-    if (this.world.time % 3 !== 0) {
-      return;
-    }
+  step(dt: number) {
+    super.step(dt);
     // transport hungers at double speed
-    this.energy -= 1 * this.tempo;
-    super.step();
+    this.energy -= 1 * this.tempo * dt;
     let waterToTransport = 0;
     let sugarToTransport = 0;
     if (this.cooldownWater <= 0) {
@@ -916,8 +888,8 @@ export class Transport extends Tissue {
         fromTile.inventory.give(this.inventory, waterToTransport, sugarToTransport);
       }
     }
-    this.cooldownWater -= 1 * this.tempo;
-    this.cooldownSugar -= 1 * this.tempo;
+    this.cooldownWater -= 1 * dt * this.tempo;
+    this.cooldownSugar -= 1 * dt * this.tempo;
   }
 
   public getTarget() {

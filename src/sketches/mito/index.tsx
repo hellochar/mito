@@ -9,7 +9,7 @@ import { ISketch, SketchAudioContext } from "../sketch";
 import { ActionBuild, ActionInteract, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
 import { Constructor } from "./constructor";
-import { TIME_PER_SEASON, World } from "./game";
+import { World } from "./game";
 import { isInteractable } from "./game/interactable";
 import { Cell, Fruit, Leaf, Root, Tile, Tissue, Transport, Vein } from "./game/tile";
 import { ACTION_KEYMAP, CELL_BAR_KEYS, MOVEMENT_KEYS } from "./keymap";
@@ -139,7 +139,7 @@ export class Mito extends ISketch {
     this.worldRenderer = new WorldRenderer(this.world, this.scene, this);
 
     // step once to get a StepStats
-    this.world.step();
+    this.world.step(1 / 60);
 
     hookUpAudio(this.audioContext);
     this.updateAmbientAudio();
@@ -236,16 +236,16 @@ Number of Programs: ${this.renderer.info.programs!.length}
     console.log(s);
   }
 
-  public worldStep() {
+  public worldStep(dt: number) {
     if (!this.firstActionTakenYet || this.instructionsOpen) {
       return;
     }
 
     // this.world.player.dropWater = this.keyMap.has("q");
     // this.world.player.dropSugar = this.keyMap.has("e");
-    this.world.step();
+    this.world.step(dt);
 
-    if (this.world.time % (TIME_PER_SEASON / 27) === 0) {
+    if (this.vignetteCapturer.isTimeForNewCapture()) {
       const v = this.vignetteCapturer.capture();
       this.vignettes.push(v);
     }
@@ -327,7 +327,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
   //   // }
   // }
 
-  public animate() {
+  public animate(millisElapsed: number) {
     if (this.instructionsOpen) {
       return;
     }
@@ -335,6 +335,9 @@ Number of Programs: ${this.renderer.info.programs!.length}
     //     this.canvas.focus();
     // }
     this.canvas.focus();
+    // const dt = millisElapsed / 1000;
+    // TODO make this seconds instead of frames
+    const dt = 1 * millisElapsed / 30;
     if (params.isRealtime) {
       const moveAction = this.keysToMovement(this.keyMap);
       if (moveAction) {
@@ -353,9 +356,9 @@ Number of Programs: ${this.renderer.info.programs!.length}
           this.handleRightClick();
         }
       }
-      this.worldStep();
+      this.worldStep(dt);
     } else if (this.world.player.getAction() != null) {
-      this.worldStep();
+      this.worldStep(dt);
     }
     this.worldRenderer.update();
 

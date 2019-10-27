@@ -80,7 +80,7 @@ export class Player implements Steppable {
     this.events.on(event, cb);
   }
 
-  public step() {
+  public step(dt: number) {
     if (this.action === undefined) {
       this.action = { type: "none" };
     }
@@ -92,8 +92,8 @@ export class Player implements Steppable {
         this.action = { type: "none" };
       }
     }
-    const actionSuccessful = this.attemptAction(this.action);
-    this.maybeMoveWithTransports();
+    const actionSuccessful = this.attemptAction(this.action, dt);
+    this.maybeMoveWithTransports(dt);
     // if (this.dropWater) {
     //   this.attemptAction(ACTION_KEYMAP.q);
     // }
@@ -106,40 +106,40 @@ export class Player implements Steppable {
     this.action = undefined;
   }
 
-  private maybeMoveWithTransports() {
+  private maybeMoveWithTransports(dt: number) {
     const tile = this.currentTile();
     if (tile instanceof Transport) {
-      this.posFloat.add(tile.dir.clone().setLength(this.speed * 0.15));
+      this.posFloat.add(tile.dir.clone().setLength(this.speed * 0.15 * dt));
     }
   }
 
-  public attemptAction(action: Action): boolean {
+  public attemptAction(action: Action, dt: number): boolean {
     switch (action.type) {
       case "none":
         // literally do nothing
         return true;
       case "still":
-        return this.attemptStill();
+        return this.attemptStill(dt);
       case "move":
-        return this.attemptMove(action);
+        return this.attemptMove(action, dt);
       case "build":
-        return this.attemptBuild(action);
+        return this.attemptBuild(action, dt);
       case "deconstruct":
-        return this.attemptDeconstruct(action);
+        return this.attemptDeconstruct(action, dt);
       case "drop":
-        return this.attemptDrop(action);
+        return this.attemptDrop(action, dt);
       case "pickup":
-        return this.attemptPickup(action);
+        return this.attemptPickup(action, dt);
       case "multiple":
-        return this.attemptMultiple(action);
+        return this.attemptMultiple(action, dt);
       case "interact":
-        return this.attemptInteract(action);
+        return this.attemptInteract(action, dt);
     }
   }
-  public verifyMove(action: ActionMove) {
+  public verifyMove(action: ActionMove, dt: number) {
     const target = this.posFloat
       .clone()
-      .add(action.dir.clone().setLength(this.speed))
+      .add(action.dir.clone().setLength(this.speed * dt))
       .round();
     return this.isWalkable(target);
   }
@@ -173,8 +173,8 @@ export class Player implements Steppable {
     }
   }
 
-  public attemptMove(action: ActionMove) {
-    if (this.verifyMove(action)) {
+  public attemptMove(action: ActionMove, dt: number) {
+    if (this.verifyMove(action, dt)) {
       // const t = this.currentTile();
       // if (t instanceof Cell) {
       //   if (t.temperature < 40) {
@@ -188,7 +188,7 @@ export class Player implements Steppable {
       footsteps.gain.gain.value = 0.5;
       footsteps.gain.gain.linearRampToValueAtTime(0, footsteps.gain.context.currentTime + 0.05);
       // do the move
-      this.posFloat.add(action.dir.clone().setLength(this.speed));
+      this.posFloat.add(action.dir.clone().setLength(this.speed * dt));
       // this._pos = this.posFloat.clone().round();
       // this.autopickup();
       return true;
@@ -196,7 +196,7 @@ export class Player implements Steppable {
       return false;
     }
   }
-  public attemptStill() {
+  public attemptStill(_dt: number) {
     // this.autopickup();
     return true;
   }
@@ -270,7 +270,7 @@ export class Player implements Steppable {
     return false;
   }
 
-  public attemptBuild(action: ActionBuild) {
+  public attemptBuild(action: ActionBuild, dt: number) {
     const existingCell = this.world.cellAt(action.position.x, action.position.y);
     if (existingCell != null && !this.isMeaningfulBuild(action, existingCell)) {
       // already built, whatever.
@@ -281,7 +281,7 @@ export class Player implements Steppable {
         type: "deconstruct",
         position: action.position,
         force: true,
-      });
+      }, dt);
     }
     const matureCell = this.tryConstructingNewCell(action.position, action.cellType, action.args);
     if (matureCell != null) {
@@ -299,7 +299,7 @@ export class Player implements Steppable {
     }
   }
 
-  public attemptDeconstruct(action: ActionDeconstruct): boolean {
+  public attemptDeconstruct(action: ActionDeconstruct, _dt: number): boolean {
     if (!action.position.equals(this.pos) || action.force) {
       const cell = this.world.maybeRemoveCellAt(action.position);
       if (cell != null) {
@@ -315,11 +315,13 @@ export class Player implements Steppable {
     return false;
   }
 
-  public attemptDrop(action: ActionDrop) {
+  public attemptDrop(action: ActionDrop, dt: number) {
     // drop as much as you can onto the current tile
     const currentTile = this.currentTile();
     if (hasInventory(currentTile)) {
-      const { water, sugar } = action;
+      const { water: waterRate, sugar: sugarRate } = action;
+      const water = waterRate * dt;
+      const sugar = sugarRate * dt;
       // first, pick up the opposite of what you can from the tile to try and make space
       currentTile.inventory.give(this.inventory, sugar, water);
 
@@ -331,38 +333,25 @@ export class Player implements Steppable {
     }
   }
 
-  public attemptPickup(action: ActionPickup) {
+  public attemptPickup(action: ActionPickup, dt: number) {
     const cell = this.currentTile();
     if (hasInventory(cell)) {
       const inv = cell.inventory;
-      inv.give(this.inventory, action.water, action.sugar);
+      inv.give(this.inventory, action.water * dt, action.sugar * dt);
     }
     return true;
-    // // drop as much as you can onto the current tile
-    // const currentTile = this.currentTile();
-    // if (hasInventory(currentTile)) {
-    //   const { water, sugar } = action;
-    //   // first, pick up the opposite of what you can from the tile to try and make space
-    //   currentTile.inventory.give(this.inventory, sugar, water);
-
-    //   // give as much as you can
-    //   this.inventory.give(currentTile.inventory, water, sugar);
-    //   return true;
-    // } else {
-    //   return false;
-    // }
   }
 
-  public attemptMultiple(multiple: ActionMultiple) {
+  public attemptMultiple(multiple: ActionMultiple, dt: number) {
     let allSuccess = true;
     for (const action of multiple.actions) {
-      allSuccess = this.attemptAction(action) && allSuccess;
+      allSuccess = this.attemptAction(action, dt) && allSuccess;
     }
     return allSuccess;
   }
 
-  public attemptInteract(action: ActionInteract) {
-    action.interactable.interact();
+  public attemptInteract(action: ActionInteract, dt: number) {
+    action.interactable.interact(dt);
     return true;
   }
 }

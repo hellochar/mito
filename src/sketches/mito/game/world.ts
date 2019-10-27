@@ -1,4 +1,4 @@
-import { map } from "math";
+import { map, randRound } from "math";
 import * as THREE from "three";
 import { Vector2 } from "three";
 import { GameResult } from "..";
@@ -48,6 +48,7 @@ export const TIME_PER_DAY = TIME_PER_MONTH / 3;
 
 export class World {
   public time: number = 0;
+  public frame: number = 0;
   public readonly width = 50;
   public readonly height = 100;
   public readonly player: Player;
@@ -276,7 +277,7 @@ export class World {
   private computeTileNeighbors(px: number, py: number) {
     const mapping = new Map<Vector2, Tile>();
     // randomize the neighbor array to reduce aliasing
-    const directions = DIRECTION_VALUES_RAND[this.time % DIRECTION_VALUES_RAND.length];
+    const directions = DIRECTION_VALUES_RAND[this.frame % DIRECTION_VALUES_RAND.length];
     directions.forEach((v) => {
       const x = px + v.x;
       const y = py + v.y;
@@ -326,18 +327,18 @@ export class World {
     let x = 0,
       y = 0;
     for (x = 0; x < this.width; x++) {
-      for (y = (x + this.time) % 2; y < this.height; y += 2) {
+      for (y = (x + this.frame) % 2; y < this.height; y += 2) {
         // checkerboard
         newEntities.push(this.tileAt(x, y)!);
       }
     }
     for (x = 0; x < this.width; x++) {
-      for (y = (x + this.time + 1) % 2; y < this.height; y += 2) {
+      for (y = (x + this.frame + 1) % 2; y < this.height; y += 2) {
         // opposite checkerboard
         newEntities.push(this.tileAt(x, y)!);
       }
     }
-    if (this.time % 4 < 2) {
+    if (this.frame % 4 < 2) {
       newEntities.reverse();
     }
     // add player at the end - this is important since Player is currently the only thing
@@ -363,19 +364,20 @@ export class World {
   }
   // iterate through all the actions
   private stepStats: StepStats = new StepStats();
-  public step(): StepStats {
+  public step(dt: number): StepStats {
     const entities = this.entities();
     this.stepStats = new StepStats();
     // dear god
     entities.forEach((entity) => {
       if (isSteppable(entity)) {
-        step(entity);
+        step(entity, dt);
       }
     });
-    this.updateTemperatures();
-    this.computeSunlight();
-    this.stepWeather();
-    this.time++;
+    this.updateTemperatures(dt);
+    this.computeSunlight(dt);
+    this.stepWeather(dt);
+    this.frame++;
+    this.time += dt;
     this.fillCachedEntities();
     return this.stepStats;
     // this.checkResources();
@@ -385,17 +387,22 @@ export class World {
     return this.stepStats;
   }
 
-  public stepWeather() {
-    // offset first rain event by 300 turns
+  public stepWeather(dt: number) {
+    // offset first rain event by 200 turns
     const isRaining =
       (this.time + this.environment.climate.turnsBetweenRainfall - 200) %
       this.environment.climate.turnsBetweenRainfall <
       this.environment.climate.rainDuration;
     if (isRaining) {
-      const x = THREE.Math.randInt(0, this.width - 1);
-      const t = this.tileAt(x, 0);
-      if (t instanceof Air) {
-        t.inventory.add(this.environment.climate.waterPerDroplet, 0);
+      // add multiple random droplets
+      while (dt > 0) {
+        const dropletSizeScalar = Math.min(dt, 1);
+        const x = THREE.Math.randInt(0, this.width - 1);
+        const t = this.tileAt(x, 0);
+        if (t instanceof Air) {
+          t.inventory.add(randRound(this.environment.climate.waterPerDroplet * dropletSizeScalar), 0);
+        }
+        dt -= 1;
       }
     }
   }
@@ -442,7 +449,7 @@ export class World {
     return map(this.sunAmount, 0, 1, night, day);
   }
 
-  public computeSunlight() {
+  public computeSunlight(_dt: number) {
     // sunlight is special - we step downards from the top; neighbors don't affect the calculation so
     // we don't have buffering problems
     const sunAngle = this.sunAngle;
@@ -484,7 +491,7 @@ export class World {
     }
   }
 
-  public updateTemperatures() {
+  public updateTemperatures(_dt: number) {
     for (const t of this.cells()) {
       t.temperatureFloat = t.nextTemperature;
     }

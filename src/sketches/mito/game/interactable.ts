@@ -1,5 +1,5 @@
 export interface Interactable {
-  interact(): void;
+  interact(dt: number): void;
 }
 
 export function isInteractable<T>(e: T): e is Interactable & T {
