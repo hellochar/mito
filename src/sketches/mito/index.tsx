@@ -337,7 +337,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     this.canvas.focus();
     // const dt = millisElapsed / 1000;
     // TODO make this seconds instead of frames
-    let dt = Math.min(1 * millisElapsed / 30 * 3, 10);
+    let dt = Math.min(1 * millisElapsed / 30, 10);
     if (params.isRealtime) {
       const moveAction = this.keysToMovement(this.keyMap);
       if (moveAction) {

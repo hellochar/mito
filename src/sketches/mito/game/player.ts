@@ -24,6 +24,7 @@ export class Player implements Steppable {
   // public dropWater = false;
   // public dropSugar = false;
   public baseSpeed: number;
+  public dtSinceLastStepped = 0;
 
   public get speed() {
     const t = this.currentTile();
@@ -36,6 +37,10 @@ export class Player implements Steppable {
 
   public constructor(public posFloat: Vector2, public world: World) {
     this.baseSpeed = traitMod(world.traits.walkSpeed, 0.15, 1.5);
+  }
+
+  shouldStep() {
+    return true;
   }
 
   public setAction(action: Action) {
