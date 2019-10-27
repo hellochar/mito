@@ -1,10 +1,11 @@
+import Ticker from "global/ticker";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
-
+import { lerp2 } from "../../../math";
 import { Player } from "../game";
 import { Mito } from "../index";
 import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
-import { lerp2 } from "../../../math";
+
 
 export class PlayerRenderer extends Renderer<Player> {
   public mesh: Mesh;
@@ -28,8 +29,8 @@ export class PlayerRenderer extends Renderer<Player> {
   }
   update() {
     const pos = this.target.droopPosFloat().clone();
-    pos.x += Math.cos(performance.now() / 1000) * 0.04;
-    pos.y += Math.sin(performance.now() / 400) * 0.08;
+    pos.x += Math.cos(Ticker.now / 1000) * 0.04;
+    pos.y += Math.sin(Ticker.now / 400) * 0.08;
     lerp2(this.mesh.position, pos, 0.5);
     this.mesh.position.z = 2;
     // for (const [key, keyMesh] of MOVEMENT_KEY_MESHES) {

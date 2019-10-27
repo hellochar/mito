@@ -1,3 +1,4 @@
+import Ticker from "global/ticker";
 import { Color, Scene, Vector2 } from "three";
 import lazy from "../../../common/lazy";
 import { map } from "../../../math";
@@ -161,9 +162,8 @@ export class InventoryRenderer extends Renderer<Inventory> {
       const r = i < numWaters ? this.waters[i] : this.sugars[i - numWaters];
       let vx = 0,
         vy = 0;
-      const angle = performance.now() / 3000 + this.animationOffset;
+      const angle = Ticker.now / 3000 + this.animationOffset;
       vx += Math.cos(angle) * 0.02;
-      // vel.y += Math.sin(performance.now() / 3000) * 0.1;
       const goTowardsCenterStrength = 0.1 + r.length() * 0.1;
       vx += -r.x * goTowardsCenterStrength;
       vy += -r.y * goTowardsCenterStrength;
