@@ -1,0 +1,162 @@
+@import "../variables";
+
+.overworld-screen {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: $black;
+  color: white;
+  position: relative;
+
+  canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .panel-left {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    bottom: 10px;
+    position: absolute;
+    left: 0;
+    top: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    animation: opacifyAndSlideIn 0.2s both;
+    width: 0;
+    transition: width 0.2s;
+
+    &.open {
+      width: 33%;
+      min-width: 200px;
+    }
+
+    .panel-left-handle {
+      position: absolute;
+      top: 10px;
+      left: 100%;
+      cursor: pointer;
+      border: none;
+      background: rgba(255, 255, 255, 0.8);
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      // border-left: 1px solid $gray3;
+      outline: none;
+
+      &:active {
+        box-shadow: 0 0 4px 4px inset rgba(64, 64, 64, 0.5);
+      }
+
+      .icon {
+        padding: 5px;
+        font-size: 48px;
+      }
+    }
+  }
+
+  .epoch-display {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.5s;
+    padding: 20px;
+    border-radius: 10px;
+
+    @mixin primary {
+      bottom: 10%;
+      right: 50%;
+      transform: translate(50%, 0);
+      background: rgba(255, 255, 255, 0.8);
+      color: black;
+    }
+
+    &.ready-to-advance {
+      @include primary;
+
+      .button-next-epoch {
+        animation: pulsating 1.3s alternate-reverse infinite;
+
+        @keyframes pulsating {
+          0% {
+            transform: scale(1);
+          }
+
+          100% {
+            transform: scale(1.2);
+          }
+        }
+      }
+    }
+
+    &.transitioning {
+      @include primary;
+
+      .icon {
+        animation: flip 4s ease-in-out both;
+
+        @keyframes flip {
+          0% {
+            transform: rotate(0deg);
+          }
+
+          100% {
+            transform: rotate(720deg);
+          }
+        }
+      }
+    }
+
+    .number {
+      font-size: 20px;
+    }
+
+    .button-next-epoch {
+      margin-top: 10px;
+      display: inline-block;
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.8);
+      // background: none;
+      border-radius: 100%;
+      border: 1px solid $gray3;
+      color: black;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(64, 64, 64, 0.2);
+      transition: all 0.2s;
+      position: relative;
+      outline: none;
+
+      .icon {
+        font-size: 40px;
+      }
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      &:active {
+        left: 2px;
+        top: 2px;
+      }
+    }
+  }
+}
+
+.mutation-screen-portal {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  right: 40px;
+  bottom: 40px;
+  border: 1px solid rgb(204, 204, 204);
+  background: rgb(255, 255, 255);
+  overflow: auto;
+  border-radius: 4px;
+  outline: none;
+}

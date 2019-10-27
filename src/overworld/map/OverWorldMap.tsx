@@ -1,30 +1,21 @@
-import React from "react";
-import Modal from "react-modal";
-
-import { HexTile } from "../hexTile";
-import { roundCubeCoordinates } from "../hexMath";
-import { OverWorld } from "../overWorld";
-
-import "./OverWorldMap.scss";
-import { Vector2 } from "three";
-import OverWorldPopover from "./OverWorldPopover";
-import HexTileInfo from "./HexTileInfo";
-import PhylogeneticTree from "../../evolution/PhylogeneticTree";
-import { Species } from "../../evolution/species";
-import MutationScreen from "../../evolution/MutationScreen";
-import { GiFamilyTree } from "react-icons/gi";
-import classNames from "classnames";
 import Ticker from "global/ticker";
+import React from "react";
+import { Vector2 } from "three";
+import { Species } from "../../evolution/species";
+import { getCameraPositionCenteredOn, getClickedHexCoords } from "../hexMath";
+import { HexTile } from "../hexTile";
+import { OverWorld } from "../overWorld";
+import HexTileInfo from "./HexTileInfo";
 import HexTileSprite from "./hexTileSprite";
-
-const C = Math.sqrt(3) / 2;
+import "./OverWorldMap.scss";
+import OverWorldPopover from "./OverWorldPopover";
 
 interface OverWorldMapProps {
   rootSpecies: Species;
   overWorld: OverWorld;
   onPlayLevel: (level: HexTile, species: Species) => void;
-  onNextEpoch: () => void;
-  epoch: number;
+  // TODO turn this into a trigger, or global state
+  focusedHex?: HexTile;
 }
 
 export interface CameraState {
@@ -36,9 +27,8 @@ export interface CameraState {
 interface OverWorldMapState {
   cameraState: CameraState;
   pressedKeys: { [code: string]: boolean };
-  highlightedTile?: HexTile;
-  leftPanelOpen?: boolean;
-  activelyMutatingSpecies?: Species;
+  highlightedHex?: HexTile;
+  frame: number;
 }
 
 export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWorldMapState> {
@@ -47,11 +37,12 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
 
   constructor(props: OverWorldMapProps) {
     super(props);
+    const scale = 96;
+    const [dX, dY] = getCameraPositionCenteredOn(props.overWorld.getStartTile(), scale);
     this.state = {
-      cameraState: { scale: 48, dX: 0, dY: 0 },
+      cameraState: { scale, dX, dY },
       pressedKeys: {},
-      leftPanelOpen: true,
-      // activelyMutatingSpecies: props.rootSpecies,
+      frame: 0,
     };
     for (const tile of props.overWorld) {
       const sprite = new HexTileSprite(tile);
@@ -65,58 +56,34 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   private handleCanvasRef = (ref: HTMLCanvasElement | null) => {
     this.canvas = ref;
     if (ref != null) {
+      Ticker.addAnimation(() => {
+        this.setState({ frame: this.state.frame + 1 });
+        return this.canvas == null;
+      });
       this.handleResize();
     }
   };
 
   private handleCanvasClick = (e: React.MouseEvent) => {
     if (this.canvas != null) {
-      if (this.state.highlightedTile != null) {
-        this.setState({ highlightedTile: undefined });
+      if (this.state.highlightedHex != null) {
+        this.setState({ highlightedHex: undefined });
       } else {
-        const level = getClickedHexTile(this.props.overWorld, this.canvas, this.state.cameraState, e);
+        const coords = getClickedHexCoords(this.canvas, this.state.cameraState, e);
+        const level = this.props.overWorld.tileAt(coords.i, coords.j);
         if (level != null && level.info.visible) {
-          this.setState({ highlightedTile: level });
+          this.setState({ highlightedHex: level });
         }
       }
     }
-  };
-
-  private handleStartMutate = (s: Species) => {
-    this.setState({
-      activelyMutatingSpecies: s
-    });
-  };
-
-  private handleCommit = (newSpecies: Species, newPool: number) => {
-    if (this.state.activelyMutatingSpecies == null) {
-      throw new Error("created new species with no actively mutating one!");
-    }
-    this.state.activelyMutatingSpecies.descendants.push(newSpecies);
-    // eslint-disable-next-line react/no-direct-mutation-state
-    this.state.activelyMutatingSpecies.freeMutationPoints = newPool;
-    newSpecies.parent = this.state.activelyMutatingSpecies;
-    this.setState({
-      activelyMutatingSpecies: undefined,
-    });
   };
 
   private onPlayLevel = (level: HexTile, species: Species) => {
     this.props.onPlayLevel(level, species);
   };
 
-  private toggleLeftPanelOpen = () => {
-    this.setState({
-      leftPanelOpen: !this.state.leftPanelOpen
-    });
-  };
-
   private handleKeyDown = (e: KeyboardEvent) => {
     if (!e.repeat) {
-      if (e.code === "Tab") {
-        this.toggleLeftPanelOpen();
-        e.preventDefault();
-      }
       const newPressedKeys = { ...this.state.pressedKeys, [e.code]: true };
       this.setState({
         pressedKeys: newPressedKeys,
@@ -133,7 +100,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   };
 
   private handleWheel = (e: WheelEvent) => {
-    const delta = -(e.deltaX + e.deltaY) / 125 / 20;
+    const delta = -(e.deltaX + e.deltaY) / 125 / 10;
     const scalar = Math.pow(2, delta);
 
     const scale = this.state.cameraState.scale * scalar;
@@ -208,97 +175,51 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     Ticker.removeAnimation(this.rafId!);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: OverWorldMapProps) {
+    if (prevProps.focusedHex !== this.props.focusedHex && this.props.focusedHex != null) {
+      this.focusHex(this.props.focusedHex);
+    }
     this.drawMap();
+  }
+
+  focusHex(hex: HexTile) {
+    let tStart = 0;
+    Ticker.addAnimation((t) => {
+      if (tStart === 0) {
+        tStart = t;
+      }
+      const dt = t - tStart;
+      const [targetX, targetY] = getCameraPositionCenteredOn(hex, this.state.cameraState.scale);
+      const dX = this.state.cameraState.dX * 0.5 + targetX * 0.5;
+      const dY = this.state.cameraState.dY * 0.5 + targetY * 0.5;
+      this.setState({
+        cameraState: {
+          ...this.state.cameraState,
+          dX,
+          dY,
+        }
+      });
+      return dt > 1000 ||
+        (Math.abs(targetX - dX) < 1e-2 && Math.abs(targetY - dY) < 1e-2);
+    });
   }
 
   render() {
     return (
       <div className="overworld-map-container">
         <canvas tabIndex={-1} ref={this.handleCanvasRef} onClick={this.handleCanvasClick} />
-        {this.maybeRenderHighlightedTile()}
-        {this.maybeRenderPhylogeneticTreePanel()}
-        {this.maybeRenderMutationModal()}
-        {this.renderEpoch()}
+        {this.maybeRenderHexPopover()}
       </div>
     );
   }
 
-  renderEpoch() {
-    return (
-      <div className="epoch-display">
-        Epoch {this.props.epoch}
-      </div>
-    );
-  }
-
-  maybeRenderMutationModal() {
-    const maybeMutationScreen = this.state.activelyMutatingSpecies != null ? (
-      <MutationScreen species={this.state.activelyMutatingSpecies} onCommit={this.handleCommit} />
-    ) : null;
-    return (
-      <Modal
-        ariaHideApp={false}
-        isOpen={this.state.activelyMutatingSpecies != null}
-        onRequestClose={() => this.setState({ activelyMutatingSpecies: undefined })}
-        className="mutation-screen-portal"
-      >
-        {maybeMutationScreen}
-      </Modal>
-    );
-  }
-
-  maybeRenderPhylogeneticTreePanel() {
-    return (
-      <div className={classNames("panel-left", { open: this.state.leftPanelOpen })}>
-        {this.state.leftPanelOpen ? (
-          <PhylogeneticTree onMutate={this.handleStartMutate} rootSpecies={this.props.rootSpecies} />
-        ) : null}
-        <button className="panel-left-handle" onClick={this.toggleLeftPanelOpen}><GiFamilyTree className="icon" /></button>
-      </div>
-    );
-  }
-
-  maybeRenderHighlightedTile() {
-    if (this.state.highlightedTile != null) {
+  maybeRenderHexPopover() {
+    if (this.state.highlightedHex != null) {
       return (
-        <OverWorldPopover camera={this.state.cameraState} tile={this.state.highlightedTile}>
-          <HexTileInfo rootSpecies={this.props.rootSpecies} tile={this.state.highlightedTile} onClickPlay={this.onPlayLevel} />
+        <OverWorldPopover camera={this.state.cameraState} tile={this.state.highlightedHex}>
+          <HexTileInfo rootSpecies={this.props.rootSpecies} tile={this.state.highlightedHex} onClickPlay={this.onPlayLevel} />
         </OverWorldPopover>
       );
     }
   }
-}
-
-function getClickedHexTile(
-  overWorld: OverWorld,
-  canvas: HTMLCanvasElement,
-  camera: CameraState,
-  event: React.MouseEvent
-) {
-  const { scale, dX, dY } = camera;
-  const cX = canvas.width / 2 + dX;
-  const cY = canvas.height / 2 + dY;
-
-  const e = event.nativeEvent;
-  const pxX = e.offsetX;
-  const pxY = e.offsetY;
-  const x = (pxX - cX) / scale;
-  const y = (pxY - cY) / scale;
-  // we now have a fractional cartesian coordinates
-  // now we flip the equations:
-
-  // x = 1.5i
-  // i = x / 1.5
-
-  // y = 2Cj + Ci
-  // j = (y - Ci) / (2 * C)
-
-  const i = x / 1.5;
-  const j = (y - C * i) / (2 * C);
-  const k = -(i + j);
-
-  const rounded = roundCubeCoordinates(i, j, k);
-
-  return overWorld.tileAt(rounded.i, rounded.j);
 }

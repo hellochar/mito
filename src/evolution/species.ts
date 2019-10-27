@@ -1,5 +1,5 @@
-import { Gene } from "./gene";
 import uuid from "uuid";
+import { Gene } from "./gene";
 
 export interface Species {
   id: string;
@@ -7,6 +7,7 @@ export interface Species {
   genes: Gene[];
   // cells: Cell[];
   freeMutationPoints: number;
+  totalMutationPoints: number;
   descendants: Species[];
   parent?: Species;
 }
@@ -18,6 +19,7 @@ export function newBaseSpecies(name = "newBaseSpecies"): Species {
     // genes: [mutateRandomNewGene(), mutateRandomNewGene(), mutateRandomNewGene()],
     genes: [],
     freeMutationPoints: 0,
+    totalMutationPoints: 0,
     descendants: [],
   };
 }

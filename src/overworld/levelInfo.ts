@@ -1,7 +1,6 @@
+import { Species } from "../evolution/species";
 import { Environment } from "../sketches/mito/game/environment";
 
-import { World } from "../sketches/mito/game";
-import { Species } from "../evolution/species";
 
 export interface LevelInfo {
   height: number; // [-1 to 6], integers only
@@ -13,9 +12,9 @@ export interface LevelInfo {
   flora?: {
     species: Species;
     mutationPointsPerEpoch: number;
+    actionPoints: number;
   };
-  inhabitants?: Species;
   visible: boolean;
   environment?: Environment;
-  world?: World;
+  // world?: World;
 }

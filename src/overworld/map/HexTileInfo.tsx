@@ -1,13 +1,13 @@
+import { lineage, Species } from "evolution/species";
 import React from "react";
 import Dropdown, { Option } from 'react-dropdown';
-
-import { HexTile } from "../hexTile";
-import Expand from "../../common/Expand";
-
-import "./HexTileInfo.scss";
 import { Button } from "../../common/Button";
+import Expand from "../../common/Expand";
 import MP from "../../common/MP";
-import { Species, lineage } from "evolution/species";
+import { HexTile } from "../hexTile";
+import "./HexTileInfo.scss";
+
+
 
 interface HexTileInfoProps {
   tile: HexTile;
@@ -53,13 +53,11 @@ function HexTileInfo({ tile, onClickPlay, rootSpecies }: HexTileInfoProps) {
         <h1>Uninhabited</h1>
       );
 
-  const stringifyInfo = { ...tile.info };
-  delete stringifyInfo.world;
 
   const expand =
     tile.info.height === -1 ? null : (
       <Expand shrunkElements={<div className="details">Details</div>}>
-        <pre style={{ fontSize: "12px" }}>{JSON.stringify(stringifyInfo, null, 4)}</pre>
+        <pre style={{ fontSize: "12px" }}>{JSON.stringify(tile.info, null, 4)}</pre>
       </Expand>
     );
 

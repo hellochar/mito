@@ -1,9 +1,8 @@
 @import "../../variables";
 
 .overworld-map-container {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,57 +13,4 @@
     width: 100%;
     height: 100%;
   }
-
-  .panel-left {
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    bottom: 10px;
-    position: absolute;
-    left: 0;
-    top: 10px;
-    background: rgba(255, 255, 255, 0.8);
-    animation: opacifyAndSlideIn 0.2s both;
-    width: 0;
-    transition: width 0.2s;
-
-    &.open {
-      width: 33%;
-      min-width: 200px;
-    }
-
-    .panel-left-handle {
-      position: absolute;
-      top: 10px;
-      left: 100%;
-      cursor: pointer;
-      border: none;
-      background: rgba(255, 255, 255, 0.8);
-      border-top-right-radius: 5px;
-      border-bottom-right-radius: 5px;
-      // border-left: 1px solid $gray3;
-      outline: none;
-
-      &:active {
-        box-shadow: 0 0 4px 4px inset rgba(64, 64, 64, 0.5);
-      }
-
-      .icon {
-        padding: 5px;
-        font-size: 48px;
-      }
-    }
-  }
-}
-
-.mutation-screen-portal {
-  position: absolute;
-  top: 40px;
-  left: 40px;
-  right: 40px;
-  bottom: 40px;
-  border: 1px solid rgb(204, 204, 204);
-  background: rgb(255, 255, 255);
-  overflow: auto;
-  border-radius: 4px;
-  outline: none;
 }

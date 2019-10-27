@@ -1,8 +1,9 @@
 
+export type TickerCallback = (time: number) => boolean | void;
 class TickerClass {
   private tickerId = 1;
 
-  private tickers: Record<number, (time: number) => void> = {};
+  private tickers: Record<number, TickerCallback> = {};
 
   private _time = 0;
 
@@ -12,14 +13,24 @@ class TickerClass {
 
   tickerLoop = (time: number) => {
     this._time = time;
+    const toDelete: number[] = [];
     for (const id in this.tickers) {
       const f = this.tickers[id];
-      f(time);
+      const shouldDelete = f(time);
+      if (shouldDelete === true) {
+        toDelete.push(Number(id));
+      }
+    }
+    for (const id of toDelete) {
+      this.removeAnimation(id);
     }
     requestAnimationFrame(this.tickerLoop);
   }
 
-  public addAnimation(fn: (time: number) => void) {
+  /**
+   * Return true to kill the ticker.
+   */
+  public addAnimation(fn: TickerCallback) {
     const id = this.tickerId++;
     this.tickers[id] = fn;
     return id;

@@ -1,12 +1,12 @@
+import LookAtMouse from "common/LookAtMouse";
 import React from "react";
-import { Species } from "./species";
 import Popover from "react-popover";
-import SpeciesPopoverDetails from "./SpeciesPopoverDetails";
 import Character from "../common/Character";
 import MP from "../common/MP";
-
+import { Species } from "./species";
 import "./SpeciesNode.scss";
-import LookAtMouse from "common/LookAtMouse";
+import SpeciesPopoverDetails from "./SpeciesPopoverDetails";
+
 
 export interface SpeciesNodeProps {
   species: Species;
@@ -42,7 +42,7 @@ function SpeciesNode({ species, onMutate }: SpeciesNodeProps) {
             <div className="species-info-animation">
               <Character size="small" />
             </div>
-            <MP amount={species.freeMutationPoints} />
+            <MP amount={species.freeMutationPoints} total={species.totalMutationPoints} />
           </div>
         </LookAtMouse>
       </Popover>

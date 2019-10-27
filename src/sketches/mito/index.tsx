@@ -1,11 +1,10 @@
+import { PopulationAttempt } from "App";
 import VignetteCapturer from "common/vignette";
 import { parse } from "query-string";
 import * as React from "react";
 import * as THREE from "three";
 import { OrthographicCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
-import { Species } from "../../evolution/species";
 import { lerp2, map } from "../../math/index";
-import { HexTile } from "../../overworld/hexTile";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { ActionBuild, ActionInteract, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
@@ -20,11 +19,10 @@ import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
 import { GameStack, Hover, HUD } from "./ui";
 
-
-
 export interface GameResult {
   status: "won" | "lost";
   fruits: Fruit[];
+  mutationPointsPerEpoch: number;
   world: World;
 }
 
@@ -125,15 +123,11 @@ export class Mito extends ISketch {
   constructor(
     renderer: WebGLRenderer,
     context: SketchAudioContext,
-    level: HexTile,
-    species: Species,
+    attempt: PopulationAttempt,
     public onWinLoss: (result: GameResult) => void
   ) {
     super(renderer, context);
-    if (level.info.world == null) {
-      level.info.world = new World(level.info.environment!, species);
-    }
-    this.world = level.info.world;
+    this.world = new World(attempt.targetHex.info.environment!, attempt.settlingSpecies);
 
     this.camera.position.z = 10;
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));

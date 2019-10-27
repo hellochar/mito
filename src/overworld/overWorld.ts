@@ -1,8 +1,8 @@
+import { Species } from "evolution/species";
 import SimplexNoise from "simplex-noise";
-
-import { HexTile } from "./hexTile";
+import { Desert, Rocky, Temperate } from "../sketches/mito/game/environment";
 import { HexStore } from "./hexStore";
-import { Temperate, Desert, Rocky } from "../sketches/mito/game/environment";
+import { HexTile } from "./hexTile";
 
 export class OverWorld {
   private static randomHeight(tile: HexTile, noise: SimplexNoise) {
@@ -102,5 +102,34 @@ export class OverWorld {
     for (const tile of this.storage) {
       yield tile;
     }
+  }
+
+  resetActionPoints() {
+    for (const tile of this.storage) {
+      if (tile.info.flora) {
+        tile.info.flora.actionPoints = 1;
+      }
+    }
+  }
+
+  unusedHexes() {
+    const hexes = [];
+    for (const tile of this.storage) {
+      if (tile.info.flora && tile.info.flora.actionPoints > 0) {
+        hexes.push(tile);
+      }
+    }
+    return hexes;
+  }
+
+  getMaxGenePool(species: Species) {
+    let pool = 0;
+    for (const tile of this.storage) {
+      const { flora } = tile.info;
+      if (flora && flora.species === species) {
+        pool += flora.mutationPointsPerEpoch;
+      }
+    }
+    return pool;
   }
 }

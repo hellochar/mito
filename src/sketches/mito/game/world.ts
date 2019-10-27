@@ -54,7 +54,7 @@ export class World {
   private readonly gridEnvironment: Tile[][];
   private readonly gridCells: Array<Array<Cell | null>>;
   private readonly neighborCache: Array<Array<Map<Vector2, Tile>>>;
-  private readonly wipResult: Omit<GameResult, "status">;
+  private readonly wipResult: Omit<GameResult, "status" | "mutationPointsPerEpoch">;
   public readonly species: Species;
   public readonly traits: Traits;
 
@@ -495,6 +495,7 @@ export class World {
     if (this.tileAt(this.player.pos.x, this.player.pos.y) instanceof DeadCell) {
       return {
         ...this.wipResult,
+        mutationPointsPerEpoch: 0,
         status: "lost",
       };
     }
@@ -507,12 +508,14 @@ export class World {
     if (matureFruit.length === 0) {
       return {
         ...this.wipResult,
+        mutationPointsPerEpoch: 0,
         status: "lost",
       };
     }
     // you win if there's a seed with full capacity
     return {
       ...this.wipResult,
+      mutationPointsPerEpoch: matureFruit.length * traitMod(this.traits.fruitMutationPoints, 1, 1.5),
       status: "won",
     };
   }

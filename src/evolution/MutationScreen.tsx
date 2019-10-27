@@ -1,24 +1,33 @@
+import classNames from "classnames";
 import React from "react";
-
+import uuid from "uuid";
+import { Button } from "../common/Button";
+import Character from "../common/Character";
+import MP from "../common/MP";
+import { Gene } from "./gene";
+import GenesToTraits from "./GenesToTraits";
+import { mutatePosition, mutateRandomNewGene, mutateSwapDNA } from "./mutation";
+import "./MutationScreen.scss";
 import { Species } from "./species";
 
-import "./MutationScreen.scss";
-import { Button } from "../common/Button";
-import { mutateRandomNewGene, mutatePosition, mutateSwapDNA } from "./mutation";
-import { Gene } from "./gene";
-import Character from "../common/Character";
-import classNames from "classnames";
-import MP from "../common/MP";
-import GenesToTraits from "./GenesToTraits";
-import uuid from "uuid";
+
 
 function MutationScreen({ species, onCommit }: { species: Species, onCommit: (newSpecies: Species, newPool: number) => void }) {
-  const [pool, setPool] = React.useState(species.freeMutationPoints);
+  // const [pool, setPool] = React.useState(species.freeMutationPoints);
+  const pool = species.freeMutationPoints;
+  const setPool = (arg: number | ((p: number) => number)) => {
+    if (typeof arg === "number") {
+      species.freeMutationPoints = arg;
+    } else {
+      species.freeMutationPoints = arg(pool);
+    }
+  };
 
   const [newSpecies, setNewSpecies] = React.useState<Species>({
     id: uuid(),
     descendants: [],
     freeMutationPoints: 0,
+    totalMutationPoints: 0,
     genes: [...species.genes],
     name: "New species",
     parent: species,
@@ -135,7 +144,7 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
         <h1><Character size="medium" /><span className="name">{species.name}</span></h1>
 
         <div className="buttons">
-          <MP className="pool" amount={pool} total={species.freeMutationPoints} />
+          <MP className="pool" amount={pool} total={species.totalMutationPoints} />
           <Button
             onClick={handleNewGene}
             disabled={pool < newGeneCost}
