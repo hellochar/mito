@@ -57,6 +57,10 @@ export class Inventory {
   //     // }
   // }
 
+  public isEmpty() {
+    return this.water === 0 && this.sugar === 0;
+  }
+
   public give(other: Inventory, amountWater: number, amountSugar: number) {
     if (other === this) {
       throw new Error("shouldn't give to self");

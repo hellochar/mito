@@ -138,9 +138,6 @@ export class Mito extends ISketch {
 
     this.worldRenderer = new WorldRenderer(this.world, this.scene, this);
 
-    // step once to get a StepStats
-    this.world.step(1 / 60);
-
     hookUpAudio(this.audioContext);
     this.updateAmbientAudio();
     this.attachWindowEvents();

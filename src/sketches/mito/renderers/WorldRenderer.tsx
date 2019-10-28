@@ -1,14 +1,14 @@
-import { Scene } from "three";
 import { createSelector } from "reselect";
-
-import { Renderer } from "./Renderer";
-import { World, Entity, Player, StepStats } from "../game";
+import { Scene } from "three";
 import Mito from "..";
-import { PlayerRenderer } from "./PlayerRenderer";
-import { Transport, Tile } from "../game/tile";
-import { TransportRenderer } from "./TransportRenderer";
-import { TileRenderer } from "./TileRenderer";
+import { Entity, Player, StepStats, World } from "../game";
+import { Tile, Transport } from "../game/tile";
 import { InventoryRenderer } from "./InventoryRenderer";
+import { PlayerRenderer } from "./PlayerRenderer";
+import { Renderer } from "./Renderer";
+import { TileRenderer } from "./TileRenderer";
+import { TransportRenderer } from "./TransportRenderer";
+
 
 export function createRendererFor<E extends Entity>(object: E, scene: Scene, mito: Mito): Renderer<Entity> {
   if (object instanceof Player) {

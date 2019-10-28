@@ -59,16 +59,18 @@ export abstract class Tile implements Steppable {
     this.temperatureFloat = this.world.getCurrentTemperature();
   }
 
-  shouldStep(dt: number) {
-    // return true;
-    return dt > 3;
-  }
+  abstract shouldStep(dt: number): boolean;
+
   public lightAmount() {
     return Math.sqrt(Math.min(Math.max(map(1 - this.darkness, 0, 1, 0, 1), 0), 1));
   }
 
   // test tiles diffusing water around on same-type tiles
   public step(dt: number) {
+    // const cellHere = this.world.cellAt(this.pos.x, this.pos.y) != null;
+    // if (cellHere) {
+    //   console.error("stepping environmental tile even when a cell is on-top:", cellHere);
+    // }
     const neighbors = this.world.tileNeighbors(this.pos);
     this.stepDarkness(neighbors, dt);
     this.stepDiffusion(neighbors, dt);
@@ -98,10 +100,6 @@ export abstract class Tile implements Steppable {
         }
       }
       this.darkness = minDarkness;
-      const cellHere = this.world.cellAt(this.pos.x, this.pos.y) != null;
-      if (cellHere) {
-        console.error("stepping environmental tile even when a cell is on-top:", cellHere);
-      }
     }
   }
 
@@ -205,6 +203,16 @@ export class Air extends Tile {
     this._co2 = this.computeCo2();
   }
 
+  // Air always steps every 3 tiles, otherwise rainfall and diffusion go much slower
+  // than intended
+  shouldStep(dt: number) {
+    // if (!this.inventory.isEmpty()) {
+    return dt > 3;
+    // } else {
+    //   return super.shouldStep(dt);
+    // }
+  }
+
   private computeCo2() {
     const base = map(this.pos.y, this.world.height / 2, 0, this.world.environment.floorCo2, 1.15);
     const scaleX = map(this.pos.y, this.world.height / 2, 0, 4, 9);
@@ -283,6 +291,11 @@ export class Soil extends Tile implements HasInventory {
     this.inventory.add(water, 0);
   }
 
+  shouldStep(dt: number) {
+    // test this out
+    return dt > 10;
+  }
+
   step(dt: number) {
     super.step(dt);
     this.stepEvaporation(dt);
@@ -301,10 +314,12 @@ export class Soil extends Tile implements HasInventory {
 export class Rock extends Tile {
   isObstacle = true;
   static displayName = "Rock";
+  shouldStep() { return false; }
 }
 
 export class DeadCell extends Tile {
   static displayName = "Dead Cell";
+  shouldStep() { return false; }
 }
 
 export class Fountain extends Soil {
@@ -462,6 +477,11 @@ export class Cell extends Tile implements HasEnergy, Interactable {
     return this.energy < params.cellEnergyMax * 0.95;
   }
 
+  // Step cells every 3 frames
+  shouldStep(dt: number) {
+    return dt > 3;
+  }
+
   step(dt: number) {
     const { tempo } = this;
     super.step(dt);
@@ -537,17 +557,17 @@ export class Cell extends Tile implements HasEnergy, Interactable {
   stepEqualizeEnergy(neighbors: HasEnergy[], tempo: number, dt: number) {
     for (const neighbor of neighbors) {
       if (this.isHungry()) {
-        if (neighbor.energy > this.energy) {
-          // safe method but slower
+        const difference = neighbor.energy - this.energy;
+        if (difference > 20) {
+          // safe method but lower upper bound on equalization rate
           // energyTransfer = Math.floor((neighbor.energy - this.energy) / energeticNeighbors.length);
 
           // this may be unstable w/o double buffering
-          const difference = neighbor.energy - this.energy;
           const rate = 0.125 * tempo * dt;
           const energyTransfer = Math.floor(difference * clamp(rate, 0, 0.5));
-          if (rate > 0.5) {
-            console.warn("energy transfer rate wants to be unstable", rate);
-          }
+          // if (rate > 0.5) {
+          //   console.warn("energy transfer rate wants to be unstable", rate);
+          // }
           this.energy += energyTransfer;
           neighbor.energy -= energyTransfer;
         }

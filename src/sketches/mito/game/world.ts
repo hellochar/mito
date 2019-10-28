@@ -141,6 +141,17 @@ export class World {
     // this.newTile(x, y - 2, Leaf);
     // this.newTile(x + 1, y - 2, Leaf);
     // this.newTile(x - 1, y - 2, Leaf);
+
+    // step all tiles first with 0 timestep to trigger any initial state
+    for (let x = 0; x < this.width; x++) {
+      for (let y = 0; y < this.height; y++) {
+        const tileEnvironment = this.gridEnvironment[x][y];
+        tileEnvironment && tileEnvironment.step(0);
+
+        const tileCell = this.gridCells[x][y];
+        tileCell && tileCell.step(0);
+      }
+    }
   }
 
   public tileAt(v: Vector2): Tile | null;
