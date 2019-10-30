@@ -1,4 +1,4 @@
-import { PopulationAttempt } from "App";
+import { PopulationAttempt } from "app";
 import VignetteCapturer from "common/vignette";
 import { parse } from "query-string";
 import * as React from "react";

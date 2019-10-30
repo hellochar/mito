@@ -1,15 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Switch, Route, Redirect, HashRouter } from "react-router-dom";
-
-import App from "./App";
-import * as serviceWorker from "./serviceWorker";
-
-import 'react-dropdown/style.css'
-
+import 'react-dropdown/style.css';
+import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
+import App from "./app/App";
 import "./index.scss";
-import { TestWinScreen } from "./tests/TestWinScreen";
+import * as serviceWorker from "./serviceWorker";
 import TestStats from "./tests/TestStats";
+import { TestWinScreen } from "./tests/TestWinScreen";
 
 ReactDOM.render(
   <HashRouter>
