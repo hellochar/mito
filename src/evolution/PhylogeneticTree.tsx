@@ -1,15 +1,16 @@
+import { useAppReducer } from "app";
 import React from "react";
-
 import "./PhylogeneticTree.scss";
 import { Species } from "./species";
 import SpeciesNode from "./SpeciesNode";
 
+
 interface PhylogeneticTreeProps {
-  rootSpecies: Species;
   onMutate: (s: Species) => void;
 }
 
-function PhylogeneticTree({ rootSpecies, onMutate }: PhylogeneticTreeProps) {
+function PhylogeneticTree({ onMutate }: PhylogeneticTreeProps) {
+  const [{ rootSpecies }] = useAppReducer();
   return (
     <div className="phylogenetic-tree">
       <div className="title">Phylogenetic Tree</div>

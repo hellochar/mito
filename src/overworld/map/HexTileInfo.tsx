@@ -1,3 +1,4 @@
+import { useAppReducer } from "app";
 import { lineage, Species } from "evolution/species";
 import React from "react";
 import Dropdown, { Option } from 'react-dropdown';
@@ -12,10 +13,10 @@ import "./HexTileInfo.scss";
 interface HexTileInfoProps {
   tile: HexTile;
   onClickPlay: (level: HexTile, species: Species) => void;
-  rootSpecies: Species;
 }
 
-function HexTileInfo({ tile, onClickPlay, rootSpecies }: HexTileInfoProps) {
+function HexTileInfo({ tile, onClickPlay }: HexTileInfoProps) {
+  const [{ rootSpecies }] = useAppReducer();
   const allSpecies = React.useMemo(() => lineage(rootSpecies), [rootSpecies]);
 
   const [selectedSpecies, setSelectedSpecies] = React.useState(allSpecies[0].id);

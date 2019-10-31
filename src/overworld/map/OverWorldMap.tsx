@@ -1,18 +1,16 @@
+import { AppReducerContext } from "app";
 import Ticker from "global/ticker";
 import React from "react";
 import { Vector2 } from "three";
 import { Species } from "../../evolution/species";
 import { getCameraPositionCenteredOn, getClickedHexCoords } from "../hexMath";
 import { HexTile } from "../hexTile";
-import { OverWorld } from "../overWorld";
 import HexTileInfo from "./HexTileInfo";
 import HexTileSprite from "./hexTileSprite";
 import "./OverWorldMap.scss";
 import OverWorldPopover from "./OverWorldPopover";
 
 interface OverWorldMapProps {
-  rootSpecies: Species;
-  overWorld: OverWorld;
   onPlayLevel: (level: HexTile, species: Species) => void;
   // TODO turn this into a trigger, or global state
   focusedHex?: HexTile;
@@ -32,19 +30,23 @@ interface OverWorldMapState {
 }
 
 export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWorldMapState> {
+  static contextType = AppReducerContext;
+
+  context!: React.ContextType<typeof AppReducerContext>;
 
   private hexTileSprites: Map<HexTile, HexTileSprite> = new Map();
 
-  constructor(props: OverWorldMapProps) {
-    super(props);
+  constructor(props: OverWorldMapProps, context: OverWorldMap["context"]) {
+    super(props, props);
     const scale = 96;
-    const [dX, dY] = getCameraPositionCenteredOn(props.overWorld.getStartTile(), scale);
+    const [{ overWorld }] = context;
+    const [dX, dY] = getCameraPositionCenteredOn(overWorld.getStartTile(), scale);
     this.state = {
       cameraState: { scale, dX, dY },
       pressedKeys: {},
       frame: 0,
     };
-    for (const tile of props.overWorld) {
+    for (const tile of overWorld) {
       const sprite = new HexTileSprite(tile);
       this.hexTileSprites.set(tile, sprite);
     }
@@ -70,7 +72,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
         this.setState({ highlightedHex: undefined });
       } else {
         const coords = getClickedHexCoords(this.canvas, this.state.cameraState, e);
-        const level = this.props.overWorld.tileAt(coords.i, coords.j);
+        const level = this.context[0].overWorld.tileAt(coords.i, coords.j);
         if (level != null && level.info.visible) {
           this.setState({ highlightedHex: level });
         }
@@ -217,7 +219,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     if (this.state.highlightedHex != null) {
       return (
         <OverWorldPopover camera={this.state.cameraState} tile={this.state.highlightedHex}>
-          <HexTileInfo rootSpecies={this.props.rootSpecies} tile={this.state.highlightedHex} onClickPlay={this.onPlayLevel} />
+          <HexTileInfo tile={this.state.highlightedHex} onClickPlay={this.onPlayLevel} />
         </OverWorldPopover>
       );
     }

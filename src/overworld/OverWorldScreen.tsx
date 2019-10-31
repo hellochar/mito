@@ -1,3 +1,4 @@
+import { useAppReducer } from "app";
 import classNames from "classnames";
 import DynamicNumber from "common/DynamicNumber";
 import MutationScreen from "evolution/MutationScreen";
@@ -8,19 +9,15 @@ import { GiFamilyTree, GiSandsOfTime } from "react-icons/gi";
 import Modal from "react-modal";
 import { HexTile } from "./hexTile";
 import { OverWorldMap } from "./map/OverWorldMap";
-import { OverWorld } from "./overWorld";
 import "./OverWorldScreen.scss";
 
 
 export interface OverWorldScreenProps {
-  rootSpecies: Species;
-  epoch: number;
-  overWorld: OverWorld;
   onPopulationAttempt: (level: HexTile, species: Species) => void;
   onNextEpoch: () => void;
 }
 
-const OverWorldScreen = ({ rootSpecies, epoch, overWorld, onPopulationAttempt: onPlayLevel, onNextEpoch }: OverWorldScreenProps) => {
+const OverWorldScreen = ({ onPopulationAttempt, onNextEpoch }: OverWorldScreenProps) => {
   const [leftPanelOpen, setLeftPanelOpen] = useState(false);
   const [activelyMutatingSpecies, setActivelyMutatingSpecies] = useState<Species | undefined>(undefined);
 
@@ -72,7 +69,7 @@ const OverWorldScreen = ({ rootSpecies, epoch, overWorld, onPopulationAttempt: o
     return (
       <div className={classNames("panel-left", { open: leftPanelOpen })}>
         {leftPanelOpen ? (
-          <PhylogeneticTree onMutate={handleStartMutate} rootSpecies={rootSpecies} />
+          <PhylogeneticTree onMutate={handleStartMutate} />
         ) : null}
         <button
           className="panel-left-handle"
@@ -90,23 +87,22 @@ const OverWorldScreen = ({ rootSpecies, epoch, overWorld, onPopulationAttempt: o
 
   return (
     <div className="overworld-screen">
-      <OverWorldMap focusedHex={focusedHex} overWorld={overWorld} rootSpecies={rootSpecies} onPlayLevel={onPlayLevel} />
+      <OverWorldMap focusedHex={focusedHex} onPlayLevel={onPopulationAttempt} />
       {maybeRenderPhylogeneticTreePanel()}
       {maybeRenderMutationModal()}
-      <EpochUI epoch={epoch} onNextEpoch={onNextEpoch} onFocusHex={handleFocusHex} overWorld={overWorld} />
+      <EpochUI onNextEpoch={onNextEpoch} onFocusHex={handleFocusHex} />
     </div>
   )
 };
 
 export interface EpochUIProps {
-  epoch: number;
-  overWorld: OverWorld;
   onNextEpoch: () => void;
   onFocusHex: (hex: HexTile) => void;
 }
 
 const EPOCH_FORMATTER = new Intl.NumberFormat(undefined, { useGrouping: true, maximumFractionDigits: 0 });
-function EpochUI({ epoch, overWorld, onNextEpoch, onFocusHex }: EpochUIProps) {
+function EpochUI({ onNextEpoch, onFocusHex }: EpochUIProps) {
+  const [{ epoch, overWorld }] = useAppReducer();
   const [transitioning, setTransitioning] = useState(false);
   const unusedHexes = overWorld.unusedHexes();
   const isReadyToAdvance = unusedHexes.length === 0;
@@ -124,7 +120,6 @@ function EpochUI({ epoch, overWorld, onNextEpoch, onFocusHex }: EpochUIProps) {
         <div onClick={() => onFocusHex(unusedHexes[0])}>{unusedHexes.length} hexes unused</div>
         : null}
       <button className="button-next-epoch" onClick={handleNextEpoch} disabled={transitioning}>
-        {/* {isReadyToAdvance ? <GiSandsOfTime className="icon" /> : `${unusedHexes.length} hexes unused`} */}
         <GiSandsOfTime className="icon" />
       </button>
     </div>

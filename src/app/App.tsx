@@ -103,9 +103,6 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
     if (state.activePopulationAttempt == null) {
       return (
         <OverWorldScreen
-          epoch={state.epoch}
-          overWorld={state.overWorld}
-          rootSpecies={state.rootSpecies}
           onPopulationAttempt={this.handlePopulationAttempt}
           onNextEpoch={this.handleNextEpoch}
         />
