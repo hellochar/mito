@@ -10,7 +10,6 @@ export interface AppStateProviderProps {
 
 export default function AppStateProvider({ children }: AppStateProviderProps) {
   const stateDispatchTuple = React.useReducer(reducer, newInitialAppState());
-  console.log("appstateprovider", stateDispatchTuple);
   return (
     <AppReducerContext.Provider value={stateDispatchTuple}>
       {children}

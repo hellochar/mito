@@ -1,6 +1,6 @@
 {
   "name": "mito",
-  "homepage": "https://hellochar.github.io/mito",
+  "homepage": "./",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
