@@ -732,7 +732,7 @@ export class Leaf extends Cell {
 
 export class Root extends Cell {
   static displayName = "Root";
-  public isObstacle = false;
+  public isObstacle = true;
   public activeNeighbors: Vector2[] = [];
   public inventory = new Inventory(params.tissueInventoryCapacity, this);
   cooldown = 0;
