@@ -1,5 +1,8 @@
 export interface Interactable {
-  interact(dt: number): void;
+  /**
+   * Return true if an interaction was successful.
+   */
+  interact(dt: number): boolean;
 }
 
 export function isInteractable<T>(e: T): e is Interactable & T {

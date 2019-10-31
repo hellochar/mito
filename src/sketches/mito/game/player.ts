@@ -7,7 +7,7 @@ import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
 import { params } from "../params";
 import { Steppable } from "./entity";
-import { Cell, FreezeEffect, Fruit, GrowingCell, Tile, Transport } from "./tile";
+import { Cell, FreezeEffect, Fruit, GrowingCell, Tile, Tissue, Transport } from "./tile";
 import { World } from "./world";
 
 export class Player implements Steppable {
@@ -99,6 +99,7 @@ export class Player implements Steppable {
     }
     const actionSuccessful = this.attemptAction(this.action, dt);
     this.maybeMoveWithTransports(dt);
+    this.posFloat.lerp(this.pos, 0.05 * dt);
     // if (this.dropWater) {
     //   this.attemptAction(ACTION_KEYMAP.q);
     // }
@@ -167,10 +168,18 @@ export class Player implements Steppable {
     return true;
   }
 
-  public isBuildCandidate(tile: Tile | null): tile is Tile {
+  public isBuildCandidate(tile: Tile | null, cellType: Constructor<Cell>): tile is Tile {
     if (tile != null && !tile.isObstacle) {
       if (tile instanceof Cell) {
-        return tile.findEffectOfType(FreezeEffect) == null;
+        const isFrozen = tile.findEffectOfType(FreezeEffect) != null;
+        if (isFrozen) {
+          return false;
+        }
+        const isTransportOnTissue = tile instanceof Tissue && cellType === Transport;
+        if (isTransportOnTissue) {
+          return true;
+        }
+        return false;
       }
       return true;
     } else {
@@ -311,9 +320,9 @@ export class Player implements Steppable {
         // refund the resources back
         const refund = cell.energy / params.cellEnergyMax;
         this.inventory.add(refund, refund);
-        if (hasInventory(cell)) {
-          cell.inventory.give(this.inventory, cell.inventory.water, cell.inventory.sugar);
-        }
+        // if (hasInventory(cell)) {
+        //   cell.inventory.give(this.inventory, cell.inventory.water, cell.inventory.sugar);
+        // }
         return true;
       }
     }
@@ -356,7 +365,6 @@ export class Player implements Steppable {
   }
 
   public attemptInteract(action: ActionInteract, dt: number) {
-    action.interactable.interact(dt);
-    return true;
+    return action.interactable.interact(dt);
   }
 }

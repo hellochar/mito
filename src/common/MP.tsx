@@ -1,9 +1,9 @@
+import classNames from "classnames";
 import React from "react";
 import { GiDna1 } from "react-icons/gi";
-
-import "./MP.scss";
-import classNames from "classnames";
 import DynamicNumber from "./DynamicNumber";
+import "./MP.scss";
+
 
 export type MPProps = JSX.IntrinsicElements["div"] & {
   amount: number;
@@ -17,11 +17,11 @@ const MP_NUMBER_FORMATTER = new Intl.NumberFormat(undefined, {
 
 function MP({ amount, total, ...props }: MPProps) {
   return (
-    <div {...props} className={classNames("mp", props.className)}>
+    <span {...props} className={classNames("mp", props.className)}>
       <DynamicNumber speed={0.3} formatter={MP_NUMBER_FORMATTER} value={amount} />
       {total != null ? <>/{total}</> : null}
       <GiDna1 className="mp-icon" />
-    </div>
+    </span>
   );
 }
 

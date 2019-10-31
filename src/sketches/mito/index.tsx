@@ -399,17 +399,8 @@ Number of Programs: ${this.renderer.info.programs!.length}
       return;
     }
 
-    if (isInteractable(target)) {
-      const action: ActionInteract = {
-        type: "interact",
-        interactable: target,
-      };
-      this.world.player.setAction(action);
-      return;
-    }
-
     // clicking a build candidate will try to build with the currently selected cell
-    if (this.world.player.isBuildCandidate(target)) {
+    if (this.world.player.isBuildCandidate(target, this.selectedCell)) {
       const args: any[] = [];
       if (this.selectedCell === Transport) {
         const highlightVector = this.getHighlightVector();
@@ -423,6 +414,13 @@ Number of Programs: ${this.renderer.info.programs!.length}
         args,
       };
       this.world.player.setAction(action);
+    } else if (isInteractable(target)) {
+      const action: ActionInteract = {
+        type: "interact",
+        interactable: target,
+      };
+      this.world.player.setAction(action);
+      return;
     }
   }
   static expansionTiles: Array<Constructor<Cell>> = [Tissue, Root, Vein];
