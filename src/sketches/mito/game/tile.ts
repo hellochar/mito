@@ -307,12 +307,12 @@ export class Soil extends Tile implements HasInventory {
 export class Rock extends Tile {
   isObstacle = true;
   static displayName = "Rock";
-  shouldStep() { return false; }
+  shouldStep(dt: number) { return dt > 10; }
 }
 
 export class DeadCell extends Tile {
   static displayName = "Dead Cell";
-  shouldStep() { return false; }
+  shouldStep(dt: number) { return dt > 10; }
 }
 
 export class Fountain extends Soil {
