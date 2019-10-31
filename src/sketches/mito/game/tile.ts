@@ -135,9 +135,6 @@ export abstract class Tile implements Steppable {
       //   giver.inventory.give(this.inventory, diffusionAmount, 0);
       // } else {
       giver.inventory.give(this.inventory, randRound(diffusionAmount), 0);
-      // if (Math.random() < waterDiff * this.diffusionWater * chanceToHappenScalar) {
-      //   giver.inventory.give(this.inventory, 1, 0);
-      // }
       // }
     }
   }
@@ -151,10 +148,6 @@ export abstract class Tile implements Steppable {
       giver.inventory.give(this.inventory, 0, randRound(diffusionAmount));
       // }
     }
-    // if (hasInventory(this)) {
-    //   const diffusionAmount = (giver.inventory.sugar - this.inventory.sugar) * this.diffusionSugar;
-    //   giver.inventory.give(this.inventory, 0, diffusionAmount);
-    // }
   }
 
   stepGravity(dt: number) {
@@ -595,35 +588,6 @@ export class Cell extends Tile implements HasEnergy, Interactable {
     }
   }
 
-  // stepStress(tileNeighbors: Map<Vector2, Tile>) {
-  //     // start with +y down for gravity
-  //     const totalForce = new Vector2(0, 1);
-  //     // pretend like you're spring connected to nearby cells,
-  //     // and find the equilibrium position as your offset
-  //     for (const [dir, neighbor] of tileNeighbors) {
-  //         let springTightness = 0;
-  //         // neighbor's world position
-  //         let neighborX = neighbor.pos.x,
-  //             neighborY = neighbor.pos.y;
-  //         if (neighbor instanceof Cell) {
-  //             neighborX += neighbor.offset.x;
-  //             neighborY += neighbor.offset.y;
-  //             springTightness = 0.1;
-  //         } else if (neighbor instanceof Rock || neighbor instanceof Soil) {
-  //             springTightness = 1;
-  //         }
-  //         const offX = this.pos.x + this.offset.x - neighborX;
-  //         const offY = this.pos.y + this.offset.y - neighborY;
-  //         // world offset
-  //         const offset = new Vector2(offX, offY);
-  //         totalForce.x += offX * springTightness;
-  //         totalForce.y += offY * springTightness;
-  //     }
-
-  //     this.offset.x += totalForce.x * 0.01;
-  //     this.offset.y += totalForce.y * 0.01;
-  // }
-
   stepDroop(tileNeighbors: Map<Vector2, Tile>, dt: number) {
     const below = tileNeighbors.get(DIRECTIONS.s)!;
     const belowLeft = tileNeighbors.get(DIRECTIONS.sw)!;
@@ -769,7 +733,6 @@ export class Leaf extends Cell {
 export class Root extends Cell {
   static displayName = "Root";
   public isObstacle = false;
-  // public tilePairs: Vector2[] = []; // implied that the opposite direction is connected
   public activeNeighbors: Vector2[] = [];
   public inventory = new Inventory(params.tissueInventoryCapacity, this);
   cooldown = 0;
@@ -785,26 +748,13 @@ export class Root extends Cell {
   }
 
   private stepWaterTransfer(_dt: number) {
-    // this.tilePairs = [];
     this.activeNeighbors = [];
     const neighbors = this.world.tileNeighbors(this.pos);
     let doneOnce = false;
     for (const [dir, tile] of neighbors) {
-      // const oppositeTile = this.world.tileAt(this.pos.x - dir.x, this.pos.y - dir.y);
       if (
         tile instanceof Soil
-        /* && oppositeTile instanceof Tissue*/
       ) {
-        // this.tilePairs.push(dir);
-        // const transferAmount = Math.ceil(Math.max(0, soilWater - tissueWater) / 2);
-        // if (tile.inventory.water > 0) {
-        //     const {water: transferAmount} = tile.inventory.give(oppositeTile.inventory, 1, 0);
-        //     if (transferAmount > 0) {
-        //         this.waterTransferAmount += transferAmount;
-        //         // add a random to trigger the !== on water transfer audio
-        //         this.waterTransferAmount += Math.random() * 0.0001;
-        //     }
-        // }
         this.activeNeighbors.push(dir);
         if (!doneOnce) {
           const { water } = tile.inventory.give(this.inventory, 1, 0);

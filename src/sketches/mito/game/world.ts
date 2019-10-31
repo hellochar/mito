@@ -123,25 +123,6 @@ export class World {
     );
     this.fillCachedEntities();
 
-    // // auto-add Roots
-    // const {x, y} = this.player.pos;
-    // this.newTile(x - 1, y + 2, Root);
-    // this.newTile(x + 1, y + 2, Root);
-
-    // // auto-add Veins
-    // for (let yTemp = y - 2; yTemp <= y + 2; yTemp++) {
-    //     this.newTile(x, yTemp, Vein);
-    // }
-    // this.newTile(x - 1, y + 2, Vein);
-    // this.newTile(x + 1, y + 2, Vein);
-    // this.newTile(x - 1, y - 1, Vein);
-    // this.newTile(x + 1, y - 1, Vein);
-
-    // // auto-add Leaves
-    // this.newTile(x, y - 2, Leaf);
-    // this.newTile(x + 1, y - 2, Leaf);
-    // this.newTile(x - 1, y - 2, Leaf);
-
     // step all tiles first with 0 timestep to trigger any initial state
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
