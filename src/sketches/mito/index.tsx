@@ -18,28 +18,13 @@ import { TileRenderer } from "./renderers/TileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
 import { GameStack, Hover, HUD } from "./ui";
+import { WorldDOMElement } from "./WorldDOMElement";
 
 export interface GameResult {
   status: "won" | "lost";
   fruits: Fruit[];
   mutationPointsPerEpoch: number;
   world: World;
-}
-
-export class WorldDOMElement {
-  constructor(public mito: Mito, public positionFn: () => Vector2, public renderFn: () => JSX.Element) { }
-
-  render() {
-    const worldPosition = this.positionFn();
-    const pixelPosition = this.mito.worldToScreen(worldPosition);
-    const left = pixelPosition.x;
-    const top = pixelPosition.y;
-    const style: React.CSSProperties = {
-      left,
-      top,
-    };
-    return <div style={style}>{this.renderFn()}</div>;
-  }
 }
 
 export class Mito extends ISketch {
@@ -309,20 +294,6 @@ Number of Programs: ${this.renderer.info.programs!.length}
   removeWorldDOMElement(worldDomElement: WorldDOMElement) {
     this.worldDomElements.delete(worldDomElement);
   }
-
-  // private getTileAtScreenPosition(clientX: number, clientY: number) {
-  //   const cameraNorm = this.getCameraNormCoordinates(clientX, clientY);
-  //   this.raycaster.setFromCamera(cameraNorm, this.camera);
-
-  //   const { x, y } = this.raycaster.ray.origin;
-  //   const ix = Math.round(x);
-  //   const iy = Math.round(y);
-  //   const tile = this.world.tileAt(ix, iy);
-  //   if (tile != null && tile.lightAmount() > 0) {
-  //     return tile;
-  //   }
-  //   // }
-  // }
 
   public animate(millisElapsed: number) {
     if (this.instructionsOpen) {
