@@ -40,7 +40,7 @@ function HexTileInfo({ tile, onClickPlay }: HexTileInfoProps) {
     (height === -1) ? null : (
       <div className="play-selector">
         <Dropdown options={options} value={selectedSpecies} onChange={handleDropdownChange} />
-        <Button color="green" className="play-button" onClick={handleClickPlay}>
+        <Button color="green" className="play-button" onClick={handleClickPlay} disabled={tile.info.flora && tile.info.flora.actionPoints < 1}>
           Populate
         </Button>
       </div>
@@ -50,6 +50,7 @@ function HexTileInfo({ tile, onClickPlay }: HexTileInfoProps) {
     <div>
       <h1>Inhabited by <i>{flora.species.name}</i></h1>
       <p><MP amount={flora.mutationPointsPerEpoch} /> per epoch</p>
+      <p>Action Points: {flora.actionPoints}</p>
     </div >
   ) : tile.info.height === -1 ? (
     <h1>Deep Water</h1>

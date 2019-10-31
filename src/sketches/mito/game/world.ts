@@ -56,7 +56,7 @@ export class World {
   private readonly gridEnvironment: Tile[][];
   private readonly gridCells: Array<Array<Cell | null>>;
   private readonly neighborCache: Array<Array<Map<Vector2, Tile>>>;
-  private readonly wipResult: Omit<GameResult, "status" | "mutationPointsPerEpoch">;
+  public readonly wipResult: Omit<GameResult, "status" | "mutationPointsPerEpoch">;
   public readonly species: Species;
   public readonly traits: Traits;
 

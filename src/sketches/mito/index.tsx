@@ -1,4 +1,5 @@
 import { PopulationAttempt } from "app";
+import { Button } from "common/Button";
 import VignetteCapturer from "common/vignette";
 import { parse } from "query-string";
 import * as React from "react";
@@ -162,6 +163,27 @@ export class Mito extends ISketch {
     for (const e of this.worldDomElements) {
       worldDomElementComponents.push(e.render());
     }
+    const doWin = () => {
+      this.onWinLoss({
+        ...this.world.wipResult,
+        status: "won",
+        mutationPointsPerEpoch: 2,
+      });
+    };
+
+    const doLose = () => {
+      this.onWinLoss({
+        ...this.world.wipResult,
+        status: "lost",
+        mutationPointsPerEpoch: 0,
+      });
+    };
+    const endGameButtons = process.env.NODE_ENV === "development" ? (
+      <div style={{ position: "absolute", top: 50, right: 10 }}>
+        <Button color="green" onClick={doWin}>Win</Button>
+        <Button color="green" onClick={doLose}>Lose</Button>
+      </div>
+    ) : null;
     return (
       <>
         <HUD mito={this} />
@@ -170,6 +192,7 @@ export class Mito extends ISketch {
         {/* <ParamsGUI /> */}
         <Hover mito={this} />
         <div className="world-dom-components">{worldDomElementComponents}</div>
+        {endGameButtons}
       </>
     );
   }

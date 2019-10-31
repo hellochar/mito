@@ -49,7 +49,7 @@ function GameWonScreen({ results }: GameResultsScreenProps) {
         <Character size="large" />
       </div>
       <h1>You {matureFruit.length >= 3 ? "thrived" : "survived"}!</h1>
-      <h2>{matureFruit.length} Mutation Points earned.</h2>
+      <h2>{results.mutationPointsPerEpoch} Mutation Points earned.</h2>
       <h5>Fruit Made</h5>
       <div className="fruit-list">
         {results.fruits.map((f) => (
