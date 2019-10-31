@@ -730,13 +730,20 @@ export class Leaf extends Cell {
   }
 }
 
-export class Root extends Cell {
+export class Root extends Cell implements Interactable {
   static displayName = "Root";
   public isObstacle = true;
   public activeNeighbors: Vector2[] = [];
   public inventory = new Inventory(params.tissueInventoryCapacity, this);
   cooldown = 0;
   public totalSucked = 0;
+
+  interact(dt: number) {
+    super.interact(dt);
+    // give water to player
+    const player = this.world.player;
+    this.inventory.give(player.inventory, 0.25, 0);
+  }
 
   public step(dt: number) {
     super.step(dt);
