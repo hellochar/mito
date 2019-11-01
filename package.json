@@ -33,6 +33,7 @@
     "d3-scale": "^3.1.0",
     "dat.gui": "^0.7.6",
     "easeljs": "^1.0.2",
+    "flatted": "^2.0.1",
     "gh-pages": "^2.0.1",
     "localforage": "^1.7.3",
     "node-sass": "^4.12.0",
@@ -49,11 +50,12 @@
     "react-router-dom": "^5.1.1",
     "react-scripts": "3.0.1",
     "reselect": "^4.0.0",
+    "serializr": "^1.5.3",
     "simplex-noise": "^2.4.0",
     "string.prototype.matchall": "^4.0.0",
     "three": "^0.104.0",
     "tweenjs": "^1.0.2",
-    "typescript": "3.6.3",
+    "typescript": "^3.7.1-rc",
     "uuid": "^3.3.3"
   },
   "scripts": {
