@@ -1,3 +1,4 @@
+import { createSimpleSchema, identifier, list, object, primitive, reference } from "serializr";
 import uuid from "uuid";
 import { Gene } from "./gene";
 
@@ -11,6 +12,18 @@ export interface Species {
   descendants: Species[];
   parent?: Species;
 }
+
+export const SpeciesSchema = createSimpleSchema<Species>({
+  id: identifier(),
+  name: primitive(),
+  genes: list(primitive()),
+  freeMutationPoints: primitive(),
+  totalMutationPoints: primitive(),
+  // descendants: reference(SpeciesSchema),
+  // parent: reference(SpeciesSchema),
+});
+SpeciesSchema.props.descendants = list(object(SpeciesSchema));
+SpeciesSchema.props.parent = reference(SpeciesSchema);
 
 export function newBaseSpecies(name = "newBaseSpecies"): Species {
   return {

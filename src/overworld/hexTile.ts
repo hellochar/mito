@@ -1,24 +1,14 @@
-import { LevelInfo } from "./levelInfo";
+import { identifier, object, serializable } from "serializr";
+import uuid from "uuid";
+import { LevelInfo, LevelInfoSchema } from "./levelInfo";
 
 const C = Math.sqrt(3) / 2;
 
 export class HexTile {
-  /**
-   * store neighbors at angles [30, 90, 150, 210, 270, 330]
-   *
-   * 30: (1, 0, -1)
-   *
-   * 90: (0, 1, -1)
-   *
-   * 150: (-1, 1, 0)
-   *
-   * 210: (-1, 0, 1)
-   *
-   * 270: (0, -1, 1)
-   *
-   * 330: (1, -1, 0)
-   */
-  neighbors: HexTile[] = new Array(6);
+  @serializable(identifier())
+  private uuid = uuid();
+
+  @serializable(object(LevelInfoSchema))
   info: LevelInfo = {
     height: 0,
     rainfall: "medium",
@@ -27,6 +17,15 @@ export class HexTile {
     wind: "low",
     visible: false,
   };
+  @serializable
+  public i: number;
+  @serializable
+  public j: number;
+
+  constructor(i?: number, j?: number) {
+    this.i = i!;
+    this.j = j!;
+  }
 
   get k() {
     return -(this.i + this.j);
@@ -48,5 +47,4 @@ export class HexTile {
       y: 2 * C * j + C * i,
     };
   }
-  constructor(public i: number, public j: number) { }
 }

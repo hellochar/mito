@@ -1,4 +1,5 @@
-import { Species } from "../evolution/species";
+import { createSimpleSchema, object, reference } from "serializr";
+import { Species, SpeciesSchema } from "../evolution/species";
 import { HexTile } from "../overworld/hexTile";
 import { OverWorld } from "../overworld/overWorld";
 import { GameResult } from "../sketches/mito";
@@ -31,3 +32,17 @@ export interface PopulationAttempt {
   targetHex: HexTile;
   settlingSpecies: Species;
 }
+
+const PopulationAttemptSchema = createSimpleSchema<PopulationAttempt>({
+  sourceHex: reference(HexTile),
+  targetHex: reference(HexTile),
+  settlingSpecies: reference(SpeciesSchema),
+});
+
+export const AppStateSchema = createSimpleSchema<AppState>({
+  overWorld: object(OverWorld),
+  activePopulationAttempt: object(PopulationAttemptSchema),
+  // no activeGameResult
+  rootSpecies: object(SpeciesSchema),
+  epoch: true,
+});

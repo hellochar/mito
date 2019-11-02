@@ -1,10 +1,26 @@
 import { Species } from "evolution/species";
+import { object, reference, serializable } from "serializr";
 import SimplexNoise from "simplex-noise";
 import { Desert, Rocky, Temperate } from "../sketches/mito/game/environment";
 import { HexStore } from "./hexStore";
 import { HexTile } from "./hexTile";
 
 export class OverWorld {
+  @serializable(object(HexStore))
+  storage: HexStore;
+  @serializable(reference(HexTile))
+  startTile: HexTile;
+
+  constructor(storage?: HexStore, startTile?: HexTile) {
+    this.storage = storage!;
+    this.startTile = startTile!;
+
+    // ensure the start tile is visible
+    if (this.startTile) {
+      this.startTile.info.visible = true;
+    }
+  }
+
   private static randomHeight(tile: HexTile, noise: SimplexNoise) {
     const { x, y } = tile.cartesian;
     let height = 0;
@@ -46,7 +62,8 @@ export class OverWorld {
         storage.set(i, j, tile);
       }
     }
-    return new OverWorld(storage);
+    const startTile = OverWorld.getDefaultStartTile(storage);
+    return new OverWorld(storage, startTile);
   }
 
   static generateRectangle(width: number = 50, height: number = 25): OverWorld {
@@ -75,20 +92,45 @@ export class OverWorld {
       }
     }
 
-    return new OverWorld(storage);
+    const startTile = OverWorld.getDefaultStartTile(storage);
+    return new OverWorld(storage, startTile);
   }
 
-  private startTile: HexTile;
-
-  constructor(private storage: HexStore) {
-    // hook up neighbors
-    storage.hookUpNeighbors();
-
-    // make an initial tile visible
+  static getDefaultStartTile(storage?: HexStore) {
+    if (storage == null) {
+      return undefined;
+    }
     const tiles = Array.from(storage);
-    this.startTile = tiles.filter((t) => t.info.height === 0).sort((t1, t2) => t1.magnitude - t2.magnitude)[0];
-    this.startTile.info.visible = true;
+    return tiles.filter((t) => t.info.height === 0).sort((t1, t2) => t1.magnitude - t2.magnitude)[0];
   }
+
+  /**
+   * store neighbors at angles [30, 90, 150, 210, 270, 330]
+   *
+   * 30: (1, 0, -1)
+   *
+   * 90: (0, 1, -1)
+   *
+   * 150: (-1, 1, 0)
+   *
+   * 210: (-1, 0, 1)
+   *
+   * 270: (0, -1, 1)
+   *
+   * 330: (1, -1, 0)
+   */
+  public hexNeighbors(hex: HexTile) {
+    const { i, j } = hex;
+    const neighbors: HexTile[] = [];
+    neighbors[0] = this.storage.get(i + 1, j);
+    neighbors[1] = this.storage.get(i, j + 1);
+    neighbors[2] = this.storage.get(i - 1, j + 1);
+    neighbors[3] = this.storage.get(i - 1, j);
+    neighbors[4] = this.storage.get(i, j - 1);
+    neighbors[5] = this.storage.get(i + 1, j - 1);
+    return neighbors;
+  }
+
 
   public getStartTile() {
     return this.startTile;

@@ -109,7 +109,7 @@ function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAtt
   }
 
   // bump visibility
-  for (const n of targetHex.neighbors) {
+  for (const n of state.overWorld.hexNeighbors(targetHex)) {
     n.info.visible = true;
   }
 

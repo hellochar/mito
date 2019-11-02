@@ -1,5 +1,7 @@
 import { useAppReducer } from "app";
+import { resetGame, save } from "app/saveLoad";
 import classNames from "classnames";
+import { Button } from "common/Button";
 import DynamicNumber from "common/DynamicNumber";
 import MutationScreen from "evolution/MutationScreen";
 import PhylogeneticTree from "evolution/PhylogeneticTree";
@@ -85,12 +87,20 @@ const OverWorldScreen = ({ onPopulationAttempt, onNextEpoch }: OverWorldScreenPr
     setFocusedHex(hex);
   }, []);
 
+  const [appState] = useAppReducer();
+
   return (
     <div className="overworld-screen">
       <OverWorldMap focusedHex={focusedHex} onPlayLevel={onPopulationAttempt} />
       {maybeRenderPhylogeneticTreePanel()}
       {maybeRenderMutationModal()}
       <EpochUI onNextEpoch={onNextEpoch} onFocusHex={handleFocusHex} />
+      <div style={{ position: "absolute", right: "10px", top: "10px" }}>
+        <Button onClick={() => save(appState)}>Save</Button>
+      </div>
+      <div style={{ position: "absolute", right: "10px", top: "60px" }}>
+        <Button onClick={() => resetGame()}>Reset Game</Button>
+      </div>
     </div>
   )
 };

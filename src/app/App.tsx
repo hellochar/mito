@@ -7,7 +7,7 @@ import { HexTile } from "../overworld/hexTile";
 import { FullPageSketch } from "../sketches/fullPageSketch";
 import Mito, { GameResult } from "../sketches/mito";
 import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
-import AppStateProvider from "./AppStateProvider";
+import { LocalForageStateProvider } from "./AppStateProvider";
 import { AppReducerContext } from "./reducer";
 import { AppState, PopulationAttempt } from "./state";
 
@@ -34,19 +34,6 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
 
   componentDidMount() {
     document.addEventListener("mousemove", this.handleMousePosition);
-
-    const [state, dispatch] = this.context;
-    // test give first level for free
-    dispatch({
-      type: "AAPopulationAttemptSuccess",
-      attempt: {
-        settlingSpecies: state.rootSpecies,
-        targetHex: state.overWorld.getStartTile(),
-      },
-      results: {
-        status: "won", mutationPointsPerEpoch: 1, fruits: [], world: null!
-      }
-    });
   }
 
   componentWillUnmount() {
@@ -131,9 +118,9 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
 }
 
 const App = () => (
-  <AppStateProvider>
+  <LocalForageStateProvider loadingComponent={<div>Loading...</div>}>
     <AppComponent />
-  </AppStateProvider>
+  </LocalForageStateProvider>
 );
 
 export default App;

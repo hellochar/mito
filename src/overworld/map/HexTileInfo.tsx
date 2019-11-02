@@ -58,6 +58,8 @@ function HexTileInfo({ tile, onClickPlay }: HexTileInfoProps) {
         <h1>Uninhabited</h1>
       );
 
+  const stringifyInfo = { ...tile.info };
+  delete stringifyInfo.flora;
 
   const expand =
     tile.info.height === -1 ? null : (

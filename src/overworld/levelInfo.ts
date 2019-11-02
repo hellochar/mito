@@ -1,5 +1,6 @@
-import { Species } from "../evolution/species";
-import { Environment } from "../sketches/mito/game/environment";
+import { createSimpleSchema, object, primitive, reference } from "serializr";
+import { Species, SpeciesSchema } from "../evolution/species";
+import { Environment, EnvironmentSchema } from "../sketches/mito/game/environment";
 
 
 export interface LevelInfo {
@@ -8,13 +9,28 @@ export interface LevelInfo {
   rainfall?: "low" | "medium" | "high";
   soilType?: "barren" | "average" | "fertile";
   wind?: "low" | "medium" | "high";
-
+  visible: boolean;
+  environment?: Environment;
   flora?: {
     species: Species;
     mutationPointsPerEpoch: number;
     actionPoints: number;
   };
-  visible: boolean;
-  environment?: Environment;
-  // world?: World;
 }
+
+export const LevelInfoSchema = createSimpleSchema<LevelInfo>({
+  // "*": true,
+  height: primitive(),
+  temperature: primitive(),
+  rainfall: primitive(),
+  soilType: primitive(),
+  wind: primitive(),
+  visible: primitive(),
+  environment: object(EnvironmentSchema),
+
+  flora: object(createSimpleSchema({
+    species: reference(SpeciesSchema),
+    mutationPointsPerEpoch: primitive(),
+    actionPoints: primitive(),
+  }))
+});

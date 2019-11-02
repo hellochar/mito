@@ -1,19 +1,44 @@
 import { newBaseSpecies } from "evolution/species";
 import { OverWorld } from "overworld/overWorld";
-import React from "react";
+import React, { useEffect } from "react";
 import { AppReducerContext, reducer } from "./reducer";
+import { load, saveOnActionMiddleware } from "./saveLoad";
 import { AppState } from "./state";
 
 export interface AppStateProviderProps {
   children: React.ReactNode;
+  appState: AppState;
 }
 
-export default function AppStateProvider({ children }: AppStateProviderProps) {
-  const stateDispatchTuple = React.useReducer(reducer, newInitialAppState());
+
+export function AppStateProvider({ children, appState }: AppStateProviderProps) {
+  const reducerWithMiddleware = React.useMemo(() => saveOnActionMiddleware(reducer), []);
+  const reducerTuple = React.useReducer(reducerWithMiddleware, appState);
   return (
-    <AppReducerContext.Provider value={stateDispatchTuple}>
+    <AppReducerContext.Provider value={reducerTuple}>
       {children}
     </AppReducerContext.Provider>
+  );
+}
+
+export const LocalForageStateProvider: React.FC<{ loadingComponent: JSX.Element }> = ({ children, loadingComponent = null }) => {
+  const [state, setState] = React.useState<AppState | null>(null);
+  useEffect(() => {
+    load().then((appState) => {
+      console.log("loaded", appState);
+      if (appState)
+        setState(appState);
+    }).catch(() => {
+      console.log("caught");
+      setState(newInitialAppState());
+    });
+  }, []);
+
+  return (
+    state == null ? loadingComponent :
+      <AppStateProvider appState={state}>
+        {children}
+      </AppStateProvider>
   );
 }
 

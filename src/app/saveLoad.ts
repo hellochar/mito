@@ -1,77 +1,51 @@
+import localforage from "localforage";
+import { deserialize, serialize } from "serializr";
+import { AppActions } from "./reducer";
+import { AppState, AppStateSchema } from "./state";
 
-// export type Serializable = number
-//   | string
-//   | SerializableObject<any>
-//   | Serializable[]
-//   | { [key: string]: Serializable };
+const GAME_DATA_KEY = "gameData";
 
-// export interface SerializableObject<SerializedType extends Serializable> {
-//   serialize(): SerializedType;
-//   deserialize(s: SerializedType): this;
-// }
-
-// interface AppStateJson {
-//   overWorld: {
-//     startTile:
-//   }
-// }
-
-// export function serialize(appState: AppState): string {
-
-// }
-
-// export function deserialize(s: string): AppState {
-
-// }
-
-export interface HexTileJson {
-  i: number;
-  j: number;
+export function save(appState: AppState) {
+  const json = serialize(AppStateSchema, appState);
+  const stringToSave = JSON.stringify(json);
+  return localforage.setItem(GAME_DATA_KEY, stringToSave);
 }
 
-interface SerializableConstructor<T, S extends T> {
-  new(...args: any[]): S;
-  serialize(s: S): T;
-  deserialize(t: T): S;
+export async function load(): Promise<AppState> {
+  const string = await localforage.getItem<string>(GAME_DATA_KEY);
+  const json = JSON.parse(string);
+  const appState = deserialize(AppStateSchema, json);
+  return appState;
 }
 
-interface HexTile extends HexTileJson {
-  readonly k: number;
-  readonly magnitude: number;
+export function resetGame() {
+  const confirm = window.confirm("Are you sure you want to reset your whole game?");
+  if (confirm) {
+    return localforage.removeItem(GAME_DATA_KEY).then(() => {
+      window.location.reload();
+    });
+  } else {
+    return Promise.reject();
+  }
 }
 
-const HexTile: SerializableConstructor<HexTileJson, HexTile> = class HexTile {
-  i: number;
-  j: number;
-
-  get k() {
-    return -(this.i + this.j);
-  }
-  get magnitude() {
-    return Math.abs(this.i) + Math.abs(this.j) + Math.abs(this.k);
-  }
-
-  foo() { return 3; }
-
-  constructor(i: number, j: number) {
-    this.i = i;
-    this.j = j;
-  }
-
-  static serialize(s: HexTile): HexTileJson {
-    const { i, j } = s;
-    return {
-      i, j
-    }
-  }
-
-  static deserialize(json: HexTileJson): HexTile {
-    return new HexTile(json.i, json.j);
-  }
+const ACTIONS_TO_SAVE_ON: Partial<Record<AppActions["type"], true>> = {
+  "AAGameResultDone": true,
+  "AAGetGameResult": true,
+  "AANewSpecies": true,
+  "AANextEpoch": true,
+  "AAPopulationAttemptSuccess": true,
+  "AAStartPopulationAttempt": true,
 };
 
-const h1 = new HexTile(1, 1);
-
-const json = HexTile.serialize(h1);
-const hexTile = HexTile.deserialize(json);
-console.log(hexTile.k);
+export function saveOnActionMiddleware(reducer: React.Reducer<AppState, AppActions>) {
+  console.log("new reducer made");
+  return (state: AppState, action: AppActions) => {
+    const newState = reducer(state, action);
+    if (ACTIONS_TO_SAVE_ON.hasOwnProperty(action.type)) {
+      console.log("saved from", action);
+      save(newState);
+    }
+    return newState;
+  }
+}

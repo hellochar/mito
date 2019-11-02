@@ -10,7 +10,7 @@ import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
 import { Entity, isSteppable, step } from "./entity";
-import { Environment } from "./environment";
+import { Environment, FILL_FUNCTIONS } from "./environment";
 import { Player } from "./player";
 import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
 
@@ -80,7 +80,7 @@ export class World {
         const pos = new Vector2(x, y);
 
         let tile: Tile | undefined;
-        for (const fillFunction of environment.fill) {
+        for (const fillFunction of FILL_FUNCTIONS[environment.fill]) {
           const t = fillFunction(pos, this);
           if (t != null) {
             tile = t;
