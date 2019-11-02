@@ -3,7 +3,7 @@ import Ticker from "global/ticker";
 import React from "react";
 import { Vector2 } from "three";
 import { Species } from "../../evolution/species";
-import { getCameraPositionCenteredOn, getClickedHexCoords } from "../hexMath";
+import { getCameraPositionCenteredOn, getClickedHexCoords, pixelPosition } from "../hexMath";
 import { HexTile } from "../hexTile";
 import HexTileInfo from "./HexTileInfo";
 import HexTileSprite from "./hexTileSprite";
@@ -26,6 +26,7 @@ interface OverWorldMapState {
   cameraState: CameraState;
   pressedKeys: { [code: string]: boolean };
   highlightedHex?: HexTile;
+  hoveredHex?: HexTile;
   frame: number;
 }
 
@@ -67,17 +68,27 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   };
 
   private handleCanvasClick = (e: React.MouseEvent) => {
-    if (this.canvas != null) {
-      if (this.state.highlightedHex != null) {
-        this.setState({ highlightedHex: undefined });
-      } else {
-        const coords = getClickedHexCoords(this.canvas, this.state.cameraState, e);
-        const level = this.context[0].overWorld.tileAt(coords.i, coords.j);
-        if (level != null && level.info.visible) {
-          this.setState({ highlightedHex: level });
-        }
+    if (this.state.highlightedHex != null) {
+      this.setState({ highlightedHex: undefined });
+    } else {
+      const coords = getClickedHexCoords(this.canvas!, this.state.cameraState, e);
+      const level = this.context[0].overWorld.hexAt(coords.i, coords.j);
+      if (level != null && level.info.visible) {
+        this.setState({ highlightedHex: level });
       }
     }
+  };
+
+  private handleCanvasMouseLeave = () => {
+    this.setState({
+      hoveredHex: undefined
+    });
+  }
+
+  private handleCanvasMouseMove = (e: React.MouseEvent) => {
+    const coords = getClickedHexCoords(this.canvas!, this.state.cameraState, e);
+    const hex = this.context[0].overWorld.hexAt(coords.i, coords.j);
+    this.setState({ hoveredHex: hex });
   };
 
   private onPlayLevel = (level: HexTile, species: Species) => {
@@ -153,10 +164,22 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
 
   private drawMap() {
     if (this.canvas != null) {
-      const context = this.canvas.getContext("2d")!;
-      context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      for (const sprite of this.hexTileSprites.values()) {
-        sprite.draw(context, this.state.cameraState);
+      const c = this.canvas.getContext("2d")!;
+      const { hoveredHex, cameraState } = this.state;
+      c.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      if (hoveredHex != null) {
+        this.hexTileSprites.get(hoveredHex)!.setIsHovered();
+      }
+      const sprites = Array.from(this.hexTileSprites.values());
+      sprites.sort((b, a) => {
+        return b.zIndex - a.zIndex;
+      });
+      for (const sprite of sprites) {
+        sprite.draw(c, cameraState);
+      }
+
+      if (hoveredHex != null) {
+        this.drawMigrationArrows(c, hoveredHex);
       }
     }
   }
@@ -209,10 +232,36 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   render() {
     return (
       <div className="overworld-map-container">
-        <canvas tabIndex={-1} ref={this.handleCanvasRef} onClick={this.handleCanvasClick} />
+        <canvas
+          tabIndex={-1}
+          ref={this.handleCanvasRef}
+          onClick={this.handleCanvasClick}
+          onMouseLeave={this.handleCanvasMouseLeave}
+          onMouseMove={this.handleCanvasMouseMove}
+        />
         {this.maybeRenderHexPopover()}
       </div>
     );
+  }
+
+  drawMigrationArrows(c: CanvasRenderingContext2D, hoveredHex: HexTile) {
+    const { scale } = this.state.cameraState;
+    const [{ overWorld }] = this.context;
+    const possibleSourceHexes = overWorld.hexNeighbors(hoveredHex).filter((hex) => {
+      return hex.info.flora != null && hex.info.flora.actionPoints > 0;
+    });
+    c.shadowBlur = 3 * scale / 48;
+    c.shadowOffsetX = 4 * scale / 48;
+    c.shadowOffsetY = 4 * scale / 48;
+    c.shadowColor = "black";
+    c.strokeStyle = "white";
+    c.lineWidth = 1 * scale / 48;
+    const [tox, toy] = pixelPosition(hoveredHex, this.state.cameraState);
+    for (const source of possibleSourceHexes) {
+      const [fromx, fromy] = pixelPosition(source, this.state.cameraState);
+      canvas_arrow(c, fromx, fromy, tox, toy, 10 * scale / 48);
+    }
+    c.shadowColor = "transparent";
   }
 
   maybeRenderHexPopover() {
@@ -224,4 +273,17 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
       );
     }
   }
+}
+
+function canvas_arrow(c: CanvasRenderingContext2D, fromx: number, fromy: number, tox: number, toy: number, headlen = 10) {
+  c.beginPath();
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  c.moveTo(fromx, fromy);
+  c.lineTo(tox, toy);
+  c.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+  c.moveTo(tox, toy);
+  c.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+  c.stroke();
 }

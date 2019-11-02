@@ -136,7 +136,7 @@ export class OverWorld {
     return this.startTile;
   }
 
-  public tileAt(i: number, j: number) {
+  public hexAt(i: number, j: number) {
     return this.storage.get(i, j);
   }
 
