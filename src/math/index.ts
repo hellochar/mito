@@ -43,6 +43,11 @@ export function mirroredRepeat(x: number) {
   return (1 - (Math.abs(mod(x * 2, 4) - 2) - 1)) / 2;
 }
 
+// goes [0, 1] every integer
+export function sawTooth(x: number) {
+  return mod(x, 1);
+}
+
 export function logistic(x: number) {
   if (x < -6) {
     return 0;

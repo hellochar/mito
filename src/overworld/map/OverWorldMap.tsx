@@ -255,11 +255,16 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     c.shadowOffsetY = 4 * scale / 48;
     c.shadowColor = "black";
     c.strokeStyle = "white";
-    c.lineWidth = 1 * scale / 48;
-    const [tox, toy] = pixelPosition(hoveredHex, this.state.cameraState);
+    c.lineWidth = 3 * scale / 48;
+    c.lineCap = "round";
+    c.lineJoin = "round";
+    const hoveredCenter = new Vector2(...pixelPosition(hoveredHex, this.state.cameraState));
     for (const source of possibleSourceHexes) {
-      const [fromx, fromy] = pixelPosition(source, this.state.cameraState);
-      canvas_arrow(c, fromx, fromy, tox, toy, 10 * scale / 48);
+      const sourceCenter = new Vector2(...pixelPosition(source, this.state.cameraState));
+
+      const arrowStart = sourceCenter.clone().lerp(hoveredCenter, 0.2);
+      const arrowEnd = hoveredCenter.clone().lerp(sourceCenter, 0.2);
+      drawArrow(c, arrowStart.x, arrowStart.y, arrowEnd.x, arrowEnd.y, 10 * scale / 48);
     }
     c.shadowColor = "transparent";
   }
@@ -275,7 +280,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   }
 }
 
-function canvas_arrow(c: CanvasRenderingContext2D, fromx: number, fromy: number, tox: number, toy: number, headlen = 10) {
+function drawArrow(c: CanvasRenderingContext2D, fromx: number, fromy: number, tox: number, toy: number, headlen = 10) {
   c.beginPath();
   var dx = tox - fromx;
   var dy = toy - fromy;

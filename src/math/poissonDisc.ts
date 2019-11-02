@@ -6,6 +6,7 @@ export function poissonDisc({
   height = 1,
   radius = 0.1,
   max = 1000,
+  initialSample = undefined as [number, number] | undefined,
   rng = Math.random,
 }): Vector2[] {
   // maximum number of samples before rejection
@@ -70,7 +71,11 @@ export function poissonDisc({
 
   const sampler = function () {
     if (!sampleSize) {
-      return sample(rng() * width, rng() * height);
+      if (initialSample != null) {
+        return sample(initialSample[0], initialSample[1]);
+      } else {
+        return sample(rng() * width, rng() * height);
+      }
     }
 
     // Pick a random existing sample and remove it from the queue.

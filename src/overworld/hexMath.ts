@@ -103,15 +103,19 @@ export const randomPointInHexagon = (() => {
   };
 })();
 
-export const generateNaturalRandomHexagonPoints = (radius: number) => {
+export const generateNaturalRandomHexagonPoints = (radius: number, dropFirst = false) => {
   const width = 2;
   const height = Y_SQUISH_FACTOR * width;
   // const areaAvailable = width * height;
   // const radius = areaAvailable / maxPoints * 0.5; // technically you could get pretty close with .8; but do 0.5 for some more leeway
-  const samples = poissonDisc({ width, height, radius, max: 10000 });
-  return samples
+  const samples = poissonDisc({ width, height, radius, initialSample: [width / 2, height / 2], max: 10000 });
+  const normSamples = samples
     .map((s) => { s.x -= width / 2; s.y -= height / 2; return s; })
     .filter((s) => isPointInHexagon(s.x, s.y));
+  if (dropFirst) {
+    normSamples.shift();
+  }
+  return normSamples;
 }
 
 /**

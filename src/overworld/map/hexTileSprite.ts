@@ -1,9 +1,10 @@
 import testVignetteUrl from "assets/images/test-vignette.png";
 import { sleep } from "common/promise";
+import { easeExpIn } from "d3-ease";
 import { scaleLinear } from "d3-scale";
 import { Species } from "evolution/species";
 import Ticker from "global/ticker";
-import { map } from "math";
+import { clamp, map, sawTooth } from "math";
 import { generateNaturalRandomHexagonPoints, pixelPosition } from "overworld/hexMath";
 import { HexTile } from "overworld/hexTile";
 import { Vector2 } from "three";
@@ -49,29 +50,17 @@ export default class HexTileSprite {
       c.fillStyle = COLOR_SCALE_HEIGHT(this.tile.info.height);
       drawHex(c, px, py, scale);
 
-      // 0-6 number
-      c.font = `${12 * scale / 48}px serif`;
-      c.textAlign = "center";
-      c.textBaseline = "middle";
-      c.fillStyle = "#666";
-      c.fillText(this.tile.info.height + "", px, py, scale);
-
-      // draw vignettes
-      if (this.tile.info.flora != null) {
-        this.updateVignettes(c, this.tile.info.flora.species, px, py, scale);
+      // 0-6 number (can be covered by vignettes)
+      if (!this.isHovered) {
+        this.drawNumericHeight(c, scale, px, py);
       }
 
       // "active" pulse
-      if (this.tile.info.flora != null && this.tile.info.flora.actionPoints > 0) {
-        // c.shadowBlur = 15 * scale / 48 * map(Math.sin(Ticker.now / 250), -1, 1, 0, 1);
-        // c.shadowColor = "white";
-        const thickness = map(Math.sin(Ticker.now / 250), -1, 1, 1, 10);
-        c.lineWidth = thickness * scale / 48;
-        const a = 1 / (thickness * thickness / 10);
-        c.strokeStyle = `rgba(255, 255, 255, ${a})`;
-        drawHex(c, px, py, scale, false);
-      } else {
-        // c.shadowBlur = 0;
+      if (this.tile.info.flora != null) {
+        if (this.tile.info.flora.actionPoints > 0) {
+          this.drawActivePulse(c, scale, px, py);
+        }
+        this.drawVignettes(c, this.tile.info.flora.species, px, py, scale);
       }
     } else {
       c.strokeStyle = "rgb(112, 112, 112)";
@@ -80,19 +69,56 @@ export default class HexTileSprite {
 
     // hovered outline
     if (this.isHovered) {
-      // const rInset = scale - 1 * scale / 48;
-      // c.setLineDash([5, 5]);
-      // drawHex(c, px, py, rInset, false);
-      // c.setLineDash([]);
+      c.strokeStyle = "rgb(112, 112, 112)";
+      c.lineWidth = 1 * scale / 48;
       drawCircle(c, px, py, scale / 48 * 12, false);
+      if (this.tile.info.visible) {
+        this.drawNumericHeight(c, scale, px, py);
+      }
     }
 
     this.isHovered = false;
   }
 
-  updateVignettes(c: CanvasRenderingContext2D, species: Species, px: number, py: number, scale: number) {
+  private static easePulse = easeExpIn;
+
+  public drawActivePulse(c: CanvasRenderingContext2D, scale: number, px: number, py: number) {
+    for (let i = 0; i < 10; i++) {
+      this.drawPulse(i / 10, c, scale, px, py);
+    }
+  }
+
+  private drawPulse(tOffset: number, c: CanvasRenderingContext2D, scale: number, px: number, py: number) {
+    const thickness = map(
+      HexTileSprite.easePulse(
+        clamp(
+          map(
+            sawTooth(Ticker.now / 6000 + tOffset),
+            0, 1,
+            -1, 2
+          ),
+          -Infinity, 1
+        )
+      ),
+      0, 1,
+      0, 20);
+    c.lineWidth = thickness * scale / 48;
+    const a = 100 / (thickness * thickness * thickness);
+    c.strokeStyle = `rgba(255, 255, 255, ${a})`;
+    drawHex(c, px, py, scale + c.lineWidth / 2, false);
+  }
+
+  private drawNumericHeight(c: CanvasRenderingContext2D, scale: number, px: number, py: number) {
+    c.font = `${12 * scale / 48}px serif`;
+    c.textAlign = "center";
+    c.textBaseline = "middle";
+    c.fillStyle = "#666";
+    c.fillText(this.tile.info.height + "", px, py, scale);
+  }
+
+  drawVignettes(c: CanvasRenderingContext2D, species: Species, px: number, py: number, scale: number) {
     if (this.vignettePositions == null) {
-      const positions = generateNaturalRandomHexagonPoints(0.2).sort((a, b) => a.y - b.y);
+      const positions = generateNaturalRandomHexagonPoints(0.3, true); //.sort((a, b) => a.y - b.y);
       this.vignettePositions = [];
       const vignettePositions = this.vignettePositions;
       (async function () {
@@ -114,22 +140,6 @@ export default class HexTileSprite {
     }
   }
 }
-
-// class AnimatedVignetteSprites {
-//   public spritePositions: Vector2[] = [];
-//   constructor(public image: CanvasImageSource) {
-//     stagger(10 times, 30ms delay, (i, delay) => {
-//       const randomPosition = randomPointInHex();
-//       const s = new Sprite(image, randomPosition);
-//       s.animate(over 1000 ms, (t) => { s.opacity = t / 1000 })
-//       return s;
-//     })
-//   }
-
-//   draw() {
-//     draw all sprites
-//   }
-// }
 
 function drawHex(c: CanvasRenderingContext2D, x: number, y: number, r: number, fill = true) {
   c.beginPath();
