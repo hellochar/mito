@@ -1,4 +1,4 @@
-import { AppReducerContext } from "app";
+import { AppReducerContext, PopulationAttempt } from "app";
 import Ticker from "global/ticker";
 import React from "react";
 import { Vector2 } from "three";
@@ -25,6 +25,9 @@ export interface CameraState {
 interface OverWorldMapState {
   cameraState: CameraState;
   pressedKeys: { [code: string]: boolean };
+  populationAttempt?: PopulationAttempt;
+  // TODO one of population attempt or highlighted hex can be
+  // non-null at a time
   highlightedHex?: HexTile;
   hoveredHex?: HexTile;
   frame: number;
@@ -37,8 +40,8 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
 
   private hexTileSprites: Map<HexTile, HexTileSprite> = new Map();
 
-  constructor(props: OverWorldMapProps, context: OverWorldMap["context"]) {
-    super(props, props);
+  constructor(props: OverWorldMapProps, context: any) {
+    super(props, context);
     const scale = 96;
     const [{ overWorld }] = context;
     const [dX, dY] = getCameraPositionCenteredOn(overWorld.getStartTile(), scale);
@@ -68,13 +71,39 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   };
 
   private handleCanvasClick = (e: React.MouseEvent) => {
-    if (this.state.highlightedHex != null) {
-      this.setState({ highlightedHex: undefined });
+    if (this.state.populationAttempt != null || this.state.highlightedHex != null) {
+      this.setState({
+        populationAttempt: undefined,
+        highlightedHex: undefined
+      });
     } else {
       const coords = getClickedHexCoords(this.canvas!, this.state.cameraState, e);
-      const level = this.context[0].overWorld.hexAt(coords.i, coords.j);
-      if (level != null && level.info.visible) {
-        this.setState({ highlightedHex: level });
+      const [{ overWorld }] = this.context;
+      const clicked = overWorld.hexAt(coords.i, coords.j);
+      // simplest check - we clicked on a tile we can see
+      if (clicked != null && clicked.info.visible) {
+
+        // if clicked has no flora, migrate into it
+        if (clicked.info.flora == null) {
+          const target = clicked;
+          const source = overWorld.possibleMigrationSources(clicked)[0];
+          if (source != null) {
+            const populationAttempt: PopulationAttempt = {
+              targetHex: target,
+              sourceHex: source,
+              settlingSpecies: source.info.flora!.species
+            };
+            this.setState({ populationAttempt, highlightedHex: undefined });
+          } else {
+            // TODO add a Popover for when you see a tile but can't reach it with anything
+            // this can happen in the future if earthquakes happen and destroy
+            // blocks you used to own
+          }
+        } else {
+          // clicked does have flora; just show a highlight
+          const highlightedHex = clicked;
+          this.setState({ highlightedHex, populationAttempt: undefined });
+        }
       }
     }
   };
@@ -129,7 +158,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     if (this.canvas != null) {
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
-      this.drawMap();
+      this.updateCanvas();
     }
   };
 
@@ -162,25 +191,49 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     }
   };
 
-  private drawMap() {
+  private updateCanvas() {
     if (this.canvas != null) {
       const c = this.canvas.getContext("2d")!;
-      const { hoveredHex, cameraState } = this.state;
-      c.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      if (hoveredHex != null) {
-        this.hexTileSprites.get(hoveredHex)!.setIsHovered();
-      }
-      const sprites = Array.from(this.hexTileSprites.values());
-      sprites.sort((b, a) => {
-        return b.zIndex - a.zIndex;
-      });
-      for (const sprite of sprites) {
-        sprite.draw(c, cameraState);
-      }
+      this.drawMap(c);
+      this.drawMigrationArrows(c);
+      this.drawPopulationAttempt(c);
+    }
+  }
 
-      if (hoveredHex != null) {
-        this.drawMigrationArrows(c, hoveredHex);
+  private drawMap(c: CanvasRenderingContext2D) {
+    const { hoveredHex, cameraState } = this.state;
+    c.clearRect(0, 0, c.canvas.width, c.canvas.height);
+
+    if (hoveredHex != null) {
+      this.hexTileSprites.get(hoveredHex)!.setIsHovered();
+    }
+
+    const sprites = Array.from(this.hexTileSprites.values());
+    sprites.sort((b, a) => {
+      return b.zIndex - a.zIndex;
+    });
+
+    for (const sprite of sprites) {
+      sprite.draw(c, cameraState);
+    }
+  }
+
+  private drawMigrationArrows(c: CanvasRenderingContext2D) {
+    const { hoveredHex, populationAttempt } = this.state;
+    if (hoveredHex != null && populationAttempt == null) {
+      if (hoveredHex.info.flora == null) {
+        this.drawPossibleMigrationIntoArrows(c, hoveredHex);
       }
+      else {
+        this.drawPossibleMigrationOutOfArrows(c, hoveredHex);
+      }
+    }
+  }
+
+  private drawPopulationAttempt(c: CanvasRenderingContext2D) {
+    const { populationAttempt } = this.state;
+    if (populationAttempt != null) {
+      this.drawMigrationArrow(c, populationAttempt.sourceHex!, populationAttempt.targetHex);
     }
   }
 
@@ -204,7 +257,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     if (prevProps.focusedHex !== this.props.focusedHex && this.props.focusedHex != null) {
       this.focusHex(this.props.focusedHex);
     }
-    this.drawMap();
+    this.updateCanvas();
   }
 
   focusHex(hex: HexTile) {
@@ -239,41 +292,64 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
           onMouseLeave={this.handleCanvasMouseLeave}
           onMouseMove={this.handleCanvasMouseMove}
         />
-        {this.maybeRenderHexPopover()}
+        {this.maybeRenderPopover()}
       </div>
     );
   }
 
-  drawMigrationArrows(c: CanvasRenderingContext2D, hoveredHex: HexTile) {
-    const { scale } = this.state.cameraState;
+  drawPossibleMigrationIntoArrows(c: CanvasRenderingContext2D, target: HexTile) {
     const [{ overWorld }] = this.context;
-    const possibleSourceHexes = overWorld.hexNeighbors(hoveredHex).filter((hex) => {
-      return hex.info.flora != null && hex.info.flora.actionPoints > 0;
-    });
+    for (const source of overWorld.possibleMigrationSources(target)) {
+      this.drawMigrationArrow(c, source, target);
+    }
+  }
+
+  drawPossibleMigrationOutOfArrows(c: CanvasRenderingContext2D, source: HexTile) {
+    const [{ overWorld }] = this.context;
+    for (const target of overWorld.possibleMigrationTargets(source)) {
+      this.drawMigrationArrow(c, source, target);
+    }
+  }
+
+  public drawMigrationArrow(c: CanvasRenderingContext2D, source: HexTile, target: HexTile) {
+    const { scale } = this.state.cameraState;
     c.shadowBlur = 3 * scale / 48;
     c.shadowOffsetX = 4 * scale / 48;
     c.shadowOffsetY = 4 * scale / 48;
     c.shadowColor = "black";
     c.strokeStyle = "white";
+
     c.lineWidth = 3 * scale / 48;
     c.lineCap = "round";
     c.lineJoin = "round";
-    const hoveredCenter = new Vector2(...pixelPosition(hoveredHex, this.state.cameraState));
-    for (const source of possibleSourceHexes) {
-      const sourceCenter = new Vector2(...pixelPosition(source, this.state.cameraState));
-
-      const arrowStart = sourceCenter.clone().lerp(hoveredCenter, 0.2);
-      const arrowEnd = hoveredCenter.clone().lerp(sourceCenter, 0.2);
-      drawArrow(c, arrowStart.x, arrowStart.y, arrowEnd.x, arrowEnd.y, 10 * scale / 48);
-    }
+    const targetCenter = new Vector2(...pixelPosition(target, this.state.cameraState));
+    const sourceCenter = new Vector2(...pixelPosition(source, this.state.cameraState));
+    const arrowStart = sourceCenter.clone().lerp(targetCenter, 0.2);
+    const arrowEnd = targetCenter.clone().lerp(sourceCenter, 0.2);
+    drawArrow(c, arrowStart.x, arrowStart.y, arrowEnd.x, arrowEnd.y, 10 * scale / 48);
     c.shadowColor = "transparent";
   }
 
-  maybeRenderHexPopover() {
-    if (this.state.highlightedHex != null) {
+  maybeRenderPopover() {
+    const { cameraState, populationAttempt, highlightedHex } = this.state;
+    if (populationAttempt != null) {
       return (
-        <OverWorldPopover camera={this.state.cameraState} tile={this.state.highlightedHex}>
-          <HexTileInfo tile={this.state.highlightedHex} onClickPlay={this.onPlayLevel} />
+        <OverWorldPopover camera={cameraState} tile={populationAttempt.targetHex}>
+          <HexTileInfo
+            playSpecies={populationAttempt.settlingSpecies}
+            tile={populationAttempt.targetHex}
+            onClickPlay={this.onPlayLevel}
+          />
+        </OverWorldPopover>
+      );
+    } else if (highlightedHex != null) {
+      return (
+        <OverWorldPopover camera={cameraState} tile={highlightedHex}>
+          <HexTileInfo
+            playSpecies={highlightedHex.info.flora!.species}
+            tile={highlightedHex}
+            onClickPlay={this.onPlayLevel}
+          />
         </OverWorldPopover>
       );
     }

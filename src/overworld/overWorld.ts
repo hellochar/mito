@@ -131,6 +131,40 @@ export class OverWorld {
     return neighbors;
   }
 
+  /**
+   * For a given target hex, find the source hexes that
+   * can migrate into it.
+   */
+  public possibleMigrationSources(target: HexTile) {
+    const populatedActiveNeighbors = this.hexNeighbors(target).filter((hex) => {
+      return hex.info.flora != null && hex.info.flora.actionPoints > 0;
+    });
+    if (target.info.flora == null) {
+      // if the target is unpopulated, allow any neighbor to migrate into it
+      return populatedActiveNeighbors;
+    } else {
+      // if the target is already populated, disallow "migration" from the same source species
+      return populatedActiveNeighbors.filter((s) => s.info.flora!.species !== target.info.flora!.species);
+    }
+  }
+
+  public possibleMigrationTargets(source: HexTile) {
+    if (source.info.flora == null) {
+      console.error("can't migrate from a null flora source");
+      return [];
+    }
+    // can't migrate if you're out of points
+    if (source.info.flora.actionPoints < 1) {
+      return [];
+    }
+    const unpopulatedNeighbors = this.hexNeighbors(source).filter((hex) => {
+      // find neighbors that are either:
+      //  unpopulated, or
+      //  populated but with a different species
+      return hex.info.flora == null || (hex.info.flora.species !== source.info.flora!.species);
+    });
+    return unpopulatedNeighbors;
+  }
 
   public getStartTile() {
     return this.startTile;

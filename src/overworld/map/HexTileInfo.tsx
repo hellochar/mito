@@ -1,47 +1,30 @@
-import { useAppReducer } from "app";
-import { lineage, Species } from "evolution/species";
+import { Species } from "evolution/species";
 import React from "react";
-import Dropdown, { Option } from 'react-dropdown';
 import { Button } from "../../common/Button";
 import Expand from "../../common/Expand";
 import MP from "../../common/MP";
 import { HexTile } from "../hexTile";
 import "./HexTileInfo.scss";
 
-
-
 interface HexTileInfoProps {
+  playSpecies: Species;
   tile: HexTile;
   onClickPlay: (level: HexTile, species: Species) => void;
 }
 
-function HexTileInfo({ tile, onClickPlay }: HexTileInfoProps) {
-  const [{ rootSpecies }] = useAppReducer();
-  const allSpecies = React.useMemo(() => lineage(rootSpecies), [rootSpecies]);
-
-  const [selectedSpecies, setSelectedSpecies] = React.useState(allSpecies[0].id);
-
+function HexTileInfo({ playSpecies, tile, onClickPlay }: HexTileInfoProps) {
   const handleClickPlay = () => {
-    onClickPlay(tile, allSpecies.find((s) => s.id === selectedSpecies)!);
+    onClickPlay(tile, playSpecies);
   };
 
   const { height, flora } = tile.info;
 
-  const options: Option[] = allSpecies.map((s) => ({
-    value: s.id,
-    label: s.name,
-  }));
-
-  const handleDropdownChange = (option: Option) => {
-    setSelectedSpecies(option.value);
-  };
-
   const playButtonElement =
     (height === -1) ? null : (
       <div className="play-selector">
-        <Dropdown options={options} value={selectedSpecies} onChange={handleDropdownChange} />
+        <span>{playSpecies.name}</span>
         <Button color="green" className="play-button" onClick={handleClickPlay} disabled={tile.info.flora && tile.info.flora.actionPoints < 1}>
-          Populate
+          Migrate
         </Button>
       </div>
     );

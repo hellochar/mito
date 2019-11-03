@@ -61,8 +61,17 @@ function handleStartPopulationAttempt(state: AppState, action: AAStartPopulation
   if (!targetHex.info.visible) {
     return state;
   }
-  if (sourceHex != null && sourceHex.info.flora != null && sourceHex.info.flora.actionPoints < 1) {
-    return state;
+  if (sourceHex != null) {
+    if (sourceHex.info.flora == null) {
+      console.error("sourceHex isn't null but the flora is null");
+      return state;
+    }
+    if (sourceHex.info.flora.actionPoints < 1) {
+      console.error("tried population attempt with a source hex that has no action point");
+      return state;
+    }
+    // remove the action point
+    sourceHex.info.flora.actionPoints = 0;
   }
 
   return {
