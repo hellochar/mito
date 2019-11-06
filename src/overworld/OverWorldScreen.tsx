@@ -14,11 +14,10 @@ import { OverWorldMap } from "./map/OverWorldMap";
 import "./OverWorldScreen.scss";
 
 export interface OverWorldScreenProps {
-  onPopulationAttempt: (level: HexTile, species: Species) => void;
   onNextEpoch: () => void;
 }
 
-const OverWorldScreen = ({ onPopulationAttempt, onNextEpoch }: OverWorldScreenProps) => {
+const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
   const [leftPanelOpen, setLeftPanelOpen] = useState(false);
   const [activelyMutatingSpecies, setActivelyMutatingSpecies] = useState<Species | undefined>(undefined);
 
@@ -90,7 +89,7 @@ const OverWorldScreen = ({ onPopulationAttempt, onNextEpoch }: OverWorldScreenPr
 
   return (
     <div className="overworld-screen">
-      <OverWorldMap focusedHex={focusedHex} onPlayLevel={onPopulationAttempt} />
+      <OverWorldMap focusedHex={focusedHex} />
       {maybeRenderPhylogeneticTreePanel()}
       {maybeRenderMutationModal()}
       <EpochUI onNextEpoch={onNextEpoch} onFocusHex={handleFocusHex} />

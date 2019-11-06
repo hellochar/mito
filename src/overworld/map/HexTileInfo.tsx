@@ -9,14 +9,10 @@ import "./HexTileInfo.scss";
 interface HexTileInfoProps {
   playSpecies: Species;
   tile: HexTile;
-  onClickPlay: (level: HexTile, species: Species) => void;
+  onClickPlay: () => void;
 }
 
 function HexTileInfo({ playSpecies, tile, onClickPlay }: HexTileInfoProps) {
-  const handleClickPlay = () => {
-    onClickPlay(tile, playSpecies);
-  };
-
   const { height, flora } = tile.info;
 
   const playButtonElement =
@@ -26,7 +22,7 @@ function HexTileInfo({ playSpecies, tile, onClickPlay }: HexTileInfoProps) {
         <Button
           color="green"
           className="play-button"
-          onClick={handleClickPlay}
+          onClick={onClickPlay}
           disabled={tile.info.flora && tile.info.flora.actionPoints < 1}
         >
           Migrate
@@ -57,7 +53,7 @@ function HexTileInfo({ playSpecies, tile, onClickPlay }: HexTileInfoProps) {
   const expand =
     tile.info.height === -1 ? null : (
       <Expand shrunkElements={<div className="details">Details</div>}>
-        <pre style={{ fontSize: "12px" }}>{JSON.stringify(tile.info, null, 4)}</pre>
+        <pre style={{ fontSize: "12px" }}>{JSON.stringify(stringifyInfo, null, 4)}</pre>
       </Expand>
     );
 

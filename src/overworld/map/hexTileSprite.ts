@@ -47,6 +47,7 @@ export default class HexTileSprite {
     if (this.tile.info.visible) {
       // base color
       c.fillStyle = COLOR_SCALE_HEIGHT(this.tile.info.height);
+      c.strokeStyle = "rgb(112, 112, 112)";
       drawHex(c, px, py, scale);
 
       // 0-6 number (can be covered by vignettes)

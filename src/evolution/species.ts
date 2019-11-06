@@ -16,7 +16,7 @@ export interface Species {
 export const SpeciesSchema = createSimpleSchema<Species>({
   id: identifier(),
   name: primitive(),
-  genes: list(primitive()),
+  genes: list(list(primitive())),
   freeMutationPoints: primitive(),
   totalMutationPoints: primitive(),
   // descendants: reference(SpeciesSchema),

@@ -2,7 +2,6 @@ import { AppReducerContext, PopulationAttempt } from "app";
 import Ticker from "global/ticker";
 import React from "react";
 import { Vector2 } from "three";
-import { Species } from "../../evolution/species";
 import { getCameraPositionCenteredOn, getClickedHexCoords, pixelPosition } from "../hexMath";
 import { HexTile } from "../hexTile";
 import HexTileInfo from "./HexTileInfo";
@@ -11,7 +10,6 @@ import "./OverWorldMap.scss";
 import OverWorldPopover from "./OverWorldPopover";
 
 interface OverWorldMapProps {
-  onPlayLevel: (level: HexTile, species: Species) => void;
   // TODO turn this into a trigger, or global state
   focusedHex?: HexTile;
 }
@@ -119,8 +117,25 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     this.setState({ hoveredHex: hex });
   };
 
-  private onPlayLevel = (level: HexTile, species: Species) => {
-    this.props.onPlayLevel(level, species);
+  private handleClickPlay = () => {
+    const [, dispatch] = this.context;
+    if (this.state.populationAttempt != null) {
+      dispatch({
+        type: "AAStartPopulationAttempt",
+        populationAttempt: this.state.populationAttempt,
+      });
+    } else if (this.state.highlightedHex != null) {
+      // re-populate the same tile
+      const sourceHex = this.state.highlightedHex;
+      dispatch({
+        type: "AAStartPopulationAttempt",
+        populationAttempt: {
+          sourceHex,
+          targetHex: sourceHex,
+          settlingSpecies: sourceHex.info.flora!.species,
+        },
+      });
+    }
   };
 
   private handleKeyDown = (e: KeyboardEvent) => {
@@ -335,7 +350,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
           <HexTileInfo
             playSpecies={populationAttempt.settlingSpecies}
             tile={populationAttempt.targetHex}
-            onClickPlay={this.onPlayLevel}
+            onClickPlay={this.handleClickPlay}
           />
         </OverWorldPopover>
       );
@@ -345,7 +360,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
           <HexTileInfo
             playSpecies={highlightedHex.info.flora!.species}
             tile={highlightedHex}
-            onClickPlay={this.onPlayLevel}
+            onClickPlay={this.handleClickPlay}
           />
         </OverWorldPopover>
       );

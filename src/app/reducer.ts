@@ -14,7 +14,7 @@ export function useAppReducer(): AppReducerContextType {
 
 export function reducer(state: AppState, action: AppActions): AppState {
   switch (action.type) {
-    case "AANewSpecies":
+    case "AAUpdateSpecies":
       return {
         ...state,
         // species: {
@@ -36,15 +36,15 @@ export function reducer(state: AppState, action: AppActions): AppState {
 }
 
 export type AppActions =
-  | AANewSpecies
+  | AAUpdateSpecies
   | AAStartPopulationAttempt
   | AAPopulationAttemptSuccess
   | AANextEpoch
   | AAGetGameResult
   | AAGameResultDone;
 
-export interface AANewSpecies {
-  type: "AANewSpecies";
+export interface AAUpdateSpecies {
+  type: "AAUpdateSpecies";
   species: Species;
 }
 
@@ -94,11 +94,7 @@ export interface AAPopulationAttemptSuccess {
 
 function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAttemptSuccess): AppState {
   const { attempt = state.activePopulationAttempt!, results } = action;
-  const { targetHex, sourceHex, settlingSpecies } = attempt;
-  // use the action point
-  if (sourceHex != null) {
-    sourceHex.info.flora!.actionPoints -= 1;
-  }
+  const { targetHex, settlingSpecies } = attempt;
 
   // populate target hex
   let oldSpecies: Species | undefined = undefined;

@@ -1,4 +1,6 @@
+import { useAppReducer } from "app";
 import classNames from "classnames";
+import generateSpeciesName from "common/generateSpeciesName";
 import React from "react";
 import uuid from "uuid";
 import { Button } from "../common/Button";
@@ -17,6 +19,7 @@ function MutationScreen({
   species: Species;
   onCommit: (newSpecies: Species, newPool: number) => void;
 }) {
+  const [, dispatch] = useAppReducer();
   // const [pool, setPool] = React.useState(species.freeMutationPoints);
   const pool = species.freeMutationPoints;
   const setPool = (arg: number | ((p: number) => number)) => {
@@ -25,6 +28,12 @@ function MutationScreen({
     } else {
       species.freeMutationPoints = arg(pool);
     }
+    // TODO if user refreshes while mutating, they'll lose the mutation state!
+    // we should save the mutation state in the AppState
+    dispatch({
+      type: "AAUpdateSpecies",
+      species,
+    });
   };
 
   const [newSpecies, setNewSpecies] = React.useState<Species>({
@@ -33,7 +42,7 @@ function MutationScreen({
     freeMutationPoints: 0,
     totalMutationPoints: 0,
     genes: [...species.genes],
-    name: "New species",
+    name: generateSpeciesName(),
     parent: species,
   });
 

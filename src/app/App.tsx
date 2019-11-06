@@ -2,14 +2,12 @@ import { MousePositionContext } from "common/useMousePosition";
 import OverWorldScreen from "overworld/OverWorldScreen";
 import React from "react";
 import { createSelector } from "reselect";
-import { Species } from "../evolution/species";
-import { HexTile } from "../overworld/hexTile";
 import { FullPageSketch } from "../sketches/fullPageSketch";
 import Mito, { GameResult } from "../sketches/mito";
 import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
 import { LocalForageStateProvider } from "./AppStateProvider";
 import { AppReducerContext } from "./reducer";
-import { AppState, PopulationAttempt } from "./state";
+import { AppState } from "./state";
 
 interface AppComponentState {
   mousePosition: { x: number; y: number };
@@ -39,19 +37,6 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
   componentWillUnmount() {
     document.removeEventListener("mousemove", this.handleMousePosition);
   }
-
-  handlePopulationAttempt = (targetHex: HexTile, settlingSpecies: Species, sourceHex?: HexTile) => {
-    const populationAttempt: PopulationAttempt = {
-      settlingSpecies,
-      sourceHex,
-      targetHex,
-    };
-    const [, dispatch] = this.context;
-    dispatch({
-      type: "AAStartPopulationAttempt",
-      populationAttempt,
-    });
-  };
 
   handleNextEpoch = () => {
     const [, dispatch] = this.context;
@@ -88,7 +73,7 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
   maybeRenderOverWorld() {
     const [state] = this.context;
     if (state.activePopulationAttempt == null) {
-      return <OverWorldScreen onPopulationAttempt={this.handlePopulationAttempt} onNextEpoch={this.handleNextEpoch} />;
+      return <OverWorldScreen onNextEpoch={this.handleNextEpoch} />;
     }
   }
 

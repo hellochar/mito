@@ -32,7 +32,7 @@ export function resetGame() {
 const ACTIONS_TO_SAVE_ON: Partial<Record<AppActions["type"], true>> = {
   AAGameResultDone: true,
   AAGetGameResult: true,
-  AANewSpecies: true,
+  AAUpdateSpecies: true,
   AANextEpoch: true,
   AAPopulationAttemptSuccess: true,
   AAStartPopulationAttempt: true,

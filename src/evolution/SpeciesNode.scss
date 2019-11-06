@@ -50,13 +50,13 @@ $animation-distance: 8px;
       }
 
       // [connector] sibling-to-sibling:last-child
-      &:last-of-type::after {
+      &:not(:only-child):last-of-type::after {
         width: 50%;
         left: 0;
       }
 
       // [connector] sibling-to-sibling:first-child
-      &:first-of-type::after {
+      &:not(:only-child):first-of-type::after {
         width: 50%;
         right: 0;
       }
