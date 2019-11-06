@@ -1,14 +1,13 @@
 import React from "react";
 import { Gene } from "./gene";
-import { dnaPairToTraitType } from "./traits";
-
 import "./GeneDisplay.scss";
+import { tupleToTrait } from "./traits";
 
 function GeneComponent({ gene, onClick }: { gene: Gene; onClick: (position: number) => void }) {
   return (
     <div className="gene">
       <div className="gene-number">
-        <span className="tuple-plus" title={dnaPairToTraitType(gene[0]) + " +1"}>
+        <span className="tuple-plus" title={tupleToTrait(gene[0]) + " +1"}>
           <span className="dna" onClick={() => onClick(0)}>
             {gene[0][0]}
           </span>
@@ -16,7 +15,7 @@ function GeneComponent({ gene, onClick }: { gene: Gene; onClick: (position: numb
             {gene[0][1]}
           </span>
         </span>
-        <span className="tuple-minus" title={dnaPairToTraitType(gene[1]) + " -1"}>
+        <span className="tuple-minus" title={tupleToTrait(gene[1]) + " -1"}>
           <span className="dna" onClick={() => onClick(2)}>
             {gene[1][0]}
           </span>

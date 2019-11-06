@@ -1,0 +1,93 @@
+@import "../variables";
+
+.epoch-display {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s;
+  padding: 20px;
+  border-radius: 10px;
+
+  @mixin primary {
+    bottom: 10%;
+    right: 50%;
+    transform: translate(50%, 0);
+    background: rgba(255, 255, 255, 0.8);
+    color: black;
+  }
+
+  &.ready-to-advance {
+    @include primary;
+
+    .button-next-epoch {
+      animation: pulsating 1.3s alternate-reverse infinite;
+
+      @keyframes pulsating {
+        0% {
+          transform: scale(1);
+        }
+
+        100% {
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+
+  &.transitioning {
+    @include primary;
+
+    .icon {
+      animation: flip 4s ease-in-out both;
+
+      @keyframes flip {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(720deg);
+        }
+      }
+    }
+  }
+
+  .number {
+    font-size: 20px;
+    pointer-events: none;
+  }
+
+  .button-next-epoch {
+    margin-top: 10px;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.8);
+    // background: none;
+    border-radius: 100%;
+    border: 1px solid $gray3;
+    color: black;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(64, 64, 64, 0.2);
+    transition: all 0.2s;
+    position: relative;
+    outline: none;
+
+    .icon {
+      font-size: 40px;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &:active {
+      left: 2px;
+      top: 2px;
+    }
+  }
+}

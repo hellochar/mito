@@ -117,16 +117,16 @@ export function displayName(trait: TraitType) {
   return displayName;
 }
 
-/**
- * Mutates source.
- * @param source source
- * @param modifier modifier
- */
-export function addTraits(source: TraitDiff, modifier: TraitDiff) {
-  for (const traitType in modifier) {
-    source[traitType] = clampToTraitValue((source[traitType] || 0) + modifier[traitType]!);
-  }
-}
+// /**
+//  * Mutates source.
+//  * @param source source
+//  * @param modifier modifier
+//  */
+// export function addTraits(source: TraitDiff, modifier: TraitDiff) {
+//   for (const traitType in modifier) {
+//     source[traitType] = clampToTraitValue((source[traitType] || 0) + modifier[traitType]!);
+//   }
+// }
 
 export function clampToTraitValue(t: number): TraitValue {
   return (t < -3 ? -3 : t > 3 ? 3 : t) as TraitValue;
@@ -135,64 +135,57 @@ export function clampToTraitValue(t: number): TraitValue {
 export function getTraits(genes: Gene[]): Traits {
   const traits: Traits = emptyTraits();
   for (const gene of genes) {
-    const traitDiff = getTraitInfluence(gene);
-    addTraits(traits, traitDiff);
+    const traitTypePlus = tupleToTrait(gene[0]);
+    traits[traitTypePlus] += 1;
+
+    const traitTypeMinus = tupleToTrait(gene[1]);
+    traits[traitTypeMinus] -= 1;
+    // const traitDiff = getTraitInfluence(gene);
+    // addTraits(traits, traitDiff);
   }
   return traits;
 }
 
-export function getTraitInfluence(gene: Gene): TraitDiff {
-  const traitDiff: TraitDiff = {};
-  const traitTypePlus = dnaPairToTraitType(gene[0]);
-  if (traitTypePlus != null) {
-    traitDiff[traitTypePlus] = 1;
-  }
+// export function getTraitInfluence(gene: Gene): TraitDiff {
+//   const traitDiff: TraitDiff = {};
+//   const traitTypePlus = tupleToTrait(gene[0]);
+//   traitDiff[traitTypePlus] = 1;
 
-  const traitTypeMinus = dnaPairToTraitType(gene[1]);
-  if (traitTypeMinus != null) {
-    traitDiff[traitTypeMinus] = -1;
-  }
-  return traitDiff;
+//   const traitTypeMinus = tupleToTrait(gene[1]);
+//   traitDiff[traitTypeMinus] = -1;
+//   return traitDiff;
+// }
+
+const DNA_TUPLE_TO_TRAIT_TYPE: { [K in DNATuple]: TraitType } = {
+  AA: "walkSpeed",
+  AC: "energyEfficiency",
+  AG: "photosynthesis",
+  AT: "rootAbsorption",
+  CA: "carryCapacity",
+  CC: "activeTransportSugar",
+  CG: "activeTransportWater",
+  CT: "structuralStability",
+  GA: "diffuseSugar",
+  GC: "diffuseWater",
+  GG: "buildTime",
+  GT: "heatTolerant",
+  TA: "coldTolerant",
+  TC: "fruitGrowthSpeed",
+  TG: "fruitMutationPoints",
+  TT: "fruitNeededResources",
+};
+
+const TRAIT_TYPE_TO_DNA_TUPLE = {} as { [K in TraitType]: DNATuple };
+for (const [tuple, type] of Object.entries(DNA_TUPLE_TO_TRAIT_TYPE)) {
+  TRAIT_TYPE_TO_DNA_TUPLE[type] = tuple as DNATuple;
 }
 
-export function dnaPairToTraitType(dnaTuple: DNATuple): TraitType | undefined {
-  switch (dnaTuple) {
-    case "AA":
-      return "walkSpeed";
-    case "AC":
-      return "energyEfficiency";
-    case "AG":
-      return "photosynthesis";
-    case "AT":
-      return "rootAbsorption";
+export function tupleToTrait(dnaTuple: DNATuple) {
+  return DNA_TUPLE_TO_TRAIT_TYPE[dnaTuple];
+}
 
-    case "CA":
-      return "carryCapacity";
-    case "CC":
-      return "activeTransportSugar";
-    case "CG":
-      return "activeTransportWater";
-    case "CT":
-      return "structuralStability";
-
-    case "GA":
-      return "diffuseSugar";
-    case "GC":
-      return "diffuseWater";
-    case "GG":
-      return "buildTime";
-    case "GT":
-      return "heatTolerant";
-
-    case "TA":
-      return "coldTolerant";
-    case "TC":
-      return "fruitGrowthSpeed";
-    case "TG":
-      return "fruitMutationPoints";
-    case "TT":
-      return "fruitNeededResources";
-  }
+export function traitToTuple(trait: TraitType) {
+  return TRAIT_TYPE_TO_DNA_TUPLE[trait];
 }
 
 /**

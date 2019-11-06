@@ -2,13 +2,13 @@ import { useAppReducer } from "app";
 import { resetGame, save } from "app/saveLoad";
 import classNames from "classnames";
 import { Button } from "common/Button";
-import DynamicNumber from "common/DynamicNumber";
 import MutationScreen from "evolution/MutationScreen";
 import PhylogeneticTree from "evolution/PhylogeneticTree";
 import { Species } from "evolution/species";
 import React, { useCallback, useEffect, useState } from "react";
-import { GiFamilyTree, GiSandsOfTime } from "react-icons/gi";
+import { GiFamilyTree } from "react-icons/gi";
 import Modal from "react-modal";
+import { EpochUI } from "./EpochUI";
 import { HexTile } from "./hexTile";
 import { OverWorldMap } from "./map/OverWorldMap";
 import "./OverWorldScreen.scss";
@@ -102,36 +102,5 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
     </div>
   );
 };
-
-export interface EpochUIProps {
-  onNextEpoch: () => void;
-  onFocusHex: (hex: HexTile) => void;
-}
-
-const EPOCH_FORMATTER = new Intl.NumberFormat(undefined, { useGrouping: true, maximumFractionDigits: 0 });
-function EpochUI({ onNextEpoch, onFocusHex }: EpochUIProps) {
-  const [{ epoch, overWorld }] = useAppReducer();
-  const [transitioning, setTransitioning] = useState(false);
-  const unusedHexes = overWorld.unusedHexes();
-  const isReadyToAdvance = unusedHexes.length === 0;
-  const handleNextEpoch = () => {
-    setTransitioning(true);
-    setTimeout(() => setTransitioning(false), 5000);
-    onNextEpoch();
-  };
-  return (
-    <div className={classNames("epoch-display", { "ready-to-advance": isReadyToAdvance, transitioning })}>
-      <span className="number">
-        <DynamicNumber formatter={EPOCH_FORMATTER} value={epoch * 1e6} speed={0.08} /> Years
-      </span>
-      {unusedHexes.length > 0 ? (
-        <div onClick={() => onFocusHex(unusedHexes[0])}>{unusedHexes.length} hexes unused</div>
-      ) : null}
-      <button className="button-next-epoch" onClick={handleNextEpoch} disabled={transitioning}>
-        <GiSandsOfTime className="icon" />
-      </button>
-    </div>
-  );
-}
 
 export default OverWorldScreen;
