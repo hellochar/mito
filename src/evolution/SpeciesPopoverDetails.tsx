@@ -17,7 +17,9 @@ function SpeciesPopoverDetails({ species, onClick, onMutate }: SpeciesPopoverDet
   return (
     <div className="species-details">
       <GenesToTraits genes={species.genes} onClick={onClick} />
-      {species.freeMutationPoints > 0 ? <div className="suggestion">{species.freeMutationPoints} Mutation Points available. Use them!</div> : null}
+      {species.freeMutationPoints > 0 ? (
+        <div className="suggestion">{species.freeMutationPoints} Mutation Points available. Use them!</div>
+      ) : null}
       <Button onClick={() => onMutate(species)}>Mutate</Button>
     </div>
   );

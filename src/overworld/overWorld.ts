@@ -161,7 +161,7 @@ export class OverWorld {
       // find neighbors that are either:
       //  unpopulated, or
       //  populated but with a different species
-      return hex.info.flora == null || (hex.info.flora.species !== source.info.flora!.species);
+      return hex.info.flora == null || hex.info.flora.species !== source.info.flora!.species;
     });
     return unpopulatedNeighbors;
   }

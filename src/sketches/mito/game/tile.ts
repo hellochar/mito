@@ -315,13 +315,17 @@ export class Rock extends Tile {
   static displayName = "Rock";
   isObstacle = true;
   inventory = new Inventory(0, this);
-  shouldStep(dt: number) { return dt > 10; }
+  shouldStep(dt: number) {
+    return dt > 10;
+  }
 }
 
 export class DeadCell extends Tile {
   static displayName = "Dead Cell";
   inventory = new Inventory(0, this);
-  shouldStep(dt: number) { return dt > 10; }
+  shouldStep(dt: number) {
+    return dt > 10;
+  }
 }
 
 export class Fountain extends Soil {
@@ -381,18 +385,18 @@ export class FreezeEffect extends CellEffect implements Interactable {
   }
 
   interact(dt: number) {
-    this.percentFrozen -= 20 / this.turnsToDie * dt;
+    this.percentFrozen -= (20 / this.turnsToDie) * dt;
     this.onFrozenChanged();
     return true;
   }
 
   step(dt: number) {
     if (this.cell.temperature === Temperature.Cold) {
-      this.percentFrozen += 1 / this.turnsToDie * dt;
+      this.percentFrozen += (1 / this.turnsToDie) * dt;
     } else if (this.cell.temperature === Temperature.Freezing) {
-      this.percentFrozen += 10 / this.turnsToDie * dt;
+      this.percentFrozen += (10 / this.turnsToDie) * dt;
     } else {
-      this.percentFrozen -= 10 / this.turnsToDie * dt;
+      this.percentFrozen -= (10 / this.turnsToDie) * dt;
     }
     this.onFrozenChanged();
 
@@ -405,7 +409,6 @@ export class FreezeEffect extends CellEffect implements Interactable {
     } else if (this.percentFrozen < 0) {
       this.remove();
     }
-
   }
 }
 
@@ -589,12 +592,14 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
 
     // if we're cold, try to naturally heat ourselves
     if (this.temperatureFloat <= 32) {
-      const chanceToFreeze = traitMod(this.world.traits.coldTolerant, (this.temperature === Temperature.Cold ? 0.001 : 0.01), 1 / 1.5) * dt;
+      const chanceToFreeze =
+        traitMod(this.world.traits.coldTolerant, this.temperature === Temperature.Cold ? 0.001 : 0.01, 1 / 1.5) * dt;
       if (Math.random() < chanceToFreeze) {
         this.addEffect(new FreezeEffect());
       }
     } else if (this.temperatureFloat >= 64) {
-      const chanceToLoseWater = traitMod(this.world.traits.heatTolerant, (this.temperature === Temperature.Hot ? 0.001 : 0.01), 1 / 1.5) * dt;
+      const chanceToLoseWater =
+        traitMod(this.world.traits.heatTolerant, this.temperature === Temperature.Hot ? 0.001 : 0.01, 1 / 1.5) * dt;
       if (Math.random() < chanceToLoseWater) {
         this.inventory.add(Math.max(-1, this.inventory.water), 0);
       }
@@ -775,9 +780,7 @@ export class Root extends Cell implements Interactable {
     const neighbors = this.world.tileNeighbors(this.pos);
     let doneOnce = false;
     for (const [dir, tile] of neighbors) {
-      if (
-        tile instanceof Soil
-      ) {
+      if (tile instanceof Soil) {
         this.activeNeighbors.push(dir);
         if (!doneOnce) {
           const { water } = tile.inventory.give(this.inventory, 1, 0);
@@ -796,7 +799,7 @@ export class Fruit extends Cell {
   public isObstacle = true;
   public inventory = new Inventory(8, this);
   public neededResources: number;
-  public committedResources: Inventory;// = new Inventory(Fruit.neededResources, this);
+  public committedResources: Inventory; // = new Inventory(Fruit.neededResources, this);
   public timeMatured?: number;
   static turnsToBuild = 0;
   public turnsToMature: number; // = TIME_PER_SEASON / 3 * 2; // takes two months to mature
@@ -809,7 +812,7 @@ export class Fruit extends Cell {
     this.neededResources = Math.ceil(traitMod(world.traits.fruitNeededResources, 100, 1 / 1.5) / 2) * 2;
     this.committedResources = new Inventory(this.neededResources, this);
     this.committedResources.on("get", this.handleGetResources);
-    this.turnsToMature = Math.ceil(traitMod(world.traits.fruitGrowthSpeed, TIME_PER_SEASON / 3 * 2, 1 / 1.5));
+    this.turnsToMature = Math.ceil(traitMod(world.traits.fruitGrowthSpeed, (TIME_PER_SEASON / 3) * 2, 1 / 1.5));
   }
 
   handleGetResources = () => {
@@ -838,8 +841,14 @@ export class Fruit extends Cell {
   }
 
   commitResources(dt: number) {
-    const wantedWater = Math.min(this.neededResources / 2 - this.committedResources.water, this.oneTurnCommitMax / 2 * dt * this.tempo);
-    const wantedSugar = Math.min(this.neededResources / 2 - this.committedResources.sugar, this.oneTurnCommitMax / 2 * dt * this.tempo);
+    const wantedWater = Math.min(
+      this.neededResources / 2 - this.committedResources.water,
+      (this.oneTurnCommitMax / 2) * dt * this.tempo
+    );
+    const wantedSugar = Math.min(
+      this.neededResources / 2 - this.committedResources.sugar,
+      (this.oneTurnCommitMax / 2) * dt * this.tempo
+    );
     this.inventory.give(this.committedResources, wantedWater, wantedSugar);
   }
 

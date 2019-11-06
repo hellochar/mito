@@ -46,7 +46,7 @@ export function updateParamsHash() {
   }
   if (Object.keys(nonDefaultParams).length > 0) {
     const stringified = stringify({
-      ...(parse(window.location.search)),
+      ...parse(window.location.search),
       params: JSON.stringify(nonDefaultParams),
     });
     window.location.search = stringified;

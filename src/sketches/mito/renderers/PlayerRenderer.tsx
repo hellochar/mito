@@ -6,7 +6,6 @@ import { Mito } from "../index";
 import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
 
-
 export class PlayerRenderer extends Renderer<Player> {
   public mesh: Mesh;
   constructor(target: Player, scene: Scene, mito: Mito) {

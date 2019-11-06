@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import 'react-dropdown/style.css';
+import "react-dropdown/style.css";
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
 import App from "./app/App";
 import "./index.scss";

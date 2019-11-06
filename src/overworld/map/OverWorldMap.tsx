@@ -74,7 +74,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     if (this.state.populationAttempt != null || this.state.highlightedHex != null) {
       this.setState({
         populationAttempt: undefined,
-        highlightedHex: undefined
+        highlightedHex: undefined,
       });
     } else {
       const coords = getClickedHexCoords(this.canvas!, this.state.cameraState, e);
@@ -82,7 +82,6 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
       const clicked = overWorld.hexAt(coords.i, coords.j);
       // simplest check - we clicked on a tile we can see
       if (clicked != null && clicked.info.visible) {
-
         // if clicked has no flora, migrate into it
         if (clicked.info.flora == null) {
           const target = clicked;
@@ -91,7 +90,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
             const populationAttempt: PopulationAttempt = {
               targetHex: target,
               sourceHex: source,
-              settlingSpecies: source.info.flora!.species
+              settlingSpecies: source.info.flora!.species,
             };
             this.setState({ populationAttempt, highlightedHex: undefined });
           } else {
@@ -110,9 +109,9 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
 
   private handleCanvasMouseLeave = () => {
     this.setState({
-      hoveredHex: undefined
+      hoveredHex: undefined,
     });
-  }
+  };
 
   private handleCanvasMouseMove = (e: React.MouseEvent) => {
     const coords = getClickedHexCoords(this.canvas!, this.state.cameraState, e);
@@ -149,8 +148,8 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     this.setState({
       cameraState: {
         ...this.state.cameraState,
-        scale
-      }
+        scale,
+      },
     });
   };
 
@@ -223,8 +222,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     if (hoveredHex != null && populationAttempt == null) {
       if (hoveredHex.info.flora == null) {
         this.drawPossibleMigrationIntoArrows(c, hoveredHex);
-      }
-      else {
+      } else {
         this.drawPossibleMigrationOutOfArrows(c, hoveredHex);
       }
     }
@@ -275,10 +273,9 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
           ...this.state.cameraState,
           dX,
           dY,
-        }
+        },
       });
-      return dt > 1000 ||
-        (Math.abs(targetX - dX) < 1e-2 && Math.abs(targetY - dY) < 1e-2);
+      return dt > 1000 || (Math.abs(targetX - dX) < 1e-2 && Math.abs(targetY - dY) < 1e-2);
     });
   }
 
@@ -313,20 +310,20 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
 
   public drawMigrationArrow(c: CanvasRenderingContext2D, source: HexTile, target: HexTile) {
     const { scale } = this.state.cameraState;
-    c.shadowBlur = 3 * scale / 48;
-    c.shadowOffsetX = 4 * scale / 48;
-    c.shadowOffsetY = 4 * scale / 48;
+    c.shadowBlur = (3 * scale) / 48;
+    c.shadowOffsetX = (4 * scale) / 48;
+    c.shadowOffsetY = (4 * scale) / 48;
     c.shadowColor = "black";
     c.strokeStyle = "white";
 
-    c.lineWidth = 3 * scale / 48;
+    c.lineWidth = (3 * scale) / 48;
     c.lineCap = "round";
     c.lineJoin = "round";
     const targetCenter = new Vector2(...pixelPosition(target, this.state.cameraState));
     const sourceCenter = new Vector2(...pixelPosition(source, this.state.cameraState));
     const arrowStart = sourceCenter.clone().lerp(targetCenter, 0.2);
     const arrowEnd = targetCenter.clone().lerp(sourceCenter, 0.2);
-    drawArrow(c, arrowStart.x, arrowStart.y, arrowEnd.x, arrowEnd.y, 10 * scale / 48);
+    drawArrow(c, arrowStart.x, arrowStart.y, arrowEnd.x, arrowEnd.y, (10 * scale) / 48);
     c.shadowColor = "transparent";
   }
 

@@ -14,9 +14,8 @@ import { Environment, FILL_FUNCTIONS } from "./environment";
 import { Player } from "./player";
 import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
 
-
 export class StepStats {
-  constructor(public deleted: Entity[] = [], public added: Entity[] = []) { }
+  constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
 }
 
 export interface Season {
@@ -35,7 +34,6 @@ export function seasonFromTime(time: number): Season {
     month,
   };
 }
-
 
 const SEASON_NAMES = ["Spring", "Summer", "Fall", "Winter"];
 export function seasonDisplay(s: Season) {
@@ -376,7 +374,7 @@ export class World {
     // offset first rain event by 200 turns
     const isRaining =
       (this.time + this.environment.climate.turnsBetweenRainfall - 200) %
-      this.environment.climate.turnsBetweenRainfall <
+        this.environment.climate.turnsBetweenRainfall <
       this.environment.climate.rainDuration;
     if (isRaining) {
       // add multiple random droplets
@@ -417,11 +415,11 @@ export class World {
    * 0.5 to 1: nighttime
    */
   get sunAngle() {
-    return this.time * Math.PI * 2 / TIME_PER_DAY;
+    return (this.time * Math.PI * 2) / TIME_PER_DAY;
   }
 
   get dayOrNight() {
-    return (this.sunAngle % (Math.PI * 2)) < Math.PI ? "day" : "night";
+    return this.sunAngle % (Math.PI * 2) < Math.PI ? "day" : "night";
   }
 
   get sunAmount() {

@@ -13,7 +13,6 @@ import { HexTile } from "./hexTile";
 import { OverWorldMap } from "./map/OverWorldMap";
 import "./OverWorldScreen.scss";
 
-
 export interface OverWorldScreenProps {
   onPopulationAttempt: (level: HexTile, species: Species) => void;
   onNextEpoch: () => void;
@@ -33,28 +32,32 @@ const OverWorldScreen = ({ onPopulationAttempt, onNextEpoch }: OverWorldScreenPr
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-    }
+    };
   }, []);
 
   const handleStartMutate = useCallback((s: Species) => {
     setActivelyMutatingSpecies(s);
   }, []);
 
-  const handleCommit = useCallback((newSpecies: Species, newPool: number) => {
-    if (activelyMutatingSpecies == null) {
-      throw new Error("created new species with no actively mutating one!");
-    }
-    activelyMutatingSpecies.descendants.push(newSpecies);
-    // eslint-disable-next-line react/no-direct-mutation-state
-    activelyMutatingSpecies.freeMutationPoints = newPool;
-    newSpecies.parent = activelyMutatingSpecies;
-    setActivelyMutatingSpecies(undefined);
-  }, [activelyMutatingSpecies]);
+  const handleCommit = useCallback(
+    (newSpecies: Species, newPool: number) => {
+      if (activelyMutatingSpecies == null) {
+        throw new Error("created new species with no actively mutating one!");
+      }
+      activelyMutatingSpecies.descendants.push(newSpecies);
+      // eslint-disable-next-line react/no-direct-mutation-state
+      activelyMutatingSpecies.freeMutationPoints = newPool;
+      newSpecies.parent = activelyMutatingSpecies;
+      setActivelyMutatingSpecies(undefined);
+    },
+    [activelyMutatingSpecies]
+  );
 
   function maybeRenderMutationModal() {
-    const maybeMutationScreen = activelyMutatingSpecies != null ? (
-      <MutationScreen species={activelyMutatingSpecies} onCommit={handleCommit} />
-    ) : null;
+    const maybeMutationScreen =
+      activelyMutatingSpecies != null ? (
+        <MutationScreen species={activelyMutatingSpecies} onCommit={handleCommit} />
+      ) : null;
     return (
       <Modal
         ariaHideApp={false}
@@ -70,12 +73,8 @@ const OverWorldScreen = ({ onPopulationAttempt, onNextEpoch }: OverWorldScreenPr
   function maybeRenderPhylogeneticTreePanel() {
     return (
       <div className={classNames("panel-left", { open: leftPanelOpen })}>
-        {leftPanelOpen ? (
-          <PhylogeneticTree onMutate={handleStartMutate} />
-        ) : null}
-        <button
-          className="panel-left-handle"
-          onClick={() => setLeftPanelOpen((open) => !open)}>
+        {leftPanelOpen ? <PhylogeneticTree onMutate={handleStartMutate} /> : null}
+        <button className="panel-left-handle" onClick={() => setLeftPanelOpen((open) => !open)}>
           <GiFamilyTree className="icon" />
         </button>
       </div>
@@ -102,7 +101,7 @@ const OverWorldScreen = ({ onPopulationAttempt, onNextEpoch }: OverWorldScreenPr
         <Button onClick={() => resetGame()}>Reset Game</Button>
       </div>
     </div>
-  )
+  );
 };
 
 export interface EpochUIProps {
@@ -126,9 +125,9 @@ function EpochUI({ onNextEpoch, onFocusHex }: EpochUIProps) {
       <span className="number">
         <DynamicNumber formatter={EPOCH_FORMATTER} value={epoch * 1e6} speed={0.08} /> Years
       </span>
-      {unusedHexes.length > 0 ?
+      {unusedHexes.length > 0 ? (
         <div onClick={() => onFocusHex(unusedHexes[0])}>{unusedHexes.length} hexes unused</div>
-        : null}
+      ) : null}
       <button className="button-next-epoch" onClick={handleNextEpoch} disabled={transitioning}>
         <GiSandsOfTime className="icon" />
       </button>

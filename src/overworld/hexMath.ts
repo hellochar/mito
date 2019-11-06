@@ -11,11 +11,7 @@ import { CameraState } from "./map/OverWorldMap";
  */
 export const Y_SQUISH_FACTOR = Math.sqrt(3) / 2;
 
-export function getClickedHexCoords(
-  canvas: HTMLCanvasElement,
-  camera: CameraState,
-  event: React.MouseEvent
-) {
+export function getClickedHexCoords(canvas: HTMLCanvasElement, camera: CameraState, event: React.MouseEvent) {
   const { scale, dX, dY } = camera;
   const cX = canvas.width / 2 + dX;
   const cY = canvas.height / 2 + dY;
@@ -84,21 +80,14 @@ export function getCameraPositionCenteredOn(hex: HexTile, scale: number) {
 }
 
 export const randomPointInHexagon = (() => {
-  const vectors = [
-    new Vector2(-1, 0),
-    new Vector2(0.5, Y_SQUISH_FACTOR),
-    new Vector2(0.5, -Y_SQUISH_FACTOR)
-  ];
+  const vectors = [new Vector2(-1, 0), new Vector2(0.5, Y_SQUISH_FACTOR), new Vector2(0.5, -Y_SQUISH_FACTOR)];
 
   return (scale: number) => {
     // adapted from https://stackoverflow.com/a/3241819
     const vIndex = Math.floor(Math.random() * 3);
     const [v1, v2] = [vectors[vIndex], vectors[(vIndex + 1) % 3]];
-    const [v1Scale, v2Scale] = [Math.random(), Math.random()]
-    const [x, y] = [
-      v1Scale * v1.x + v2Scale * v2.x,
-      v1Scale * v1.y + v2Scale * v2.y
-    ];
+    const [v1Scale, v2Scale] = [Math.random(), Math.random()];
+    const [x, y] = [v1Scale * v1.x + v2Scale * v2.x, v1Scale * v1.y + v2Scale * v2.y];
     return new Vector2(x * scale, y * scale);
   };
 })();
@@ -110,13 +99,17 @@ export const generateNaturalRandomHexagonPoints = (radius: number, dropFirst = f
   // const radius = areaAvailable / maxPoints * 0.5; // technically you could get pretty close with .8; but do 0.5 for some more leeway
   const samples = poissonDisc({ width, height, radius, initialSample: [width / 2, height / 2], max: 10000 });
   const normSamples = samples
-    .map((s) => { s.x -= width / 2; s.y -= height / 2; return s; })
+    .map((s) => {
+      s.x -= width / 2;
+      s.y -= height / 2;
+      return s;
+    })
     .filter((s) => isPointInHexagon(s.x, s.y));
   if (dropFirst) {
     normSamples.shift();
   }
   return normSamples;
-}
+};
 
 /**
  * Return true if the point is inside a radius 1 hexagon (width 2, height sqrt(3))
@@ -136,6 +129,5 @@ export const isPointInHexagon = (() => {
     // dot product can be reduced to this due to the hexagon symmetry
     // return HALF_HEIGHT * RADIUS * q2x - RADIUS * q2y >= 0;
     return RADIUS * HALF_HEIGHT - HALF_HEIGHT * q2x - 0.5 * q2y >= 0;
-  }
+  };
 })();
-

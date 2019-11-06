@@ -178,12 +178,17 @@ export class Mito extends ISketch {
         mutationPointsPerEpoch: 0,
       });
     };
-    const endGameButtons = process.env.NODE_ENV === "development" ? (
-      <div style={{ position: "absolute", top: 50, right: 10 }}>
-        <Button color="green" onClick={doWin}>Win</Button>
-        <Button color="green" onClick={doLose}>Lose</Button>
-      </div>
-    ) : null;
+    const endGameButtons =
+      process.env.NODE_ENV === "development" ? (
+        <div style={{ position: "absolute", top: 50, right: 10 }}>
+          <Button color="green" onClick={doWin}>
+            Win
+          </Button>
+          <Button color="green" onClick={doLose}>
+            Lose
+          </Button>
+        </div>
+      ) : null;
     return (
       <>
         <HUD mito={this} />
@@ -328,7 +333,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     this.canvas.focus();
     // const dt = millisElapsed / 1000;
     // TODO make this seconds instead of frames
-    let dt = Math.min(1 * millisElapsed / 30, 10);
+    let dt = Math.min((1 * millisElapsed) / 30, 10);
     if (params.isRealtime) {
       const moveAction = this.keysToMovement(this.keyMap);
       if (moveAction) {

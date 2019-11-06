@@ -1,4 +1,3 @@
-
 export type TickerCallback = (time: number) => boolean | void;
 class TickerClass {
   private tickerId = 1;
@@ -25,7 +24,7 @@ class TickerClass {
       this.removeAnimation(id);
     }
     requestAnimationFrame(this.tickerLoop);
-  }
+  };
 
   /**
    * Return true to kill the ticker.

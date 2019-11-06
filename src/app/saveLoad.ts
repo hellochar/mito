@@ -30,12 +30,12 @@ export function resetGame() {
 }
 
 const ACTIONS_TO_SAVE_ON: Partial<Record<AppActions["type"], true>> = {
-  "AAGameResultDone": true,
-  "AAGetGameResult": true,
-  "AANewSpecies": true,
-  "AANextEpoch": true,
-  "AAPopulationAttemptSuccess": true,
-  "AAStartPopulationAttempt": true,
+  AAGameResultDone: true,
+  AAGetGameResult: true,
+  AANewSpecies: true,
+  AANextEpoch: true,
+  AAPopulationAttemptSuccess: true,
+  AAStartPopulationAttempt: true,
 };
 
 export function saveOnActionMiddleware(reducer: React.Reducer<AppState, AppActions>) {
@@ -47,5 +47,5 @@ export function saveOnActionMiddleware(reducer: React.Reducer<AppState, AppActio
       save(newState);
     }
     return newState;
-  }
+  };
 }

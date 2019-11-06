@@ -41,8 +41,7 @@ export type AppActions =
   | AAPopulationAttemptSuccess
   | AANextEpoch
   | AAGetGameResult
-  | AAGameResultDone
-  ;
+  | AAGameResultDone;
 
 export interface AANewSpecies {
   type: "AANewSpecies";

@@ -29,8 +29,7 @@ $animation-distance: 8px;
       bottom: -$animation-distance;
     }
 
-    >.species-node {
-
+    > .species-node {
       // vertical descendant line
       &::before {
         content: "";
@@ -42,10 +41,9 @@ $animation-distance: 8px;
         left: 50%;
       }
 
-
       // horizontal connector
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         top: calc(100% + #{$generation-distance} - #{$nub-size});
         border-bottom: 1px solid grey;

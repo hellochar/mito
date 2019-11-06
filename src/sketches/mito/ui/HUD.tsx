@@ -81,9 +81,13 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   renderInventory() {
     return (
       <div className="mito-inventory-indicator">
-        <span className="mito-inventory-water"><DynamicNumber speed={0.5} value={this.inventory.water} /> water</span>
+        <span className="mito-inventory-water">
+          <DynamicNumber speed={0.5} value={this.inventory.water} /> water
+        </span>
         &nbsp;
-        <span className="mito-inventory-sugar"><DynamicNumber speed={0.5} value={this.inventory.sugar} /> sugar</span>
+        <span className="mito-inventory-sugar">
+          <DynamicNumber speed={0.5} value={this.inventory.sugar} /> sugar
+        </span>
       </div>
     );
   }

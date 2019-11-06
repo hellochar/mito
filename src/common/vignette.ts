@@ -23,8 +23,7 @@ class VignetteCapturer {
   })();
   private lastCaptureTime: number = 0;
 
-  public constructor(public readonly mito: Mito, public pxPerTile = 4, public captureInterval = TIME_PER_SEASON / 27) {
-  }
+  public constructor(public readonly mito: Mito, public pxPerTile = 4, public captureInterval = TIME_PER_SEASON / 27) {}
 
   isTimeForNewCapture() {
     return this.mito.world.time - this.lastCaptureTime > this.captureInterval;
@@ -35,8 +34,9 @@ class VignetteCapturer {
     this.lastCaptureTime = this.mito.world.time;
 
     // Cells that form the vignette:
-    const picturesqueCells = Array.from(this.mito.world.cells())
-      .filter((t) => t.pos.y < 50 && !(t instanceof GrowingCell));
+    const picturesqueCells = Array.from(this.mito.world.cells()).filter(
+      (t) => t.pos.y < 50 && !(t instanceof GrowingCell)
+    );
 
     const [minBounds, maxBounds] = this.getBounds(picturesqueCells);
 
@@ -57,17 +57,10 @@ class VignetteCapturer {
     renderer.setRenderTarget(null);
 
     // buffer will now contain [r1, g1, b1, a1, r2, g2, b2, a2, ...]
-    renderer.readRenderTargetPixels(
-      renderTarget,
-      0,
-      0,
-      renderTarget.width,
-      renderTarget.height,
-      rtBuffer
-    );
+    renderer.readRenderTargetPixels(renderTarget, 0, 0, renderTarget.width, renderTarget.height, rtBuffer);
 
     // copy buffer pixels into the full resolution canvas
-    const context = rtCanvas.getContext('2d')!;
+    const context = rtCanvas.getContext("2d")!;
     const imageData: ImageData = context.createImageData(rtCanvas.width, rtCanvas.height);
     const imageBuffer = imageData.data;
     for (let i = 0; i < rtBuffer.length; i++) {
@@ -81,26 +74,13 @@ class VignetteCapturer {
 
     const roiWidth = map(boundsWidth, 0, maxDimension, 0, 1024);
     const roiHeight = map(boundsHeight, 0, maxDimension, 0, 1024);
-    const roiTopLeft = new Vector2(
-      512 - roiWidth / 2,
-      512 - roiHeight / 2
-    );
+    const roiTopLeft = new Vector2(512 - roiWidth / 2, 512 - roiHeight / 2);
 
     const dest = document.createElement("canvas");
     dest.width = Math.ceil(boundsWidth * this.pxPerTile);
     dest.height = Math.ceil(boundsHeight * this.pxPerTile);
-    const destContext = dest.getContext('2d')!;
-    destContext.drawImage(
-      rtCanvas,
-      roiTopLeft.x,
-      roiTopLeft.y,
-      roiWidth,
-      roiHeight,
-      0,
-      0,
-      dest.width,
-      dest.height
-    );
+    const destContext = dest.getContext("2d")!;
+    destContext.drawImage(rtCanvas, roiTopLeft.x, roiTopLeft.y, roiWidth, roiHeight, 0, 0, dest.width, dest.height);
 
     const img = new Image();
     img.src = dest.toDataURL();
@@ -144,7 +124,8 @@ class VignetteCapturer {
       center.y + largerDim / 2,
       center.y - largerDim / 2,
       -100,
-      100);
+      100
+    );
     return camera;
   }
 }

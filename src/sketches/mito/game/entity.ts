@@ -9,7 +9,7 @@ export interface Steppable {
   step(dt: number): void;
 }
 
-export class StopStep extends Error { }
+export class StopStep extends Error {}
 
 export function isSteppable(obj: any): obj is Steppable {
   return typeof obj.step === "function";

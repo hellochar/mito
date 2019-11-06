@@ -28,8 +28,8 @@ export function poissonDisc({
   rng = rng || Math.random;
 
   function far(x: number, y: number) {
-    var i = x / cellSize | 0;
-    var j = y / cellSize | 0;
+    var i = (x / cellSize) | 0;
+    var j = (y / cellSize) | 0;
 
     var i0 = Math.max(i - 2, 0);
     var j0 = Math.max(j - 2, 0);
@@ -61,7 +61,7 @@ export function poissonDisc({
 
     queue.push(s);
 
-    grid[gridWidth * (y / cellSize | 0) + (x / cellSize | 0)] = s;
+    grid[gridWidth * ((y / cellSize) | 0) + ((x / cellSize) | 0)] = s;
 
     sampleSize++;
     queueSize++;
@@ -69,7 +69,7 @@ export function poissonDisc({
     return s;
   }
 
-  const sampler = function () {
+  const sampler = function() {
     if (!sampleSize) {
       if (initialSample != null) {
         return sample(initialSample[0], initialSample[1]);
@@ -80,7 +80,7 @@ export function poissonDisc({
 
     // Pick a random existing sample and remove it from the queue.
     while (queueSize) {
-      var i = rng() * queueSize | 0;
+      var i = (rng() * queueSize) | 0;
       var s = queue[i];
 
       // Make a new candidate between [radius, 2 * radius] from the existing
@@ -113,4 +113,4 @@ export function poissonDisc({
     samples.push(new Vector2(sample[0], sample[1]));
   }
   return samples;
-};
+}

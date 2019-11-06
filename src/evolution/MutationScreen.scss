@@ -56,7 +56,7 @@
       color: black;
     }
 
-    .button~.button {
+    .button ~ .button {
       margin-left: 10px;
     }
   }
@@ -119,31 +119,31 @@
 
       @keyframes wiggle {
         0% {
-          transform: rotate(0deg)
+          transform: rotate(0deg);
         }
 
         5% {
-          transform: rotate(30deg)
+          transform: rotate(30deg);
         }
 
         10% {
-          transform: rotate(-30deg)
+          transform: rotate(-30deg);
         }
 
         15% {
-          transform: rotate(30deg)
+          transform: rotate(30deg);
         }
 
         20% {
-          transform: rotate(-30deg)
+          transform: rotate(-30deg);
         }
 
         25% {
-          transform: rotate(0deg)
+          transform: rotate(0deg);
         }
 
         100% {
-          transform: rotate(0deg)
+          transform: rotate(0deg);
         }
       }
     }

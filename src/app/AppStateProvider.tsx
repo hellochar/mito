@@ -10,37 +10,31 @@ export interface AppStateProviderProps {
   appState: AppState;
 }
 
-
 export function AppStateProvider({ children, appState }: AppStateProviderProps) {
   const reducerWithMiddleware = React.useMemo(() => saveOnActionMiddleware(reducer), []);
   const reducerTuple = React.useReducer(reducerWithMiddleware, appState);
-  return (
-    <AppReducerContext.Provider value={reducerTuple}>
-      {children}
-    </AppReducerContext.Provider>
-  );
+  return <AppReducerContext.Provider value={reducerTuple}>{children}</AppReducerContext.Provider>;
 }
 
-export const LocalForageStateProvider: React.FC<{ loadingComponent: JSX.Element }> = ({ children, loadingComponent = null }) => {
+export const LocalForageStateProvider: React.FC<{ loadingComponent: JSX.Element }> = ({
+  children,
+  loadingComponent = null,
+}) => {
   const [state, setState] = React.useState<AppState | null>(null);
   useEffect(() => {
-    load().then((appState) => {
-      console.log("loaded", appState);
-      if (appState)
-        setState(appState);
-    }).catch(() => {
-      console.log("caught");
-      setState(newInitialAppState());
-    });
+    load()
+      .then((appState) => {
+        console.log("loaded", appState);
+        if (appState) setState(appState);
+      })
+      .catch(() => {
+        console.log("caught");
+        setState(newInitialAppState());
+      });
   }, []);
 
-  return (
-    state == null ? loadingComponent :
-      <AppStateProvider appState={state}>
-        {children}
-      </AppStateProvider>
-  );
-}
+  return state == null ? loadingComponent : <AppStateProvider appState={state}>{children}</AppStateProvider>;
+};
 
 export function newInitialAppState(): AppState {
   const overWorld = OverWorld.generateRectangle(100, 50);

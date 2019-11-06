@@ -10,9 +10,13 @@ import { mutatePosition, mutateRandomNewGene, mutateSwapDNA } from "./mutation";
 import "./MutationScreen.scss";
 import { Species } from "./species";
 
-
-
-function MutationScreen({ species, onCommit }: { species: Species, onCommit: (newSpecies: Species, newPool: number) => void }) {
+function MutationScreen({
+  species,
+  onCommit,
+}: {
+  species: Species;
+  onCommit: (newSpecies: Species, newPool: number) => void;
+}) {
   // const [pool, setPool] = React.useState(species.freeMutationPoints);
   const pool = species.freeMutationPoints;
   const setPool = (arg: number | ((p: number) => number)) => {
@@ -35,11 +39,11 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
 
   type ClickModeSwap = {
     type: "swap";
-    p1?: { gene: Gene; position: number; };
-  }
+    p1?: { gene: Gene; position: number };
+  };
   type ClickModeReroll = {
     type: "reroll";
-  }
+  };
   type ClickMode = ClickModeSwap | ClickModeReroll | undefined;
   const [clickMode, setClickMode] = React.useState<ClickMode>();
   const isSwapping = clickMode && clickMode.type === "swap";
@@ -48,7 +52,7 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
   const newGeneCost = newSpecies.genes.length + 1;
 
   const handleNewGene = () => {
-    setPool(p => p - newGeneCost);
+    setPool((p) => p - newGeneCost);
     setNewSpecies((species) => ({
       ...species,
       genes: [...species.genes, mutateRandomNewGene()],
@@ -72,7 +76,7 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
   };
 
   function reroll(gene: Gene, position: number) {
-    setPool(p => p - 1);
+    setPool((p) => p - 1);
     setNewSpecies((species) => {
       const geneIndex = species.genes.indexOf(gene);
       const newGene = mutatePosition(gene, position);
@@ -86,7 +90,7 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
   }
 
   function swap(gene1: Gene, position1: number, gene2: Gene, position2: number) {
-    setPool(p => p - 2);
+    setPool((p) => p - 2);
     setNewSpecies((species) => {
       const geneIndex1 = species.genes.indexOf(gene1);
       const geneIndex2 = species.genes.indexOf(gene2);
@@ -99,7 +103,7 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
 
       return {
         ...species,
-        genes: newGenes
+        genes: newGenes,
       };
     });
     setClickMode(undefined);
@@ -120,11 +124,11 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
   };
 
   const handleNewSpeciesName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewSpecies(s => ({
+    setNewSpecies((s) => ({
       ...s,
       name: e.target.value,
     }));
-  }
+  };
 
   const handleCommit = () => {
     onCommit(newSpecies, pool);
@@ -141,14 +145,14 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
   return (
     <div className={classNames("mutation-screen", { "click-mode-active": clickMode != null })}>
       <div className="mutation-screen-content">
-        <h1><Character size="medium" /><span className="name">{species.name}</span></h1>
+        <h1>
+          <Character size="medium" />
+          <span className="name">{species.name}</span>
+        </h1>
 
         <div className="buttons">
           <MP className="pool" amount={pool} total={species.totalMutationPoints} />
-          <Button
-            onClick={handleNewGene}
-            disabled={pool < newGeneCost}
-          >
+          <Button onClick={handleNewGene} disabled={pool < newGeneCost}>
             New Gene (<MP amount={newGeneCost} />)
           </Button>
 
@@ -157,7 +161,13 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
             onClick={startSwapClickMode}
             disabled={(!isSwapping && pool < 2) || newSpecies.genes.length === 0}
           >
-            {isSwapping ? "Cancel" : <>Swap DNA (<MP amount={2} />)</>}
+            {isSwapping ? (
+              "Cancel"
+            ) : (
+              <>
+                Swap DNA (<MP amount={2} />)
+              </>
+            )}
           </Button>
 
           <Button
@@ -165,7 +175,13 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
             onClick={startRerollClickMode}
             disabled={(!isRerolling && pool < 1) || newSpecies.genes.length === 0}
           >
-            {isRerolling ? "Cancel" : <>Re-roll DNA (<MP amount={1} />)</>}
+            {isRerolling ? (
+              "Cancel"
+            ) : (
+              <>
+                Re-roll DNA (<MP amount={1} />)
+              </>
+            )}
           </Button>
         </div>
 
@@ -173,8 +189,13 @@ function MutationScreen({ species, onCommit }: { species: Species, onCommit: (ne
         {isGenesChanged ? (
           <>
             <div className="arrow">⇓</div>
-            <h1><Character size="medium" /><input type="text" className="name" value={newSpecies.name} onChange={handleNewSpeciesName} /></h1>
-            <Button className="commit" color="green" onClick={handleCommit}>Commit</Button>
+            <h1>
+              <Character size="medium" />
+              <input type="text" className="name" value={newSpecies.name} onChange={handleNewSpeciesName} />
+            </h1>
+            <Button className="commit" color="green" onClick={handleCommit}>
+              Commit
+            </Button>
           </>
         ) : null}
       </div>

@@ -6,9 +6,6 @@ import { Fruit } from "../game/tile";
 import { seasonDisplay } from "../game/world";
 import "./GameResultsScreen.scss";
 
-
-
-
 function Glow() {
   return (
     <div className="glow">
@@ -34,8 +31,8 @@ function FruitInfo({ fruit }: { fruit: Fruit }) {
           <span className="matured-info success">Matured</span>&nbsp;at {fruit.timeMatured}, Mutation Points earned: 1
         </>
       ) : (
-          <span className="matured-info in-progress">{(fruit.getPercentMatured() * 100).toFixed(0)}% maturity</span>
-        )}
+        <span className="matured-info in-progress">{(fruit.getPercentMatured() * 100).toFixed(0)}% maturity</span>
+      )}
       , started {fruit.timeMade}.
     </div>
   );
@@ -76,8 +73,8 @@ export default function GameResultsScreen({ onDone, results }: GameResultsScreen
         {results.status === "won" ? (
           <GameWonScreen onDone={onDone} results={results} />
         ) : (
-            <GameLostScreen onDone={onDone} results={results} />
-          )}
+          <GameLostScreen onDone={onDone} results={results} />
+        )}
         <button className="done-button" onClick={onDone}>
           Continue →
         </button>

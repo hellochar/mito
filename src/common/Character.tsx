@@ -7,14 +7,7 @@ import "./Character.scss";
 
 function Character(props: JSX.IntrinsicElements["img"] & { size?: "xs" | "small" | "medium" | "large" }) {
   const { size, ...otherProps } = props;
-  return (
-    <img
-      className={classNames("character", size)}
-      alt=""
-      src={characterSrc}
-      {...otherProps}
-    />
-  );
+  return <img className={classNames("character", size)} alt="" src={characterSrc} {...otherProps} />;
 }
 
 export default Character;

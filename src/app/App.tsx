@@ -12,7 +12,7 @@ import { AppReducerContext } from "./reducer";
 import { AppState, PopulationAttempt } from "./state";
 
 interface AppComponentState {
-  mousePosition: { x: number, y: number };
+  mousePosition: { x: number; y: number };
 }
 
 class AppComponent extends React.PureComponent<{}, AppComponentState> {
@@ -30,7 +30,7 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
     this.setState({
       mousePosition: { x: e.clientX, y: e.clientY },
     });
-  }
+  };
 
   componentDidMount() {
     document.addEventListener("mousemove", this.handleMousePosition);
@@ -56,7 +56,7 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
   handleNextEpoch = () => {
     const [, dispatch] = this.context;
     dispatch({ type: "AANextEpoch" });
-  }
+  };
 
   handleWinLoss = (result: GameResult) => {
     const [, dispatch] = this.context;
@@ -86,14 +86,9 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
   }
 
   maybeRenderOverWorld() {
-    const [state,] = this.context;
+    const [state] = this.context;
     if (state.activePopulationAttempt == null) {
-      return (
-        <OverWorldScreen
-          onPopulationAttempt={this.handlePopulationAttempt}
-          onNextEpoch={this.handleNextEpoch}
-        />
-      );
+      return <OverWorldScreen onPopulationAttempt={this.handlePopulationAttempt} onNextEpoch={this.handleNextEpoch} />;
     }
   }
 
@@ -103,14 +98,14 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
   );
 
   maybeRenderInGame() {
-    const [state,] = this.context;
+    const [state] = this.context;
     if (state.activePopulationAttempt != null && state.activeGameResult == null) {
       return <FullPageSketch sketchClass={Mito} otherArgs={this.otherArgsSelector(state)} />;
     }
   }
 
   maybeRenderGameResult() {
-    const [state,] = this.context;
+    const [state] = this.context;
     if (state.activeGameResult != null) {
       return <GameResultsScreen results={state.activeGameResult} onDone={this.handleResultsDone} />;
     }

@@ -1,17 +1,6 @@
-$palatino-family: Palatino,
-Palatino Linotype,
-Palatino LT STD,
-Book Antiqua,
-serif;
-$georgia-family: Georgia,
-Cambria,
-"Times New Roman",
-Times,
-serif;
-$arial-family: Arial,
-Helvetica Neue,
-Helvetica,
-sans-serif;
+$palatino-family: Palatino, Palatino Linotype, Palatino LT STD, Book Antiqua, serif;
+$georgia-family: Georgia, Cambria, "Times New Roman", Times, serif;
+$arial-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 
 $black: #10161a !default;
 
@@ -148,8 +137,5 @@ $sepia5: #c99765 !default;
 }
 
 @mixin text-outline($size: 1px, $color: $black) {
-  text-shadow: -$size -$size 0 $color,
-  $size -$size 0 $color,
-  -$size $size 0 $color,
-  $size $size 0 $color;
+  text-shadow: -$size -$size 0 $color, $size -$size 0 $color, -$size $size 0 $color, $size $size 0 $color;
 }

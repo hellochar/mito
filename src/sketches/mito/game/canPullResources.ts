@@ -8,10 +8,7 @@ export function allowPull(receiver: any, recieverType: Constructor<any>, giver: 
 
 export function canPullResources(receiver: HasInventory, giver: HasInventory): boolean {
   // allow ancestors and children to exchange resources with each other (e.g. Soil and Fountain)
-  const hasAncestry = (
-    receiver instanceof giver.constructor ||
-    giver instanceof receiver.constructor
-  );
+  const hasAncestry = receiver instanceof giver.constructor || giver instanceof receiver.constructor;
 
   // allow all Cells to give to each other
   const areCells = receiver instanceof Cell && giver instanceof Cell;

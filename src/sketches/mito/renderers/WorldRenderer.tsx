@@ -9,7 +9,6 @@ import { Renderer } from "./Renderer";
 import { TileRenderer } from "./TileRenderer";
 import { TransportRenderer } from "./TransportRenderer";
 
-
 export function createRendererFor<E extends Entity>(object: E, scene: Scene, mito: Mito): Renderer<Entity> {
   if (object instanceof Player) {
     return new PlayerRenderer(object, scene, mito);

@@ -4,7 +4,6 @@ import "./PhylogeneticTree.scss";
 import { Species } from "./species";
 import SpeciesNode from "./SpeciesNode";
 
-
 interface PhylogeneticTreeProps {
   onMutate: (s: Species) => void;
 }
@@ -18,7 +17,7 @@ function PhylogeneticTree({ onMutate }: PhylogeneticTreeProps) {
         <SpeciesNode species={rootSpecies} onMutate={onMutate} />
       </div>
     </div>
-  )
+  );
 }
 
 export default PhylogeneticTree;

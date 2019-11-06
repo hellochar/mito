@@ -27,5 +27,5 @@ export function TestWinScreen() {
     mutationPointsPerEpoch: 2,
     world,
   };
-  return <GameResultsScreen results={mockResults} onDone={() => { }} />;
+  return <GameResultsScreen results={mockResults} onDone={() => {}} />;
 }

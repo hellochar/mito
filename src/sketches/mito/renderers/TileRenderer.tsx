@@ -2,13 +2,46 @@ import { easeCubic } from "d3-ease";
 import Ticker from "global/ticker";
 import { reversed } from "math/easing";
 import React from "react";
-import { ArrowHelper, Audio, BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Scene, Vector2, Vector3 } from "three";
+import {
+  ArrowHelper,
+  Audio,
+  BufferGeometry,
+  Color,
+  DoubleSide,
+  Float32BufferAttribute,
+  Line,
+  LineBasicMaterial,
+  Mesh,
+  MeshBasicMaterial,
+  Object3D,
+  PlaneBufferGeometry,
+  Scene,
+  Vector2,
+  Vector3,
+} from "three";
 import lazy from "../../../common/lazy";
 import { clamp, lerp, lerp2, map } from "../../../math/index";
 import { blopBuffer, suckWaterBuffer } from "../audio";
 import { Constructor } from "../constructor";
 import { Temperature } from "../game/temperature";
-import { Air, Cell, DeadCell, Fountain, Fruit, GrowingCell, hasEnergy, hasTilePairs, Leaf, Rock, Root, Soil, Tile, Tissue, Transport, Vein } from "../game/tile";
+import {
+  Air,
+  Cell,
+  DeadCell,
+  Fountain,
+  Fruit,
+  GrowingCell,
+  hasEnergy,
+  hasTilePairs,
+  Leaf,
+  Rock,
+  Root,
+  Soil,
+  Tile,
+  Tissue,
+  Transport,
+  Vein,
+} from "../game/tile";
 import { Mito } from "../index";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
@@ -123,7 +156,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
 
     if (this.target instanceof Cell) {
-      this.cellEffectsRenderer = new CellEffectsRenderer(this as unknown as TileRenderer<Cell>);
+      this.cellEffectsRenderer = new CellEffectsRenderer((this as unknown) as TileRenderer<Cell>);
     }
   }
 
@@ -295,7 +328,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     const duration = 0.5;
     const ease = reversed(easeCubic);
     return (dt) => {
-      const t = clamp(dt / duration * ((this.target as any).tempo || 1), 0, 1);
+      const t = clamp((dt / duration) * ((this.target as any).tempo || 1), 0, 1);
       const scale = map(ease(t), 0, 1, 1, 1.3);
       this.mesh.scale.setScalar(scale);
       return t >= 1;

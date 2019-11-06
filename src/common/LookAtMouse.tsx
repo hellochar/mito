@@ -1,6 +1,6 @@
 import React from "react";
 // import useMouse from "@rooks/use-mouse";
-import useBoundingclientrectRef from '@rooks/use-boundingclientrect-ref';
+import useBoundingclientrectRef from "@rooks/use-boundingclientrect-ref";
 
 import "./LookAtMouse.scss";
 import classNames from "classnames";
@@ -30,7 +30,7 @@ function LookAtMouse(props: JSX.IntrinsicElements["div"] & LookAtMouseProps) {
       const rotY = Math.atan((ox * 2) / z);
       const rotX = Math.atan(-(oy * 2) / z);
       const s: React.CSSProperties = {
-        transform: `perspective(525px) rotateX(${rotX}rad) rotateY(${rotY}rad)`
+        transform: `perspective(525px) rotateX(${rotX}rad) rotateY(${rotY}rad)`,
       };
       return s;
     } else {
@@ -40,7 +40,9 @@ function LookAtMouse(props: JSX.IntrinsicElements["div"] & LookAtMouseProps) {
 
   return (
     <div ref={ref} className={classNames("look-at-mouse", className)} {...restProps}>
-      <div className="look-at-mouse-transform" style={style}>{children}</div>
+      <div className="look-at-mouse-transform" style={style}>
+        {children}
+      </div>
     </div>
   );
 }

@@ -3,7 +3,6 @@ import { Constructor } from "./constructor";
 import { Interactable } from "./game/interactable";
 import { Cell } from "./game/tile";
 
-
 export interface ActionStill {
   type: "still";
 }

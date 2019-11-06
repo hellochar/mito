@@ -27,7 +27,7 @@ interface Trial {
 }
 class Experiment {
   trials: Trial[] = [];
-  constructor(public visitors: Visitors) { }
+  constructor(public visitors: Visitors) {}
   recordDataFor(world: World) {
     const trial = visit(world, this.visitors);
     this.trials.push(trial);
@@ -38,7 +38,7 @@ class Experiment {
 }
 
 class ExperimentSuite {
-  constructor(public experiments: Experiment[]) { }
+  constructor(public experiments: Experiment[]) {}
 
   recordDataFor(world: World) {
     for (const e of this.experiments) {
@@ -157,7 +157,7 @@ function TestStats() {
   React.useEffect(() => {
     var script = document.createElement("script");
     script.src = "https://cdn.plot.ly/plotly-latest.min.js";
-    script.addEventListener("load", function () {
+    script.addEventListener("load", function() {
       runTests(Temperate, "temperate");
       runTests(Rocky, "rocky");
       runTests(Desert, "desert");

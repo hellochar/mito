@@ -8,7 +8,6 @@ import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
 import { ResourceParticles } from "./resourceParticles";
 
-
 // we represent Resources as dots of certain colors.
 export class InventoryRenderer extends Renderer<Inventory> {
   static WaterParticles = lazy(

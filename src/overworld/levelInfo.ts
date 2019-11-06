@@ -2,7 +2,6 @@ import { createSimpleSchema, object, primitive, reference } from "serializr";
 import { Species, SpeciesSchema } from "../evolution/species";
 import { Environment, EnvironmentSchema } from "../sketches/mito/game/environment";
 
-
 export interface LevelInfo {
   height: number; // [-1 to 6], integers only
   temperature?: "cold" | "temperate" | "hot";
@@ -28,9 +27,11 @@ export const LevelInfoSchema = createSimpleSchema<LevelInfo>({
   visible: primitive(),
   environment: object(EnvironmentSchema),
 
-  flora: object(createSimpleSchema({
-    species: reference(SpeciesSchema),
-    mutationPointsPerEpoch: primitive(),
-    actionPoints: primitive(),
-  }))
+  flora: object(
+    createSimpleSchema({
+      species: reference(SpeciesSchema),
+      mutationPointsPerEpoch: primitive(),
+      actionPoints: primitive(),
+    })
+  ),
 });

@@ -4,11 +4,10 @@ import { GiDna1 } from "react-icons/gi";
 import DynamicNumber from "./DynamicNumber";
 import "./MP.scss";
 
-
 export type MPProps = JSX.IntrinsicElements["div"] & {
   amount: number;
   total?: number;
-}
+};
 
 const MP_NUMBER_FORMATTER = new Intl.NumberFormat(undefined, {
   maximumFractionDigits: 0,

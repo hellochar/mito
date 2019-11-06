@@ -1,5 +1,5 @@
 export interface Constructor<T> {
-  new(...args: any[]): T;
+  new (...args: any[]): T;
   displayName?: string;
 
   diffusionWater?: number;
