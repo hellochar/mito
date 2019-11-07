@@ -1,3 +1,4 @@
+import { PopulationAttempt } from "app";
 import testVignetteUrl from "assets/images/test-vignette.png";
 import { sleep } from "common/promise";
 import { easeExpIn } from "d3-ease";
@@ -17,11 +18,16 @@ const COLOR_SCALE_HEIGHT = scaleLinear<string, string>()
   .domain([-1, 0, 1, 5, 6])
   .range(["rgb(0, 60, 255)", "lightblue", "yellow", "orange"]);
 
+export interface DrawingContext {
+  populationAttempt?: PopulationAttempt;
+  highlightedHex?: HexTile;
+}
+
 export default class HexTileSprite {
   private vignettePositions?: Vector2[];
   private isHovered = false;
 
-  constructor(public tile: HexTile) {}
+  constructor(public tile: HexTile, public context: DrawingContext) {}
 
   public get zIndex() {
     let z = this.tile.cartesian.y;
@@ -29,6 +35,18 @@ export default class HexTileSprite {
       z += 1000;
     }
     return z;
+  }
+
+  public get isShadowed() {
+    if (this.context.highlightedHex != null) {
+      return this.context.highlightedHex !== this.tile;
+    } else if (this.context.populationAttempt != null) {
+      return (
+        this.context.populationAttempt.sourceHex !== this.tile && this.context.populationAttempt.targetHex !== this.tile
+      );
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -44,6 +62,11 @@ export default class HexTileSprite {
 
     c.lineWidth = (1 * scale) / 48;
 
+    if (this.isShadowed) {
+      c.globalAlpha = 0.2;
+    } else {
+      c.globalAlpha = 1;
+    }
     if (this.tile.info.visible) {
       // base color
       c.fillStyle = COLOR_SCALE_HEIGHT(this.tile.info.height);

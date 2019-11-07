@@ -5,7 +5,7 @@ import { Vector2 } from "three";
 import { getCameraPositionCenteredOn, getClickedHexCoords, pixelPosition } from "../hexMath";
 import { HexTile } from "../hexTile";
 import HexTileInfo from "./HexTileInfo";
-import HexTileSprite from "./hexTileSprite";
+import HexTileSprite, { DrawingContext } from "./hexTileSprite";
 import "./OverWorldMap.scss";
 import OverWorldPopover from "./OverWorldPopover";
 
@@ -15,7 +15,15 @@ interface OverWorldMapProps {
 }
 
 export interface CameraState {
+  /**
+   * Multiply cartesian hex coord values by scale to get pixel coordinates.
+   * Each hex is drawn with radius `scale`.
+   */
+
   scale: number;
+  /**
+   * dX and dY are pure pixel offsets.
+   */
   dX: number;
   dY: number;
 }
@@ -31,12 +39,24 @@ interface OverWorldMapState {
   frame: number;
 }
 
-export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWorldMapState> {
+export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWorldMapState> implements DrawingContext {
   static contextType = AppReducerContext;
 
   context!: React.ContextType<typeof AppReducerContext>;
 
   private hexTileSprites: Map<HexTile, HexTileSprite> = new Map();
+
+  private canvas: HTMLCanvasElement | null = null;
+
+  private rafId?: number;
+
+  get populationAttempt() {
+    return this.state.populationAttempt;
+  }
+
+  get highlightedHex() {
+    return this.state.highlightedHex;
+  }
 
   constructor(props: OverWorldMapProps, context: any) {
     super(props, context);
@@ -49,13 +69,10 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
       frame: 0,
     };
     for (const tile of overWorld) {
-      const sprite = new HexTileSprite(tile);
+      const sprite = new HexTileSprite(tile, this);
       this.hexTileSprites.set(tile, sprite);
     }
   }
-
-  private canvas: HTMLCanvasElement | null = null;
-  private rafId?: number;
 
   private handleCanvasRef = (ref: HTMLCanvasElement | null) => {
     this.canvas = ref;
@@ -324,6 +341,20 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   }
 
   public drawMigrationArrow(c: CanvasRenderingContext2D, source: HexTile, target: HexTile) {
+    const isShadowed = (() => {
+      if (this.highlightedHex != null) {
+        return true;
+      } else if (this.populationAttempt != null) {
+        return source !== this.populationAttempt.sourceHex || target !== this.populationAttempt.targetHex;
+      } else {
+        return false;
+      }
+    })();
+    if (isShadowed) {
+      c.globalAlpha = 0.2;
+    } else {
+      c.globalAlpha = 1;
+    }
     const { scale } = this.state.cameraState;
     c.shadowBlur = (3 * scale) / 48;
     c.shadowOffsetX = (4 * scale) / 48;
