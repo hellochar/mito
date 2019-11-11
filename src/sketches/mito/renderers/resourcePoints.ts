@@ -1,21 +1,22 @@
 import { BufferAttribute, BufferGeometry, Color, Points, ShaderMaterial, Texture } from "three";
+import glsl from "./glsl";
 
-export class ResourceParticles extends Points {
+export class ResourcePoints extends Points {
   static BUFFER_SIZE = 100000;
-  public geometry!: BufferGeometry;
-  public material!: ResourceParticleMaterial;
+  public geometry: BufferGeometry;
+  public material: ResourcePointsMaterial;
   static newGeometry() {
     const geometry = new BufferGeometry();
-    const positions = new Float32Array(ResourceParticles.BUFFER_SIZE * 3);
-    const sizes = new Float32Array(ResourceParticles.BUFFER_SIZE);
+    const positions = new Float32Array(ResourcePoints.BUFFER_SIZE * 3);
+    const sizes = new Float32Array(ResourcePoints.BUFFER_SIZE);
     geometry.addAttribute("position", new BufferAttribute(positions, 3).setDynamic(true));
     geometry.addAttribute("size", new BufferAttribute(sizes, 1).setDynamic(true));
     return geometry;
   }
-  constructor(params: MaterialParams) {
+  constructor(params: ResourcePointsParameters) {
     super();
-    this.geometry = ResourceParticles.newGeometry();
-    this.material = new ResourceParticleMaterial(params);
+    this.geometry = ResourcePoints.newGeometry();
+    this.material = new ResourcePointsMaterial(params);
     this.frustumCulled = false;
   }
   private index = 0;
@@ -36,17 +37,17 @@ export class ResourceParticles extends Points {
   }
 }
 
-export interface MaterialParams {
+export interface ResourcePointsParameters {
   opacity: number;
   color: Color;
   size: number;
   map?: Texture;
 }
 
-class ResourceParticleMaterial extends ShaderMaterial {
+class ResourcePointsMaterial extends ShaderMaterial {
   public map: Texture | undefined;
 
-  constructor(public params: MaterialParams) {
+  constructor(public params: ResourcePointsParameters) {
     super({
       uniforms: {
         opacity: { value: params.opacity },
@@ -62,11 +63,13 @@ class ResourceParticleMaterial extends ShaderMaterial {
     } as any);
 
     // OH MY GOD you can do this. You have to do this *AFTER* the super call!
+    // This hooks into threejs WebGLProgram's built-in properties that hooks up
+    // various named textures to glsl variables and #DEFINEs.
     this.map = params.map;
   }
 }
 
-const vertexShader = `
+const vertexShader = glsl`
 attribute float size;
 uniform float sizeGlobal;
 
@@ -77,7 +80,7 @@ void main() {
 }
 `;
 
-const fragmentShader = `
+const fragmentShader = glsl`
 uniform vec3 color;
 uniform sampler2D texture;
 uniform float opacity;
