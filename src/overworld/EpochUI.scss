@@ -22,6 +22,7 @@
 
   &.ready-to-advance {
     @include primary;
+    padding: 20px;
 
     .button-next-epoch {
       animation: pulsating 1.3s alternate-reverse infinite;
@@ -47,10 +48,12 @@
       @keyframes flip {
         0% {
           transform: rotate(0deg);
+          padding: 20px;
         }
 
         100% {
           transform: rotate(720deg);
+          padding: 0;
         }
       }
     }

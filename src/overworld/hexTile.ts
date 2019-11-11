@@ -22,17 +22,12 @@ export class HexTile {
   @serializable
   public j: number;
 
+  // Handle 0 arg constructor from serializr
   constructor(i?: number, j?: number) {
     this.i = i!;
     this.j = j!;
   }
 
-  get k() {
-    return -(this.i + this.j);
-  }
-  get magnitude() {
-    return Math.abs(this.i) + Math.abs(this.j) + Math.abs(this.k);
-  }
   get cartesian() {
     const { i, j } = this;
     // simplified version:
@@ -46,5 +41,17 @@ export class HexTile {
       x: 1.5 * i,
       y: 2 * C * j + C * i,
     };
+  }
+
+  get isHabitable() {
+    return this.info.height !== -1;
+  }
+
+  get k() {
+    return -(this.i + this.j);
+  }
+
+  get magnitude() {
+    return Math.abs(this.i) + Math.abs(this.j) + Math.abs(this.k);
   }
 }

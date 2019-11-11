@@ -4,15 +4,15 @@ import { Button } from "../../common/Button";
 import Expand from "../../common/Expand";
 import MP from "../../common/MP";
 import { HexTile } from "../hexTile";
-import "./HexTileInfo.scss";
+import "./HexInfo.scss";
 
-interface HexTileInfoProps {
+interface HexInfo {
   playSpecies: Species;
   tile: HexTile;
   onClickPlay: () => void;
 }
 
-function HexTileInfo({ playSpecies, tile, onClickPlay }: HexTileInfoProps) {
+function HexInfo({ playSpecies, tile, onClickPlay }: HexInfo) {
   const { height, flora } = tile.info;
 
   const playButtonElement =
@@ -41,24 +41,23 @@ function HexTileInfo({ playSpecies, tile, onClickPlay }: HexTileInfoProps) {
         </p>
         <p>Action Points: {flora.actionPoints}</p>
       </div>
-    ) : tile.info.height === -1 ? (
-      <h1>Deep Water</h1>
-    ) : (
+    ) : tile.isHabitable ? (
       <h1>Uninhabited</h1>
+    ) : (
+      <h1>Uninhabitable (Deep Water)</h1>
     );
 
   const stringifyInfo = { ...tile.info };
   delete stringifyInfo.flora;
 
-  const expand =
-    tile.info.height === -1 ? null : (
-      <Expand shrunkElements={<div className="details">Details</div>}>
-        <pre style={{ fontSize: "12px" }}>{JSON.stringify(stringifyInfo, null, 4)}</pre>
-      </Expand>
-    );
+  const expand = tile.isHabitable ? (
+    <Expand shrunkElements={<div className="details">Details</div>}>
+      <pre style={{ fontSize: "12px" }}>{JSON.stringify(stringifyInfo, null, 4)}</pre>
+    </Expand>
+  ) : null;
 
   return (
-    <div className="hex-tile-info-container">
+    <div className="hex-info-container">
       {header}
       {expand}
       {playButtonElement}
@@ -66,4 +65,4 @@ function HexTileInfo({ playSpecies, tile, onClickPlay }: HexTileInfoProps) {
   );
 }
 
-export default HexTileInfo;
+export default HexInfo;

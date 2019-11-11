@@ -4,7 +4,7 @@ import React from "react";
 import { Vector2 } from "three";
 import { getCameraPositionCenteredOn, getClickedHexCoords, pixelPosition } from "../hexMath";
 import { HexTile } from "../hexTile";
-import HexTileInfo from "./HexTileInfo";
+import HexInfo from "./HexInfo";
 import HexTileSprite, { DrawingContext } from "./hexTileSprite";
 import "./OverWorldMap.scss";
 import OverWorldPopover from "./OverWorldPopover";
@@ -378,7 +378,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     if (populationAttempt != null) {
       return (
         <OverWorldPopover camera={cameraState} tile={populationAttempt.targetHex}>
-          <HexTileInfo
+          <HexInfo
             playSpecies={populationAttempt.settlingSpecies}
             tile={populationAttempt.targetHex}
             onClickPlay={this.handleClickPlay}
@@ -388,7 +388,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     } else if (highlightedHex != null) {
       return (
         <OverWorldPopover camera={cameraState} tile={highlightedHex}>
-          <HexTileInfo
+          <HexInfo
             playSpecies={highlightedHex.info.flora!.species}
             tile={highlightedHex}
             onClickPlay={this.handleClickPlay}
