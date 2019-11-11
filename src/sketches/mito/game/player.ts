@@ -108,7 +108,7 @@ export class Player implements Steppable {
     }
     const actionSuccessful = this.attemptAction(this.action, dt);
     this.maybeMoveWithTransports(dt);
-    this.posFloat.lerp(this.pos, 0.05 * dt);
+    // this.posFloat.lerp(this.pos, 0.05 * dt);
     // if (this.dropWater) {
     //   this.attemptAction(ACTION_KEYMAP.q);
     // }
