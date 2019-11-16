@@ -85,7 +85,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private lastAudioValueTracker = 0;
   private pairsLines = new Object3D();
   private worldDomElement?: WorldDOMElement;
-  private growingRenderer?: InstancedTileRenderer;
   private cellEffectsRenderer?: CellEffectsRenderer;
   private animation = new AnimationController();
 
@@ -102,7 +101,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     super(target, scene, mito);
     this.instance = batchMesh.getBatchInstance(target);
     if (this.target instanceof GrowingCell) {
-      // this.growingRenderer = new InstancedTileRenderer(this.target.completedCell, this.scene, this.mito, batchMesh);
       this.scale.set(0.01, 0.01, 1);
     }
 
@@ -113,9 +111,9 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     if (this.target instanceof Cell) {
       // if it takes no turns to build, start it off small just for show
-      // if (!(this.target.constructor as Constructor<Cell>).turnsToBuild) {
-      //   this.scale.set(0.01, 0.01, 1);
-      // }
+      if (!(this.target.constructor as Constructor<Cell>).turnsToBuild) {
+        this.scale.set(0.01, 0.01, 1);
+      }
     }
     if (this.target instanceof Leaf || this.target instanceof Root) {
       this.audio = new Audio(this.mito.audioListener);
@@ -198,11 +196,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   updateSize() {
     if (this.target instanceof GrowingCell) {
-      // const s = this.steps(1.001 - this.target.timeRemaining / params.cellGestationTurns, 0.05);
       const s = 1 - this.target.timeRemaining / this.target.timeToBuild;
       lerp2(this.scale, { x: s, y: s }, 0.5);
-      // this.mesh.scale.x = s;
-      // this.mesh.scale.y = s;
     } else if (this.target instanceof Fruit) {
       const scale = map(this.target.getPercentMatured(), 0, 1, 0.2, 1);
       const targetScale = new Vector2(scale, scale);
@@ -424,15 +419,15 @@ export const materialInfoMapping = (() => {
     texturePosition: new Vector2(0, 0),
     color: new Color("white"),
   });
-  materials.set(GrowingCell, {
-    texturePosition: new Vector2(1, 1),
-    color: new Color("purple"),
-  });
   return materials;
 })();
 
-function getMaterialInfo(tile: Tile) {
-  return materialInfoMapping.get(tile.constructor as Constructor<Tile>)!;
+function getMaterialInfo(tile: Tile): MaterialInfo {
+  if (tile instanceof GrowingCell) {
+    return getMaterialInfo(tile.completedCell);
+  } else {
+    return materialInfoMapping.get(tile.constructor as Constructor<Tile>)!;
+  }
 }
 
 const AIR_COLORSCALE = [
