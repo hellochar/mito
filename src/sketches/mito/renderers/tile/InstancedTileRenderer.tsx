@@ -174,21 +174,15 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   updateVisibility(lightAmount: number) {
-    // visibility
+    // TODO handle visibility. Right now it kinda just "works" because
+    // we render black, and black is invisible. Instead we should actually
+    // *not* commit() if we don't see it.
     if (lightAmount > 0) {
-      // TODO handle visibility
-      // if (this.mesh.parent == null) {
-      //   this.scene.add(this.mesh);
-      // }
-
       if (this.inventoryRenderer != null) {
         // will not render without an update
         this.inventoryRenderer.update();
       }
     }
-    // else if (this.mesh.parent != null) {
-    //   this.scene.remove(this.mesh);
-    // }
   }
 
   updateSize() {
