@@ -8,7 +8,7 @@ import { PlayerRenderer } from "./PlayerRenderer";
 import { Renderer } from "./Renderer";
 import { InstancedTileRenderer } from "./tile/InstancedTileRenderer";
 import TileBatcher from "./tile/tileBatcher";
-import { TransportRenderer } from "./TransportRenderer";
+import { TransportRenderer } from "./tile/TransportRenderer";
 
 export class WorldRenderer extends Renderer<World> {
   public renderers = new Map<Entity, Renderer<Entity>>();
@@ -37,7 +37,7 @@ export class WorldRenderer extends Renderer<World> {
     if (object instanceof Player) {
       return new PlayerRenderer(object, this.scene, this.mito);
     } else if (object instanceof Transport) {
-      return new TransportRenderer(object, this.scene, this.mito);
+      return new TransportRenderer(object, this.scene, this.mito, this.tileBatcher);
     } else if (object instanceof Tile) {
       //  return new TileRenderer(object, this.scene, this.mito);
       return new InstancedTileRenderer(object, this.scene, this.mito, this.tileBatcher);
