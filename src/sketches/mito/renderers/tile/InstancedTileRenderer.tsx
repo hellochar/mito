@@ -117,8 +117,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     if (this.target instanceof Leaf || this.target instanceof Root) {
       this.audio = new Audio(this.mito.audioListener);
-      // TODO do audio
-      // this.mesh.add(this.audio);
     }
 
     if (this.target instanceof Fruit) {
