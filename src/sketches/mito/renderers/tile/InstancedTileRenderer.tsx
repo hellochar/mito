@@ -40,9 +40,9 @@ import {
   Vector2,
   Vector3,
 } from "three";
-import { CellEffectsRenderer } from "../CellEffectsRenderer";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";
+import { CellEffectsRenderer } from "./CellEffectsRenderer";
 import TileBatcher, { BatchInstance } from "./tileBatcher";
 
 type Animation = (dt: number) => boolean;

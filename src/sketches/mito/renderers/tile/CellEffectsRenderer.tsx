@@ -1,9 +1,9 @@
 import { lerp, map } from "math";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
-import Mito from "..";
-import { Cell, CellEffect, FreezeEffect } from "../game/tile";
-import { textureFromSpritesheet } from "../spritesheet";
-import { Renderer } from "./Renderer";
+import Mito from "../..";
+import { Cell, CellEffect, FreezeEffect } from "../../game/tile";
+import { textureFromSpritesheet } from "../../spritesheet";
+import { Renderer } from "../Renderer";
 
 export class CellEffectsRenderer extends Renderer<Cell> {
   private renderers: Renderer<CellEffect>[] = [];
