@@ -15,7 +15,7 @@ import { isInteractable } from "./game/interactable";
 import { Cell, Fruit, Leaf, Root, Tile, Tissue, Transport, Vein } from "./game/tile";
 import { ACTION_KEYMAP, CELL_BAR_KEYS, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
-import { TileRenderer } from "./renderers/TileRenderer";
+import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
 import { GameStack, Hover, HUD } from "./ui";
@@ -255,10 +255,10 @@ Number of Programs: ${this.renderer.info.programs!.length}
     // this.world.player.dropSugar = this.keyMap.has("e");
     this.world.step(dt);
 
-    // if (this.vignetteCapturer.isTimeForNewCapture()) {
-    //   const v = this.vignetteCapturer.capture();
-    //   this.vignettes.push(v);
-    // }
+    if (this.vignetteCapturer.isTimeForNewCapture()) {
+      const v = this.vignetteCapturer.capture();
+      this.vignettes.push(v);
+    }
 
     if (this.tutorialRef) {
       this.tutorialRef.setState({ time: this.world.time });
@@ -361,7 +361,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     this.highlightedTile = this.getHighlightedTile();
     // console.log(this.highlightedTile!.pos);
     if (this.highlightedTile != null) {
-      (this.worldRenderer.getOrCreateRenderer(this.highlightedTile) as TileRenderer).updateHover();
+      (this.worldRenderer.getOrCreateRenderer(this.highlightedTile) as InstancedTileRenderer).updateHover();
     }
 
     const mouseNorm = this.getCameraNormCoordinates(this.mouse.x, this.mouse.y);

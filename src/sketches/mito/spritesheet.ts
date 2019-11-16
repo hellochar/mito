@@ -17,7 +17,7 @@ export const SPRITESHEET = lazy(() =>
 
 export const fruitTexture = new THREE.TextureLoader().load(fruitSrc);
 
-const cache: { [key: string]: THREE.Texture } = {};
+export const cache: { [key: string]: THREE.Texture } = {};
 // x, y are spritesheet coordinates, starting top-left and going down/right
 export function textureFromSpritesheet(x: number, y: number, backgroundColor = "white") {
   x = Math.floor(x);

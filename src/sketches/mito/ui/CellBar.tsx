@@ -1,12 +1,10 @@
+import classNames from "classnames";
 import * as React from "react";
-
 import { Constructor } from "../constructor";
 import { Cell } from "../game/tile";
-import { materialMapping } from "../renderers/TileRenderer";
-
+import { materialInfoMapping } from "../renderers/tile/InstancedTileRenderer";
+import { spritesheetLoaded, textureFromSpritesheet } from "../spritesheet";
 import "./CellBar.scss";
-import classNames from "classnames";
-import { spritesheetLoaded } from "../spritesheet";
 
 export interface CellBarProps {
   bar: Constructor<Cell>[];
@@ -41,9 +39,10 @@ export interface CellBarItemProps {
 }
 
 function CellBarItem({ type, hotkey, isSelected, onClick, spritesheetLoaded }: CellBarItemProps) {
+  const material = materialInfoMapping.get(type)!;
+  const texture = textureFromSpritesheet(material.texturePosition.x, material.texturePosition.y);
   const style: React.CSSProperties = React.useMemo(() => {
-    const material = materialMapping().get(type)!;
-    const image = material.map!.image;
+    const image = texture.image;
     const color = material.color.getStyle();
     const url = (() => {
       if (image != null) {
@@ -52,7 +51,7 @@ function CellBarItem({ type, hotkey, isSelected, onClick, spritesheetLoaded }: C
         } else if (image instanceof Image) {
           return image.src;
         } else {
-          return "";
+          throw new Error("image is" + image);
         }
       } else {
         return "";
@@ -62,7 +61,7 @@ function CellBarItem({ type, hotkey, isSelected, onClick, spritesheetLoaded }: C
     return {
       backgroundImage,
     };
-  }, [spritesheetLoaded, type]);
+  }, [material.color, spritesheetLoaded, texture]);
   return (
     <div className={classNames("cell-bar-item", { selected: isSelected })}>
       <div className="cell-bar-item-icon" onClick={onClick} style={style}>

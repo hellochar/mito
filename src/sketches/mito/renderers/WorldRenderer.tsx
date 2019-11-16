@@ -14,10 +14,12 @@ export class WorldRenderer extends Renderer<World> {
   public renderers = new Map<Entity, Renderer<Entity>>();
   public readonly tileBatcher: TileBatcher;
 
-  constructor(target: World, scene: Scene, mito: Mito) {
+  constructor(target: World, scene: Scene, mito: Mito, renderResources = true) {
     super(target, scene, mito);
-    scene.add(InventoryRenderer.WaterParticles());
-    scene.add(InventoryRenderer.SugarParticles());
+    if (renderResources) {
+      scene.add(InventoryRenderer.WaterParticles());
+      scene.add(InventoryRenderer.SugarParticles());
+    }
     this.tileBatcher = new TileBatcher(this.target);
     scene.add(this.tileBatcher.mesh);
   }
@@ -73,6 +75,7 @@ export class WorldRenderer extends Renderer<World> {
     InventoryRenderer.endFrame();
     this.tileBatcher.endFrame();
   }
+
   destroy(): void {
     throw new Error("Method not implemented.");
   }
