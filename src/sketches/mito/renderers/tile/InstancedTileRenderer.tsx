@@ -273,6 +273,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   updateHover() {
     this.scene.add(this.pairsLines);
+    this.pairsLines.position.set(this.target.pos.x, this.target.pos.y, 1);
     if (hasTilePairs(this.target)) {
       const pairColor = this.target instanceof Leaf ? 0xffc90e : new Color("rgb(9, 12, 255)").getHex();
       const pairs = this.target.tilePairs;
