@@ -2,7 +2,7 @@ import { map } from "math";
 import Mito from "sketches/mito";
 import { TIME_PER_SEASON } from "sketches/mito/game";
 import { GrowingCell, Tile } from "sketches/mito/game/tile";
-import { createRendererFor } from "sketches/mito/renderers/WorldRenderer";
+// import { createRendererFor } from "sketches/mito/renderers/WorldRenderer";
 import { OrthographicCamera, Scene, Vector2, WebGLRenderTarget } from "three";
 
 /**
@@ -43,7 +43,7 @@ class VignetteCapturer {
     // add all renderers to a scene
     const scene = new Scene();
     const tileRenderers = picturesqueCells.map((c) => {
-      const renderer = createRendererFor(c, scene, this.mito);
+      const renderer = this.mito.worldRenderer.createRendererFor(c);
       renderer.update();
       return renderer;
     });

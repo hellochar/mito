@@ -6,37 +6,43 @@ import { Tile, Transport } from "../game/tile";
 import { InventoryRenderer } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";
 import { Renderer } from "./Renderer";
-import { TileRenderer } from "./TileRenderer";
+import { InstancedTileRenderer } from "./tile/InstancedTileRenderer";
+import TileBatcher from "./tile/tileBatcher";
 import { TransportRenderer } from "./TransportRenderer";
-
-export function createRendererFor<E extends Entity>(object: E, scene: Scene, mito: Mito): Renderer<Entity> {
-  if (object instanceof Player) {
-    return new PlayerRenderer(object, scene, mito);
-  } else if (object instanceof Transport) {
-    return new TransportRenderer(object, scene, mito);
-  } else if (object instanceof Tile) {
-    return new TileRenderer(object, scene, mito);
-  } else {
-    throw new Error(`Couldn't find renderer for ${object}`);
-  }
-}
 
 export class WorldRenderer extends Renderer<World> {
   public renderers = new Map<Entity, Renderer<Entity>>();
+  public readonly tileBatcher: TileBatcher;
+
   constructor(target: World, scene: Scene, mito: Mito) {
     super(target, scene, mito);
     scene.add(InventoryRenderer.WaterParticles());
     scene.add(InventoryRenderer.SugarParticles());
+    this.tileBatcher = new TileBatcher(this.target);
+    scene.add(this.tileBatcher.mesh);
   }
 
   public getOrCreateRenderer(entity: Entity) {
     const renderer = this.renderers.get(entity);
     if (renderer == null) {
-      const created = createRendererFor(entity, this.scene, this.mito);
+      const created = this.createRendererFor(entity);
       this.renderers.set(entity, created);
       return created;
     } else {
       return renderer;
+    }
+  }
+
+  public createRendererFor<E extends Entity>(object: E): Renderer<Entity> {
+    if (object instanceof Player) {
+      return new PlayerRenderer(object, this.scene, this.mito);
+    } else if (object instanceof Transport) {
+      return new TransportRenderer(object, this.scene, this.mito);
+    } else if (object instanceof Tile) {
+      //  return new TileRenderer(object, this.scene, this.mito);
+      return new InstancedTileRenderer(object, this.scene, this.mito, this.tileBatcher);
+    } else {
+      throw new Error(`Couldn't find renderer for ${object}`);
     }
   }
 
@@ -65,6 +71,9 @@ export class WorldRenderer extends Renderer<World> {
       renderer.update();
     });
     InventoryRenderer.endFrame();
+    this.tileBatcher.centers.needsUpdate = true;
+    this.tileBatcher.colors.needsUpdate = true;
+    this.tileBatcher.scales.needsUpdate = true;
   }
   destroy(): void {
     throw new Error("Method not implemented.");

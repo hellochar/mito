@@ -1,12 +1,11 @@
+import fruitSrc from "assets/images/fruit.png";
+import roguelikeSheet_transparentSrc from "assets/images/roguelikeSheet_transparent.png";
 import * as THREE from "three";
 import lazy from "../../common/lazy";
 
-import roguelikeSheet_transparentSrc from "assets/images/roguelikeSheet_transparent.png";
-import fruitSrc from "assets/images/fruit.png";
-
 const spriteSize = 16; // 16x16 sprites
 export let spritesheetLoaded = false;
-const SPRITESHEET = lazy(() =>
+export const SPRITESHEET = lazy(() =>
   new THREE.TextureLoader().load(roguelikeSheet_transparentSrc, () => {
     SPRITESHEET().dispatchEvent({ type: "update" });
     spritesheetLoaded = true;

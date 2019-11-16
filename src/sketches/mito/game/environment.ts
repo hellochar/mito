@@ -27,9 +27,9 @@ export const EnvironmentSchema = createSimpleSchema<Environment>({
 export type FillFunction = (pos: Vector2, world: World) => Tile | undefined;
 
 // TODO put this somewhere
-const noiseWater = new Noise();
-const noiseRock = new Noise();
-const noiseHeight = new Noise();
+const noiseWater = new Noise(2);
+const noiseRock = new Noise(2);
+const noiseHeight = new Noise(2);
 
 export const FILL_FUNCTIONS = {
   Temperate: [

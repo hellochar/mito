@@ -102,7 +102,7 @@ export class Mito extends ISketch {
     return this.cellBar[this.cellBarIndex];
   }
 
-  private worldRenderer: WorldRenderer;
+  public readonly worldRenderer: WorldRenderer;
   private vignetteCapturer = new VignetteCapturer(this);
   private vignettes: HTMLCanvasElement[] = [];
 
@@ -255,10 +255,10 @@ Number of Programs: ${this.renderer.info.programs!.length}
     // this.world.player.dropSugar = this.keyMap.has("e");
     this.world.step(dt);
 
-    if (this.vignetteCapturer.isTimeForNewCapture()) {
-      const v = this.vignetteCapturer.capture();
-      this.vignettes.push(v);
-    }
+    // if (this.vignetteCapturer.isTimeForNewCapture()) {
+    //   const v = this.vignetteCapturer.capture();
+    //   this.vignettes.push(v);
+    // }
 
     if (this.tutorialRef) {
       this.tutorialRef.setState({ time: this.world.time });
@@ -359,6 +359,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     this.worldRenderer.update();
 
     this.highlightedTile = this.getHighlightedTile();
+    // console.log(this.highlightedTile!.pos);
     if (this.highlightedTile != null) {
       (this.worldRenderer.getOrCreateRenderer(this.highlightedTile) as TileRenderer).updateHover();
     }
