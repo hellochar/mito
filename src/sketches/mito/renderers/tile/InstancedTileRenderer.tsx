@@ -365,6 +365,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (this.cellEffectsRenderer != null) {
       this.cellEffectsRenderer.destroy();
     }
+    this.scene.remove(this.pairsLines);
   }
 }
 
