@@ -142,8 +142,9 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.cellEffectsRenderer = new CellEffectsRenderer(this.target, this.scene, this.mito);
     }
 
-    // TODO fix this clobbering with GrowingCell
-    this.commit();
+    if (this.target.darkness < 1) {
+      this.commit();
+    }
   }
 
   commit() {
@@ -158,34 +159,34 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   update() {
-    const lightAmount = this.target.lightAmount();
-    this.updateVisibility(lightAmount);
-    this.updateSize();
-    this.updateColor(lightAmount);
+    if (this.target.darkness < 1) {
+      this.respondToEvents();
 
-    this.respondToEvents();
+      this.updateScale();
+      this.updateColor();
 
+      this.updateInventory();
+      this.maybeUpdateCellEffectsRenderer();
+
+      this.animation.update(Ticker.now / 1000);
+      this.commit();
+    }
+  }
+
+  maybeUpdateCellEffectsRenderer() {
     if (this.cellEffectsRenderer != null) {
       this.cellEffectsRenderer.update();
     }
-
-    this.animation.update(Ticker.now / 1000);
-    this.commit();
   }
 
-  updateVisibility(lightAmount: number) {
-    // TODO handle visibility. Right now it kinda just "works" because
-    // we render black, and black is invisible. Instead we should actually
-    // *not* commit() if we don't see it.
-    if (lightAmount > 0) {
-      if (this.inventoryRenderer != null) {
-        // will not render without an update
-        this.inventoryRenderer.update();
-      }
+  updateInventory() {
+    if (this.inventoryRenderer != null) {
+      // will not render without an update
+      this.inventoryRenderer.update();
     }
   }
 
-  updateSize() {
+  updateScale() {
     if (this.target instanceof GrowingCell) {
       const s = 1 - this.target.timeRemaining / this.target.timeToBuild;
       lerp2(this.scale, { x: s, y: s }, 0.5);
@@ -198,7 +199,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
   }
 
-  updateColor(lightAmount: number) {
+  updateColor() {
+    const lightAmount = this.target.lightAmount();
     if (this.target instanceof Air) {
       const colorIndex = Math.max(0, map(this.target.co2(), 1 / 6, 1.001, 0, AIR_COLORSCALE.length - 1));
       const startColorIndex = Math.floor(colorIndex);
