@@ -71,9 +71,7 @@ export class WorldRenderer extends Renderer<World> {
       renderer.update();
     });
     InventoryRenderer.endFrame();
-    this.tileBatcher.centers.needsUpdate = true;
-    this.tileBatcher.colors.needsUpdate = true;
-    this.tileBatcher.scales.needsUpdate = true;
+    this.tileBatcher.endFrame();
   }
   destroy(): void {
     throw new Error("Method not implemented.");

@@ -157,6 +157,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     } else {
       this.instance.commitCenter(this.target.pos.x, this.target.pos.y, 0);
     }
+    this.instance.commitTexturePosition(this.materialInfo.texturePosition);
     this.instance.commitColor(this.color);
     this.instance.commitScale(this.scale);
   }
@@ -381,12 +382,15 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 interface MaterialInfo {
   color: Color;
   // TODO implement texturePosition
-  texturePosition?: Vector2;
+  texturePosition: Vector2;
 }
 
 export const materialInfoMapping = (() => {
   const materials = new Map<Constructor<Tile>, MaterialInfo>();
-  materials.set(Air, { color: new Color("white") });
+  materials.set(Air, {
+    texturePosition: new Vector2(0, 0),
+    color: new Color("white"),
+  });
   materials.set(Soil, {
     texturePosition: new Vector2(8, 11),
     color: new Color("rgb(112, 89, 44)"),

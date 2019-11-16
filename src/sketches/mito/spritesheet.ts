@@ -6,7 +6,10 @@ import lazy from "../../common/lazy";
 const spriteSize = 16; // 16x16 sprites
 export let spritesheetLoaded = false;
 export const SPRITESHEET = lazy(() =>
-  new THREE.TextureLoader().load(roguelikeSheet_transparentSrc, () => {
+  new THREE.TextureLoader().load(roguelikeSheet_transparentSrc, (texture) => {
+    texture.magFilter = THREE.NearestFilter;
+    texture.flipY = true;
+    texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
     SPRITESHEET().dispatchEvent({ type: "update" });
     spritesheetLoaded = true;
   })
