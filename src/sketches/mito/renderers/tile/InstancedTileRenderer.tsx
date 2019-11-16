@@ -138,10 +138,9 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       );
     }
 
-    // TODO do cell effects
-    // if (this.target instanceof Cell) {
-    //   this.cellEffectsRenderer = new CellEffectsRenderer((this as unknown) as InstancedTileRenderer<Cell>);
-    // }
+    if (this.target instanceof Cell) {
+      this.cellEffectsRenderer = new CellEffectsRenderer(this.target, this.scene, this.mito);
+    }
 
     // TODO fix this clobbering with GrowingCell
     this.commit();

@@ -155,9 +155,9 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
       );
     }
 
-    if (this.target instanceof Cell) {
-      this.cellEffectsRenderer = new CellEffectsRenderer((this as unknown) as TileRenderer<Cell>);
-    }
+    // if (this.target instanceof Cell) {
+    //   this.cellEffectsRenderer = new CellEffectsRenderer((this as unknown) as TileRenderer<Cell>);
+    // }
   }
 
   steps(x: number, size: number) {
