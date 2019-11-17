@@ -118,7 +118,7 @@ export const Temperate = () => {
     evaporationRate: 0.0002,
     evaporationBottom: 0.6,
     floorCo2: 0.3333,
-    waterGravityPerTurn: 0.005,
+    waterGravityPerTurn: 0.001,
     fill: "Temperate",
   };
   return environment;

@@ -65,10 +65,6 @@ export class Inventory {
     if (other === this) {
       throw new Error("shouldn't give to self");
     }
-    // special case - don't emit events or anything since nothing actually changed
-    if (amountWater === 0 && amountSugar === 0) {
-      return { water: 0, sugar: 0 };
-    }
     // to check:
     // 1) we have enough water and sugar
     //      if we don't, cap water and sugar to the amount available
@@ -76,6 +72,7 @@ export class Inventory {
     //      if it doesn't, scale down to the amount that is available
     let water = Math.min(amountWater, this.water);
     let sugar = Math.min(amountSugar, this.sugar);
+
     const spaceNeeded = fpref(water + sugar);
     const spaceAvailable = other.space();
     if (spaceNeeded > spaceAvailable) {
@@ -84,23 +81,25 @@ export class Inventory {
       water = Math.floor((water / spaceNeeded) * spaceAvailable);
       sugar = Math.floor((sugar / spaceNeeded) * spaceAvailable);
     }
-    this.change(-water, -sugar);
-    other.change(water, sugar);
-    if (this.events) {
-      this.events.emit("give", other, water, sugar);
-    }
-    if (other.events) {
-      other.events.emit("get", this, water, sugar);
+    if (water !== 0 || sugar !== 0) {
+      this.change(-water, -sugar);
+      other.change(water, sugar);
+      if (this.events) {
+        this.events.emit("give", other, water, sugar);
+      }
+      if (other.events) {
+        other.events.emit("get", this, water, sugar);
+      }
     }
     return { water, sugar };
   }
 
   private events?: EventEmitter;
-  public on(name: "give" | "get", fn: (other: Inventory, water: number, sugar: number) => void) {
+  public on(name: "give" | "get" | "add", fn: (...args: any[]) => void) {
     this.events = this.events || new EventEmitter();
     this.events.on(name, fn);
   }
-  public off(name: "give" | "get", fn: (...args: any[]) => any) {
+  public off(name: "give" | "get" | "add", fn: (...args: any[]) => any) {
     this.events = this.events || new EventEmitter();
     this.events.off(name, fn);
   }
@@ -114,6 +113,9 @@ export class Inventory {
       sugar = (sugar / spaceNeeded) * spaceAvailable;
     }
     this.change(water, sugar);
+    if (this.events) {
+      this.events.emit("add", water, sugar);
+    }
   }
 
   private change(water: number, sugar: number) {

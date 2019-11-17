@@ -2,6 +2,7 @@ import Ticker from "global/ticker";
 import { Color, Scene, Vector2 } from "three";
 import lazy from "../../../common/lazy";
 import { map } from "../../../math";
+import { Cell, Tile } from "../game/tile";
 import { Mito } from "../index";
 import { Inventory } from "../inventory";
 import { textureFromSpritesheet } from "../spritesheet";
@@ -12,43 +13,21 @@ import { ResourcePoints } from "./resourcePoints";
 export class InventoryRenderer extends Renderer<Inventory> {
   static WaterParticles = lazy(
     () =>
-      new ResourcePoints(
-        {
-          color: new Color("rgb(9, 12, 255)"),
-          size: 45,
-          opacity: 0.75,
-        }
-        // new PointsMaterial({
-        //     // map: textureFromSpritesheet(0, 1),
-        //     transparent: true,
-        //     opacity: 0.75,
-        //     // color: new Color("rgb(12, 41, 255)"),
-        //     // color: new Color("rgb(29, 42, 255)"),
-        //     color: new Color("rgb(9, 12, 255)"),
-        //     size: .12,
-        //     side: DoubleSide,
-        // })
-      )
+      new ResourcePoints({
+        color: new Color("rgb(9, 12, 255)"),
+        size: 45,
+        opacity: 0.75,
+      })
   );
 
   static SugarParticles = lazy(
     () =>
-      new ResourcePoints(
-        {
-          color: new Color("yellow"),
-          size: 85,
-          opacity: 0.9,
-          map: textureFromSpritesheet(42, 12, "transparent"),
-        }
-        // new PointsMaterial({
-        //     map: textureFromSpritesheet(42, 12, "transparent"),
-        //     transparent: true,
-        //     opacity: 0.9,
-        //     color: "yellow",
-        //     size: .12,
-        //     side: DoubleSide,
-        // })
-      )
+      new ResourcePoints({
+        color: new Color("yellow"),
+        size: 85,
+        opacity: 0.9,
+        map: textureFromSpritesheet(42, 12, "transparent"),
+      })
   );
 
   static startFrame() {
@@ -60,91 +39,103 @@ export class InventoryRenderer extends Renderer<Inventory> {
     InventoryRenderer.WaterParticles().endFrame();
     InventoryRenderer.SugarParticles().endFrame();
   }
-  // static geometry = new PlaneBufferGeometry(1, 1);
-  // static waterMaterial = new MeshBasicMaterial({
-  //     // map: textureFromSpritesheet(0, 1),
-  //     transparent: true,
-  //     opacity: 0.75,
-  //     // color: new Color("rgb(12, 41, 255)"),
-  //     // color: new Color("rgb(29, 42, 255)"),
-  //     color: new Color("rgb(9, 12, 255)"),
-  //     side: DoubleSide,
-  // });
-  // static sugarMaterial = lazy(() => new MeshBasicMaterial({
-  //     map: textureFromSpritesheet(42, 12, "transparent"),
-  //     transparent: true,
-  //     opacity: 0.9,
-  //     color: "yellow",
-  //     // color: new Color("yellow"),
-  //     side: DoubleSide,
-  // }));
+
   public animationOffset = 0;
-  // public object = new Object3D();
   public waters: Vector2[] = [];
   public sugars: Vector2[] = [];
+
   constructor(target: Inventory, scene: Scene, mito: Mito) {
     super(target, scene, mito);
     target.on("get", this.handleGetResources);
     target.on("give", this.handleGiveResources);
-    // this.object.name = "InventoryRenderer Object";
-    // this.object.position.z = 1;
-    // this.object.updateMatrix();
-    // this.object.matrixAutoUpdate = false;
-    for (let i = 0; i < this.target.water; i++) {
-      this.waters.push(newParticle());
+    target.on("add", this.handleAddResources);
+
+    this.updateSugarAndWaterParticles();
+  }
+
+  private handleGetResources = (giver: Inventory) => {
+    this.updateSugarAndWaterParticles(giver);
+    if (this.target.carrier instanceof Cell) {
+      console.log(
+        "getResources",
+        this.target.water,
+        "(" + this.waters.length + ")",
+        this.target.sugar,
+        "(" + this.sugars.length + ")"
+      );
     }
-    for (let i = 0; i < this.target.sugar; i++) {
-      this.sugars.push(newParticle());
+  };
+
+  private verifyArrayLengths() {
+    if (this.waters.length !== Math.ceil(this.target.water)) {
+      throw new Error(
+        "water array lengths mismatch: " + this.waters.length + " should be " + Math.ceil(this.target.water)
+      );
+    }
+    if (this.sugars.length !== Math.ceil(this.target.sugar)) {
+      throw new Error(
+        "sugar array lengths mismatch: " + this.sugars.length + " should be " + Math.ceil(this.target.sugar)
+      );
     }
   }
-  private handleGetResources = (giver: Inventory) => {
-    let wantedMeshes = Math.ceil(this.target.water);
-    while (this.waters.length < wantedMeshes) {
-      const v = giver.carrier.pos.clone().sub(this.target.carrier.pos);
-      v.x += (Math.random() - 0.5) * 0.1;
-      v.y += (Math.random() - 0.5) * 0.1;
-      this.waters.push(v);
-    }
-
-    wantedMeshes = Math.ceil(this.target.sugar);
-    while (this.sugars.length < wantedMeshes) {
-      const v = giver.carrier.pos.clone().sub(this.target.carrier.pos);
-      v.x += (Math.random() - 0.5) * 0.1;
-      v.y += (Math.random() - 0.5) * 0.1;
-      this.sugars.push(v);
-    }
-  };
 
   private handleGiveResources = () => {
-    let wantedMeshes = Math.ceil(this.target.water);
-    if (this.waters.length > wantedMeshes) {
-      this.waters.splice(wantedMeshes, this.waters.length - wantedMeshes);
-    }
-
-    wantedMeshes = Math.ceil(this.target.sugar);
-    if (this.sugars.length > wantedMeshes) {
-      this.sugars.splice(wantedMeshes, this.sugars.length - wantedMeshes);
-    }
+    this.updateSugarAndWaterParticles();
   };
 
-  private updateNumParticles(resources: number) {
-    // while (resourceArray.length < wantedMeshes) {
-    //     this.newParticle(resourceArray);
-    // }
-    // if (resourceArray.length > wantedMeshes) {
-    //     resourceArray.splice(wantedMeshes, resourceArray.length - wantedMeshes);
-    // }
+  private handleAddResources = (water: number, sugar: number) => {
+    if (Math.round(water) !== water && sugar !== 0) {
+      console.log("added resources", water, sugar);
+    }
+    this.updateSugarAndWaterParticles();
+  };
+
+  private updateSugarAndWaterParticles(giver?: Inventory) {
+    this.updateParticlesArray(this.waters, this.target.water, giver);
+    this.updateParticlesArray(this.sugars, this.target.sugar, giver);
+    this.verifyArrayLengths();
+  }
+
+  private updateParticlesArray(particles: Vector2[], resource: number, giver?: Inventory) {
+    const wantedParticles = Math.ceil(resource);
+    while (particles.length < wantedParticles) {
+      const v = giver != null ? giver.carrier.pos.clone().sub(this.target.carrier.pos) : newParticle();
+      v.x += (Math.random() - 0.5) * 0.1;
+      v.y += (Math.random() - 0.5) * 0.1;
+      particles.push(v);
+    }
+    if (particles.length > wantedParticles) {
+      // delete from the start
+      particles.splice(0, particles.length - wantedParticles);
+    }
+    if (particles.length !== wantedParticles) {
+      throw new Error("array lengths mismatch: " + particles.length + " should be " + wantedParticles);
+    }
+    return particles;
   }
 
   private commitParticles(particles: ResourcePoints, resource: number, resourceArray: Vector2[]) {
-    if (resourceArray.length > 0) {
-      for (let i = 0; i < resourceArray.length - 1; i++) {
-        const p = resourceArray[i];
-        particles.commit(p.x + this.target.carrier.pos.x, p.y + this.target.carrier.pos.y, 10, 1);
-        resource -= 1;
-      }
+    this.verifyArrayLengths();
+    while (resourceArray.length < Math.ceil(resource)) {
+      const pos = this.target.carrier.pos;
+      console.warn(
+        "(" + pos.x + "," + pos.y + ") - " + (this.target.carrier as Tile).world.time,
+        "commitParticles caught resource mismatch",
+        resource,
+        "vs",
+        resourceArray.length,
+        resourceArray === this.waters ? "water" : "sugar"
+      );
+      resourceArray.push(newParticle());
+    }
+    const numFullSizedParticles = Math.floor(resource);
+    for (let i = 0; i < numFullSizedParticles; i++) {
+      const p = resourceArray[i];
+      particles.commit(p.x + this.target.carrier.pos.x, p.y + this.target.carrier.pos.y, 10, 1);
+    }
+    const fract = resource - numFullSizedParticles;
+    if (fract > 0) {
       const p = resourceArray[resourceArray.length - 1];
-      const fract = resource;
       particles.commit(
         p.x + this.target.carrier.pos.x,
         p.y + this.target.carrier.pos.y,
@@ -199,17 +190,15 @@ export class InventoryRenderer extends Renderer<Inventory> {
   }
 
   update() {
-    this.updateNumParticles(this.target.water);
-    this.updateNumParticles(this.target.sugar);
     this.simulateResourcePositions();
     this.commitParticles(InventoryRenderer.WaterParticles(), this.target.water, this.waters);
     this.commitParticles(InventoryRenderer.SugarParticles(), this.target.sugar, this.sugars);
   }
 
   destroy() {
-    // no-op
     this.target.off("get", this.handleGetResources);
     this.target.off("give", this.handleGiveResources);
+    this.target.off("add", this.handleAddResources);
   }
 }
 

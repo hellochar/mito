@@ -1,3 +1,4 @@
+import { mutateRandomNewGene } from "evolution/mutation";
 import { newBaseSpecies } from "evolution/species";
 import { OverWorld } from "overworld/overWorld";
 import React, { useEffect } from "react";
@@ -39,7 +40,10 @@ export const LocalForageStateProvider: React.FC<{ loadingComponent: JSX.Element 
 export function newInitialAppState(): AppState {
   const overWorld = OverWorld.generateRectangle(100, 50);
   const rootSpecies = newBaseSpecies("plantum originus");
-  // const activeLevel = overWorld.getStartTile();
+  for (let i = 0; i < 8; i++) {
+    rootSpecies.genes.push(mutateRandomNewGene());
+  }
+  const activeLevel = overWorld.getStartTile();
   // rootSpecies.freeMutationPoints = 25;
   // const s3 = newBaseSpecies("s3");
   // s3.descendants = [newBaseSpecies("ya"), newBaseSpecies("no"), newBaseSpecies("whoa")];
@@ -49,6 +53,10 @@ export function newInitialAppState(): AppState {
   return {
     overWorld,
     rootSpecies,
+    activePopulationAttempt: {
+      settlingSpecies: rootSpecies,
+      targetHex: activeLevel,
+    },
     epoch: 0,
   };
 }

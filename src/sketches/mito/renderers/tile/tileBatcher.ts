@@ -232,7 +232,6 @@ export class BatchInstance {
   }
 
   destroy() {
-    console.log("freeing instance", this.index);
     this.commitColor(BLACK);
     this.commitScale(ZERO);
     this.inUse = false;

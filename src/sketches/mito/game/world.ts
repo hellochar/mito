@@ -69,8 +69,9 @@ export class World {
     };
     this.species = species;
     this.traits = getTraits(this.species.genes);
-    Cell.diffusionWater = traitMod(this.traits.diffuseWater, params.cellDiffusionWater, 2);
-    Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, params.cellDiffusionSugar, 2);
+    // Cell.diffusionWater = traitMod(this.traits.diffuseWater, params.cellDiffusionWater, 2);
+    // Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, params.cellDiffusionSugar, 2);
+    Cell.diffusionWater = Cell.diffusionSugar = 0;
     Cell.turnsToBuild = Math.floor(traitMod(this.traits.buildTime, params.cellGestationTurns, 1 / 2));
     this.player = new Player(new Vector2(this.width / 2, this.height / 2), this);
     this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) =>
