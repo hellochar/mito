@@ -2,7 +2,6 @@ import Ticker from "global/ticker";
 import { Color, Scene, Vector2 } from "three";
 import lazy from "../../../common/lazy";
 import { map } from "../../../math";
-import { Cell, Tile } from "../game/tile";
 import { Mito } from "../index";
 import { Inventory } from "../inventory";
 import { textureFromSpritesheet } from "../spritesheet";
@@ -55,15 +54,6 @@ export class InventoryRenderer extends Renderer<Inventory> {
 
   private handleGetResources = (giver: Inventory) => {
     this.updateSugarAndWaterParticles(giver);
-    if (this.target.carrier instanceof Cell) {
-      console.log(
-        "getResources",
-        this.target.water,
-        "(" + this.waters.length + ")",
-        this.target.sugar,
-        "(" + this.sugars.length + ")"
-      );
-    }
   };
 
   private verifyArrayLengths() {
@@ -84,9 +74,6 @@ export class InventoryRenderer extends Renderer<Inventory> {
   };
 
   private handleAddResources = (water: number, sugar: number) => {
-    if (Math.round(water) !== water && sugar !== 0) {
-      console.log("added resources", water, sugar);
-    }
     this.updateSugarAndWaterParticles();
   };
 
@@ -115,19 +102,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
   }
 
   private commitParticles(particles: ResourcePoints, resource: number, resourceArray: Vector2[]) {
-    this.verifyArrayLengths();
-    while (resourceArray.length < Math.ceil(resource)) {
-      const pos = this.target.carrier.pos;
-      console.warn(
-        "(" + pos.x + "," + pos.y + ") - " + (this.target.carrier as Tile).world.time,
-        "commitParticles caught resource mismatch",
-        resource,
-        "vs",
-        resourceArray.length,
-        resourceArray === this.waters ? "water" : "sugar"
-      );
-      resourceArray.push(newParticle());
-    }
+    // this.verifyArrayLengths();
     const numFullSizedParticles = Math.floor(resource);
     for (let i = 0; i < numFullSizedParticles; i++) {
       const p = resourceArray[i];

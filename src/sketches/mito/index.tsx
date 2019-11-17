@@ -180,7 +180,7 @@ export class Mito extends ISketch {
     };
     const endGameButtons =
       process.env.NODE_ENV === "development" ? (
-        <div style={{ position: "absolute", top: 50, right: 10 }}>
+        <div style={{ position: "absolute", top: 0, right: 50, display: "flex" }}>
           <Button color="green" onClick={doWin}>
             Win
           </Button>
