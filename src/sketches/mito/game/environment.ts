@@ -8,6 +8,7 @@ import { Fountain, Rock, Soil, Tile } from "./tile";
 import { World } from "./world";
 
 export interface Environment {
+  airEvaporation: number;
   climate: {
     timeBetweenRainfall: number;
     rainDuration: number;
@@ -117,6 +118,7 @@ export type FillFunctionName = keyof typeof FILL_FUNCTIONS;
 
 export const Temperate = () => {
   const environment: Environment = {
+    airEvaporation: 0.3,
     climate: {
       timeBetweenRainfall: 26,
       rainDuration: 1.6,
@@ -133,6 +135,7 @@ export const Temperate = () => {
 
 export const Desert = () => {
   const e: Environment = {
+    airEvaporation: 0.3,
     climate: {
       rainDuration: 7.3333,
       timeBetweenRainfall: 110,
@@ -149,6 +152,7 @@ export const Desert = () => {
 
 export const Rocky = () => {
   const e: Environment = {
+    airEvaporation: 0.3,
     climate: {
       timeBetweenRainfall: 83.333,
       rainDuration: 4,

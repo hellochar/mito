@@ -143,18 +143,12 @@ export function getTraits(genes: Gene[]): Traits {
     // const traitDiff = getTraitInfluence(gene);
     // addTraits(traits, traitDiff);
   }
+  let val: TraitType;
+  for (val in traits) {
+    traits[val] = clampToTraitValue(traits[val]);
+  }
   return traits;
 }
-
-// export function getTraitInfluence(gene: Gene): TraitDiff {
-//   const traitDiff: TraitDiff = {};
-//   const traitTypePlus = tupleToTrait(gene[0]);
-//   traitDiff[traitTypePlus] = 1;
-
-//   const traitTypeMinus = tupleToTrait(gene[1]);
-//   traitDiff[traitTypeMinus] = -1;
-//   return traitDiff;
-// }
 
 const DNA_TUPLE_TO_TRAIT_TYPE: { [K in DNATuple]: TraitType } = {
   AA: "walkSpeed",

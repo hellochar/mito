@@ -193,7 +193,7 @@ const noiseCo2 = new Noise();
 export class Air extends Tile {
   static displayName = "Air";
   static fallAmount = 30;
-  static diffusionWater = 3;
+  static diffusionWater = 1.5;
   public sunlightCached: number = 1;
   public _co2: number;
   public inventory = new Inventory(20, this);
@@ -203,11 +203,10 @@ export class Air extends Tile {
     this._co2 = this.computeCo2();
   }
 
-  // Air always steps every 3 tiles, otherwise rainfall and diffusion go much slower
-  // than intended
+  // Careful - this affects gravity speed
   shouldStep(dt: number) {
     // if (!this.inventory.isEmpty()) {
-    return dt > 0.1;
+    return dt > 0.06667;
     // } else {
     //   return super.shouldStep(dt);
     // }
@@ -263,7 +262,8 @@ export class Air extends Tile {
   }
 
   stepEvaporation(dt: number) {
-    if (Math.random() < 0.3 * this.inventory.water * dt) {
+    if (Math.random() < this.world.environment.airEvaporation * this.inventory.water * dt) {
+      this.world.numEvaporatedAir += 1;
       this.inventory.add(-1, 0);
     }
   }
@@ -306,6 +306,7 @@ export class Soil extends Tile implements HasInventory {
     const evaporationAmountScalar = this.inventory.water;
     if (Math.random() < evaporationRate * evaporationHeightScalar * evaporationAmountScalar * dt) {
       this.inventory.add(-1, 0);
+      this.world.numEvaporatedSoil += 1;
     }
   }
 }

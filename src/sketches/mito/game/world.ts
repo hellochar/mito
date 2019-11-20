@@ -370,6 +370,9 @@ export class World {
     return this.stepStats;
   }
 
+  numRainWater = 0;
+  numEvaporatedAir = 0;
+  numEvaporatedSoil = 0;
   public stepWeather(dt: number) {
     // offset first rain event by 200 turns
     const isRaining =
@@ -384,7 +387,9 @@ export class World {
         const x = THREE.Math.randInt(0, this.width - 1);
         const t = this.tileAt(x, 0);
         if (t instanceof Air) {
-          t.inventory.add(randRound(dropletSize), 0);
+          const w = randRound(dropletSize);
+          t.inventory.add(w, 0);
+          this.numRainWater += w;
         }
         numWater -= 1;
       }

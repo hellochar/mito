@@ -200,7 +200,8 @@ export class BatchInstance {
 
   checkout() {
     if (this.inUse) {
-      throw new Error("Checking out instance that's already in use!" + this.index);
+      // throw new Error("Checking out instance that's already in use!" + this.index);
+      console.warn("Checking out instance that's already in use!" + this.index);
     }
     this.inUse = true;
     BatchInstance.numInUse++;

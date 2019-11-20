@@ -198,6 +198,11 @@ export class Mito extends ISketch {
         <Hover mito={this} />
         <div className="world-dom-components">{worldDomElementComponents}</div>
         {endGameButtons}
+        <div style={{ position: "absolute", bottom: 0, left: 0, background: "white" }}>
+          <div>Rainwater: {this.world.numRainWater}</div>
+          <div>Evaporated Air: {this.world.numEvaporatedAir}</div>
+          <div>Evaporated Soil: {this.world.numEvaporatedSoil}</div>
+        </div>
       </>
     );
   }
