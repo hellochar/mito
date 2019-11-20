@@ -30,6 +30,6 @@ export function nextTemperature(t: Cell, neighbors: Map<any, Tile>, dt: number):
     averageTemperature += tile.temperatureFloat;
   }
   averageTemperature /= neighbors.size + 1;
-  // TODO maybe overshoot issues?
-  return lerp(temperature, averageTemperature, 0.2 * dt);
+  // TODO maybe use proper dt-scaling lerp
+  return lerp(temperature, averageTemperature, Math.min(6 * dt, 1));
 }

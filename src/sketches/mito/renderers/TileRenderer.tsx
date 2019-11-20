@@ -2,46 +2,13 @@ import { easeCubic } from "d3-ease";
 import Ticker from "global/ticker";
 import { reversed } from "math/easing";
 import React from "react";
-import {
-  ArrowHelper,
-  Audio,
-  BufferGeometry,
-  Color,
-  DoubleSide,
-  Float32BufferAttribute,
-  Line,
-  LineBasicMaterial,
-  Mesh,
-  MeshBasicMaterial,
-  Object3D,
-  PlaneBufferGeometry,
-  Scene,
-  Vector2,
-  Vector3,
-} from "three";
+import { ArrowHelper, Audio, BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Scene, Vector2, Vector3 } from "three";
 import lazy from "../../../common/lazy";
 import { clamp, lerp, lerp2, map } from "../../../math/index";
 import { blopBuffer, suckWaterBuffer } from "../audio";
 import { Constructor } from "../constructor";
 import { Temperature } from "../game/temperature";
-import {
-  Air,
-  Cell,
-  DeadCell,
-  Fountain,
-  Fruit,
-  GrowingCell,
-  hasEnergy,
-  hasTilePairs,
-  Leaf,
-  Rock,
-  Root,
-  Soil,
-  Tile,
-  Tissue,
-  Transport,
-  Vein,
-} from "../game/tile";
+import { Air, Cell, DeadCell, Fountain, Fruit, GrowingCell, hasEnergy, hasTilePairs, Leaf, Rock, Root, Soil, Tile, Tissue, Transport, Vein } from "../game/tile";
 import { Mito } from "../index";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
@@ -124,7 +91,7 @@ export class TileRenderer<T extends Tile = Tile> extends Renderer<T> {
     this.mesh.position.set(this.target.pos.x, this.target.pos.y, zIndex);
     if (this.target instanceof Cell) {
       // if it takes no turns to build, start it off small just for show
-      if (!(this.target.constructor as Constructor<Cell>).turnsToBuild) {
+      if (!(this.target.constructor as Constructor<Cell>).timeToBuild) {
         this.mesh.scale.set(0.01, 0.01, 1);
       }
     } else {

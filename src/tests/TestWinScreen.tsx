@@ -9,16 +9,16 @@ import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
 
 export function TestWinScreen() {
   const world = new World(Temperate(), newBaseSpecies());
-  world.time = 150;
+  world.time = 5;
   const f1 = new Fruit(new Vector2(0, 0), world);
   f1.committedResources.add(50, 50);
   f1.timeMatured = 250;
 
-  world.time = 479;
+  world.time = 15.9;
   const f2 = new Fruit(new Vector2(0, 0), world);
   f2.committedResources.add(25, 15);
 
-  world.time = 1296;
+  world.time = 43.2;
   const f3 = new Fruit(new Vector2(0, 0), world);
   f3.committedResources.add(50, 50);
   const mockResults: GameResult = {

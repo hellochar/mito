@@ -27,13 +27,29 @@ export interface ActionDeconstruct {
 
 export interface ActionDrop {
   type: "drop";
+
+  /**
+   * Rate of water drop per second.
+   */
   water: number;
+
+  /**
+   * Rate of sugar drop per second.
+   */
   sugar: number;
 }
 
 export interface ActionPickup {
   type: "pickup";
+
+  /**
+   * Rate of sugar pickup per second.
+   */
   water: number;
+
+  /**
+   * Rate of sugar pickup per second.
+   */
   sugar: number;
 }
 

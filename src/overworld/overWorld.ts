@@ -1,7 +1,6 @@
 import { Species } from "evolution/species";
 import { object, reference, serializable } from "serializr";
 import SimplexNoise from "simplex-noise";
-import { Desert, Rocky, Temperate } from "../sketches/mito/game/environment";
 import { HexStore } from "./hexStore";
 import { HexTile } from "./hexTile";
 
@@ -40,8 +39,6 @@ export class OverWorld {
   private static populateLevelInfo(tile: HexTile, noise: SimplexNoise) {
     const { info } = tile;
     info.height = OverWorld.randomHeight(tile, noise);
-
-    info.environment = info.height < 2 ? Temperate() : info.height < 4 ? Rocky() : Desert();
   }
 
   static generateFilledHex(maxDist: number = 20): OverWorld {
