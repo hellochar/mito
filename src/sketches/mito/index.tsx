@@ -11,10 +11,10 @@ import { ActionBuild, ActionInteract, ActionMove } from "./action";
 import { drums, hookUpAudio, strings } from "./audio";
 import { Constructor } from "./constructor";
 import { World } from "./game";
+import { environmentFromLevelInfo } from "./game/environment";
 import { isInteractable } from "./game/interactable";
 import { Cell, Fruit, Leaf, Root, Tile, Tissue, Transport, Vein } from "./game/tile";
 import { ACTION_KEYMAP, CELL_BAR_KEYS, MOVEMENT_KEYS } from "./keymap";
-import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
@@ -113,7 +113,7 @@ export class Mito extends ISketch {
     public onWinLoss: (result: GameResult) => void
   ) {
     super(renderer, context);
-    this.world = new World(attempt.targetHex.info.environment!, attempt.settlingSpecies);
+    this.world = new World(environmentFromLevelInfo(attempt.targetHex.info), attempt.settlingSpecies);
 
     this.camera.position.z = 10;
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -327,35 +327,28 @@ Number of Programs: ${this.renderer.info.programs!.length}
     if (this.instructionsOpen) {
       return;
     }
-    // if (document.activeElement !== this.canvas && !document.querySelector(".dg.ac")!.contains(document.activeElement)) {
-    //     this.canvas.focus();
-    // }
     this.canvas.focus();
-    // const dt = millisElapsed / 1000;
-    // TODO make this seconds instead of frames
-    let dt = Math.min((1 * millisElapsed) / 30, 10);
-    if (params.isRealtime) {
-      const moveAction = this.keysToMovement(this.keyMap);
-      if (moveAction) {
-        this.world.player.setAction(moveAction);
-      }
-      for (const key of this.keyMap) {
-        if (ACTION_KEYMAP[key]) {
-          this.world.player.setAction(ACTION_KEYMAP[key]);
-        }
-      }
-      if (this.mouseDown) {
-        // left
-        if (this.mouseButton === 0) {
-          this.handleLeftClick();
-        } else if (this.mouseButton === 2) {
-          this.handleRightClick();
-        }
-      }
-      this.worldStep(dt);
-    } else if (this.world.player.getAction() != null) {
-      this.worldStep(dt);
+    const moveAction = this.keysToMovement(this.keyMap);
+    if (moveAction) {
+      this.world.player.setAction(moveAction);
     }
+    for (const key of this.keyMap) {
+      if (ACTION_KEYMAP[key]) {
+        this.world.player.setAction(ACTION_KEYMAP[key]);
+      }
+    }
+    if (this.mouseDown) {
+      // left
+      if (this.mouseButton === 0) {
+        this.handleLeftClick();
+      } else if (this.mouseButton === 2) {
+        this.handleRightClick();
+      }
+    }
+
+    // cap out at 1/3rd of a second in one frame (about 10 frames)
+    const dt = Math.min(millisElapsed / 1000, 1 / 3);
+    this.worldStep(dt);
     this.worldRenderer.update();
 
     this.highlightedTile = this.getHighlightedTile();
@@ -377,6 +370,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
       this.logRenderInfo();
     }
   }
+
   public keysToMovement(keys: Set<string>): ActionMove | null {
     const dir = new Vector2();
     for (const key of keys) {

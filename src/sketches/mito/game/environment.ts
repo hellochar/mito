@@ -1,3 +1,4 @@
+import { LevelInfo } from "overworld/levelInfo";
 import { createSimpleSchema, object } from "serializr";
 import { Vector2 } from "three";
 import { Noise } from "../../../common/perlin";
@@ -8,15 +9,21 @@ import { World } from "./world";
 
 export interface Environment {
   climate: {
-    turnsBetweenRainfall: number;
+    timeBetweenRainfall: number;
     rainDuration: number;
-    waterPerDroplet: number;
+    waterPerSecond: number;
   };
   waterGravityPerTurn: number;
   evaporationRate: number;
   evaporationBottom: number;
   floorCo2: number;
   fill: FillFunctionName;
+}
+
+export function environmentFromLevelInfo(info: LevelInfo) {
+  // const { rainfall, soilType, temperature } = levelInfo;
+
+  return info.height < 2 ? Temperate() : info.height < 4 ? Rocky() : Desert();
 }
 
 export const EnvironmentSchema = createSimpleSchema<Environment>({
@@ -60,7 +67,7 @@ export const FILL_FUNCTIONS = {
           );
           if (heightScalar * simplexValue > 1 / params.fountainAppearanceRate) {
             const emitWaterScalar = Math.min(heightScalar * simplexValue, 1);
-            return new Fountain(pos, water, world, Math.round(params.fountainTurnsPerWater / emitWaterScalar));
+            return new Fountain(pos, water, world, Math.round(params.fountainSecondsPerWater / emitWaterScalar));
           } else {
             return new Soil(pos, water, world);
           }
@@ -111,14 +118,14 @@ export type FillFunctionName = keyof typeof FILL_FUNCTIONS;
 export const Temperate = () => {
   const environment: Environment = {
     climate: {
-      turnsBetweenRainfall: 800,
-      rainDuration: 50,
-      waterPerDroplet: 2,
+      timeBetweenRainfall: 26,
+      rainDuration: 1.6,
+      waterPerSecond: 60,
     },
-    evaporationRate: 0.0002,
+    evaporationRate: 0.006,
     evaporationBottom: 0.6,
     floorCo2: 0.3333,
-    waterGravityPerTurn: 0.001,
+    waterGravityPerTurn: 0.03,
     fill: "Temperate",
   };
   return environment;
@@ -127,13 +134,13 @@ export const Temperate = () => {
 export const Desert = () => {
   const e: Environment = {
     climate: {
-      rainDuration: 220,
-      turnsBetweenRainfall: 3300,
-      waterPerDroplet: 8,
+      rainDuration: 7.3333,
+      timeBetweenRainfall: 110,
+      waterPerSecond: 240,
     },
-    evaporationRate: 0.002,
+    evaporationRate: 0.06,
     evaporationBottom: 0.7,
-    waterGravityPerTurn: 0.02,
+    waterGravityPerTurn: 0.6,
     floorCo2: 0.95,
     fill: "Desert",
   };
@@ -143,13 +150,13 @@ export const Desert = () => {
 export const Rocky = () => {
   const e: Environment = {
     climate: {
-      turnsBetweenRainfall: 2500,
-      rainDuration: 120,
-      waterPerDroplet: 3,
+      timeBetweenRainfall: 83.333,
+      rainDuration: 4,
+      waterPerSecond: 90,
     },
-    waterGravityPerTurn: 0.1,
+    waterGravityPerTurn: 3,
     evaporationBottom: 0.6,
-    evaporationRate: 0.001,
+    evaporationRate: 0.03,
     floorCo2: 1,
     fill: "Rocky",
   };

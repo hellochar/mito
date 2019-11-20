@@ -40,7 +40,7 @@ export function seasonDisplay(s: Season) {
   return `${SEASON_NAMES[s.season]}, Month ${s.month}`;
 }
 
-export const TIME_PER_YEAR = 30 * 60 * 15; // 30 fps * 60 seconds/minute * 15 minutes
+export const TIME_PER_YEAR = 60 * 15; // 60 seconds/minute * 15 minutes
 export const TIME_PER_SEASON = TIME_PER_YEAR / 4;
 export const TIME_PER_MONTH = TIME_PER_SEASON / 3;
 export const TIME_PER_DAY = TIME_PER_MONTH / 3;
@@ -71,7 +71,7 @@ export class World {
     this.traits = getTraits(this.species.genes);
     Cell.diffusionWater = traitMod(this.traits.diffuseWater, params.cellDiffusionWater, 2);
     Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, params.cellDiffusionSugar, 2);
-    Cell.turnsToBuild = Math.floor(traitMod(this.traits.buildTime, params.cellGestationTurns, 1 / 2));
+    Cell.timeToBuild = Math.floor(traitMod(this.traits.buildTime, params.cellGestationTime, 1 / 2));
     this.player = new Player(new Vector2(this.width / 2, this.height / 2), this);
     this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) =>
       new Array(this.height).fill(undefined).map((__, y) => {
@@ -356,8 +356,8 @@ export class World {
         step(entity, dt);
       }
     });
-    this.updateTemperatures(dt);
-    this.computeSunlight(dt);
+    this.updateTemperatures();
+    this.computeSunlight();
     this.stepWeather(dt);
     this.frame++;
     this.time += dt;
@@ -373,19 +373,20 @@ export class World {
   public stepWeather(dt: number) {
     // offset first rain event by 200 turns
     const isRaining =
-      (this.time + this.environment.climate.turnsBetweenRainfall - 200) %
-        this.environment.climate.turnsBetweenRainfall <
+      (this.time + this.environment.climate.timeBetweenRainfall - 6.6667) %
+        this.environment.climate.timeBetweenRainfall <
       this.environment.climate.rainDuration;
     if (isRaining) {
       // add multiple random droplets
-      while (dt > 0) {
-        const dropletSizeScalar = Math.min(dt, 1);
+      let numWater = this.environment.climate.waterPerSecond * dt;
+      while (numWater > 0) {
+        const dropletSize = Math.min(numWater, 1);
         const x = THREE.Math.randInt(0, this.width - 1);
         const t = this.tileAt(x, 0);
         if (t instanceof Air) {
-          t.inventory.add(randRound(this.environment.climate.waterPerDroplet * dropletSizeScalar), 0);
+          t.inventory.add(randRound(dropletSize), 0);
         }
-        dt -= 1;
+        numWater -= 1;
       }
     }
   }
@@ -432,7 +433,7 @@ export class World {
     return map(this.sunAmount, 0, 1, night, day);
   }
 
-  public computeSunlight(_dt: number) {
+  public computeSunlight() {
     // sunlight is special - we step downards from the top; neighbors don't affect the calculation so
     // we don't have buffering problems
     const sunAngle = this.sunAngle;
@@ -474,7 +475,7 @@ export class World {
     }
   }
 
-  public updateTemperatures(_dt: number) {
+  public updateTemperatures() {
     for (const t of this.cells()) {
       t.temperatureFloat = t.nextTemperature;
     }

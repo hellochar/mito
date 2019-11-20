@@ -4,5 +4,5 @@ export interface Constructor<T> {
 
   diffusionWater?: number;
   diffusionSugar?: number;
-  turnsToBuild?: number;
+  timeToBuild?: number;
 }

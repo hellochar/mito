@@ -63,7 +63,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     if (tile instanceof Fountain) {
       return (
         <div className="info-fountain">
-          <div>{tile.turnsPerWater} turns per water</div>
+          <div>{tile.secondsPerWater} turns per water</div>
         </div>
       );
     }

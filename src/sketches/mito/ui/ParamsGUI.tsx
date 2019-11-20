@@ -1,6 +1,5 @@
 import * as dat from "dat.gui";
 import * as React from "react";
-
 import { ALL_ENVIRONMENTS } from "../game/environment";
 import { params, updateParamsHash } from "../params";
 
@@ -17,7 +16,6 @@ export class ParamsGUI extends React.Component {
       .onChange(() => setTimeout(() => window.location.reload(), 100));
     gui.add(params, "droop", 0, 0.5, 0.01);
     gui.add(params, "fountainTurnsPerWater", 1, 100, 1);
-    gui.add(params, "isRealtime");
     gui.add(params, "leafReactionRate", 0, 0.2, 0.0001);
     gui.add(params, "leafSugarPerReaction", 0, 1, 0.01);
     gui.add(params, "rootTurnsPerTransfer", 1, 100, 1);

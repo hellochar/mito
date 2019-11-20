@@ -14,7 +14,7 @@ export class HexTile {
     rainfall: "medium",
     soilType: "average",
     temperature: "temperate",
-    wind: "low",
+    // wind: "low",
     visible: false,
   };
   @serializable

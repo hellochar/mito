@@ -111,7 +111,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     if (this.target instanceof Cell) {
       // if it takes no turns to build, start it off small just for show
-      if (!(this.target.constructor as Constructor<Cell>).turnsToBuild) {
+      if (!(this.target.constructor as Constructor<Cell>).timeToBuild) {
         this.scale.set(0.01, 0.01, 1);
       }
     }

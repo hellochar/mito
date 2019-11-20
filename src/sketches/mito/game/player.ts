@@ -45,7 +45,7 @@ export class Player implements Steppable {
   }
 
   public constructor(public posFloat: Vector2, public world: World) {
-    this.baseSpeed = traitMod(world.traits.walkSpeed, 0.15, 1.5);
+    this.baseSpeed = traitMod(world.traits.walkSpeed, 4.5, 1.5);
   }
 
   shouldStep() {
@@ -108,7 +108,6 @@ export class Player implements Steppable {
     }
     const actionSuccessful = this.attemptAction(this.action, dt);
     this.maybeMoveWithTransports(dt);
-    // this.posFloat.lerp(this.pos, 0.05 * dt);
     // if (this.dropWater) {
     //   this.attemptAction(ACTION_KEYMAP.q);
     // }
@@ -312,7 +311,7 @@ export class Player implements Steppable {
     const matureCell = this.tryConstructingNewCell(action.position, action.cellType, action.args);
     if (matureCell != null) {
       let cell: Cell;
-      if (action.cellType.turnsToBuild) {
+      if (action.cellType.timeToBuild) {
         cell = new GrowingCell(action.position, this.world, matureCell);
       } else {
         cell = matureCell;

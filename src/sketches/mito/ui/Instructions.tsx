@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import { params } from "../params";
 
 interface InstructionsProps {
@@ -43,7 +42,7 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
           <p>
             Underground, Soil holds water, rocks block your way, and occasionally Fountains (at the very bottom) are a
             permanent source of water. Soil holds up to {params.soilMaxWater} water at a time. Fountains emit one water
-            per {params.fountainTurnsPerWater} turns.
+            per {params.fountainSecondsPerWater} turns.
           </p>
           <h3>Air and Aboveground</h3>
           <p>
