@@ -6,6 +6,7 @@ import React from "react";
 import Mito from "sketches/mito";
 import { blopBuffer, suckWaterBuffer } from "sketches/mito/audio";
 import { Constructor } from "sketches/mito/constructor";
+import { CELL_MAX_ENERGY } from "sketches/mito/game/constants";
 import { Temperature } from "sketches/mito/game/temperature";
 import {
   Air,
@@ -25,7 +26,6 @@ import {
   Transport,
 } from "sketches/mito/game/tile";
 import { hasInventory } from "sketches/mito/inventory";
-import { params } from "sketches/mito/params";
 import { WorldDOMElement } from "sketches/mito/WorldDOMElement";
 import {
   ArrowHelper,
@@ -215,7 +215,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     this.color.copy(this.originalColor);
     if (hasEnergy(this.target)) {
-      this.color.lerp(new Color(0), 1 - this.target.energy / params.cellEnergyMax);
+      this.color.lerp(new Color(0), 1 - this.target.energy / CELL_MAX_ENERGY);
     }
 
     this.color = this.lerpColorTemperature(this.color);

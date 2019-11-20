@@ -1,4 +1,5 @@
 import * as React from "react";
+import { CELL_MAX_ENERGY, LEAF_REACTION_RATE, TISSUE_INVENTORY_CAPACITY } from "../game/constants";
 import { params } from "../params";
 
 interface InstructionsProps {
@@ -73,12 +74,12 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
           <h3>Cells</h3>
           <p>
             All cells require energy upkeep and will automatically eat sugar on their tile, or get energy from their
-            neighbors. Each cell consumes 1 sugar every {params.cellEnergyMax} turns.
+            neighbors. Each cell consumes 1 sugar every {CELL_MAX_ENERGY} seconds.
           </p>
           <h3>Tissue</h3>
           <p>
             Tissue connects your plant together, you may only walk on Tissue. Each Tissue carries up to{" "}
-            {params.tissueInventoryCapacity} resources.
+            {TISSUE_INVENTORY_CAPACITY} resources.
           </p>
           <h3>Roots</h3>
           <p>
@@ -89,8 +90,8 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
           <h3>Leaves</h3>
           <p>
             When exposed to Air, Leaves convert water to sugar. Leaves also use Pairings between opposite direction
-            Air/Tissue with water. In perfect co2, leave produce on average 1 sugar per{" "}
-            {(1 / params.leafReactionRate).toFixed(0)} turns per pair. Leaf efficiency is heavily influenced by co2 and
+            Air/Tissue with water. In perfect co2 and Water availability, Leaves produce 1 sugar every{" "}
+            {(1 / LEAF_REACTION_RATE).toFixed(2)} seconds per pair. Leaf efficiency is heavily influenced by co2 and
             sunlight of its neighboring Air. If your leaf is in too much shadow, it will not be able to photosynthesize.
             Leaves higher up produce sugar faster.
           </p>

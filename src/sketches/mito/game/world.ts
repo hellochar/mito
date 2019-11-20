@@ -9,6 +9,15 @@ import shuffle from "../../../math/shuffle";
 import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
+import {
+  CELL_BUILD_TIME,
+  CELL_DIFFUSION_SUGAR_RATE,
+  CELL_DIFFUSION_WATER_RATE,
+  TIME_PER_DAY,
+  TIME_PER_MONTH,
+  TIME_PER_SEASON,
+  TIME_PER_YEAR,
+} from "./constants";
 import { Entity, isSteppable, step } from "./entity";
 import { Environment, FILL_FUNCTIONS } from "./environment";
 import { Player } from "./player";
@@ -40,11 +49,6 @@ export function seasonDisplay(s: Season) {
   return `${SEASON_NAMES[s.season]}, Month ${s.month}`;
 }
 
-export const TIME_PER_YEAR = 60 * 15; // 60 seconds/minute * 15 minutes
-export const TIME_PER_SEASON = TIME_PER_YEAR / 4;
-export const TIME_PER_MONTH = TIME_PER_SEASON / 3;
-export const TIME_PER_DAY = TIME_PER_MONTH / 3;
-
 export class World {
   public time: number = 0;
   public frame: number = 0;
@@ -69,9 +73,9 @@ export class World {
     };
     this.species = species;
     this.traits = getTraits(this.species.genes);
-    Cell.diffusionWater = traitMod(this.traits.diffuseWater, params.cellDiffusionWater, 2);
-    Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, params.cellDiffusionSugar, 2);
-    Cell.timeToBuild = Math.floor(traitMod(this.traits.buildTime, params.cellGestationTime, 1 / 2));
+    Cell.diffusionWater = traitMod(this.traits.diffuseWater, CELL_DIFFUSION_WATER_RATE, 2);
+    Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, CELL_DIFFUSION_SUGAR_RATE, 2);
+    Cell.timeToBuild = traitMod(this.traits.buildTime, CELL_BUILD_TIME, 1 / 2);
     this.player = new Player(new Vector2(this.width / 2, this.height / 2), this);
     this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) =>
       new Array(this.height).fill(undefined).map((__, y) => {
@@ -374,10 +378,9 @@ export class World {
   numEvaporatedAir = 0;
   numEvaporatedSoil = 0;
   public stepWeather(dt: number) {
-    // offset first rain event by 200 turns
+    // offset first rain event by a few seconds
     const isRaining =
-      (this.time + this.environment.climate.timeBetweenRainfall - 6.6667) %
-        this.environment.climate.timeBetweenRainfall <
+      (this.time + this.environment.climate.timeBetweenRainfall - 6) % this.environment.climate.timeBetweenRainfall <
       this.environment.climate.rainDuration;
     if (isRaining) {
       // add multiple random droplets

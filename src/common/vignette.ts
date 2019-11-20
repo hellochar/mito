@@ -1,6 +1,6 @@
 import { map } from "math";
 import Mito from "sketches/mito";
-import { TIME_PER_SEASON } from "sketches/mito/game";
+import { TIME_PER_SEASON } from "sketches/mito/game/constants";
 import { GrowingCell, Tile } from "sketches/mito/game/tile";
 import { WorldRenderer } from "sketches/mito/renderers/WorldRenderer";
 // import { createRendererFor } from "sketches/mito/renderers/WorldRenderer";

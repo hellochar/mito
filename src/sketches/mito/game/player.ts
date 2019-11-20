@@ -15,6 +15,7 @@ import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
 import { params } from "../params";
+import { PLAYER_BASE_SPEED, PLAYER_MOVED_BY_TRANSPORT_SPEED } from "./constants";
 import { Steppable } from "./entity";
 import { Cell, FreezeEffect, Fruit, GrowingCell, Tile, Tissue, Transport } from "./tile";
 import { World } from "./world";
@@ -29,9 +30,6 @@ export class Player implements Steppable {
   private action?: Action;
   private events = new EventEmitter();
   public mapActions?: (player: Player, action: Action) => Action | undefined;
-  // public speed: number;
-  // public dropWater = false;
-  // public dropSugar = false;
   public baseSpeed: number;
   public dtSinceLastStepped = 0;
 
@@ -45,7 +43,7 @@ export class Player implements Steppable {
   }
 
   public constructor(public posFloat: Vector2, public world: World) {
-    this.baseSpeed = traitMod(world.traits.walkSpeed, 4.5, 1.5);
+    this.baseSpeed = traitMod(world.traits.walkSpeed, PLAYER_BASE_SPEED, 1.5);
   }
 
   shouldStep() {
@@ -123,7 +121,7 @@ export class Player implements Steppable {
   private maybeMoveWithTransports(dt: number) {
     const tile = this.currentTile();
     if (tile instanceof Transport) {
-      this.posFloat.add(tile.dir.clone().setLength(this.speed * 0.15 * dt));
+      this.posFloat.add(tile.dir.clone().setLength(PLAYER_MOVED_BY_TRANSPORT_SPEED * dt));
     }
   }
 
@@ -184,7 +182,8 @@ export class Player implements Steppable {
           return false;
         }
         const isTransportOnTissue = tile instanceof Tissue && cellType === Transport;
-        if (isTransportOnTissue) {
+        const isTissueOnTransport = tile instanceof Transport && cellType === Tissue;
+        if (isTransportOnTissue || isTissueOnTransport) {
           return true;
         }
         return false;
@@ -329,8 +328,8 @@ export class Player implements Steppable {
       const cell = this.world.maybeRemoveCellAt(action.position);
       if (cell != null) {
         // refund the resources back
-        const refund = cell.energy / params.cellEnergyMax;
-        this.inventory.add(refund, refund);
+        // const refund = cell.energy / CELL_MAX_ENERGY;
+        // this.inventory.add(refund, refund);
         // if (hasInventory(cell)) {
         //   cell.inventory.give(this.inventory, cell.inventory.water, cell.inventory.sugar);
         // }

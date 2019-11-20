@@ -8,10 +8,22 @@ import { DIRECTIONS } from "../directions";
 import { HasInventory, Inventory } from "../inventory";
 import { params } from "../params";
 import { canPullResources } from "./canPullResources";
+import {
+  CELL_BUILD_TIME,
+  CELL_DIFFUSION_SUGAR_RATE,
+  CELL_DIFFUSION_WATER_RATE,
+  CELL_MAX_ENERGY,
+  FRUIT_NEEDED_RESOURCES,
+  FRUIT_TIME_TO_MATURE,
+  LEAF_REACTION_RATE,
+  ROOT_TIME_BETWEEN_ABSORPTIONS,
+  TISSUE_INVENTORY_CAPACITY,
+  TRANSPORT_TIME_BETWEEN_TRANSFERS,
+} from "./constants";
 import { Steppable, StopStep } from "./entity";
 import { Interactable, isInteractable } from "./interactable";
 import { nextTemperature, Temperature, temperatureFor } from "./temperature";
-import { TIME_PER_SEASON, World } from "./world";
+import { World } from "./world";
 
 export interface HasEnergy {
   energy: number;
@@ -158,6 +170,11 @@ export abstract class Tile implements Steppable, HasInventory {
   }
 
   diffuseWater(giver: HasInventory, dt: number) {
+    // Diffusion equation by finite difference: the purpose of this equation is to eventually
+    // equalize the amount of water between me and giver. The two questions are how long
+    // does it take, and what function does it follow to get there? These are generally
+    // defined by the diffusionWater variable. At these low numbers we can assume
+    // near linearity.
     const diffusionAmount = (giver.inventory.water - this.inventory.water) * this.diffusionWater * dt;
     // if (params.soilDiffusionType === "continuous") {
     //   giver.inventory.give(this.inventory, diffusionAmount, 0);
@@ -415,10 +432,10 @@ export class FreezeEffect extends CellEffect implements Interactable {
 
 export abstract class Cell extends Tile implements HasEnergy, Interactable {
   static displayName = "Cell";
-  static diffusionWater = params.cellDiffusionWater;
-  static diffusionSugar = params.cellDiffusionSugar;
-  static timeToBuild = params.cellGestationTime;
-  public energy: number = params.cellEnergyMax;
+  static diffusionWater = CELL_DIFFUSION_WATER_RATE;
+  static diffusionSugar = CELL_DIFFUSION_SUGAR_RATE;
+  static timeToBuild = CELL_BUILD_TIME;
+  public energy = CELL_MAX_ENERGY;
   public darkness = 0;
   public nextTemperature: number;
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
@@ -484,7 +501,7 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
 
   isHungry() {
     // eat below 95% energy
-    return this.energy < params.cellEnergyMax * 0.95;
+    return this.energy < CELL_MAX_ENERGY * 0.95;
   }
 
   // Step cells every 3 frames
@@ -546,10 +563,10 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
 
   stepEatSugar(tile: Tile) {
     if (!(tile instanceof Fruit)) {
-      const hunger = params.cellEnergyMax - this.energy;
+      const hunger = CELL_MAX_ENERGY - this.energy;
       // if this number goes up, we become less energy efficient
       // if this number goes down, we are more energy efficient
-      const energyToSugarConversion = traitMod(this.world.traits.energyEfficiency, 1 / params.cellEnergyMax, 1 / 1.5);
+      const energyToSugarConversion = traitMod(this.world.traits.energyEfficiency, 1 / CELL_MAX_ENERGY, 1 / 1.5);
       const sugarToEat = Math.min(hunger * energyToSugarConversion, tile.inventory.sugar);
       // eat if we're hungry
       if (hunger > 100 && sugarToEat > 0) {
@@ -622,7 +639,7 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
 
     const droopAmount = traitMod(this.world.traits.structuralStability, params.droop, 1 / 1.5) * dt;
     this.droopY += droopAmount;
-    if (this.energy < params.cellEnergyMax / 2) {
+    if (this.energy < CELL_MAX_ENERGY / 2) {
       this.droopY += droopAmount;
     }
 
@@ -676,7 +693,7 @@ export class Tissue extends Cell implements HasInventory {
   constructor(pos: Vector2, world: World) {
     super(pos, world);
     this.inventory = new Inventory(
-      Math.floor(traitMod(world.traits.carryCapacity, params.tissueInventoryCapacity, 1.5)),
+      Math.floor(traitMod(world.traits.carryCapacity, TISSUE_INVENTORY_CAPACITY, 1.5)),
       this
     );
   }
@@ -699,6 +716,10 @@ export class Leaf extends Cell {
   public tilePairs: Vector2[] = []; // implied that the opposite direction is connected
   public totalSugarProduced = 0;
   public inventory = new Inventory(0, this);
+
+  reactionRate() {
+    return traitMod(this.world.traits.photosynthesis, LEAF_REACTION_RATE, 1.5) * this.tempo;
+  }
 
   public step(dt: number) {
     super.step(dt);
@@ -726,7 +747,7 @@ export class Leaf extends Cell {
         this.averageEfficiency += efficiency;
         this.averageSpeed += speed;
 
-        const leafReactionRate = traitMod(this.world.traits.photosynthesis, 0.3, 1.5) * this.tempo;
+        const leafReactionRate = this.reactionRate();
 
         // in prime conditions:
         //      our rate of conversion is speed * params.leafReactionRate
@@ -734,8 +755,9 @@ export class Leaf extends Cell {
         // if we have less than 1/efficiencyRatio water
         //      our rate of conversion scales down proportionally
         //      on conversion, we use up all the available water and get the corresponding amount of sugar
-        const bestEfficiencyWater = params.leafSugarPerReaction / efficiency;
+        const bestEfficiencyWater = 1 / efficiency;
         const waterToConvert = Math.min(tissue.inventory.water, bestEfficiencyWater);
+        // water (1 / time) * time / (water)
         const chance = (speed * leafReactionRate * waterToConvert * dt) / bestEfficiencyWater;
         if (Math.random() < chance) {
           const sugarConverted = waterToConvert * efficiency;
@@ -756,7 +778,7 @@ export class Root extends Cell implements Interactable {
   static displayName = "Root";
   public isObstacle = true;
   public activeNeighbors: Vector2[] = [];
-  public inventory = new Inventory(params.tissueInventoryCapacity, this);
+  public inventory = new Inventory(TISSUE_INVENTORY_CAPACITY, this);
   cooldown = 0;
   public totalSucked = 0;
 
@@ -771,13 +793,13 @@ export class Root extends Cell implements Interactable {
   public step(dt: number) {
     super.step(dt);
     if (this.cooldown <= 0) {
-      this.stepWaterTransfer();
-      this.cooldown += traitMod(this.world.traits.rootAbsorption, params.rootTurnsPerTransfer, 1 / 1.5);
+      this.absorbWater();
+      this.cooldown += traitMod(this.world.traits.rootAbsorption, ROOT_TIME_BETWEEN_ABSORPTIONS, 1 / 1.5);
     }
     this.cooldown -= this.tempo * dt;
   }
 
-  private stepWaterTransfer() {
+  private absorbWater() {
     this.activeNeighbors = [];
     const neighbors = this.world.tileNeighbors(this.pos);
     let doneOnce = false;
@@ -799,7 +821,7 @@ export class Root extends Cell implements Interactable {
 export class Fruit extends Cell {
   static displayName = "Fruit";
   public isObstacle = true;
-  public inventory = new Inventory(8, this);
+  public inventory = new Inventory(TISSUE_INVENTORY_CAPACITY, this);
   public neededResources: number;
   public committedResources: Inventory; // = new Inventory(Fruit.neededResources, this);
   public timeMatured?: number;
@@ -811,10 +833,11 @@ export class Fruit extends Cell {
 
   constructor(pos: Vector2, world: World) {
     super(pos, world);
-    this.neededResources = Math.ceil(traitMod(world.traits.fruitNeededResources, 100, 1 / 1.5) / 2) * 2;
+    this.neededResources =
+      Math.ceil(traitMod(world.traits.fruitNeededResources, FRUIT_NEEDED_RESOURCES, 1 / 1.5) / 2) * 2;
     this.committedResources = new Inventory(this.neededResources, this);
     this.committedResources.on("get", this.handleGetResources);
-    this.turnsToMature = Math.ceil(traitMod(world.traits.fruitGrowthSpeed, (TIME_PER_SEASON / 3) * 2, 1 / 1.5));
+    this.turnsToMature = Math.ceil(traitMod(world.traits.fruitGrowthSpeed, FRUIT_TIME_TO_MATURE, 1 / 1.5));
   }
 
   handleGetResources = () => {
@@ -889,12 +912,12 @@ export class Transport extends Tissue {
     let sugarToTransport = 0;
     if (this.cooldownWater <= 0) {
       waterToTransport++;
-      const timePerWater = Math.floor(traitMod(this.world.traits.activeTransportWater, 0.66667, 1 / 1.5));
+      const timePerWater = traitMod(this.world.traits.activeTransportWater, TRANSPORT_TIME_BETWEEN_TRANSFERS, 1 / 1.5);
       this.cooldownWater += timePerWater;
     }
     if (this.cooldownSugar <= 0) {
       sugarToTransport++;
-      const timePerSugar = Math.floor(traitMod(this.world.traits.activeTransportSugar, 0.66667, 1 / 1.5));
+      const timePerSugar = traitMod(this.world.traits.activeTransportSugar, TRANSPORT_TIME_BETWEEN_TRANSFERS, 1 / 1.5);
       this.cooldownSugar += timePerSugar;
     }
 

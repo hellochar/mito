@@ -1,6 +1,6 @@
 import * as React from "react";
-
-import { TIME_PER_YEAR, Season, seasonDisplay } from "../game";
+import { Season, seasonDisplay } from "../game";
+import { TIME_PER_YEAR } from "../game/constants";
 import "./SeasonsTracker.scss";
 
 export default function SeasonsTracker({ time, season }: { time: number; season: Season }) {

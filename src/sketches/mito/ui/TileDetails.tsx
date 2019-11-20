@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import * as React from "react";
 import { Constructor } from "../constructor";
+import { CELL_MAX_ENERGY } from "../game/constants";
 import { Temperature } from "../game/temperature";
 import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, hasEnergy, Leaf, Root, Tile } from "../game/tile";
 import { hasInventory } from "../inventory";
-import { params } from "../params";
 import "./TileDetails.scss";
 
 interface TileDetailsProps {
@@ -43,7 +43,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     return tile instanceof Leaf ? (
       <div className="info-leaf">
         <div>{tile.totalSugarProduced} sugar produced.</div>
-        <div>{(1 / (tile.averageSpeed * params.leafReactionRate)).toFixed(0)} turns per reaction.</div>
+        <div>{(1 / (tile.averageSpeed * tile.reactionRate())).toFixed(2)} seconds per reaction.</div>
         <div>{(1 / tile.averageEfficiency).toFixed(2)} water per sugar.</div>
       </div>
     ) : null;
@@ -71,7 +71,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
 
   private tileInfo(tile: Tile) {
     const energyInfo = hasEnergy(tile) ? (
-      <span className="info-energy">💚{((tile.energy / params.cellEnergyMax) * 100).toFixed(0)}%</span>
+      <span className="info-energy">💚{((tile.energy / CELL_MAX_ENERGY) * 100).toFixed(0)}%</span>
     ) : null;
     return (
       <div className="info-tile">
