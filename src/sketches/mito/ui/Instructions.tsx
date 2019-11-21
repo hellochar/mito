@@ -1,7 +1,7 @@
 import * as React from "react";
 import {
   CELL_MAX_ENERGY,
-  LEAF_REACTION_RATE,
+  LEAF_REACTION_TIME,
   SOIL_DIFFUSION_WATER_TIME,
   SOIL_INVENTORY_CAPACITY,
   TISSUE_INVENTORY_CAPACITY,
@@ -97,9 +97,9 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
           <p>
             When exposed to Air, Leaves convert water to sugar. Leaves also use Pairings between opposite direction
             Air/Tissue with water. In perfect co2 and Water availability, Leaves produce 1 sugar every{" "}
-            {(1 / LEAF_REACTION_RATE).toFixed(2)} seconds per pair. Leaf efficiency is heavily influenced by co2 and
-            sunlight of its neighboring Air. If your leaf is in too much shadow, it will not be able to photosynthesize.
-            Leaves higher up produce sugar faster.
+            {LEAF_REACTION_TIME.toFixed(2)} seconds per pair. Leaf efficiency is heavily influenced by co2 and sunlight
+            of its neighboring Air. If your leaf is in too much shadow, it will not be able to photosynthesize. Leaves
+            higher up produce sugar faster.
           </p>
           <h3>Transport</h3>
           <p>

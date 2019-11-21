@@ -57,10 +57,9 @@ export const CELL_DIFFUSION_SUGAR_TIME = 16.6667;
 export const TISSUE_INVENTORY_CAPACITY = 6;
 
 /**
- * How quickly a Leaf will convert water into sugar. On average,
- * water will be converted after (1 / LEAF_REACTION_RATE) seconds.
+ * On average, water will be converted after LEAF_REACTION_TIME seconds.
  */
-export const LEAF_REACTION_RATE = 0.3;
+export const LEAF_REACTION_TIME = 3.3333;
 
 /**
  * Number of seconds between Root Absorption events.

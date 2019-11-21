@@ -15,7 +15,7 @@ import {
   CELL_MAX_ENERGY,
   FRUIT_NEEDED_RESOURCES,
   FRUIT_TIME_TO_MATURE,
-  LEAF_REACTION_RATE,
+  LEAF_REACTION_TIME,
   ROOT_TIME_BETWEEN_ABSORPTIONS,
   SOIL_DIFFUSION_WATER_TIME,
   SOIL_INVENTORY_CAPACITY,
@@ -186,7 +186,7 @@ export abstract class Tile implements Steppable, HasInventory {
 
   diffuseSugar(giver: HasInventory, dt: number) {
     const difference = giver.inventory.sugar - this.inventory.sugar;
-    if (difference > 0.01) {
+    if (difference > 0.02) {
       const diffusionAmount = Math.min(difference * this.diffusionSugar * dt, difference / 2);
       // sugar diffuses continuously
       giver.inventory.give(this.inventory, 0, diffusionAmount);
@@ -719,7 +719,7 @@ export class Leaf extends Cell {
   public inventory = new Inventory(0, this);
 
   reactionRate() {
-    return traitMod(this.world.traits.photosynthesis, LEAF_REACTION_RATE, 1.5) * this.tempo;
+    return (1 / traitMod(this.world.traits.photosynthesis, LEAF_REACTION_TIME, 1 / 1.5)) * this.tempo;
   }
 
   public step(dt: number) {
@@ -748,7 +748,7 @@ export class Leaf extends Cell {
         this.averageEfficiency += efficiency;
         this.averageSpeed += speed;
 
-        const leafReactionRate = this.reactionRate();
+        const reactionRate = this.reactionRate();
 
         // in prime conditions:
         //      our rate of conversion is speed * params.leafReactionRate
@@ -759,7 +759,8 @@ export class Leaf extends Cell {
         const bestEfficiencyWater = 1 / efficiency;
         const waterToConvert = Math.min(tissue.inventory.water, bestEfficiencyWater);
         // water (1 / time) * time / (water)
-        const chance = (speed * leafReactionRate * waterToConvert * dt) / bestEfficiencyWater;
+        const chance = (speed * reactionRate * dt) / bestEfficiencyWater;
+        // console.log(chance);
         if (Math.random() < chance) {
           const sugarConverted = waterToConvert * efficiency;
           tissue.inventory.add(-waterToConvert, sugarConverted);
