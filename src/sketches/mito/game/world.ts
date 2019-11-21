@@ -13,6 +13,7 @@ import {
   CELL_BUILD_TIME,
   CELL_DIFFUSION_SUGAR_TIME,
   CELL_DIFFUSION_WATER_TIME,
+  PERCENT_DAYLIGHT,
   TIME_PER_DAY,
   TIME_PER_MONTH,
   TIME_PER_SEASON,
@@ -419,12 +420,17 @@ export class World {
   };
 
   /**
-   * 0 to 1, where
-   * 0 to 0.5: daytime
-   * 0.5 to 1: nighttime
+   * 0 to 2pi, where
+   * 0 to pi: daytime (time of day - 0 to PERCENT_DAYLIGHT)
+   * pi to 2pi: nighttime (PERCENT_DAYLIGHT to 1)
    */
   get sunAngle() {
-    return (this.time * Math.PI * 2) / TIME_PER_DAY;
+    const timeOfDay = (this.time / TIME_PER_DAY) % 1;
+    if (timeOfDay < PERCENT_DAYLIGHT) {
+      return (timeOfDay / PERCENT_DAYLIGHT) * Math.PI;
+    } else {
+      return Math.PI * (1 + (timeOfDay - PERCENT_DAYLIGHT) / (1 - PERCENT_DAYLIGHT));
+    }
   }
 
   get dayOrNight() {
@@ -444,6 +450,8 @@ export class World {
   public computeSunlight() {
     // sunlight is special - we step downards from the top; neighbors don't affect the calculation so
     // we don't have buffering problems
+
+    // TODO allow sunlight to go full 45-to-90 degrees
     const sunAngle = this.sunAngle;
     const directionalBias = Math.sin(sunAngle + Math.PI / 2);
     const sunAmount = this.sunAmount;

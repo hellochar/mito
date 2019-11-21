@@ -570,7 +570,7 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
       const energyToSugarConversion = traitMod(this.world.traits.energyEfficiency, 1 / CELL_MAX_ENERGY, 1 / 1.5);
       const sugarToEat = Math.min(hunger * energyToSugarConversion, tile.inventory.sugar);
       // eat if we're hungry
-      if (hunger > 100 && sugarToEat > 0) {
+      if (sugarToEat > 0) {
         tile.inventory.add(0, -sugarToEat);
         const gotEnergy = sugarToEat / energyToSugarConversion;
         this.energy += gotEnergy;

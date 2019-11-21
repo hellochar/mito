@@ -5,6 +5,7 @@ import "./SeasonsTracker.scss";
 
 export default function SeasonsTracker({ time, season }: { time: number; season: Season }) {
   const yearDonePercent = time / TIME_PER_YEAR;
+  const timeFormatted = new Date(1000 * time).toISOString().substr(14, 5);
   return (
     <div className="seasons-tracker">
       <div className="container">
@@ -17,7 +18,9 @@ export default function SeasonsTracker({ time, season }: { time: number; season:
         </div>
         <div className="end-brace" />
       </div>
-      <div className="season-display">{seasonDisplay(season)}</div>
+      <div className="season-display">
+        {timeFormatted}, {seasonDisplay(season)}
+      </div>
     </div>
   );
 }
