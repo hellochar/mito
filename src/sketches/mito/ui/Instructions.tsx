@@ -1,5 +1,11 @@
 import * as React from "react";
-import { CELL_MAX_ENERGY, LEAF_REACTION_RATE, TISSUE_INVENTORY_CAPACITY } from "../game/constants";
+import {
+  CELL_MAX_ENERGY,
+  LEAF_REACTION_RATE,
+  SOIL_DIFFUSION_WATER_TIME,
+  SOIL_INVENTORY_CAPACITY,
+  TISSUE_INVENTORY_CAPACITY,
+} from "../game/constants";
 import { params } from "../params";
 
 interface InstructionsProps {
@@ -42,8 +48,8 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
           <h3>Soil and Underground</h3>
           <p>
             Underground, Soil holds water, rocks block your way, and occasionally Fountains (at the very bottom) are a
-            permanent source of water. Soil holds up to {params.soilMaxWater} water at a time. Fountains emit one water
-            per {params.fountainSecondsPerWater} turns.
+            permanent source of water. Soil holds up to {SOIL_INVENTORY_CAPACITY} water at a time. Fountains emit one
+            water per {params.fountainSecondsPerWater} turns.
           </p>
           <h3>Air and Aboveground</h3>
           <p>
@@ -56,8 +62,8 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
           <h3>Water</h3>
           <p>
             Water is one of the main two resources. Water slowly diffuses from high to low densities (difference 2
-            required) at about 1 unit per {(1 / params.soilDiffusionWater).toFixed(0)} turns. Obtain water in the ground
-            through Roots. Leaves require water to photosynthesize. You require water to build.
+            required) at about 1 unit per {SOIL_DIFFUSION_WATER_TIME} seconds. Obtain water in the ground through Roots.
+            Leaves require water to photosynthesize. You require water to build.
           </p>
           <h3>Sugar</h3>
           <p>

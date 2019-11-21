@@ -11,8 +11,8 @@ import { hasInventory } from "../inventory";
 import { params } from "../params";
 import {
   CELL_BUILD_TIME,
-  CELL_DIFFUSION_SUGAR_RATE,
-  CELL_DIFFUSION_WATER_RATE,
+  CELL_DIFFUSION_SUGAR_TIME,
+  CELL_DIFFUSION_WATER_TIME,
   TIME_PER_DAY,
   TIME_PER_MONTH,
   TIME_PER_SEASON,
@@ -73,8 +73,8 @@ export class World {
     };
     this.species = species;
     this.traits = getTraits(this.species.genes);
-    Cell.diffusionWater = traitMod(this.traits.diffuseWater, CELL_DIFFUSION_WATER_RATE, 2);
-    Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, CELL_DIFFUSION_SUGAR_RATE, 2);
+    Cell.diffusionWater = traitMod(this.traits.diffuseWater, 1 / CELL_DIFFUSION_WATER_TIME, 2);
+    Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, 1 / CELL_DIFFUSION_SUGAR_TIME, 2);
     Cell.timeToBuild = traitMod(this.traits.buildTime, CELL_BUILD_TIME, 1 / 2);
     this.player = new Player(new Vector2(this.width / 2, this.height / 2), this);
     this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) =>

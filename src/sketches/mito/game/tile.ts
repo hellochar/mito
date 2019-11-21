@@ -10,13 +10,15 @@ import { params } from "../params";
 import { canPullResources } from "./canPullResources";
 import {
   CELL_BUILD_TIME,
-  CELL_DIFFUSION_SUGAR_RATE,
-  CELL_DIFFUSION_WATER_RATE,
+  CELL_DIFFUSION_SUGAR_TIME,
+  CELL_DIFFUSION_WATER_TIME,
   CELL_MAX_ENERGY,
   FRUIT_NEEDED_RESOURCES,
   FRUIT_TIME_TO_MATURE,
   LEAF_REACTION_RATE,
   ROOT_TIME_BETWEEN_ABSORPTIONS,
+  SOIL_DIFFUSION_WATER_TIME,
+  SOIL_INVENTORY_CAPACITY,
   TISSUE_INVENTORY_CAPACITY,
   TRANSPORT_TIME_BETWEEN_TRANSFERS,
 } from "./constants";
@@ -175,21 +177,20 @@ export abstract class Tile implements Steppable, HasInventory {
     // does it take, and what function does it follow to get there? These are generally
     // defined by the diffusionWater variable. At these low numbers we can assume
     // near linearity.
-    const diffusionAmount = (giver.inventory.water - this.inventory.water) * this.diffusionWater * dt;
-    // if (params.soilDiffusionType === "continuous") {
-    //   giver.inventory.give(this.inventory, diffusionAmount, 0);
-    // } else {
-    giver.inventory.give(this.inventory, randRound(diffusionAmount), 0);
-    // }
+    const difference = giver.inventory.water - this.inventory.water;
+    if (difference > 1) {
+      const diffusionAmount = Math.min(difference * this.diffusionWater * dt, difference / 2);
+      giver.inventory.give(this.inventory, randRound(diffusionAmount), 0);
+    }
   }
 
   diffuseSugar(giver: HasInventory, dt: number) {
-    const diffusionAmount = (giver.inventory.sugar - this.inventory.sugar) * this.diffusionSugar * dt;
-    // if (params.soilDiffusionType === "continuous") {
-    //   giver.inventory.give(this.inventory, 0, diffusionAmount);
-    // } else {
-    giver.inventory.give(this.inventory, 0, randRound(diffusionAmount));
-    // }
+    const difference = giver.inventory.sugar - this.inventory.sugar;
+    if (difference > 0.01) {
+      const diffusionAmount = Math.min(difference * this.diffusionSugar * dt, difference / 2);
+      // sugar diffuses continuously
+      giver.inventory.give(this.inventory, 0, diffusionAmount);
+    }
   }
 
   stepGravity(dt: number) {
@@ -296,8 +297,8 @@ export class Air extends Tile {
 
 export class Soil extends Tile implements HasInventory {
   static displayName = "Soil";
-  static diffusionWater = params.soilDiffusionWater;
-  public inventory = new Inventory(params.soilMaxWater, this);
+  static diffusionWater = 1 / SOIL_DIFFUSION_WATER_TIME;
+  public inventory = new Inventory(SOIL_INVENTORY_CAPACITY, this);
   get fallAmount() {
     return this.world.environment.waterGravityPerTurn;
   }
@@ -432,8 +433,8 @@ export class FreezeEffect extends CellEffect implements Interactable {
 
 export abstract class Cell extends Tile implements HasEnergy, Interactable {
   static displayName = "Cell";
-  static diffusionWater = CELL_DIFFUSION_WATER_RATE;
-  static diffusionSugar = CELL_DIFFUSION_SUGAR_RATE;
+  static diffusionWater = 1 / CELL_DIFFUSION_WATER_TIME;
+  static diffusionSugar = 1 / CELL_DIFFUSION_SUGAR_TIME;
   static timeToBuild = CELL_BUILD_TIME;
   public energy = CELL_MAX_ENERGY;
   public darkness = 0;

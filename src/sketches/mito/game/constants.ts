@@ -23,6 +23,13 @@ export const TIME_PER_MONTH = TIME_PER_SEASON / 3;
 export const TIME_PER_DAY = TIME_PER_MONTH / 3;
 
 /**
+ * Water between adjacent Soil will diffuse, on average, after this many seconds.
+ */
+export const SOIL_DIFFUSION_WATER_TIME = 33;
+
+export const SOIL_INVENTORY_CAPACITY = 20;
+
+/**
  * How many seconds it takes for a Cell to go from 100% to 0% energy. One sugar will sustain one
  * Cell's energy for this many seconds. "Energy" is a unit of time in this game.
  */
@@ -34,15 +41,15 @@ export const CELL_MAX_ENERGY = 225;
 export const CELL_BUILD_TIME = 1;
 
 /**
- * How quickly water diffuses through cells. Each water difference
- * between two adjacent cells will diffuse, on average, after (1 / CELL_DIFFUSION_WATER_RATE) seconds.
+ * In a two Cell system with one Water, this water will diffuse, on average, after this many seconds.
+ * Divide this by 8 to get an idea of how "fast" a single water will move on a fully filled out Tissue plane.
  */
-export const CELL_DIFFUSION_WATER_RATE = 0.06;
+export const CELL_DIFFUSION_WATER_TIME = 16.6667;
 
 /**
- * How quickly sugar diffuses through cells. See water rate explanation.
+ * See CELL_DIFFUSION_WATER_TIME explanation.
  */
-export const CELL_DIFFUSION_SUGAR_RATE = 0.06;
+export const CELL_DIFFUSION_SUGAR_TIME = 16.6667;
 
 /**
  * Max inventory capacity of Tissue, Transports, and Roots.
