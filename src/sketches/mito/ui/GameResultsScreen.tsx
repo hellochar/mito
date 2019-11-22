@@ -3,7 +3,7 @@ import * as React from "react";
 import { GameResult } from "..";
 import Character from "../../../common/Character";
 import { Fruit } from "../game/tile";
-import { seasonDisplay } from "../game/world";
+import { seasonDisplay, seasonFromTime } from "../game/world";
 import "./GameResultsScreen.scss";
 
 function Glow() {
@@ -26,9 +26,10 @@ function FruitInfo({ fruit }: { fruit: Fruit }) {
         {fruit.isMature() ? <Glow /> : null}
         <img alt="" src={fruitSrc} />
       </div>
-      {fruit.isMature() ? (
+      {fruit.timeMatured != null ? (
         <>
-          <span className="matured-info success">Matured</span>&nbsp;at {fruit.timeMatured}, Mutation Points earned: 1
+          <span className="matured-info success">Matured</span> at {seasonDisplay(seasonFromTime(fruit.timeMatured))},
+          Mutation Points earned: 1
         </>
       ) : (
         <span className="matured-info in-progress">{(fruit.getPercentMatured() * 100).toFixed(0)}% maturity</span>

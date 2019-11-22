@@ -9,16 +9,7 @@ import shuffle from "../../../math/shuffle";
 import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
-import {
-  CELL_BUILD_TIME,
-  CELL_DIFFUSION_SUGAR_TIME,
-  CELL_DIFFUSION_WATER_TIME,
-  PERCENT_DAYLIGHT,
-  TIME_PER_DAY,
-  TIME_PER_MONTH,
-  TIME_PER_SEASON,
-  TIME_PER_YEAR,
-} from "./constants";
+import { CELL_BUILD_TIME, CELL_DIFFUSION_SUGAR_TIME, CELL_DIFFUSION_WATER_TIME, PERCENT_DAYLIGHT, TIME_PER_DAY, TIME_PER_MONTH, TIME_PER_SEASON, TIME_PER_YEAR } from "./constants";
 import { Entity, isSteppable, step } from "./entity";
 import { Environment, FILL_FUNCTIONS } from "./environment";
 import { Player } from "./player";
@@ -48,6 +39,10 @@ export function seasonFromTime(time: number): Season {
 const SEASON_NAMES = ["Spring", "Summer", "Fall", "Winter"];
 export function seasonDisplay(s: Season) {
   return `${SEASON_NAMES[s.season]}, Month ${s.month}`;
+}
+
+export function formatTime(t: number) {
+  return new Date(1000 * t).toISOString().substr(14, 5);
 }
 
 export class World {
