@@ -15,7 +15,7 @@ import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
 import { params } from "../params";
-import { PLAYER_BASE_SPEED, PLAYER_MOVED_BY_TRANSPORT_SPEED } from "./constants";
+import { CELL_MAX_ENERGY, PLAYER_BASE_SPEED, PLAYER_MOVED_BY_TRANSPORT_SPEED } from "./constants";
 import { Steppable } from "./entity";
 import { Cell, FreezeEffect, Fruit, GrowingCell, Tile, Tissue, Transport } from "./tile";
 import { World } from "./world";
@@ -297,6 +297,11 @@ export class Player implements Steppable {
       // already built, whatever.
       return true;
     }
+    const matureCell = this.tryConstructingNewCell(action.position, action.cellType, action.args);
+    if (matureCell == null) {
+      return false;
+    }
+
     if (existingCell) {
       this.attemptDeconstruct(
         {
@@ -307,20 +312,15 @@ export class Player implements Steppable {
         dt
       );
     }
-    const matureCell = this.tryConstructingNewCell(action.position, action.cellType, action.args);
-    if (matureCell != null) {
-      let cell: Cell;
-      if (action.cellType.timeToBuild) {
-        cell = new GrowingCell(action.position, this.world, matureCell);
-      } else {
-        cell = matureCell;
-      }
-      cell.droopY = this.droopY();
-      this.world.setTileAt(action.position, cell);
-      return true;
+    let cell: Cell;
+    if (action.cellType.timeToBuild) {
+      cell = new GrowingCell(action.position, this.world, matureCell);
     } else {
-      return false;
+      cell = matureCell;
     }
+    cell.droopY = this.droopY();
+    this.world.setTileAt(action.position, cell);
+    return true;
   }
 
   public attemptDeconstruct(action: ActionDeconstruct, _dt: number): boolean {
@@ -328,11 +328,11 @@ export class Player implements Steppable {
       const cell = this.world.maybeRemoveCellAt(action.position);
       if (cell != null) {
         // refund the resources back
-        // const refund = cell.energy / CELL_MAX_ENERGY;
-        // this.inventory.add(refund, refund);
-        // if (hasInventory(cell)) {
-        //   cell.inventory.give(this.inventory, cell.inventory.water, cell.inventory.sugar);
-        // }
+        const refund = cell.energy / CELL_MAX_ENERGY;
+        this.inventory.add(refund, refund);
+        if (hasInventory(cell)) {
+          cell.inventory.give(this.inventory, cell.inventory.water, cell.inventory.sugar);
+        }
         return true;
       }
     }
