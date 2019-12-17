@@ -1,3 +1,5 @@
+@import "../../../variables";
+
 .hud-panel-right {
   position: absolute;
   right: 10px;
@@ -6,4 +8,86 @@
   background: rgba(255, 255, 255, 0.9);
   border-radius: 2px;
   font-size: 12px;
+}
+
+.mito-inventory {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  // left: 25%;
+  // right: 25%;
+  display: flex;
+  flex-direction: column;
+  opacity: 0.95;
+  transition: transform 2s;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  border: 1px solid grey;
+  background: rgba(255, 255, 255, 0.25);
+  pointer-events: none;
+
+  &.hidden {
+    transform: translateX(-50%) translateY(170%);
+  }
+
+  .mito-inventory-container {
+    z-index: 1;
+    padding: 10px;
+    background: hsl(111, 70%, 27%);
+    border-bottom: 1px solid grey;
+  }
+
+  .mito-inventory-indicator {
+    font-weight: bold;
+  }
+
+  .mito-inventory-water {
+    color: hsl(242, 81%, 42%);
+  }
+
+  .mito-inventory-sugar {
+    color: hsl(41, 73%, 67%);
+  }
+
+  .mito-inventory-maxed {
+    text-align: center;
+    position: absolute;
+    bottom: calc(100% - 100px);
+    // background: $light-gray5;
+    background: hsl(111, 70%, 27%);
+    font-weight: bold;
+    padding: 5px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    align-self: center;
+    transition: bottom 0.2s;
+    color: $white;
+
+    &.is-maxed {
+      bottom: 100%;
+    }
+  }
+
+  .mito-inventory-bar {
+    height: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+
+    .mito-inventory-bar-water {
+      background: hsl(242, 81%, 42%);
+      transition: width 0.05s;
+    }
+
+    .mito-inventory-bar-sugar {
+      background: hsl(41, 73%, 67%);
+      transition: width 0.05s;
+    }
+
+    .mito-inventory-bar-empty {
+      box-shadow: 0 5px 6px inset rgba(0, 0, 0, 0.25);
+      transition: width 0.05s;
+    }
+  }
 }

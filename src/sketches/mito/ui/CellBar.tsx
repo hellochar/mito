@@ -10,11 +10,13 @@ export interface CellBarProps {
   bar: Constructor<Cell>[];
   index: number;
   onIndexClicked: (index: number) => void;
+  buildError?: "water" | "sugar" | "water and sugar";
 }
 
-function CellBar({ bar, index, onIndexClicked }: CellBarProps) {
+function CellBar({ bar, index, onIndexClicked, buildError }: CellBarProps) {
+  const disabled = buildError != null;
   return (
-    <div className="cell-bar">
+    <div className={classNames("cell-bar", { disabled })}>
       {bar.map((cellType, i) => (
         <CellBarItem
           key={i}
@@ -25,6 +27,7 @@ function CellBar({ bar, index, onIndexClicked }: CellBarProps) {
           spritesheetLoaded={spritesheetLoaded}
         />
       ))}
+      {disabled ? <div className="disabled-cover">Need {buildError} to build!</div> : null}
     </div>
   );
 }

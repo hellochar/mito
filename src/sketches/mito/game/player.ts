@@ -88,6 +88,23 @@ export class Player implements Steppable {
     return this.world.tileAt(this.pos)!;
   }
 
+  getBuildError(): "water" | "sugar" | "water and sugar" | undefined {
+    const waterCost = 1;
+    const sugarCost = 1;
+    const needWater = this.inventory.water < waterCost;
+    const needSugar = this.inventory.sugar < sugarCost;
+
+    if (needWater && needSugar) {
+      return "water and sugar";
+    } else if (needWater && !needSugar) {
+      return "water";
+    } else if (needSugar && !needWater) {
+      return "sugar";
+    } else {
+      return;
+    }
+  }
+
   public on(event: string, cb: (...args: any[]) => void) {
     this.events.on(event, cb);
   }
@@ -240,17 +257,10 @@ export class Player implements Steppable {
     if (targetTile instanceof Fruit) {
       return;
     }
-    const waterCost = 1;
-    const sugarCost = 1;
     const tileAlreadyExists =
       targetTile instanceof cellType && !((cellType as any) === Transport && targetTile instanceof Transport);
-    if (
-      !tileAlreadyExists &&
-      !targetTile.isObstacle &&
-      this.inventory.water >= waterCost &&
-      this.inventory.sugar >= sugarCost
-    ) {
-      this.inventory.add(-waterCost, -sugarCost);
+    if (!tileAlreadyExists && !targetTile.isObstacle && this.getBuildError() == null) {
+      this.inventory.add(-1, -1);
       const newTile = new cellType(position, this.world, ...args);
       newTile.args = args;
       build.audio.currentTime = 0;

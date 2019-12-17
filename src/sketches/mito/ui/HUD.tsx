@@ -1,15 +1,12 @@
 import classnames from "classnames";
+import DynamicNumber from "common/DynamicNumber";
+import { isInteresting } from "evolution/traits";
 import * as React from "react";
-
+import TraitDisplay from "../../../evolution/TraitDisplay";
 import Mito from "../index";
 import { params } from "../params";
 import CellBar from "./CellBar";
-
-import TraitDisplay from "../../../evolution/TraitDisplay";
-import DynamicNumber from "common/DynamicNumber";
-import { isInteresting } from "evolution/traits";
 import "./HUD.scss";
-
 import SeasonsTracker from "./SeasonsTracker";
 
 export interface HUDProps {
@@ -48,6 +45,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   public render() {
     const isMaxed = this.inventory.isMaxed();
     const isMaxedEl = <div className={`mito-inventory-maxed${isMaxed ? " is-maxed" : ""}`}>maxed</div>;
+    const buildError = this.player.getBuildError();
     return (
       <>
         <SeasonsTracker time={this.world.time} season={this.world.season} />
@@ -62,6 +60,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
             bar={this.mito.cellBar}
             index={this.mito.cellBarIndex}
             onIndexClicked={(i) => this.mito.setCellBarIndex(i)}
+            buildError={buildError}
           />
         </div>
       </>
