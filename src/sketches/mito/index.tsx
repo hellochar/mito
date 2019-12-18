@@ -282,9 +282,11 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   public getHighlightVector(clientX = this.mouse.x, clientY = this.mouse.y) {
-    const offset = new Vector2(clientX - this.canvas.width / 2, clientY - this.canvas.height / 2);
+    const cursorCameraNorm = this.getCameraNormCoordinates(clientX, clientY);
+    const cursorWorld = new Vector3(cursorCameraNorm.x, cursorCameraNorm.y, 0).unproject(this.camera);
 
-    offset.setLength(0.75);
+    const offset = new Vector2(cursorWorld.x, cursorWorld.y).sub(this.world.player.posFloat);
+    offset.clampLength(0, 0.75);
     return offset;
   }
 

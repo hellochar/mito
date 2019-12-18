@@ -502,6 +502,10 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
         anyInteracted = anyInteracted || interacted;
       }
     }
+    if (this.inventory.water > 0 || this.inventory.sugar > 0) {
+      anyInteracted = true;
+      this.inventory.give(this.world.player.inventory, 30 * dt, 30 * dt);
+    }
     return anyInteracted;
   }
 
