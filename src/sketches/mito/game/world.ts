@@ -1,4 +1,4 @@
-import { map, randRound } from "math";
+import { randRound } from "math";
 import * as THREE from "three";
 import { Vector2 } from "three";
 import { GameResult } from "..";
@@ -9,7 +9,16 @@ import shuffle from "../../../math/shuffle";
 import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
-import { CELL_BUILD_TIME, CELL_DIFFUSION_SUGAR_TIME, CELL_DIFFUSION_WATER_TIME, PERCENT_DAYLIGHT, TIME_PER_DAY, TIME_PER_MONTH, TIME_PER_SEASON, TIME_PER_YEAR } from "./constants";
+import {
+  CELL_BUILD_TIME,
+  CELL_DIFFUSION_SUGAR_TIME,
+  CELL_DIFFUSION_WATER_TIME,
+  PERCENT_DAYLIGHT,
+  TIME_PER_DAY,
+  TIME_PER_MONTH,
+  TIME_PER_SEASON,
+  TIME_PER_YEAR,
+} from "./constants";
 import { Entity, isSteppable, step } from "./entity";
 import { Environment, FILL_FUNCTIONS } from "./environment";
 import { Player } from "./player";
@@ -395,25 +404,6 @@ export class World {
     }
   }
 
-  private temperatureScale = {
-    0: {
-      day: 60,
-      night: 40,
-    },
-    1: {
-      day: 80,
-      night: 60,
-    },
-    2: {
-      day: 65,
-      night: 31,
-    },
-    3: {
-      day: 40,
-      night: 0,
-    },
-  };
-
   /**
    * 0 to 2pi, where
    * 0 to pi: daytime (time of day - 0 to PERCENT_DAYLIGHT)
@@ -438,8 +428,7 @@ export class World {
 
   getCurrentTemperature() {
     const { season } = this.season;
-    const { day, night } = this.temperatureScale[season];
-    return map(this.sunAmount, 0, 1, night, day);
+    return this.environment.temperaturePerSeason[season];
   }
 
   public computeSunlight() {

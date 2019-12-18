@@ -19,6 +19,7 @@ import {
   ROOT_TIME_BETWEEN_ABSORPTIONS,
   SOIL_DIFFUSION_WATER_TIME,
   SOIL_INVENTORY_CAPACITY,
+  TIME_PER_DAY,
   TISSUE_INVENTORY_CAPACITY,
   TRANSPORT_TIME_BETWEEN_TRANSFERS,
 } from "./constants";
@@ -380,7 +381,10 @@ export abstract class CellEffect {
   attachTo(cell: Cell) {
     this.cell = cell;
     this.timeMade = this.cell.world.time;
+    this.onAttached();
   }
+
+  onAttached() {}
 
   /**
    * Return whether to step the next behavior in the chain
@@ -396,8 +400,8 @@ export abstract class CellEffect {
 export class FreezeEffect extends CellEffect implements Interactable {
   static displayName = "Frozen";
   static stacks = false;
-  public readonly secondsToDie = 66.66667;
-  public percentFrozen = 0.5;
+  public readonly secondsToDie = TIME_PER_DAY;
+  public percentFrozen = 0.25;
 
   get turnsUntilDeath() {
     return this.secondsToDie - this.age;
@@ -418,8 +422,13 @@ export class FreezeEffect extends CellEffect implements Interactable {
       this.percentFrozen -= (10 / this.secondsToDie) * dt;
     }
     this.onFrozenChanged();
+    this.cell.energy -= (dt / this.secondsToDie) * CELL_MAX_ENERGY;
 
     throw new StopStep();
+  }
+
+  onAttached() {
+    this.cell.energy -= CELL_MAX_ENERGY * 0.2;
   }
 
   onFrozenChanged() {

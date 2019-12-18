@@ -1,4 +1,4 @@
-import { lerp, map } from "math";
+import { lerp } from "math";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
 import Mito from "../..";
 import { Cell, CellEffect, FreezeEffect } from "../../game/tile";
@@ -52,7 +52,7 @@ const COLD_BLUE = new Color("#1E90FF").lerp(new Color(0), 0.5);
 
 class FreezeEffectRenderer extends Renderer<FreezeEffect> {
   static newMesh = (() => {
-    const g = new PlaneBufferGeometry(0.75, 0.75);
+    const g = new PlaneBufferGeometry(1, 1);
     const material = new MeshBasicMaterial({
       map: textureFromSpritesheet(Math.floor(23 / 16), Math.floor(22 / 16)),
       side: DoubleSide,
@@ -74,7 +74,7 @@ class FreezeEffectRenderer extends Renderer<FreezeEffect> {
 
   update() {
     const percentFrozen = this.target.percentFrozen;
-    const s = map(percentFrozen, 0, 1, 0.2, 1);
+    const s = percentFrozen ** 0.5;
     this.mesh.scale.x = lerp(this.mesh.scale.x, s, 0.2);
     this.mesh.scale.y = lerp(this.mesh.scale.y, s, 0.2);
     const cell = this.target.cell;

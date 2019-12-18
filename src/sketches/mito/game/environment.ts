@@ -18,6 +18,7 @@ export interface Environment {
   evaporationRate: number;
   evaporationBottom: number;
   floorCo2: number;
+  temperaturePerSeason: number[];
   fill: FillFunctionName;
 }
 
@@ -128,6 +129,7 @@ export const Temperate = () => {
     evaporationBottom: 0.6,
     floorCo2: 0.3333,
     waterGravityPerTurn: 0.03,
+    temperaturePerSeason: [53, 75, 43, 25],
     fill: "Temperate",
   };
   return environment;
@@ -145,6 +147,7 @@ export const Desert = () => {
     evaporationBottom: 0.7,
     waterGravityPerTurn: 0.6,
     floorCo2: 0.95,
+    temperaturePerSeason: [69, 84, 98, 24],
     fill: "Desert",
   };
   return e;
@@ -162,6 +165,7 @@ export const Rocky = () => {
     evaporationBottom: 0.6,
     evaporationRate: 0.03,
     floorCo2: 1,
+    temperaturePerSeason: [27, 62, 36, 15],
     fill: "Rocky",
   };
   return e;
