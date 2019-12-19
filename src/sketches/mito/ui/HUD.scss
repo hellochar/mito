@@ -61,10 +61,12 @@
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
     align-self: center;
-    transition: bottom 0.2s;
+    transition: all 0.2s;
     color: $white;
+    opacity: 0;
 
     &.is-maxed {
+      opacity: 1;
       bottom: 100%;
     }
   }
