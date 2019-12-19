@@ -75,9 +75,11 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     ) : null;
     return (
       <div className="info-tile">
-        <div className="info-tile-name">{(tile.constructor as Constructor<Tile>).displayName}</div>
-        <TemperatureInfo tile={tile} />
-        {energyInfo}
+        <div className="info-tile-row">
+          <div className="info-tile-name">{(tile.constructor as Constructor<Tile>).displayName}</div>
+          {energyInfo}
+          <TemperatureInfo tile={tile} />
+        </div>
       </div>
     );
   }
