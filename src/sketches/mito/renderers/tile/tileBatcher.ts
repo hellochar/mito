@@ -1,6 +1,6 @@
 import { World } from "sketches/mito/game";
 import { Cell, Tile } from "sketches/mito/game/tile";
-import { fruitTexture, SPRITESHEET } from "sketches/mito/spritesheet";
+import { SPRITESHEET } from "sketches/mito/spritesheet";
 import {
   Color,
   DoubleSide,
@@ -70,9 +70,12 @@ varying vec3 vColor;
 varying vec2 vUv;
 varying vec2 vTexturePosition;
 
-const vec2 roguelikeSheetSize = vec2(1024., 512.);
-uniform sampler2D roguelikeSheet;
-uniform sampler2D fruit;
+const vec2 spritesheetSize = vec2(128., 128.);
+uniform sampler2D spriteSheet;
+
+float myRound(float x) {
+  return sign(x) * floor(abs(x) + 0.5);
+}
 
 // uv - [0,1]x[0,1] - our local sprite (16x16) UV coords
 // texturePosition - the grid x/y where our sprite lives in our texture. NOTE:
@@ -80,29 +83,28 @@ uniform sampler2D fruit;
 // textureSize - the pixel width/height of the full spritesheet
 // returns: a UV coordinate for this sprite, relative to the full spritesheet
 vec2 getCorrectUv(vec2 uv, vec2 texturePosition, vec2 textureSize) {
-  vec2 spriteSheetPxStart = texturePosition * vec2(16.);
-  spriteSheetPxStart.y = textureSize.y - spriteSheetPxStart.y - 16.;
-  vec2 spriteSheetUv = spriteSheetPxStart + uv * vec2(16.);
-  return spriteSheetUv / textureSize;
+  vec2 spriteSheetPxStart = texturePosition * vec2(32.);
+  spriteSheetPxStart.y = textureSize.y - spriteSheetPxStart.y - 32.;
+  vec2 spriteSheetUv = spriteSheetPxStart + uv * vec2(32.);
+  vec2 minUv = spriteSheetPxStart + vec2(1.);
+  vec2 maxUv = spriteSheetPxStart + vec2(32. - 1.);
+  return clamp(spriteSheetUv / textureSize, minUv / textureSize, maxUv / textureSize);
 }
 
 void main() {
-  vec2 correctUv = getCorrectUv(vUv, vTexturePosition, roguelikeSheetSize);
-  vec4 textureColor = texture2D(roguelikeSheet, correctUv);
-  if (textureColor.a < 0.5) {
-    gl_FragColor = vec4(vColor, 1.);
-  } else {
+  vec2 correctUv = getCorrectUv(vUv, vTexturePosition, spritesheetSize);
+  vec4 textureColor = texture2D(spriteSheet, correctUv);
+  // if (textureColor.a < 0.5) {
+  //   gl_FragColor = vec4(0., 0., 0., 0.);
+  // } else {
     gl_FragColor = vec4(textureColor.rgb * vColor, textureColor.a);
-  }
-  // gl_FragColor = vec4(vColor, 1.);
-  // gl_FragColor = vec4(0.5, 0.5, 0.2, 1.);
+  // }
 }
 `;
 
 const TileShaderMaterial = new RawShaderMaterial({
   uniforms: {
-    roguelikeSheet: { value: SPRITESHEET() },
-    fruit: { value: fruitTexture },
+    spriteSheet: { value: SPRITESHEET() },
   },
   vertexShader,
   fragmentShader,

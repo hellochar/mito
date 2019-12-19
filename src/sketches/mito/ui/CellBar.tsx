@@ -3,7 +3,7 @@ import * as React from "react";
 import { Constructor } from "../constructor";
 import { Cell } from "../game/tile";
 import { materialInfoMapping } from "../renderers/tile/InstancedTileRenderer";
-import { spritesheetLoaded, textureFromSpritesheet } from "../spritesheet";
+import { spritesheetLoaded, textureFromSpritesheetNew } from "../spritesheet";
 import "./CellBar.scss";
 
 export interface CellBarProps {
@@ -43,7 +43,7 @@ export interface CellBarItemProps {
 
 function CellBarItem({ type, hotkey, isSelected, onClick, spritesheetLoaded }: CellBarItemProps) {
   const material = materialInfoMapping.get(type)!;
-  const texture = textureFromSpritesheet(material.texturePosition.x, material.texturePosition.y);
+  const texture = textureFromSpritesheetNew(material.texturePosition.x, material.texturePosition.y);
   const style: React.CSSProperties = React.useMemo(() => {
     const image = texture.image;
     const color = material.color.getStyle();

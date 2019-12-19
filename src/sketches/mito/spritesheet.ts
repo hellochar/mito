@@ -1,12 +1,12 @@
 import fruitSrc from "assets/images/fruit.png";
-import roguelikeSheet_transparentSrc from "assets/images/roguelikeSheet_transparent.png";
+import spritesheetUrl from "assets/images/spritesheet.png";
 import * as THREE from "three";
 import lazy from "../../common/lazy";
 
-const spriteSize = 16; // 16x16 sprites
+const spriteSize = 32; // 16x16 sprites
 export let spritesheetLoaded = false;
 export const SPRITESHEET = lazy(() =>
-  new THREE.TextureLoader().load(roguelikeSheet_transparentSrc, (texture) => {
+  new THREE.TextureLoader().load(spritesheetUrl, (texture) => {
     texture.magFilter = THREE.NearestFilter;
     texture.flipY = true;
     texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
@@ -19,7 +19,7 @@ export const fruitTexture = new THREE.TextureLoader().load(fruitSrc);
 
 export const cache: { [key: string]: THREE.Texture } = {};
 // x, y are spritesheet coordinates, starting top-left and going down/right
-export function textureFromSpritesheet(x: number, y: number, backgroundColor = "white") {
+export function textureFromSpritesheetNew(x: number, y: number, backgroundColor = "white") {
   x = Math.floor(x);
   y = Math.floor(y);
   const key = `${x},${y}`;

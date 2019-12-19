@@ -4,7 +4,7 @@ import lazy from "../../../common/lazy";
 import { map } from "../../../math";
 import { Mito } from "../index";
 import { Inventory } from "../inventory";
-import { textureFromSpritesheet } from "../spritesheet";
+import { textureFromSpritesheetNew } from "../spritesheet";
 import { Renderer } from "./Renderer";
 import { ResourcePoints } from "./resourcePoints";
 
@@ -25,7 +25,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
         color: new Color("yellow"),
         size: 85,
         opacity: 0.9,
-        map: textureFromSpritesheet(42, 12, "transparent"),
+        map: textureFromSpritesheetNew(2, 2, "transparent"),
       })
   );
 

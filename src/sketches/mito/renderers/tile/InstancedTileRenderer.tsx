@@ -371,47 +371,46 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
 interface MaterialInfo {
   color: Color;
-  // TODO implement texturePosition
   texturePosition: Vector2;
 }
 
 export const materialInfoMapping = (() => {
   const materials = new Map<Constructor<Tile>, MaterialInfo>();
   materials.set(Air, {
-    texturePosition: new Vector2(0, 0),
+    texturePosition: new Vector2(0, 3),
     color: new Color("white"),
   });
   materials.set(Soil, {
-    texturePosition: new Vector2(8, 11),
+    texturePosition: new Vector2(1, 0),
     color: new Color("rgb(112, 89, 44)"),
   });
   materials.set(Fountain, {
     color: new Color("white"),
-    texturePosition: new Vector2(56 / 16, 38 / 16).floor(),
+    texturePosition: new Vector2(2, 0),
   });
   materials.set(Rock, {
-    texturePosition: new Vector2(26, 20),
+    texturePosition: new Vector2(3, 0),
     color: new Color("rgb(63, 77, 84)"),
   });
   materials.set(DeadCell, {
-    texturePosition: new Vector2(137 / 16, 374 / 16).floor(),
+    texturePosition: new Vector2(0, 1),
     color: new Color("rgb(128, 128, 128)"),
   });
   materials.set(Tissue, {
-    texturePosition: new Vector2(6, 31),
+    texturePosition: new Vector2(1, 1),
     color: new Color(0x30ae25),
   });
   materials.set(Transport, materials.get(Tissue)!);
   materials.set(Leaf, {
     color: new Color("white"),
-    texturePosition: new Vector2(55 / 16, 280 / 16).floor(),
+    texturePosition: new Vector2(2, 1),
   });
   materials.set(Root, {
     color: new Color("white"),
-    texturePosition: new Vector2(59 / 16, 327 / 16).floor(),
+    texturePosition: new Vector2(3, 1),
   });
   materials.set(Fruit, {
-    texturePosition: new Vector2(0, 0),
+    texturePosition: new Vector2(0, 2),
     color: new Color("white"),
   });
   return materials;

@@ -21,6 +21,7 @@ const TemperatureInfo: React.FC<{ tile: Tile }> = ({ tile }) => {
     const midAngle = map(tempBarMid, 0, 96, -210, 30);
     const div = (
       <div
+        key={midAngle}
         className="temperature-scale"
         style={{
           transform: `rotate(${midAngle}deg)`,

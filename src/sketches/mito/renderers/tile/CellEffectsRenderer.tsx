@@ -2,7 +2,7 @@ import { lerp } from "math";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
 import Mito from "../..";
 import { Cell, CellEffect, FreezeEffect } from "../../game/tile";
-import { textureFromSpritesheet } from "../../spritesheet";
+import { textureFromSpritesheetNew } from "../../spritesheet";
 import { Renderer } from "../Renderer";
 
 export class CellEffectsRenderer extends Renderer<Cell> {
@@ -54,7 +54,7 @@ class FreezeEffectRenderer extends Renderer<FreezeEffect> {
   static newMesh = (() => {
     const g = new PlaneBufferGeometry(1, 1);
     const material = new MeshBasicMaterial({
-      map: textureFromSpritesheet(Math.floor(23 / 16), Math.floor(22 / 16)),
+      map: textureFromSpritesheetNew(1, 2),
       side: DoubleSide,
       color: COLD_BLUE,
       transparent: true,
