@@ -151,11 +151,13 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (this.target instanceof Cell) {
       this.instance.commitCenter(this.target.pos.x, this.target.pos.y + this.target.droopY, 1);
     } else {
-      this.instance.commitCenter(this.target.pos.x, this.target.pos.y, 0);
+      const z = this.target instanceof Air ? -10 : 0;
+      this.instance.commitCenter(this.target.pos.x, this.target.pos.y, z);
     }
     this.instance.commitTexturePosition(this.materialInfo.texturePosition);
     this.instance.commitColor(this.color);
     this.instance.commitScale(this.scale);
+    this.instance.commitTileType(this.target instanceof Air ? 1 : 0);
   }
 
   update() {

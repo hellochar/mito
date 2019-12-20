@@ -15,6 +15,8 @@ import {
 import glsl from "../glsl";
 
 const vertexShader = glsl`
+precision mediump float;
+
 // the vertex shader's main goals are:
 // 1. set gl_Position to a clip-coordinate
 // 2. pass varyings along to fragment shader.
@@ -29,6 +31,10 @@ const vertexShader = glsl`
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
+// global world info
+uniform float sunAngle;
+uniform float sunAmount;
+
 // Comes from threejs Geometry
 attribute vec3 position;
 attribute vec3 normal;
@@ -40,17 +46,22 @@ attribute vec3 instancedTileCenter;
 attribute vec3 instancedTileScale;
 attribute vec3 instancedTileColor;
 attribute vec2 instancedTexturePosition;
+attribute float instancedTileType; // 1 === Air, 0 === other
 
 // things we pass onto fragment
+varying vec3 vTileCenter;
 varying vec3 vColor;
 varying vec2 vUv;
 varying vec2 vTexturePosition;
+varying float vAirAmount;
 
 // based on https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_instancing_billboards.html
 void main() {
+  vTileCenter = instancedTileCenter;
   vColor = instancedTileColor;
   vUv = uv;
   vTexturePosition = instancedTexturePosition;
+  vAirAmount = instancedTileType;
 
   vec4 mvPosition = modelViewMatrix * vec4(instancedTileCenter, 1.);
   mvPosition.xyz += position * instancedTileScale;
@@ -65,16 +76,39 @@ const fragmentShader = glsl`
 //   'uniform' variables
 precision mediump float;
 
+// global world info
+uniform float sunAngle;
+uniform float sunAmount;
+
 // these should match the corresponding section in the vertexShader exactly
+varying vec3 vTileCenter;
 varying vec3 vColor;
 varying vec2 vUv;
 varying vec2 vTexturePosition;
+varying float vAirAmount;
 
 const vec2 spritesheetSize = vec2(128., 128.);
 uniform sampler2D spriteSheet;
 
 float myRound(float x) {
   return sign(x) * floor(abs(x) + 0.5);
+}
+
+float random(float x) {
+  return fract(sin(x * .43));
+}
+
+vec2 rayIntersectCircle(vec2 origin, vec2 dir, vec2 cOrigin, float cRadius) {
+  return vec2(0.);
+  // return dir *
+}
+
+vec3 sunRay(vec2 uv) {
+  // vec2 pf = uv * vec2(1., -1.) + vec2(0., 1.) - vec2(0.5);
+  vec2 pf = vec2(0.);
+  vec2 pointOnCircle = vTileCenter.xy + pf;
+  float b = random(dot(pointOnCircle, vec2(cos(sunAngle), sin(sunAngle)))) * vAirAmount;
+  return vec3(0.97, 0.98, 0.99) * b;
 }
 
 // uv - [0,1]x[0,1] - our local sprite (16x16) UV coords
@@ -94,6 +128,7 @@ vec2 getCorrectUv(vec2 uv, vec2 texturePosition, vec2 textureSize) {
 void main() {
   vec2 correctUv = getCorrectUv(vUv, vTexturePosition, spritesheetSize);
   vec4 textureColor = texture2D(spriteSheet, correctUv);
+  // gl_FragColor = vec4(textureColor.rgb * vColor + sunRay(correctUv), textureColor.a);
   gl_FragColor = vec4(textureColor.rgb * vColor, textureColor.a);
 }
 `;
@@ -101,6 +136,8 @@ void main() {
 const TileShaderMaterial = new RawShaderMaterial({
   uniforms: {
     spriteSheet: { value: SPRITESHEET() },
+    sunAngle: { value: 0 },
+    sunAmount: { value: 1 },
   },
   vertexShader,
   fragmentShader,
@@ -136,6 +173,7 @@ class TileBatcher {
   colors = new InstancedBufferAttribute(new Float32Array(3 * this.maxTiles), 3, false, 1);
   scales = new InstancedBufferAttribute(new Float32Array(3 * this.maxTiles), 3, false, 1);
   texturePositions = new InstancedBufferAttribute(new Float32Array(2 * this.maxTiles), 2, false, 1);
+  tileTypes = new InstancedBufferAttribute(new Float32Array(2 * this.maxTiles), 1, false, 1);
 
   public readonly mesh: Mesh;
 
@@ -149,10 +187,18 @@ class TileBatcher {
     this.colors.setDynamic(true);
     this.scales.setDynamic(true);
     this.texturePositions.setDynamic(true);
+    this.tileTypes.setDynamic(true);
     this.geometry.addAttribute("instancedTileCenter", this.centers);
     this.geometry.addAttribute("instancedTileColor", this.colors);
     this.geometry.addAttribute("instancedTileScale", this.scales);
     this.geometry.addAttribute("instancedTexturePosition", this.texturePositions);
+    this.geometry.addAttribute("instancedTileType", this.tileTypes);
+  }
+
+  public updateUniforms() {
+    TileShaderMaterial.uniforms.sunAngle.value = this.world.sunAngle;
+    TileShaderMaterial.uniforms.sunAmount.value = this.world.sunAmount;
+    // TileShaderMaterial.needsUpdate = true;
   }
 
   private instances = new Map<string, BatchInstance>();
@@ -181,6 +227,7 @@ class TileBatcher {
     this.colors.needsUpdate = true;
     this.scales.needsUpdate = true;
     this.texturePositions.needsUpdate = true;
+    this.tileTypes.needsUpdate = true;
   }
 }
 
@@ -210,6 +257,13 @@ export class BatchInstance {
       throw new Error("freed tileBatcher still in use!");
     }
     this.batcher.colors.setXYZ(this.index, color.r, color.g, color.b);
+  }
+
+  commitTileType(isAir: number) {
+    if (!this.inUse) {
+      throw new Error("freed tileBatcher still in use!");
+    }
+    this.batcher.tileTypes.setX(this.index, isAir);
   }
 
   commitCenter(x: number, y: number, z: number) {

@@ -1,4 +1,5 @@
 import { randRound } from "math";
+import { arrayRange } from "math/arrays";
 import * as THREE from "three";
 import { Vector2 } from "three";
 import { GameResult } from "..";
@@ -82,8 +83,8 @@ export class World {
     Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, 1 / CELL_DIFFUSION_SUGAR_TIME, 2);
     Cell.timeToBuild = traitMod(this.traits.buildTime, CELL_BUILD_TIME, 1 / 2);
     this.player = new Player(new Vector2(this.width / 2, this.height / 2), this);
-    this.gridEnvironment = new Array(this.width).fill(undefined).map((_, x) =>
-      new Array(this.height).fill(undefined).map((__, y) => {
+    this.gridEnvironment = arrayRange(this.width).map((x) =>
+      arrayRange(this.height).map((y) => {
         const pos = new Vector2(x, y);
 
         let tile: Tile | undefined;
@@ -109,8 +110,8 @@ export class World {
     }
 
     const radius = 2.5;
-    this.gridCells = new Array(this.width).fill(undefined).map((_, x) =>
-      new Array(this.height).fill(undefined).map((__, y) => {
+    this.gridCells = arrayRange(this.width).map((x) =>
+      arrayRange(this.height).map((y) => {
         const pos = new Vector2(x, y);
         // add a "seed" of tissue around the player
         if (this.player.pos.distanceTo(pos) < radius) {
@@ -124,8 +125,8 @@ export class World {
         }
       })
     );
-    this.neighborCache = new Array(this.width).fill(undefined).map((_, x) =>
-      new Array(this.height).fill(undefined).map((__, y) => {
+    this.neighborCache = arrayRange(this.width).map((x) =>
+      arrayRange(this.height).map((y) => {
         return this.computeTileNeighbors(x, y);
       })
     );
