@@ -104,7 +104,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.scale.set(0.01, 0.01, 1);
     }
 
-    this.originalColor = this.materialInfo.color.clone();
+    this.originalColor = (this.materialInfo.color || WHITE).clone();
     if (hasInventory(this.target)) {
       this.inventoryRenderer = new InventoryRenderer(this.target.inventory, this.scene, this.mito);
       this.inventoryRenderer.animationOffset = (this.target.pos.x + this.target.pos.y) / 2;
@@ -370,7 +370,10 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 }
 
 interface MaterialInfo {
-  color: Color;
+  /**
+   * If unspecified, means white but respect transparency
+   */
+  color?: Color;
   texturePosition: Vector2;
 }
 
@@ -411,7 +414,6 @@ export const materialInfoMapping = (() => {
   });
   materials.set(Fruit, {
     texturePosition: new Vector2(0, 2),
-    color: new Color("white"),
   });
   return materials;
 })();
@@ -429,3 +431,5 @@ const AIR_COLORSCALE = [
   new Color("hsl(180, 31%, 76%)"),
   new Color("hsl(213, 63%, 58%)"),
 ];
+
+const WHITE = new Color(1, 1, 1);

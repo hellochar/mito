@@ -50,10 +50,10 @@ export interface CellBarItemProps {
 
 function CellBarItem({ type, hotkey, isSelected, onClick, spritesheetLoaded, children }: CellBarItemProps) {
   const material = materialInfoMapping.get(type)!;
-  const texture = textureFromSpritesheet(material.texturePosition.x, material.texturePosition.y);
+  const color = (material.color && material.color.getStyle()) || "transparent";
+  const texture = textureFromSpritesheet(material.texturePosition.x, material.texturePosition.y, color);
   const style: React.CSSProperties = React.useMemo(() => {
     const image = texture.image;
-    const color = material.color.getStyle();
     const url = (() => {
       if (image != null) {
         if (image instanceof HTMLCanvasElement && spritesheetLoaded) {
@@ -71,7 +71,7 @@ function CellBarItem({ type, hotkey, isSelected, onClick, spritesheetLoaded, chi
     return {
       backgroundImage,
     };
-  }, [material.color, spritesheetLoaded, texture]);
+  }, [color, spritesheetLoaded, texture.image]);
   return (
     <div className={classNames("cell-bar-item", { selected: isSelected })}>
       <div className="cell-bar-item-icon" onClick={onClick} style={style}>
