@@ -3,7 +3,7 @@ import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene 
 import { lerp2 } from "../../../math";
 import { Player } from "../game";
 import { Mito } from "../index";
-import { textureFromSpritesheetNew } from "../spritesheet";
+import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
 
 export class PlayerRenderer extends Renderer<Player> {
@@ -17,7 +17,7 @@ export class PlayerRenderer extends Renderer<Player> {
         transparent: true,
         depthWrite: false,
         depthTest: false,
-        map: textureFromSpritesheetNew(3, 2, "transparent"),
+        map: textureFromSpritesheet(3, 2, "transparent"),
         color: new Color("white"),
         side: DoubleSide,
       })

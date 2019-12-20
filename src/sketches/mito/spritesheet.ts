@@ -1,9 +1,8 @@
-import fruitSrc from "assets/images/fruit.png";
 import spritesheetUrl from "assets/images/spritesheet.png";
 import * as THREE from "three";
 import lazy from "../../common/lazy";
 
-const spriteSize = 32; // 16x16 sprites
+const spriteSize = 32; // 32x32 sprites
 export let spritesheetLoaded = false;
 export const SPRITESHEET = lazy(() =>
   new THREE.TextureLoader().load(spritesheetUrl, (texture) => {
@@ -15,11 +14,9 @@ export const SPRITESHEET = lazy(() =>
   })
 );
 
-export const fruitTexture = new THREE.TextureLoader().load(fruitSrc);
-
 export const cache: { [key: string]: THREE.Texture } = {};
 // x, y are spritesheet coordinates, starting top-left and going down/right
-export function textureFromSpritesheetNew(x: number, y: number, backgroundColor = "white") {
+export function textureFromSpritesheet(x: number, y: number, backgroundColor = "white") {
   x = Math.floor(x);
   y = Math.floor(y);
   const key = `${x},${y}`;

@@ -1,9 +1,10 @@
 import classNames from "classnames";
 import * as React from "react";
+import { Vector2 } from "three";
 import { Constructor } from "../constructor";
-import { Cell } from "../game/tile";
+import { Cell, Transport } from "../game/tile";
 import { materialInfoMapping } from "../renderers/tile/InstancedTileRenderer";
-import { spritesheetLoaded, textureFromSpritesheetNew } from "../spritesheet";
+import { spritesheetLoaded, textureFromSpritesheet } from "../spritesheet";
 import "./CellBar.scss";
 
 export interface CellBarProps {
@@ -25,12 +26,18 @@ function CellBar({ bar, index, onIndexClicked, buildError }: CellBarProps) {
           isSelected={index === i}
           onClick={() => onIndexClicked(i)}
           spritesheetLoaded={spritesheetLoaded}
-        />
+        >
+          {cellType === Transport ? <TransportDirArrow dir={Transport.buildDirection} /> : null}
+        </CellBarItem>
       ))}
       {disabled ? <div className="disabled-cover">Need {buildError} to build!</div> : null}
     </div>
   );
 }
+
+const TransportDirArrow: React.FC<{ dir: Vector2 }> = ({ dir }) => {
+  return <div className="transport-dir-arrow" style={{ transform: `rotate(${dir.angle()}rad)` }}></div>;
+};
 
 export interface CellBarItemProps {
   children?: React.ReactNode;
@@ -41,9 +48,9 @@ export interface CellBarItemProps {
   hotkey: string;
 }
 
-function CellBarItem({ type, hotkey, isSelected, onClick, spritesheetLoaded }: CellBarItemProps) {
+function CellBarItem({ type, hotkey, isSelected, onClick, spritesheetLoaded, children }: CellBarItemProps) {
   const material = materialInfoMapping.get(type)!;
-  const texture = textureFromSpritesheetNew(material.texturePosition.x, material.texturePosition.y);
+  const texture = textureFromSpritesheet(material.texturePosition.x, material.texturePosition.y);
   const style: React.CSSProperties = React.useMemo(() => {
     const image = texture.image;
     const color = material.color.getStyle();
@@ -69,6 +76,7 @@ function CellBarItem({ type, hotkey, isSelected, onClick, spritesheetLoaded }: C
     <div className={classNames("cell-bar-item", { selected: isSelected })}>
       <div className="cell-bar-item-icon" onClick={onClick} style={style}>
         {type.displayName}
+        {children}
       </div>
       <HotkeyButton hotkey={hotkey} onClick={onClick} />
     </div>

@@ -54,4 +54,14 @@
     background-blend-mode: multiply;
     image-rendering: pixelated;
   }
+
+  .transport-dir-arrow {
+    background-image: url("../../../assets/images/transport-arrow.png");
+    background-size: cover;
+    width: 80%;
+    height: 80%;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+  }
 }

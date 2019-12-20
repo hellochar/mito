@@ -150,11 +150,18 @@ export class Mito extends ISketch {
     }
 
     if (CELL_BAR_KEYS[code] != null) {
-      this.cellBarIndex = CELL_BAR_KEYS[code];
+      this.setCellBarIndex(CELL_BAR_KEYS[code]);
     }
   };
 
   public setCellBarIndex(i: number) {
+    const lastIndex = this.cellBarIndex;
+    if (lastIndex === i && this.cellBar[i] === Transport) {
+      Transport.buildDirection
+        .rotateAround(new Vector2(), -Math.PI / 4)
+        .setLength(1)
+        .round();
+    }
     this.cellBarIndex = ((i % this.cellBar.length) + this.cellBar.length) % this.cellBar.length;
   }
 
@@ -433,9 +440,10 @@ Number of Programs: ${this.renderer.info.programs!.length}
     if (this.world.player.isBuildCandidate(target, this.selectedCell)) {
       const args: any[] = [];
       if (this.selectedCell === Transport) {
-        const highlightVector = this.getHighlightVector();
-        const roundedHighlightVector = highlightVector.setLength(1).round();
-        args.push(roundedHighlightVector);
+        args.push(Transport.buildDirection.clone());
+        // const highlightVector = this.getHighlightVector();
+        // const roundedHighlightVector = highlightVector.setLength(1).round();
+        // args.push(roundedHighlightVector);
       }
       const action: ActionBuild = {
         type: "build",

@@ -94,11 +94,7 @@ vec2 getCorrectUv(vec2 uv, vec2 texturePosition, vec2 textureSize) {
 void main() {
   vec2 correctUv = getCorrectUv(vUv, vTexturePosition, spritesheetSize);
   vec4 textureColor = texture2D(spriteSheet, correctUv);
-  // if (textureColor.a < 0.5) {
-  //   gl_FragColor = vec4(0., 0., 0., 0.);
-  // } else {
-    gl_FragColor = vec4(textureColor.rgb * vColor, textureColor.a);
-  // }
+  gl_FragColor = vec4(textureColor.rgb * vColor, textureColor.a);
 }
 `;
 

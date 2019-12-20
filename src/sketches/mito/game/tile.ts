@@ -911,6 +911,7 @@ export class Transport extends Tissue {
   static displayName = "Transport";
   public cooldownWater = 0;
   public cooldownSugar = 0;
+  static buildDirection = new Vector2(0, -1);
 
   constructor(pos: Vector2, world: World, public dir: Vector2) {
     super(pos, world);
