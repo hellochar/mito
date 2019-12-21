@@ -2,8 +2,8 @@ import fruitSrc from "assets/images/fruit.png";
 import * as React from "react";
 import { GameResult } from "..";
 import Character from "../../../common/Character";
+import { seasonDisplay, seasonFromTime } from "../game/Season";
 import { Fruit } from "../game/tile";
-import { seasonDisplay, seasonFromTime } from "../game/world";
 import "./GameResultsScreen.scss";
 
 function Glow() {

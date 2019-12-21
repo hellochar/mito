@@ -16,52 +16,21 @@ import {
   CELL_DIFFUSION_WATER_TIME,
   PERCENT_DAYLIGHT,
   TIME_PER_DAY,
-  TIME_PER_MONTH,
-  TIME_PER_SEASON,
   TIME_PER_YEAR,
 } from "./constants";
 import { Entity, isSteppable, step } from "./entity";
 import { Environment, FILL_FUNCTIONS } from "./environment";
 import { Player } from "./player";
+import { Season, seasonFromTime } from "./Season";
 import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
-
-export interface StepEvent {
-  tile: Tile;
-  event: "eat";
-}
+import { TileEvent } from "./tileEvent";
 
 export class StepStats {
-  public events: StepEvent[] = [];
+  public events: TileEvent[] = [];
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
-  logEvent(event: StepEvent) {
+  logEvent(event: TileEvent) {
     this.events.push(event);
   }
-}
-
-export interface Season {
-  percent: number;
-  season: 0 | 1 | 2 | 3;
-  month: number;
-}
-
-export function seasonFromTime(time: number): Season {
-  const season = Math.floor(time / TIME_PER_SEASON) as Season["season"];
-  const percent = (time % TIME_PER_SEASON) / TIME_PER_SEASON; // percent done with this season
-  const month = Math.floor((time % TIME_PER_SEASON) / TIME_PER_MONTH) + 1;
-  return {
-    season,
-    percent,
-    month,
-  };
-}
-
-const SEASON_NAMES = ["Spring", "Summer", "Fall", "Winter"];
-export function seasonDisplay(s: Season) {
-  return `${SEASON_NAMES[s.season]}, Month ${s.month}`;
-}
-
-export function formatTime(t: number) {
-  return new Date(1000 * t).toISOString().substr(14, 5);
 }
 
 export class World {
@@ -385,8 +354,8 @@ export class World {
     // this.checkResources();
   }
 
-  log(tile: Tile, event: "eat") {
-    this.stepStats.logEvent({ tile, event });
+  logEvent(event: TileEvent) {
+    this.stepStats.logEvent(event);
   }
 
   public getLastStepStats() {
@@ -553,6 +522,10 @@ export class World {
       },
     };
   }
+}
+
+export function formatTime(t: number) {
+  return new Date(1000 * t).toISOString().substr(14, 5);
 }
 
 const DIRECTION_VALUES_RAND = [

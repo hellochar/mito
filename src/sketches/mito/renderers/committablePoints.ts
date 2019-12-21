@@ -7,8 +7,10 @@ export class CommittablePoints extends Points {
   static newGeometry(size: number) {
     const geometry = new BufferGeometry();
     const positions = new Float32Array(size * 3);
+    const rotations = new Float32Array(size);
     const sizes = new Float32Array(size);
     geometry.addAttribute("position", new BufferAttribute(positions, 3).setDynamic(true));
+    geometry.addAttribute("rotation", new BufferAttribute(rotations, 1).setDynamic(true));
     geometry.addAttribute("size", new BufferAttribute(sizes, 1).setDynamic(true));
     return geometry;
   }
@@ -23,9 +25,12 @@ export class CommittablePoints extends Points {
   startFrame() {
     this.index = 0;
   }
-  commit(x: number, y: number, z: number, size: number) {
+  commit(x: number, y: number, z: number, size: number, r?: number) {
     this.geometry.attributes.position.setXYZ(this.index, x, y, z);
     this.geometry.attributes.size.setX(this.index, size);
+    if (r != null) {
+      this.geometry.attributes.rotation.setX(this.index, r);
+    }
     this.index++;
   }
   endFrame() {
@@ -33,6 +38,8 @@ export class CommittablePoints extends Points {
     positions.needsUpdate = true;
     const sizes = this.geometry.attributes.size as BufferAttribute;
     sizes.needsUpdate = true;
+    const rotations = this.geometry.attributes.rotation as BufferAttribute;
+    rotations.needsUpdate = true;
     this.geometry.setDrawRange(0, this.index);
   }
 }
@@ -71,12 +78,16 @@ class ResourcePointsMaterial extends ShaderMaterial {
 
 const vertexShader = glsl`
 attribute float size;
+attribute float rotation;
 uniform float sizeGlobal;
 
+varying float vRotation;
+
 void main() {
-    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-    gl_PointSize = size * sizeGlobal * -projectionMatrix[1].y;
-    gl_Position = projectionMatrix * mvPosition;
+  vRotation = rotation;
+  vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+  gl_PointSize = size * sizeGlobal * -projectionMatrix[1].y;
+  gl_Position = projectionMatrix * mvPosition;
 }
 `;
 
@@ -85,17 +96,35 @@ uniform vec3 color;
 uniform sampler2D texture;
 uniform float opacity;
 
+varying float vRotation;
+
 #ifdef USE_MAP
   uniform mat3 uvTransform;
   uniform sampler2D map;
 #endif
 
-void main() {
-    gl_FragColor = vec4( color, opacity );
+vec2 rotateAround ( in vec2 v, in vec2 center, in float angle ) {
 
-    #ifdef USE_MAP
-        vec4 mapTexel = texture2D( map, gl_PointCoord );
-        gl_FragColor *= mapTexelToLinear( mapTexel );
-    #endif
+  float c = cos( angle );
+  float s = sin( angle );
+
+  float x = v.x - center.x;
+  float y = v.y - center.y;
+
+  vec2 r = vec2(x * c - y * s + center.x, x * s + y * c + center.y);
+
+  return r;
+}
+
+void main() {
+  gl_FragColor = vec4( color, opacity );
+
+  #ifdef USE_MAP
+    vec2 uv = gl_PointCoord;
+
+    uv = clamp(rotateAround(uv, vec2(0.5), vRotation), vec2(0.), vec2(1.));
+    vec4 mapTexel = texture2D( map, uv );
+    gl_FragColor *= mapTexelToLinear( mapTexel );
+  #endif
 }
 `;

@@ -556,7 +556,7 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
 
     // still hungry; take neighbor's energy
     if (maxEnergyToEat > 0) {
-      const energeticNeighbors = (neighbors.filter((t) => hasEnergy(t)) as any) as HasEnergy[];
+      const energeticNeighbors = (neighbors.filter((t) => hasEnergy(t)) as any) as (Cell & HasEnergy)[];
       this.stepEqualizeEnergy(energeticNeighbors, maxEnergyToEat);
     }
 
@@ -595,7 +595,7 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
         const gotEnergy = sugarToEat / energyToSugarConversion;
         this.energy += gotEnergy;
         if (gotEnergy > 0) {
-          this.world.log(this, "eat");
+          this.world.logEvent({ type: "cell-eat", who: this });
         }
         return gotEnergy;
       }
@@ -606,8 +606,9 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
   /**
    * Take energy from neighbors who have more than you
    */
-  stepEqualizeEnergy(neighbors: HasEnergy[], maxEnergyToEat: number) {
+  stepEqualizeEnergy(neighbors: (Cell & HasEnergy)[], maxEnergyToEat: number) {
     for (const neighbor of neighbors) {
+      if (neighbor.pos.manhattanDistanceTo(this.pos) > 1) continue;
       if (maxEnergyToEat > 0) {
         const difference = neighbor.energy - this.energy;
         if (difference > 20) {
@@ -619,6 +620,9 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
           this.energy += energyTransfer;
           neighbor.energy -= energyTransfer;
           maxEnergyToEat -= energyTransfer;
+          if (energyTransfer > 1) {
+            this.world.logEvent({ type: "cell-transfer-energy", from: neighbor, to: this, amount: energyTransfer });
+          }
         }
       } else {
         break; // we're all full, eat no more
