@@ -1,10 +1,9 @@
 import { createSelector } from "reselect";
-import { PlaneHelper, Scene } from "three";
+import { Scene } from "three";
 import Mito from "..";
 import { Entity, Player, StepStats, World } from "../game";
 import { Tile, Transport } from "../game/tile";
 import { InventoryRenderer } from "./InventoryRenderer";
-import { LightRays } from "./lightRays";
 import { PlayerRenderer } from "./PlayerRenderer";
 import { Renderer } from "./Renderer";
 import { InstancedTileRenderer } from "./tile/InstancedTileRenderer";
@@ -14,7 +13,7 @@ import { TransportRenderer } from "./tile/TransportRenderer";
 export class WorldRenderer extends Renderer<World> {
   public renderers = new Map<Entity, Renderer<Entity>>();
   public readonly tileBatcher: TileBatcher;
-  private lightRays: LightRays;
+  // private lightRays: LightRays;
 
   constructor(target: World, scene: Scene, mito: Mito, renderResources = true) {
     super(target, scene, mito);
@@ -25,13 +24,13 @@ export class WorldRenderer extends Renderer<World> {
     this.tileBatcher = new TileBatcher(this.target);
     scene.add(this.tileBatcher.mesh);
 
-    this.lightRays = new LightRays(this.target);
-    scene.add(this.lightRays.lineSegments);
+    // this.lightRays = new LightRays(this.target);
+    // scene.add(this.lightRays.lineSegments);
 
     // scene.add(new PlaneHelper(this.lightRays.planeTop, 25));
     // scene.add(new PlaneHelper(this.lightRays.planeLeft, 25));
     // scene.add(new PlaneHelper(this.lightRays.planeBottom, 25));
-    scene.add(new PlaneHelper(this.lightRays.planeRight, 25));
+    // scene.add(new PlaneHelper(this.lightRays.planeRight, 25));
   }
 
   public getOrCreateRenderer(entity: Entity) {
@@ -85,7 +84,7 @@ export class WorldRenderer extends Renderer<World> {
     InventoryRenderer.endFrame();
     this.tileBatcher.endFrame();
 
-    this.lightRays.update(1 / 30);
+    // this.lightRays.update(1 / 30);
   }
 
   destroy(): void {
