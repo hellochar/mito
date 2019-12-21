@@ -54,27 +54,12 @@ export class Mito extends ISketch {
       this.mouse.x = event.clientX!;
       this.mouse.y = event.clientY!;
     },
-    click: () => {
-      // left-click
-      // this.handleClick(event.clientX!, event.clientY!);
-    },
     mousedown: (event: MouseEvent) => {
       this.mouseButton = event.button;
       this.mouseDown = true;
     },
     mouseup: () => {
       this.mouseDown = false;
-    },
-    keydown: (event: KeyboardEvent) => {
-      this.firstActionTakenYet = true;
-      const code = event.code;
-      this.keyMap.add(code);
-      if (!event.repeat) {
-        this.handleKeyDown(code);
-      }
-    },
-    keyup: (event: KeyboardEvent) => {
-      this.keyMap.delete(event.code);
     },
     wheel: (e: WheelEvent) => {
       if (e.shiftKey) {
@@ -96,6 +81,35 @@ export class Mito extends ISketch {
         }
       }
     },
+  };
+  private handleKeyDown = (event: KeyboardEvent) => {
+    this.firstActionTakenYet = true;
+    const code = event.code;
+    this.keyMap.add(code);
+    if (!event.repeat) {
+      this.updateHUDFromKeyPress(code);
+    }
+  };
+
+  updateHUDFromKeyPress(code: string) {
+    if (code === "Slash") {
+      this.instructionsOpen = !this.instructionsOpen;
+      return;
+    }
+    if (this.instructionsOpen) {
+      if (code === "Escape") {
+        this.instructionsOpen = false;
+      }
+      return;
+    }
+
+    if (CELL_BAR_KEYS[code] != null) {
+      this.setCellBarIndex(CELL_BAR_KEYS[code]);
+    }
+  }
+
+  private handleKeyUp = (event: KeyboardEvent) => {
+    this.keyMap.delete(event.code);
   };
 
   get selectedCell() {
@@ -135,24 +149,14 @@ export class Mito extends ISketch {
     window.addEventListener("blur", () => {
       this.keyMap.clear();
     });
+    window.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("keyup", this.handleKeyUp);
   }
 
-  handleKeyDown = (code: string) => {
-    if (code === "Slash") {
-      this.instructionsOpen = !this.instructionsOpen;
-      return;
-    }
-    if (this.instructionsOpen) {
-      if (code === "Escape") {
-        this.instructionsOpen = false;
-      }
-      return;
-    }
-
-    if (CELL_BAR_KEYS[code] != null) {
-      this.setCellBarIndex(CELL_BAR_KEYS[code]);
-    }
-  };
+  destroy() {
+    window.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener("keyup", this.handleKeyUp);
+  }
 
   public setCellBarIndex(i: number) {
     const lastIndex = this.cellBarIndex;
