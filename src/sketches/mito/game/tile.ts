@@ -2,7 +2,7 @@ import shuffle from "math/shuffle";
 import { Vector2 } from "three";
 import { Noise } from "../../../common/perlin";
 import { traitMod } from "../../../evolution/traits";
-import { clamp, map, randRound } from "../../../math/index";
+import { map, randRound } from "../../../math/index";
 import { Constructor } from "../constructor";
 import { DIRECTIONS } from "../directions";
 import { HasInventory, Inventory } from "../inventory";
@@ -445,7 +445,7 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
   static diffusionWater = 1 / CELL_DIFFUSION_WATER_TIME;
   static diffusionSugar = 1 / CELL_DIFFUSION_SUGAR_TIME;
   static timeToBuild = CELL_BUILD_TIME;
-  public energy = CELL_MAX_ENERGY;
+  public energy = CELL_MAX_ENERGY / 2;
   public darkness = 0;
   public nextTemperature: number;
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
@@ -513,9 +513,13 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
     this.world.setTileAt(this.pos, new DeadCell(this.pos, this.world));
   }
 
-  isHungry() {
-    // eat below 95% energy
-    return this.energy < CELL_MAX_ENERGY * 0.95;
+  getMaxEnergyToEat(dt: number) {
+    const hunger = CELL_MAX_ENERGY - this.energy;
+    if (hunger < CELL_MAX_ENERGY * 0.05) {
+      return 0;
+    }
+    const EAT_ENERGY_PER_SECOND = CELL_MAX_ENERGY / 5;
+    return Math.min(hunger, EAT_ENERGY_PER_SECOND * dt);
   }
 
   // Step cells every 3 frames
@@ -533,24 +537,25 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
     const tileNeighbors = this.world.tileNeighbors(this.pos);
     const neighbors = Array.from(tileNeighbors.values());
 
+    let maxEnergyToEat = this.getMaxEnergyToEat(tempo * dt);
     // eat from self
-    if (this.isHungry()) {
-      this.stepEatSugar(this);
+    if (maxEnergyToEat > 0) {
+      maxEnergyToEat -= this.stepEatSugar(this, maxEnergyToEat);
     }
     // eat from neighbor's sugars
-    if (this.isHungry()) {
+    if (maxEnergyToEat > 0) {
       // const neighborsAndSelf = [this, ...neighbors];
       for (const tile of neighbors) {
-        this.stepEatSugar(tile);
-        if (!this.isHungry()) {
+        maxEnergyToEat -= this.stepEatSugar(tile, maxEnergyToEat);
+        if (maxEnergyToEat <= 0) {
           break;
         }
       }
     }
     // still hungry; take neighbor's energy
-    if (this.isHungry()) {
+    if (maxEnergyToEat > 0) {
       const energeticNeighbors = (neighbors.filter((t) => hasEnergy(t)) as any) as HasEnergy[];
-      this.stepEqualizeEnergy(energeticNeighbors, tempo, dt);
+      this.stepEqualizeEnergy(energeticNeighbors, maxEnergyToEat);
     }
 
     // this.stepStress(tileNeighbors);
@@ -575,9 +580,9 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
     }
   }
 
-  stepEatSugar(tile: Tile) {
+  stepEatSugar(tile: Tile, maxEnergyToEat: number): number {
     if (!(tile instanceof Fruit)) {
-      const hunger = CELL_MAX_ENERGY - this.energy;
+      const hunger = maxEnergyToEat;
       // if this number goes up, we become less energy efficient
       // if this number goes down, we are more energy efficient
       const energyToSugarConversion = traitMod(this.world.traits.energyEfficiency, 1 / CELL_MAX_ENERGY, 1 / 1.5);
@@ -587,31 +592,28 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
         tile.inventory.add(0, -sugarToEat);
         const gotEnergy = sugarToEat / energyToSugarConversion;
         this.energy += gotEnergy;
-        return true;
+        return gotEnergy;
       }
     }
-    return false;
+    return 0;
   }
 
   /**
    * Take energy from neighbors who have more than you
    */
-  stepEqualizeEnergy(neighbors: HasEnergy[], tempo: number, dt: number) {
+  stepEqualizeEnergy(neighbors: HasEnergy[], maxEnergyToEat: number) {
     for (const neighbor of neighbors) {
-      if (this.isHungry()) {
+      if (maxEnergyToEat > 0) {
         const difference = neighbor.energy - this.energy;
         if (difference > 20) {
           // safe method but lower upper bound on equalization rate
           // energyTransfer = Math.floor((neighbor.energy - this.energy) / energeticNeighbors.length);
 
           // this may be unstable w/o double buffering
-          const rate = 3.75 * tempo * dt;
-          const energyTransfer = Math.floor(difference * clamp(rate, 0, 0.5));
-          // if (rate > 0.5) {
-          //   console.warn("energy transfer rate wants to be unstable", rate);
-          // }
+          const energyTransfer = Math.min(difference / 2, maxEnergyToEat);
           this.energy += energyTransfer;
           neighbor.energy -= energyTransfer;
+          maxEnergyToEat -= energyTransfer;
         }
       } else {
         break; // we're all full, eat no more
