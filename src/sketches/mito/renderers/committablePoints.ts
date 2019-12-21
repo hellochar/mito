@@ -1,21 +1,21 @@
 import { BufferAttribute, BufferGeometry, Color, Points, ShaderMaterial, Texture } from "three";
 import glsl from "./glsl";
 
-export class ResourcePoints extends Points {
-  static BUFFER_SIZE = 100000;
+export class CommittablePoints extends Points {
   public geometry: BufferGeometry;
   public material: ResourcePointsMaterial;
-  static newGeometry() {
+  static newGeometry(size: number) {
     const geometry = new BufferGeometry();
-    const positions = new Float32Array(ResourcePoints.BUFFER_SIZE * 3);
-    const sizes = new Float32Array(ResourcePoints.BUFFER_SIZE);
+    const positions = new Float32Array(size * 3);
+    const sizes = new Float32Array(size);
     geometry.addAttribute("position", new BufferAttribute(positions, 3).setDynamic(true));
     geometry.addAttribute("size", new BufferAttribute(sizes, 1).setDynamic(true));
     return geometry;
   }
-  constructor(params: ResourcePointsParameters) {
+
+  constructor(size: number, params: CommittablePointsParameters) {
     super();
-    this.geometry = ResourcePoints.newGeometry();
+    this.geometry = CommittablePoints.newGeometry(size);
     this.material = new ResourcePointsMaterial(params);
     this.frustumCulled = false;
   }
@@ -37,7 +37,7 @@ export class ResourcePoints extends Points {
   }
 }
 
-export interface ResourcePointsParameters {
+export interface CommittablePointsParameters {
   opacity: number;
   color: Color;
   size: number;
@@ -47,7 +47,7 @@ export interface ResourcePointsParameters {
 class ResourcePointsMaterial extends ShaderMaterial {
   public map: Texture | undefined;
 
-  constructor(public params: ResourcePointsParameters) {
+  constructor(public params: CommittablePointsParameters) {
     super({
       uniforms: {
         opacity: { value: params.opacity },

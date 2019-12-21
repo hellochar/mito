@@ -187,10 +187,10 @@ export abstract class Tile implements Steppable, HasInventory {
 
   diffuseSugar(giver: HasInventory, dt: number) {
     const difference = giver.inventory.sugar - this.inventory.sugar;
-    if (difference > 0.02) {
+    if (difference > 1) {
       const diffusionAmount = Math.min(difference * this.diffusionSugar * dt, difference / 2);
       // sugar diffuses continuously
-      giver.inventory.give(this.inventory, 0, diffusionAmount);
+      giver.inventory.give(this.inventory, 0, randRound(diffusionAmount));
     }
   }
 
@@ -542,16 +542,18 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
     if (maxEnergyToEat > 0) {
       maxEnergyToEat -= this.stepEatSugar(this, maxEnergyToEat);
     }
+
     // eat from neighbor's sugars
-    if (maxEnergyToEat > 0) {
-      // const neighborsAndSelf = [this, ...neighbors];
-      for (const tile of neighbors) {
-        maxEnergyToEat -= this.stepEatSugar(tile, maxEnergyToEat);
-        if (maxEnergyToEat <= 0) {
-          break;
-        }
-      }
-    }
+    // if (maxEnergyToEat > 0) {
+    //   // const neighborsAndSelf = [this, ...neighbors];
+    //   for (const tile of neighbors) {
+    //     maxEnergyToEat -= this.stepEatSugar(tile, maxEnergyToEat);
+    //     if (maxEnergyToEat <= 0) {
+    //       break;
+    //     }
+    //   }
+    // }
+
     // still hungry; take neighbor's energy
     if (maxEnergyToEat > 0) {
       const energeticNeighbors = (neighbors.filter((t) => hasEnergy(t)) as any) as HasEnergy[];
@@ -592,6 +594,9 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
         tile.inventory.add(0, -sugarToEat);
         const gotEnergy = sugarToEat / energyToSugarConversion;
         this.energy += gotEnergy;
+        if (gotEnergy > 0) {
+          this.world.log(this, "eat");
+        }
         return gotEnergy;
       }
     }

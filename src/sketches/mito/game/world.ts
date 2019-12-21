@@ -25,8 +25,17 @@ import { Environment, FILL_FUNCTIONS } from "./environment";
 import { Player } from "./player";
 import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
 
+export interface StepEvent {
+  tile: Tile;
+  event: "eat";
+}
+
 export class StepStats {
+  public events: StepEvent[] = [];
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
+  logEvent(event: StepEvent) {
+    this.events.push(event);
+  }
 }
 
 export interface Season {
@@ -374,6 +383,10 @@ export class World {
     this.fillCachedEntities();
     return this.stepStats;
     // this.checkResources();
+  }
+
+  log(tile: Tile, event: "eat") {
+    this.stepStats.logEvent({ tile, event });
   }
 
   public getLastStepStats() {

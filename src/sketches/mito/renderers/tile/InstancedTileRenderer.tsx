@@ -25,7 +25,6 @@ import {
   Tissue,
   Transport,
 } from "sketches/mito/game/tile";
-import { hasInventory } from "sketches/mito/inventory";
 import { WorldDOMElement } from "sketches/mito/WorldDOMElement";
 import {
   ArrowHelper,
@@ -79,7 +78,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   private static ONE = new Vector2(1, 1);
 
-  private inventoryRenderer?: InventoryRenderer;
+  public inventoryRenderer: InventoryRenderer;
   private originalColor: Color;
   private audio?: Audio;
   private lastAudioValueTracker = 0;
@@ -105,10 +104,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
 
     this.originalColor = (this.materialInfo.color || WHITE).clone();
-    if (hasInventory(this.target)) {
-      this.inventoryRenderer = new InventoryRenderer(this.target.inventory, this.scene, this.mito);
-      this.inventoryRenderer.animationOffset = (this.target.pos.x + this.target.pos.y) / 2;
-    }
+    this.inventoryRenderer = new InventoryRenderer(this.target.inventory, this.scene, this.mito);
+    this.inventoryRenderer.animationOffset = (this.target.pos.x + this.target.pos.y) / 2;
     if (this.target instanceof Cell) {
       // if it takes no turns to build, start it off small just for show
       if (!(this.target.constructor as Constructor<Cell>).timeToBuild) {

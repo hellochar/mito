@@ -5,14 +5,14 @@ import { map } from "../../../math";
 import { Mito } from "../index";
 import { Inventory } from "../inventory";
 import { textureFromSpritesheet } from "../spritesheet";
+import { CommittablePoints } from "./committablePoints";
 import { Renderer } from "./Renderer";
-import { ResourcePoints } from "./resourcePoints";
 
 // we represent Resources as dots of certain colors.
 export class InventoryRenderer extends Renderer<Inventory> {
   static WaterParticles = lazy(
     () =>
-      new ResourcePoints({
+      new CommittablePoints(10000, {
         color: new Color("rgb(9, 12, 255)"),
         size: 45,
         opacity: 0.75,
@@ -21,7 +21,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
 
   static SugarParticles = lazy(
     () =>
-      new ResourcePoints({
+      new CommittablePoints(10000, {
         color: new Color("yellow"),
         size: 85,
         opacity: 0.9,
@@ -101,7 +101,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
     return particles;
   }
 
-  private commitParticles(particles: ResourcePoints, resource: number, resourceArray: Vector2[]) {
+  private commitParticles(particles: CommittablePoints, resource: number, resourceArray: Vector2[]) {
     // this.verifyArrayLengths();
     const numFullSizedParticles = Math.floor(resource);
     for (let i = 0; i < numFullSizedParticles; i++) {

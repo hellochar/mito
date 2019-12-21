@@ -33,7 +33,7 @@ export function textureFromSpritesheet(x: number, y: number, backgroundColor = "
       const image = SPRITESHEET().image;
       const context = canvas.getContext("2d")!;
       context.fillStyle = backgroundColor;
-      context.fillRect(0, 0, spriteSize, 16);
+      context.fillRect(0, 0, spriteSize, spriteSize);
       // context.fillStyle = "white";
       // flip the image vertically
       context.drawImage(
