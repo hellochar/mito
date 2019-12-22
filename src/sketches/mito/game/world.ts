@@ -23,13 +23,21 @@ import { Environment, FILL_FUNCTIONS } from "./environment";
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
 import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
-import { TileEvent } from "./tileEvent";
+import { TileEvent, TileEventType } from "./tileEvent";
+
+export type TileEventLog = {
+  [K in TileEventType]: TileEvent[];
+};
 
 export class StepStats {
-  public events: TileEvent[] = [];
+  public events: TileEventLog = {
+    "cell-eat": [],
+    "cell-transfer-energy": [],
+    evaporation: [],
+  };
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
   logEvent(event: TileEvent) {
-    this.events.push(event);
+    this.events[event.type].push(event);
   }
 }
 

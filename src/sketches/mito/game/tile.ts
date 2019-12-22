@@ -168,11 +168,11 @@ export abstract class Tile implements Steppable, HasInventory {
     }
   }
 
-  canDiffuse(tile: Tile): tile is Tile & HasInventory {
+  canDiffuse(tile: Tile) {
     return canPullResources(this, tile);
   }
 
-  diffuseWater(giver: HasInventory, dt: number) {
+  diffuseWater(giver: Tile, dt: number) {
     // Diffusion equation by finite difference: the purpose of this equation is to eventually
     // equalize the amount of water between me and giver. The two questions are how long
     // does it take, and what function does it follow to get there? These are generally
@@ -185,7 +185,7 @@ export abstract class Tile implements Steppable, HasInventory {
     }
   }
 
-  diffuseSugar(giver: HasInventory, dt: number) {
+  diffuseSugar(giver: Tile, dt: number) {
     const difference = giver.inventory.sugar - this.inventory.sugar;
     if (difference > 1) {
       const diffusionAmount = Math.min(difference * this.diffusionSugar * dt, difference / 2);
@@ -194,6 +194,9 @@ export abstract class Tile implements Steppable, HasInventory {
     }
   }
 
+  /**
+   * Give to your lower neighbor.
+   */
   stepGravity(dt: number) {
     const fallAmount = this.fallAmount * dt;
     const lowerNeighbor = this.world.tileAt(this.pos.x, this.pos.y + 1);
@@ -284,6 +287,7 @@ export class Air extends Tile {
     if (Math.random() < this.world.environment.airEvaporation * this.inventory.water * dt) {
       this.world.numEvaporatedAir += 1;
       this.inventory.add(-1, 0);
+      this.world.logEvent({ type: "evaporation", tile: this });
     }
   }
 
@@ -296,7 +300,7 @@ export class Air extends Tile {
   }
 }
 
-export class Soil extends Tile implements HasInventory {
+export class Soil extends Tile {
   static displayName = "Soil";
   static diffusionWater = 1 / SOIL_DIFFUSION_WATER_TIME;
   public inventory = new Inventory(SOIL_INVENTORY_CAPACITY, this);
@@ -325,6 +329,7 @@ export class Soil extends Tile implements HasInventory {
     const evaporationAmountScalar = this.inventory.water;
     if (Math.random() < evaporationRate * evaporationHeightScalar * evaporationAmountScalar * dt) {
       this.inventory.add(-1, 0);
+      this.world.logEvent({ type: "evaporation", tile: this });
       this.world.numEvaporatedSoil += 1;
     }
   }
@@ -445,7 +450,7 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
   static diffusionWater = 1 / CELL_DIFFUSION_WATER_TIME;
   static diffusionSugar = 1 / CELL_DIFFUSION_SUGAR_TIME;
   static timeToBuild = CELL_BUILD_TIME;
-  public energy = CELL_MAX_ENERGY / 2;
+  public energy = CELL_MAX_ENERGY;
   public darkness = 0;
   public nextTemperature: number;
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
@@ -712,7 +717,7 @@ export class GrowingCell extends Cell {
   }
 }
 
-export class Tissue extends Cell implements HasInventory {
+export class Tissue extends Cell {
   static displayName = "Tissue";
   public inventory: Inventory;
   constructor(pos: Vector2, world: World) {

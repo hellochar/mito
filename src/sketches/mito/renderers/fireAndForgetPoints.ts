@@ -4,6 +4,7 @@ interface PointState<S> {
   r?: number;
   time: number;
   size: number;
+  alpha: number;
   x: number;
   y: number;
   z: number;
@@ -16,15 +17,8 @@ export class FireAndForgetPoints<S = any> extends CommittablePoints {
     super(10000, params);
   }
 
-  fire(x: number, y: number, z: number, size: number, info: S) {
-    this.state.add({
-      size,
-      x,
-      y,
-      z,
-      time: 0,
-      info,
-    });
+  fire(s: PointState<S>) {
+    this.state.add(s);
   }
 
   update(dt: number) {
@@ -44,7 +38,7 @@ export class FireAndForgetPoints<S = any> extends CommittablePoints {
   commitAll() {
     this.startFrame();
     for (const p of this.state) {
-      this.commit(p.x, p.y, p.z, p.size, p.r);
+      this.commit(p.x, p.y, p.z, p.size, p.alpha, p.r);
     }
     this.endFrame();
   }

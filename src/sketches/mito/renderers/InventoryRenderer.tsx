@@ -42,6 +42,8 @@ export class InventoryRenderer extends Renderer<Inventory> {
   public animationOffset = 0;
   public waters: Vector2[] = [];
   public sugars: Vector2[] = [];
+  private activeSugar?: Vector2;
+  private stableWater?: Vector2;
 
   constructor(target: Inventory, scene: Scene, mito: Mito) {
     super(target, scene, mito);
@@ -106,7 +108,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
     const numFullSizedParticles = Math.floor(resource);
     for (let i = 0; i < numFullSizedParticles; i++) {
       const p = resourceArray[i];
-      particles.commit(p.x + this.target.carrier.pos.x, p.y + this.target.carrier.pos.y, 10, 1);
+      particles.commit(p.x + this.target.carrier.pos.x, p.y + this.target.carrier.pos.y, 10, 1, 1);
     }
     const fract = resource - numFullSizedParticles;
     if (fract > 0) {
@@ -115,7 +117,8 @@ export class InventoryRenderer extends Renderer<Inventory> {
         p.x + this.target.carrier.pos.x,
         p.y + this.target.carrier.pos.y,
         10,
-        map(Math.sqrt(fract), 0, 1, 0.2, 1)
+        map(Math.sqrt(fract), 0, 1, 0.2, 1),
+        1
       );
     }
   }
@@ -168,12 +171,30 @@ export class InventoryRenderer extends Renderer<Inventory> {
     this.simulateResourcePositions();
     this.commitParticles(InventoryRenderer.WaterParticles(), this.target.water, this.waters);
     this.commitParticles(InventoryRenderer.SugarParticles(), this.target.sugar, this.sugars);
+    this.activeSugar = this.sugars[this.sugars.length - 1];
+    this.stableWater = this.waters[0];
   }
 
   destroy() {
     this.target.off("get", this.handleGetResources);
     this.target.off("give", this.handleGiveResources);
     this.target.off("add", this.handleAddResources);
+  }
+
+  /**
+   * Stores the position of the fractional sugar in the last update.
+   * This is used by other renderers to position e.g. eat effects directly
+   * on the particle.
+   */
+  public getActiveSugar() {
+    return this.activeSugar;
+  }
+
+  /**
+   * See getActiveSugar(), but this returns the "oldest" water.
+   */
+  public getStableWater() {
+    return this.stableWater;
   }
 }
 
