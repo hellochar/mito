@@ -1,32 +1,18 @@
 import shuffle from "math/shuffle";
 import { Vector2 } from "three";
-import { Noise } from "../../../common/perlin";
-import { traitMod } from "../../../evolution/traits";
-import { map, randRound } from "../../../math/index";
-import { Constructor } from "../constructor";
-import { DIRECTIONS } from "../directions";
-import { HasInventory, Inventory } from "../inventory";
-import { params } from "../params";
-import { canPullResources } from "./canPullResources";
-import {
-  CELL_BUILD_TIME,
-  CELL_DIFFUSION_SUGAR_TIME,
-  CELL_DIFFUSION_WATER_TIME,
-  CELL_MAX_ENERGY,
-  FRUIT_NEEDED_RESOURCES,
-  FRUIT_TIME_TO_MATURE,
-  LEAF_REACTION_TIME,
-  ROOT_TIME_BETWEEN_ABSORPTIONS,
-  SOIL_DIFFUSION_WATER_TIME,
-  SOIL_INVENTORY_CAPACITY,
-  TIME_PER_DAY,
-  TISSUE_INVENTORY_CAPACITY,
-  TRANSPORT_TIME_BETWEEN_TRANSFERS,
-} from "./constants";
-import { Steppable, StopStep } from "./entity";
-import { Interactable, isInteractable } from "./interactable";
-import { nextTemperature, Temperature, temperatureFor } from "./temperature";
-import { World } from "./world";
+import { Noise } from "../../../../common/perlin";
+import { traitMod } from "../../../../evolution/traits";
+import { map, randRound } from "../../../../math/index";
+import { Constructor } from "../../constructor";
+import { DIRECTIONS } from "../../directions";
+import { HasInventory, Inventory } from "../../inventory";
+import { params } from "../../params";
+import { canPullResources } from "../canPullResources";
+import { CELL_BUILD_TIME, CELL_DIFFUSION_SUGAR_TIME, CELL_DIFFUSION_WATER_TIME, CELL_MAX_ENERGY, FRUIT_NEEDED_RESOURCES, FRUIT_TIME_TO_MATURE, LEAF_REACTION_TIME, ROOT_TIME_BETWEEN_ABSORPTIONS, SOIL_DIFFUSION_WATER_TIME, SOIL_INVENTORY_CAPACITY, TIME_PER_DAY, TISSUE_INVENTORY_CAPACITY, TRANSPORT_TIME_BETWEEN_TRANSFERS } from "../constants";
+import { Steppable, StopStep } from "../entity";
+import { Interactable, isInteractable } from "../interactable";
+import { nextTemperature, Temperature, temperatureFor } from "../temperature";
+import { World } from "../world";
 
 export interface HasEnergy {
   energy: number;
