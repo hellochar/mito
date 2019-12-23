@@ -15,7 +15,6 @@ import {
   Fountain,
   Fruit,
   GrowingCell,
-  hasEnergy,
   hasTilePairs,
   Leaf,
   Rock,
@@ -213,7 +212,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       }
     }
     this.color.copy(this.originalColor);
-    if (hasEnergy(this.target)) {
+    if (this.target instanceof Cell) {
       this.color.lerp(new Color(0), 1 - this.target.energy / CELL_MAX_ENERGY);
     }
 

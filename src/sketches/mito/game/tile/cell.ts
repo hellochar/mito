@@ -6,12 +6,12 @@ import { CELL_BUILD_TIME, CELL_DIFFUSION_SUGAR_TIME, CELL_DIFFUSION_WATER_TIME, 
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
 import { World } from "../world";
+import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
 import { DeadCell } from "./deadCell";
-import { CellEffect, CellEffectConstructor, FreezeEffect, HasEnergy, hasEnergy } from "./index";
 import { Rock } from "./rock";
 import { Soil } from "./soil";
 import { Tile } from "./tile";
-export abstract class Cell extends Tile implements HasEnergy, Interactable {
+export abstract class Cell extends Tile implements Interactable {
   static displayName = "Cell";
   static diffusionWater = 1 / CELL_DIFFUSION_WATER_TIME;
   static diffusionSugar = 1 / CELL_DIFFUSION_SUGAR_TIME;
@@ -118,7 +118,7 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
     // }
     // still hungry; take neighbor's energy
     if (maxEnergyToEat > 0) {
-      const energeticNeighbors = (neighbors.filter((t) => hasEnergy(t)) as any) as (Cell & HasEnergy)[];
+      const energeticNeighbors = neighbors.filter((t) => t instanceof Cell) as Cell[];
       this.stepEqualizeEnergy(energeticNeighbors, maxEnergyToEat);
     }
     // this.stepStress(tileNeighbors);
@@ -161,7 +161,7 @@ export abstract class Cell extends Tile implements HasEnergy, Interactable {
   /**
    * Take energy from neighbors who have more than you
    */
-  stepEqualizeEnergy(neighbors: (Cell & HasEnergy)[], maxEnergyToEat: number) {
+  stepEqualizeEnergy(neighbors: Cell[], maxEnergyToEat: number) {
     for (const neighbor of neighbors) {
       if (neighbor.pos.manhattanDistanceTo(this.pos) > 1) continue;
       if (maxEnergyToEat > 0) {

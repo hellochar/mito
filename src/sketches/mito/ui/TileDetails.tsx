@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Constructor } from "../constructor";
 import { CELL_MAX_ENERGY } from "../game/constants";
-import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, hasEnergy, Leaf, Root, Tile } from "../game/tile";
+import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Leaf, Root, Tile } from "../game/tile";
 import { hasInventory } from "../inventory";
 import TemperatureInfo from "./TemperatureInfo";
 import "./TileDetails.scss";
@@ -70,9 +70,10 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   }
 
   private tileInfo(tile: Tile) {
-    const energyInfo = hasEnergy(tile) ? (
-      <span className="info-energy">💚{((tile.energy / CELL_MAX_ENERGY) * 100).toFixed(0)}%</span>
-    ) : null;
+    const energyInfo =
+      tile instanceof Cell ? (
+        <span className="info-energy">💚{((tile.energy / CELL_MAX_ENERGY) * 100).toFixed(0)}%</span>
+      ) : null;
     return (
       <div className="info-tile">
         <div className="info-tile-row">

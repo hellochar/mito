@@ -22,7 +22,7 @@ import { Entity, isSteppable, step } from "./entity";
 import { Environment, FILL_FUNCTIONS } from "./environment";
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
-import { Air, Cell, DeadCell, Fruit, hasEnergy, Rock, Soil, Tile, Tissue } from "./tile";
+import { Air, Cell, DeadCell, Fruit, Rock, Soil, Tile, Tissue } from "./tile";
 import { TileEvent, TileEventType } from "./tileEvent";
 
 export type TileEventLog = {
@@ -511,7 +511,7 @@ export class World {
         totalSugar += e.inventory.sugar;
         totalWater += e.inventory.water;
       }
-      if (hasEnergy(e)) {
+      if (e instanceof Cell) {
         totalEnergy += e.energy;
       }
     });
