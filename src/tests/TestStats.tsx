@@ -1,11 +1,11 @@
+import { Layout, PlotData } from "plotly.js";
 import React from "react";
-import { World } from "../sketches/mito/game";
-import { Temperate, Environment, Rocky, Desert } from "../sketches/mito/game/environment";
-import { Tile, Air, Soil, Rock, Fountain } from "../sketches/mito/game/tile";
-import { hasInventory } from "../sketches/mito/inventory";
-import { PlotData, Layout } from "plotly.js";
-import { findBuildCandidateTiles } from "../sketches/mito/game/worldUtils";
 import { newBaseSpecies } from "../evolution/species";
+import { World } from "../sketches/mito/game";
+import { Desert, Environment, Rocky, Temperate } from "../sketches/mito/game/environment";
+import { Air, Fountain, Rock, Soil, Tile } from "../sketches/mito/game/tile";
+import { findBuildCandidateTiles } from "../sketches/mito/game/worldUtils";
+import { hasInventory } from "../sketches/mito/inventory";
 
 type Visitor = (tiles: Tile[], world: World) => number;
 interface Visitors {

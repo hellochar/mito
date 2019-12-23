@@ -1,10 +1,10 @@
 import * as React from "react";
-
 import Mito from "..";
 import { Tile } from "../game/tile";
+import PointHighlight from "../tutorial/PointHighlight";
 import TileHighlight from "../tutorial/tileHighlight";
 import { TileDetails } from "./TileDetails";
-import PointHighlight from "../tutorial/PointHighlight";
+
 
 interface HoverProps {
   mito: Mito;

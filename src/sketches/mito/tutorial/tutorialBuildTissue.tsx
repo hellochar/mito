@@ -1,10 +1,9 @@
 import * as React from "react";
-
 import { Action } from "../action";
 import { Air, Leaf, Root, Soil, Tissue } from "../game/tile";
+import { findBuildCandidateTiles } from "../game/worldUtils";
 import TileHighlight from "./tileHighlight";
 import { Tutorial } from "./tutorial";
-import { findBuildCandidateTiles } from "../game/worldUtils";
 
 export class TutorialBuildTissue extends Tutorial {
   state = {

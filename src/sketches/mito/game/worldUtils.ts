@@ -1,5 +1,4 @@
 import { World } from ".";
-
 import { Tile, Tissue } from "./tile";
 
 export function findBuildCandidateTiles(world: World, predicate?: (tile: Tile) => boolean) {

@@ -1,6 +1,5 @@
 import { AStarFinder, DiagonalMovement, Grid } from "pathfinding";
 import { Vector2 } from "three";
-
 import { ActionMove } from "./action";
 import { World } from "./game";
 import { Cell, Tissue } from "./game/tile";

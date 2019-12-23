@@ -14,6 +14,6 @@ export interface EventCellTransferEnergy {
   amount: number;
 }
 export interface EventCellEat {
-  type: "cell-eat"; 
+  type: "cell-eat";
   who: Cell;
 }

@@ -1,16 +1,7 @@
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
 import { traitMod } from "../../../evolution/traits";
-import {
-  Action,
-  ActionBuild,
-  ActionDeconstruct,
-  ActionDrop,
-  ActionInteract,
-  ActionMove,
-  ActionMultiple,
-  ActionPickup,
-} from "../action";
+import { Action, ActionBuild, ActionDeconstruct, ActionDrop, ActionInteract, ActionMove, ActionMultiple, ActionPickup } from "../action";
 import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
