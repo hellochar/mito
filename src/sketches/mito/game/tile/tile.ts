@@ -1,4 +1,5 @@
 import shuffle from "math/shuffle";
+import { Constructor } from "sketches/mito/constructor";
 import { Vector2 } from "three";
 import { map, randRound } from "../../../../math/index";
 import { HasInventory, Inventory } from "../../inventory";
@@ -159,5 +160,9 @@ export abstract class Tile implements Steppable, HasInventory {
     if (fallAmount > 0 && lowerNeighbor != null && canPullResources(lowerNeighbor, this)) {
       this.inventory.give(lowerNeighbor.inventory, randRound(fallAmount), 0);
     }
+  }
+
+  toString() {
+    return (this.constructor as Constructor<Tile>).displayName + "(" + this.pos + ")";
   }
 }

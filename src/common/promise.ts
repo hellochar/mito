@@ -1,5 +1,5 @@
-export function sleep(time: number) {
+export function sleep(millis: number) {
   return new Promise((r) => {
-    setTimeout(r, time);
+    setTimeout(r, millis);
   });
 }

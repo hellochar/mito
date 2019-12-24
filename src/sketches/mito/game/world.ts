@@ -1,5 +1,5 @@
 import { randRound } from "math";
-import { arrayRange } from "math/arrays";
+import { gridRange } from "math/arrays";
 import * as THREE from "three";
 import { Vector2 } from "three";
 import { GameResult } from "..";
@@ -22,7 +22,7 @@ import { Entity, isSteppable, step } from "./entity";
 import { Environment, FILL_FUNCTIONS } from "./environment";
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
-import { Air, Cell, DeadCell, Fruit, Rock, Soil, Tile, Tissue } from "./tile";
+import { Air, Cell, DeadCell, Fruit, Tile, Tissue } from "./tile";
 import { TileEvent, TileEventType } from "./tileEvent";
 
 export type TileEventLog = {
@@ -68,66 +68,56 @@ export class World {
     Cell.diffusionWater = traitMod(this.traits.diffuseWater, 1 / CELL_DIFFUSION_WATER_TIME, 2);
     Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, 1 / CELL_DIFFUSION_SUGAR_TIME, 2);
     Cell.timeToBuild = traitMod(this.traits.buildTime, CELL_BUILD_TIME, 1 / 2);
-    this.player = new Player(new Vector2(this.width / 2, this.height / 2), this);
-    this.gridEnvironment = arrayRange(this.width).map((x) =>
-      arrayRange(this.height).map((y) => {
-        const pos = new Vector2(x, y);
 
-        let tile: Tile | undefined;
-        for (const fillFunction of FILL_FUNCTIONS[environment.fill]) {
-          const t = fillFunction(pos, this);
-          if (t != null) {
-            tile = t;
-            break;
-          }
+    this.gridEnvironment = gridRange(this.width, this.height, (x, y) => {
+      const pos = new Vector2(x, y);
+
+      let tile: Tile | undefined;
+      for (const fillFunction of FILL_FUNCTIONS[environment.fill]) {
+        const t = fillFunction(pos, this);
+        if (t != null) {
+          tile = t;
+          break;
         }
-        if (tile == null) {
-          tile = new Air(pos, this);
-        }
-        return tile;
-      })
-    );
+      }
+      if (tile == null) {
+        tile = new Air(pos, this);
+      }
+      return tile;
+    });
+
+    this.gridCells = gridRange(this.width, this.height, () => null);
+    this.neighborCache = gridRange(this.width, this.height, (x, y) => this.computeTileNeighbors(x, y));
+    this.fillCachedEntities();
 
     // always drop player on the Soil Air interface
-    const playerX = this.player.pos.x;
-    const firstSoil = this.gridEnvironment[playerX].find((t) => !(t instanceof Air));
-    if (firstSoil) {
-      this.player.posFloat.y = firstSoil.pos.y;
+    const start = new Vector2(this.width / 2, this.height / 2);
+    const firstNonAir = this.gridEnvironment[start.x].find((t) => !(t instanceof Air));
+    if (firstNonAir != null) {
+      // if we hit a rock, go onto the Air right above it
+      start.y = firstNonAir.isObstacle ? firstNonAir.pos.y - 1 : firstNonAir.pos.y;
     }
 
-    const radius = 2.5;
-    this.gridCells = arrayRange(this.width).map((x) =>
-      arrayRange(this.height).map((y) => {
-        const pos = new Vector2(x, y);
-        // add a "seed" of tissue around the player
-        if (this.player.pos.distanceTo(pos) < radius) {
-          // prevent Rocks underneath the seed
-          if (this.gridEnvironment instanceof Rock) {
-            this.gridEnvironment[x][y] = new Soil(new Vector2(x, y), 0, this);
-          }
-          return new Tissue(pos, this);
-        } else {
-          return null;
-        }
-      })
-    );
-    this.neighborCache = arrayRange(this.width).map((x) =>
-      arrayRange(this.height).map((y) => {
-        return this.computeTileNeighbors(x, y);
-      })
-    );
+    const tissues = Array.from(
+      this.bfsIterator(start, (t) => !t.isObstacle && t.pos.distanceTo(start) < 3.5, (t) => t.pos.distanceTo(start), 21)
+    ).map((tile, n) => {
+      const t = new Tissue(tile.pos, this);
+      this.setTileAt(tile.pos, t);
+      return t;
+    });
+    const avgTissuePos = tissues.reduce((p, t) => p.add(t.pos), new Vector2()).divideScalar(tissues.length);
+    this.player = new Player(avgTissuePos, this);
+
     this.fillCachedEntities();
 
     // step all tiles first with 0 timestep to trigger any initial state
-    for (let x = 0; x < this.width; x++) {
-      for (let y = 0; y < this.height; y++) {
-        const tileEnvironment = this.gridEnvironment[x][y];
-        tileEnvironment && tileEnvironment.step(0);
+    gridRange(this.width, this.height, (x, y) => {
+      const tileEnvironment = this.gridEnvironment[x][y];
+      tileEnvironment && tileEnvironment.step(0);
 
-        const tileCell = this.gridCells[x][y];
-        tileCell && tileCell.step(0);
-      }
-    }
+      const tileCell = this.gridCells[x][y];
+      tileCell && tileCell.step(0);
+    });
   }
 
   public tileAt(v: Vector2): Tile | null;
@@ -188,7 +178,7 @@ export class World {
   // Rules for replacement:
   // if tile is environment, clear out the gridCell and set the gridEnvironment.
   // if tile is cell, set gridCell, leave gridEnvironment alone.
-  public setTileAt(position: Vector2, tile: Tile): any {
+  public setTileAt(position: Vector2, tile: Tile) {
     const { x, y } = position;
     if (!this.isValidPosition(x, y)) {
       throw new Error(`invalid position ${x}, ${y} `);
@@ -249,6 +239,9 @@ export class World {
     }
   }
 
+  /**
+   * Returns a map from direction offsets (DIRECTIONS.n, .nw, .ne, etc.) to Tile neighbors occupying that offset.
+   */
   public tileNeighbors(pos: Vector2) {
     return this.neighborCache[pos.x][pos.y];
   }
@@ -430,7 +423,7 @@ export class World {
     const sunAngle = this.sunAngle;
     const directionalBias = Math.sin(sunAngle + Math.PI / 2);
     const sunAmount = this.sunAmount;
-    for (let y = 0; y <= this.height * 0.6; y++) {
+    for (let y = 0; y <= this.height * 0.7; y++) {
       for (let x = 0; x < this.width; x++) {
         const t = this.environmentTileAt(x, y);
         if (t instanceof Air) {
@@ -526,6 +519,43 @@ export class World {
           for (const t of row) {
             yield t;
           }
+        }
+      },
+    };
+  }
+
+  /**
+   * Breadth first search (floodfill) generator
+   */
+  public bfsIterator(
+    start: Vector2,
+    filter: (tile: Tile) => boolean,
+    heuristic: (tile: Tile) => number,
+    limit: number
+  ) {
+    if (!this.isValidPosition(start.x, start.y)) {
+      throw new Error("bfsIterator on invalid position " + start.x + "," + start.y);
+    }
+    const self = this;
+    const frontier = [this.tileAt(start)!];
+    const processed = new Set<Tile>();
+    return {
+      *[Symbol.iterator]() {
+        while (frontier.length > 0 && processed.size < limit) {
+          const tile = frontier.shift();
+          console.log("bfs iterator looking at", tile, "with processed", processed);
+          if (tile == null) {
+            return;
+          }
+          processed.add(tile);
+          yield tile;
+          const neighbors = self.tileNeighbors(tile.pos);
+          for (const [offset, n] of neighbors) {
+            if (offset.manhattanLength() === 1 && filter(n) && frontier.indexOf(n) === -1 && !processed.has(n)) {
+              frontier.push(n);
+            }
+          }
+          frontier.sort((a, b) => heuristic(a) - heuristic(b));
         }
       },
     };

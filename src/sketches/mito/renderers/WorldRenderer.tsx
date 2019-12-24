@@ -68,7 +68,8 @@ export class WorldRenderer extends Renderer<World> {
       for (const e of deletedEntities) {
         const renderer = this.renderers.get(e);
         if (renderer == null) {
-          throw new Error(`Couldn't find renderer for ${e}!`);
+          console.warn(`Couldn't find renderer for ${e}!`);
+          continue;
         }
         renderer.destroy();
         this.renderers.delete(e);
