@@ -4,7 +4,8 @@ import VignetteCapturer from "common/vignette";
 import { parse } from "query-string";
 import * as React from "react";
 import * as THREE from "three";
-import { OrthographicCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
+import { AxesHelper, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { ActionBuild, ActionInteract, ActionMove } from "./action";
@@ -120,6 +121,9 @@ export class Mito extends ISketch {
   private vignetteCapturer = new VignetteCapturer(this);
   private vignettes: HTMLCanvasElement[] = [];
 
+  private hackCamera: PerspectiveCamera;
+  private controls: OrbitControls;
+
   constructor(
     renderer: WebGLRenderer,
     context: SketchAudioContext,
@@ -130,11 +134,17 @@ export class Mito extends ISketch {
     this.world = new World(environmentFromLevelInfo(attempt.targetHex.info), attempt.settlingSpecies);
 
     this.camera.position.z = 10;
-    this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+    this.camera.lookAt(0, 0, 0);
     this.camera.position.x = this.world.player.pos.x;
     this.camera.position.y = this.world.player.pos.y;
     this.camera.zoom = 1.5;
     this.camera.add(this.audioListener);
+
+    this.hackCamera = new PerspectiveCamera(60, this.canvas.height / this.canvas.width);
+    this.hackCamera.position.copy(this.camera.position);
+    this.hackCamera.lookAt(0, 0, 0);
+    this.controls = new OrbitControls(this.hackCamera);
+    this.scene.add(new AxesHelper(25));
 
     this.worldRenderer = new WorldRenderer(this.world, this.scene, this);
 
@@ -383,6 +393,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     lerp2(this.camera.position, target, 0.3);
 
     this.renderer.render(this.scene, this.camera);
+    // this.renderer.render(this.scene, this.hackCamera);
     if (Boolean(parse(window.location.search).debug) && this.frameCount % 100 === 0) {
       // this.perfDebug();
       this.logRenderInfo();
