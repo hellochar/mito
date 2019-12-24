@@ -74,7 +74,7 @@ export const LEAF_REACTION_TIME = 5;
 /**
  * Number of seconds between Root Absorption events.
  */
-export const ROOT_TIME_BETWEEN_ABSORPTIONS = 3;
+export const ROOT_TIME_BETWEEN_ABSORPTIONS = 4.5;
 
 /**
  * How many total resources a Fruit needs to mature.

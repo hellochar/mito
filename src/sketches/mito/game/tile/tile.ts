@@ -3,7 +3,6 @@ import { Constructor } from "sketches/mito/constructor";
 import { Vector2 } from "three";
 import { map, randRound } from "../../../../math/index";
 import { HasInventory, Inventory } from "../../inventory";
-import { params } from "../../params";
 import { canPullResources } from "../canPullResources";
 import { Steppable } from "../entity";
 import { Temperature, temperatureFor } from "../temperature";
@@ -32,8 +31,8 @@ export abstract class Tile implements Steppable, HasInventory {
 
   get darknessContrib(): number {
     const contrib = Math.max(
-      0.2,
-      map(this.pos.y, this.world.height / 2, this.world.height, params.soilDarknessBase, 1)
+      0.2
+      // map(this.pos.y, this.world.height / 2, this.world.height, params.soilDarknessBase, 1)
     );
     return contrib;
   }

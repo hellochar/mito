@@ -11,6 +11,10 @@ interface TileDetailsProps {
   tile?: Tile;
 }
 
+function formatSeconds(seconds: number) {
+  return `${Math.max(0, seconds).toFixed(1)}s`;
+}
+
 export class TileDetails extends React.Component<TileDetailsProps> {
   public render() {
     const { tile } = this.props;
@@ -33,9 +37,8 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   private rootInfo(tile: Tile) {
     return tile instanceof Root ? (
       <div className="info-root">
-        <div>{tile.totalSucked} water collected.</div>
-        <div>{tile.cooldown.toFixed(0)} turns until next water suck.</div>
-        {/* <div>{tile.waterTransferAmount.toFixed(0)} water transfer per round.</div> */}
+        <div>{tile.totalSucked} water absorbed.</div>
+        <div>Absorbs in {formatSeconds(tile.cooldown)}</div>
       </div>
     ) : null;
   }
@@ -43,7 +46,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     return tile instanceof Leaf ? (
       <div className="info-leaf">
         <div>{tile.totalSugarProduced} sugar produced.</div>
-        <div>{(1 / (tile.averageSpeed * tile.reactionRate())).toFixed(2)} seconds per reaction.</div>
+        <div>{formatSeconds(1 / (tile.averageSpeed * tile.reactionRate()))} per reaction.</div>
         <div>{(1 / tile.averageEfficiency).toFixed(2)} water per sugar.</div>
       </div>
     ) : null;
@@ -63,7 +66,8 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     if (tile instanceof Fountain) {
       return (
         <div className="info-fountain">
-          <div>{tile.secondsPerWater} turns per water</div>
+          <div>{formatSeconds(tile.cooldown)} until next water.</div>
+          <div>{tile.waterRemaining} water left.</div>
         </div>
       );
     }

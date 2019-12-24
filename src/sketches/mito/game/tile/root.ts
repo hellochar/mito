@@ -5,6 +5,7 @@ import { ROOT_TIME_BETWEEN_ABSORPTIONS, TISSUE_INVENTORY_CAPACITY } from "../con
 import { Interactable } from "../interactable";
 import { Cell } from "./cell";
 import { Soil } from "./soil";
+
 export class Root extends Cell implements Interactable {
   static displayName = "Root";
   public isObstacle = true;

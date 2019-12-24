@@ -19,7 +19,7 @@ import {
   TIME_PER_YEAR,
 } from "./constants";
 import { Entity, isSteppable, step } from "./entity";
-import { Environment, FILL_FUNCTIONS } from "./environment";
+import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
 import { Air, Cell, DeadCell, Fruit, Tile, Tissue } from "./tile";
@@ -53,12 +53,14 @@ export class World {
   public readonly wipResult: Omit<GameResult, "status" | "mutationPointsPerEpoch">;
   public readonly species: Species;
   public readonly traits: Traits;
+  public readonly generatorContext: GeneratorContext;
 
   get season(): Season {
     return seasonFromTime(this.time);
   }
 
-  constructor(public environment: Environment, species: Species) {
+  constructor(public environment: Environment, seed: number, species: Species) {
+    this.generatorContext = createGeneratorContext(seed);
     this.wipResult = {
       fruits: [],
       world: this,
@@ -69,21 +71,10 @@ export class World {
     Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, 1 / CELL_DIFFUSION_SUGAR_TIME, 2);
     Cell.timeToBuild = traitMod(this.traits.buildTime, CELL_BUILD_TIME, 1 / 2);
 
+    const tileGenerator = TileGenerators[environment.fill];
     this.gridEnvironment = gridRange(this.width, this.height, (x, y) => {
       const pos = new Vector2(x, y);
-
-      let tile: Tile | undefined;
-      for (const fillFunction of FILL_FUNCTIONS[environment.fill]) {
-        const t = fillFunction(pos, this);
-        if (t != null) {
-          tile = t;
-          break;
-        }
-      }
-      if (tile == null) {
-        tile = new Air(pos, this);
-      }
-      return tile;
+      return tileGenerator(pos, this) || new Air(pos, this);
     });
 
     this.gridCells = gridRange(this.width, this.height, () => null);

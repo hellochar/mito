@@ -131,7 +131,8 @@ export class Mito extends ISketch {
     public onWinLoss: (result: GameResult) => void
   ) {
     super(renderer, context);
-    this.world = new World(environmentFromLevelInfo(attempt.targetHex.info), attempt.settlingSpecies);
+    const { info } = attempt.targetHex;
+    this.world = new World(environmentFromLevelInfo(info), info.seed, attempt.settlingSpecies);
 
     this.camera.position.z = 10;
     this.camera.lookAt(0, 0, 0);

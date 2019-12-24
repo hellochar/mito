@@ -3,6 +3,7 @@ import { Species, SpeciesSchema } from "../evolution/species";
 import { EnvironmentSchema } from "../sketches/mito/game/environment";
 
 export interface LevelInfo {
+  seed: number;
   height: number; // [-1 to 6], integers only
   temperature: "cold" | "temperate" | "hot";
   rainfall: "low" | "medium" | "high";
@@ -18,6 +19,7 @@ export interface LevelInfo {
 
 export const LevelInfoSchema = createSimpleSchema<LevelInfo>({
   // "*": true,
+  seed: primitive(),
   height: primitive(),
   temperature: primitive(),
   rainfall: primitive(),

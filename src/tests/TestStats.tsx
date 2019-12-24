@@ -47,7 +47,7 @@ class ExperimentSuite {
   }
 }
 
-function runTests(environmentFn: () => Environment, id: string) {
+function runTests(environment: Environment, id: string) {
   console.log("running");
   const suite = new ExperimentSuite([
     new Experiment({
@@ -85,7 +85,7 @@ function runTests(environmentFn: () => Environment, id: string) {
   ]);
   for (let i = 0; i < 20; i++) {
     console.time("trial " + i);
-    const world = new World(environmentFn(), newBaseSpecies());
+    const world = new World(environment, i, newBaseSpecies());
     suite.recordDataFor(world);
     console.timeEnd("trial " + i);
   }

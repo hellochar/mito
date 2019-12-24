@@ -10,6 +10,7 @@ export class HexTile {
 
   @serializable(object(LevelInfoSchema))
   info: LevelInfo = {
+    seed: Math.random() * Number.MAX_SAFE_INTEGER,
     height: 0,
     rainfall: "medium",
     soilType: "average",

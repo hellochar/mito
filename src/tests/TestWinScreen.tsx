@@ -8,7 +8,7 @@ import { Fruit } from "../sketches/mito/game/tile";
 import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
 
 export function TestWinScreen() {
-  const world = new World(Temperate(), newBaseSpecies());
+  const world = new World(Temperate, 0, newBaseSpecies());
   world.time = 5;
   const f1 = new Fruit(new Vector2(0, 0), world);
   f1.committedResources.add(50, 50);
