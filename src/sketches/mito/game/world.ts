@@ -83,7 +83,7 @@ export class World {
 
     // always drop player on the Soil Air interface
     const start = new Vector2(this.width / 2, this.height / 2);
-    const firstNonAir = this.gridEnvironment[start.x].find((t) => !(t instanceof Air));
+    const firstNonAir = this.gridEnvironment[start.x].find((t) => !(t instanceof Air) && t.pos.y > 30);
     if (firstNonAir != null) {
       // if we hit a rock, go onto the Air right above it
       start.y = firstNonAir.isObstacle ? firstNonAir.pos.y - 1 : firstNonAir.pos.y;
@@ -109,6 +109,8 @@ export class World {
       const tileCell = this.gridCells[x][y];
       tileCell && tileCell.step(0);
     });
+
+    this.computeSunlight();
   }
 
   public tileAt(v: Vector2): Tile | null;
@@ -407,7 +409,7 @@ export class World {
   }
 
   public computeSunlight() {
-    // sunlight is special - we step downards from the top; neighbors don't affect the calculation so
+    // step downards from the top; neighbors don't affect the calculation so
     // we don't have buffering problems
 
     // TODO allow sunlight to go full 45-to-90 degrees
@@ -534,7 +536,6 @@ export class World {
       *[Symbol.iterator]() {
         while (frontier.length > 0 && processed.size < limit) {
           const tile = frontier.shift();
-          console.log("bfs iterator looking at", tile, "with processed", processed);
           if (tile == null) {
             return;
           }

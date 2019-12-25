@@ -15,6 +15,20 @@ export const pointsFilter = (gen: TileGenerator, points: Vector2[]): TileGenerat
   };
 };
 
+/**
+ * The first gen takes precedence over later ones.
+ */
+export const layers = (...gens: TileGenerator[]): TileGenerator => {
+  return (pos, world) => {
+    for (const g of gens) {
+      const tile = g(pos, world);
+      if (tile) {
+        return tile;
+      }
+    }
+  };
+};
+
 const Temperate: TileGenerator = (pos, world) => {
   const { noiseHeight, noiseWater, noiseRock } = world.generatorContext;
   const { x, y } = pos;
@@ -90,5 +104,43 @@ const Rocky: TileGenerator = (pos, world) => {
   }
 };
 
-export const TileGenerators = { Temperate, Desert, Rocky };
+const Reservoires: TileGenerator = (pos, world) => {
+  const { noiseHeight, noiseWater, noiseRock } = world.generatorContext;
+  const { x, y } = pos;
+  const soilLevel =
+    world.height / 2 - (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 - 16 * noiseHeight.perlin2(10, x / 20 + 10);
+  // const isRock = Math.abs(noiseRock.simplex2(x / 10, y / 10)) < 0.1;
+  const isRockHere = Math.sin(x / 4 + y / 30) ** 2 + Math.cos(y / 4) ** 2 > 1.2;
+  const isRockBelow = Math.sin(x / 4 + (y + 1) / 30) ** 2 + Math.cos((y + 1) / 4) ** 2 > 1.2;
+
+  const isRock = isRockHere && !isRockBelow;
+  if (isRock && y + 1 > soilLevel) {
+    return new Rock(pos, world);
+  }
+  if (y > soilLevel) {
+    return new Soil(pos, 2, world);
+  }
+};
+
+const SkySoil: TileGenerator = (pos, world) => {
+  const { noiseHeight, noiseWater, noiseRock } = world.generatorContext;
+  const { x, y } = pos;
+
+  const p = 2.5;
+  const soilLevel = Math.sin(x / p + y / 12) ** 2 + Math.cos(y / p) ** 2 + noiseHeight.perlin2(x / 4, y / 26);
+
+  if (soilLevel > 1.2 && y > 80 - soilLevel * 20) {
+    return new Soil(pos, Math.floor(5 * (soilLevel - 1.1)), world);
+  }
+
+  const soilLevelBase =
+    (world.height / 2) * 1.2 -
+    (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 -
+    16 * noiseHeight.perlin2(10, x / 20 + 10);
+  if (y > soilLevelBase) {
+    return new Soil(pos, 2, world);
+  }
+};
+
+export const TileGenerators = { Temperate, Desert, Rocky, Reservoires, SkySoil };
 export type TileGeneratorName = keyof typeof TileGenerators;

@@ -26,7 +26,7 @@ export class Air extends Tile {
   }
   private computeCo2() {
     const base = map(this.pos.y, this.world.height / 2, 0, this.world.environment.floorCo2, 1.15);
-    const scaleX = map(this.pos.y, this.world.height / 2, 0, 4, 9);
+    const scaleX = Math.max(1, map(this.pos.y, this.world.height / 2, 0, 4, 9));
     // const offset = noiseCo2.perlin3(94.2321 - this.pos.x / scaleX, 3221 - this.pos.y / 2.5, world.time / 5 + 93.1) * 0.2;
     const time = this.world == null ? 0 : this.world.time;
     const offset =
