@@ -3,6 +3,7 @@ import { Inventory } from "../../inventory";
 import { World } from "../world";
 import { Cell } from "./cell";
 export class GrowingCell extends Cell {
+  static displayName = "Maturing Cell";
   public isObstacle = true;
   public timeRemaining: number;
   public timeToBuild: number;
@@ -14,8 +15,10 @@ export class GrowingCell extends Cell {
   step(dt: number) {
     super.step(dt);
     this.timeRemaining -= this.tempo * dt;
+    this.completedCell.pos.copy(this.pos);
     if (this.timeRemaining <= 0) {
-      this.world.setTileAt(this.completedCell.pos, this.completedCell);
+      this.world.maybeRemoveCellAt(this.pos);
+      this.world.setTileAt(this.pos, this.completedCell);
     }
   }
 }
