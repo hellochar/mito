@@ -3,13 +3,13 @@ import { Scene } from "three";
 import Mito from "..";
 import { Entity, Player, StepStats, World } from "../game";
 import { Tile, Transport } from "../game/tile";
+import { EventLogRenderer } from "./events/eventLogRenderer";
 import { InventoryRenderer } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";
 import { Renderer } from "./Renderer";
 import { InstancedTileRenderer } from "./tile/InstancedTileRenderer";
 import TileBatcher from "./tile/tileBatcher";
 import { TransportRenderer } from "./tile/TransportRenderer";
-import { EventLogRenderer } from "./tileEventRenderer";
 
 export class WorldRenderer extends Renderer<World> {
   public renderers = new Map<Entity, Renderer<Entity>>();

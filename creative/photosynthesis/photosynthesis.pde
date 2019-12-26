@@ -22,7 +22,7 @@ void draw() {
   g.endShape(CLOSE);
   g.endDraw();
   image(g, 0, 0);
-  g.save("energyGive.png");
+  g.save("photosynthesis.png");
   noLoop();
 }
 

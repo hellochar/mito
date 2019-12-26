@@ -20,8 +20,21 @@ export interface Environment {
 export function environmentFromLevelInfo(info: LevelInfo) {
   // const { rainfall, soilType, temperature } = levelInfo;
 
-  // return info.height < 2 ? Temperate : info.height < 4 ? Rocky : Desert;
-  return Reservoires;
+  switch (info.height) {
+    case 0:
+      return Temperate;
+    case 1:
+      return Reservoires;
+    case 2:
+      return Rocky;
+    case 3:
+      return SkySoil;
+    case 4:
+    default:
+      return Desert;
+  }
+  return info.height < 2 ? Temperate : info.height < 4 ? Rocky : Desert;
+  // return Reservoires;
 }
 
 export const EnvironmentSchema = createSimpleSchema<Environment>({
@@ -56,8 +69,7 @@ export const Reservoires: Environment = {
   floorCo2: 0.5,
   waterGravityPerTurn: 1,
   temperaturePerSeason: [53, 75, 43, 25],
-  // fill: "Reservoires",
-  fill: "SkySoil",
+  fill: "Reservoires",
 };
 
 export const Desert: Environment = {
@@ -88,4 +100,19 @@ export const Rocky: Environment = {
   floorCo2: 1,
   temperaturePerSeason: [27, 62, 36, 15],
   fill: "Rocky",
+};
+
+export const SkySoil: Environment = {
+  airEvaporation: 0.3,
+  climate: {
+    timeBetweenRainfall: 83.333,
+    rainDuration: 4,
+    waterPerSecond: 90,
+  },
+  waterGravityPerTurn: 3,
+  evaporationBottom: 0.6,
+  evaporationRate: 0.03,
+  floorCo2: 1,
+  temperaturePerSeason: [27, 62, 36, 15],
+  fill: "SkySoil",
 };

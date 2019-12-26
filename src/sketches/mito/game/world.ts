@@ -34,6 +34,7 @@ export class StepStats {
     "cell-eat": [],
     "cell-transfer-energy": [],
     evaporation: [],
+    photosynthesis: [],
   };
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
   logEvent(event: TileEvent) {

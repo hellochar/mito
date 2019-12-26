@@ -55,6 +55,13 @@ export class Leaf extends Cell {
           tissue.inventory.add(-waterToConvert, sugarConverted);
           this.sugarConverted += sugarConverted;
           this.totalSugarProduced += sugarConverted;
+          if (sugarConverted > 0.1) {
+            this.world.logEvent({
+              type: "photosynthesis",
+              leaf: this,
+              where: tissue,
+            });
+          }
         }
       }
     }
