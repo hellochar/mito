@@ -162,6 +162,6 @@ export abstract class Tile implements Steppable, HasInventory {
   }
 
   toString() {
-    return (this.constructor as Constructor<Tile>).displayName + "(" + this.pos + ")";
+    return (this.constructor as Constructor<Tile>).displayName + "(" + this.pos.x + "," + this.pos.y + ")";
   }
 }

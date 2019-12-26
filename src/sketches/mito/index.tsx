@@ -4,7 +4,7 @@ import VignetteCapturer from "common/vignette";
 import { parse } from "query-string";
 import * as React from "react";
 import * as THREE from "three";
-import { AxesHelper, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
+import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
@@ -63,24 +63,24 @@ export class Mito extends ISketch {
       this.mouseDown = false;
     },
     wheel: (e: WheelEvent) => {
-      if (e.shiftKey) {
-        // on my mouse, one scroll is + or - 125
-        const delta = -(e.deltaX + e.deltaY) / 125 / 20;
-        const currZoom = this.camera.zoom;
-        const scalar = Math.pow(2, delta);
-        // console.log(currZoom);
-        // zoom of 2 is zooming in
-        // const newZoom = Math.min(Math.max(currZoom * scalar, 1), 2.5);
-        const newZoom = currZoom * scalar;
-        this.camera.zoom = newZoom;
-        this.camera.updateProjectionMatrix();
-      } else {
-        if (e.deltaX + e.deltaY < 0) {
-          this.setCellBarIndex(this.cellBarIndex - 1);
-        } else {
-          this.setCellBarIndex(this.cellBarIndex + 1);
-        }
-      }
+      // if (e.shiftKey) {
+      // on my mouse, one scroll is + or - 125
+      const delta = -(e.deltaX + e.deltaY) / 125 / 20;
+      const currZoom = this.camera.zoom;
+      const scalar = Math.pow(2, delta);
+      // console.log(currZoom);
+      // zoom of 2 is zooming in
+      // const newZoom = Math.min(Math.max(currZoom * scalar, 1), 2.5);
+      const newZoom = currZoom * scalar;
+      this.camera.zoom = newZoom;
+      this.camera.updateProjectionMatrix();
+      // } else {
+      //   if (e.deltaX + e.deltaY < 0) {
+      //     this.setCellBarIndex(this.cellBarIndex - 1);
+      //   } else {
+      //     this.setCellBarIndex(this.cellBarIndex + 1);
+      //   }
+      // }
     },
   };
   private handleKeyDown = (event: KeyboardEvent) => {
@@ -122,7 +122,7 @@ export class Mito extends ISketch {
   private vignettes: HTMLCanvasElement[] = [];
 
   private hackCamera: PerspectiveCamera;
-  private controls: OrbitControls;
+  private controls?: OrbitControls;
 
   constructor(
     renderer: WebGLRenderer,
@@ -144,8 +144,8 @@ export class Mito extends ISketch {
     this.hackCamera = new PerspectiveCamera(60, this.canvas.height / this.canvas.width);
     this.hackCamera.position.copy(this.camera.position);
     this.hackCamera.lookAt(0, 0, 0);
-    this.controls = new OrbitControls(this.hackCamera);
-    this.scene.add(new AxesHelper(25));
+    // this.controls = new OrbitControls(this.hackCamera);
+    // this.scene.add(new AxesHelper(25));
 
     this.worldRenderer = new WorldRenderer(this.world, this.scene, this);
 

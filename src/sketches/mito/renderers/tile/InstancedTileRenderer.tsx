@@ -75,7 +75,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     [Temperature.Freezing]: new Color("lightblue"),
   } as Record<Temperature, Color>;
 
-  private static ONE = new Vector2(1, 1);
+  private static readonly ONE = Object.freeze(new Vector2(1, 1));
 
   public inventoryRenderer: InventoryRenderer;
   private originalColor: Color;
