@@ -12,7 +12,7 @@ export class Fountain extends Soil {
     public secondsPerWater: number,
     public waterRemaining: number
   ) {
-    super(pos, water, world);
+    super(pos, water, 0, world);
   }
 
   shouldStep(dt: number) {

@@ -9,7 +9,6 @@ export interface Environment {
     rainDuration: number;
     waterPerSecond: number;
   };
-  waterGravityPerTurn: number;
   evaporationRate: number;
   evaporationBottom: number;
   floorCo2: number;
@@ -33,7 +32,6 @@ export function environmentFromLevelInfo(info: LevelInfo) {
     default:
       return Desert;
   }
-  return info.height < 2 ? Temperate : info.height < 4 ? Rocky : Desert;
   // return Reservoires;
 }
 
@@ -52,7 +50,6 @@ export const Temperate: Environment = {
   evaporationRate: 0.006,
   evaporationBottom: 0.6,
   floorCo2: 0.3333,
-  waterGravityPerTurn: 0.03,
   temperaturePerSeason: [53, 75, 43, 25],
   fill: "Temperate",
 };
@@ -67,7 +64,6 @@ export const Reservoires: Environment = {
   evaporationRate: 0.01,
   evaporationBottom: 0.1,
   floorCo2: 0.5,
-  waterGravityPerTurn: 1,
   temperaturePerSeason: [53, 75, 43, 25],
   fill: "Reservoires",
 };
@@ -81,7 +77,6 @@ export const Desert: Environment = {
   },
   evaporationRate: 0.06,
   evaporationBottom: 0.7,
-  waterGravityPerTurn: 0.6,
   floorCo2: 0.95,
   temperaturePerSeason: [69, 84, 98, 24],
   fill: "Desert",
@@ -94,7 +89,6 @@ export const Rocky: Environment = {
     rainDuration: 4,
     waterPerSecond: 90,
   },
-  waterGravityPerTurn: 3,
   evaporationBottom: 0.6,
   evaporationRate: 0.03,
   floorCo2: 1,
@@ -109,7 +103,6 @@ export const SkySoil: Environment = {
     rainDuration: 4,
     waterPerSecond: 90,
   },
-  waterGravityPerTurn: 3,
   evaporationBottom: 0.6,
   evaporationRate: 0.03,
   floorCo2: 1,

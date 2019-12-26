@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
 import { clamp, map } from "../../../../math";
 import { params } from "../../params";
-import { SOIL_INVENTORY_CAPACITY } from "../constants";
+import { SOIL_BASE_SATURATION, SOIL_INVENTORY_CAPACITY } from "../constants";
 import { Fountain, Rock, Soil, Tile } from "../tile";
 import { World } from "../world";
 
@@ -63,7 +63,7 @@ const Temperate: TileGenerator = (pos, world) => {
           map(y, world.height / 2, world.height, 100, 300)
         );
       } else {
-        return new Soil(pos, water, world);
+        return new Soil(pos, water, SOIL_BASE_SATURATION, world);
       }
     }
   }
@@ -81,7 +81,7 @@ const Desert: TileGenerator = (pos, world) => {
       return new Rock(pos, world);
     }
     const water = Math.floor(Math.max(0, map(y, world.height * 0.75, world.height, 1, 9)));
-    return new Soil(pos, water, world);
+    return new Soil(pos, water, SOIL_BASE_SATURATION, world);
   }
 };
 
@@ -100,7 +100,7 @@ const Rocky: TileGenerator = (pos, world) => {
     const rock = new Rock(pos, world);
     return rock;
   } else if (y > soilLevel) {
-    return new Soil(pos, 3, world);
+    return new Soil(pos, 3, SOIL_BASE_SATURATION, world);
   }
 };
 
@@ -118,7 +118,7 @@ const Reservoires: TileGenerator = (pos, world) => {
     return new Rock(pos, world);
   }
   if (y > soilLevel) {
-    return new Soil(pos, 2, world);
+    return new Soil(pos, 2, SOIL_BASE_SATURATION, world);
   }
 };
 
@@ -130,7 +130,7 @@ const SkySoil: TileGenerator = (pos, world) => {
   const soilLevel = Math.sin(x / p + y / 12) ** 2 + Math.cos(y / p) ** 2 + noiseHeight.perlin2(x / 4, y / 26);
 
   if (soilLevel > 1.2 && y > 80 - soilLevel * 20) {
-    return new Soil(pos, Math.floor(5 * (soilLevel - 1.1)), world);
+    return new Soil(pos, SOIL_BASE_SATURATION, Math.floor(5 * (soilLevel - 1.1)), world);
   }
 
   const soilLevelBase =
@@ -138,7 +138,7 @@ const SkySoil: TileGenerator = (pos, world) => {
     (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 -
     16 * noiseHeight.perlin2(10, x / 20 + 10);
   if (y > soilLevelBase) {
-    return new Soil(pos, 2, world);
+    return new Soil(pos, 2, SOIL_BASE_SATURATION, world);
   }
 };
 
