@@ -75,6 +75,8 @@ export const TISSUE_INVENTORY_CAPACITY = 6;
  */
 export const LEAF_REACTION_TIME = 5;
 
+export const LEAF_WATER_INTAKE_PER_SECOND = 1;
+
 /**
  * Number of seconds between Root Absorption events.
  */

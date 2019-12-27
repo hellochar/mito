@@ -111,7 +111,7 @@ const Reservoires: TileGenerator = (pos, world) => {
     world.height / 2 - (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 - 16 * noiseHeight.perlin2(10, x / 20 + 10);
   // const isRock = Math.abs(noiseRock.simplex2(x / 10, y / 10)) < 0.1;
   const isRockHere = Math.sin(x / 4 + y / 30) ** 2 + Math.cos(y / 4) ** 2 > 1.2;
-  const isRockBelow = Math.sin(x / 4 + (y + 1) / 30) ** 2 + Math.cos((y + 1) / 4) ** 2 > 1.2;
+  const isRockBelow = Math.sin(x / 4 + (y + 2) / 30) ** 2 + Math.cos((y + 2) / 4) ** 2 > 1.2;
 
   const isRock = isRockHere && !isRockBelow;
   if (isRock && y + 1 > soilLevel) {

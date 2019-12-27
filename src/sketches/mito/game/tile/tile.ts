@@ -122,10 +122,10 @@ export abstract class Tile implements Steppable, HasInventory {
       }
     }
   }
-  canDiffuse(tile: Tile) {
-    return canPullResources(this, tile);
+  canDiffuse(giver: Tile) {
+    return canPullResources(this, giver);
   }
-  diffuseWater(giver: Tile, dt: number) {
+  diffuseWater(giver: Tile, dt: number, diffusionRate = this.diffusionWater) {
     // Diffusion equation by finite difference: the purpose of this equation is to eventually
     // equalize the amount of water between me and giver. The two questions are how long
     // does it take, and what function does it follow to get there? These are generally
@@ -133,7 +133,7 @@ export abstract class Tile implements Steppable, HasInventory {
     // near linearity.
     const difference = giver.inventory.water - this.inventory.water;
     if (difference > 1) {
-      const diffusionAmount = Math.min(difference * this.diffusionWater * dt, difference / 2);
+      const diffusionAmount = Math.min(difference * diffusionRate * dt, difference / 2);
       giver.inventory.give(this.inventory, randRound(diffusionAmount), 0);
     }
   }
