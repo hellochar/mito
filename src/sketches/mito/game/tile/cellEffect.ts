@@ -33,7 +33,7 @@ export class FreezeEffect extends CellEffect implements Interactable {
   static stacks = false;
   public readonly secondsToDie = TIME_PER_DAY;
   public percentFrozen = 0.25;
-  get turnsUntilDeath() {
+  get timeUntilDeath() {
     return this.secondsToDie - this.age;
   }
   interact(dt: number) {

@@ -17,7 +17,7 @@ export default class EventPhotosynthesisRenderer extends EventRenderer<EventPhot
         const t = s.time / duration;
 
         s.alpha = (4 * (t - t * t)) ** (1 / 4);
-        s.size = 2 - t * 2;
+        s.size = (1 - t) * 2 * s.info.amount;
         s.r = t * s.time;
       },
       {

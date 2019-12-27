@@ -5,10 +5,11 @@ import { ROOT_TIME_BETWEEN_ABSORPTIONS, TISSUE_INVENTORY_CAPACITY } from "../con
 import { Interactable } from "../interactable";
 import { Cell } from "./cell";
 import { Soil } from "./soil";
+import { Tile } from "./tile";
 
 export class Root extends Cell implements Interactable {
   static displayName = "Root";
-  public isObstacle = true;
+  public isObstacle = false;
   public activeNeighbors: Vector2[] = [];
   public inventory = new Inventory(TISSUE_INVENTORY_CAPACITY, this);
   cooldown = 0;
@@ -20,6 +21,7 @@ export class Root extends Cell implements Interactable {
     this.inventory.give(player.inventory, 7.5 * dt, 0);
     return true;
   }
+
   public step(dt: number) {
     super.step(dt);
     if (this.cooldown <= 0) {
@@ -28,6 +30,13 @@ export class Root extends Cell implements Interactable {
     }
     this.cooldown -= this.tempo * dt;
   }
+  diffuseWater(giver: Tile, dt: number, diffusionRate = this.diffusionWater) {
+    if (giver instanceof Root) {
+      diffusionRate *= 5;
+    }
+    return super.diffuseWater(giver, dt, diffusionRate);
+  }
+
   private absorbWater() {
     this.activeNeighbors = [];
     const neighbors = this.world.tileNeighbors(this.pos);

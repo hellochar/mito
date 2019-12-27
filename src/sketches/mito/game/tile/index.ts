@@ -14,5 +14,4 @@ import { Transport } from "./transport";
 import { Vein } from "./vein";
 
 export { CellEffect, FreezeEffect } from "./cellEffect";
-export * from "./hasTilePairs";
 export { Air, DeadCell, Fountain, Rock, Soil, Tile, Cell, Fruit, GrowingCell, Leaf, Root, Tissue, Transport, Vein };

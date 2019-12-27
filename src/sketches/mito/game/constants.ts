@@ -71,11 +71,14 @@ export const CELL_DIFFUSION_SUGAR_TIME = 16.6667;
 export const TISSUE_INVENTORY_CAPACITY = 6;
 
 /**
- * On average for each Leaf pair, water will be converted to sugar after this many seconds.
+ * On average, for each Air tile adjacent to each Leaf, water will be converted to sugar after this many seconds.
  */
 export const LEAF_REACTION_TIME = 5;
 
-export const LEAF_WATER_INTAKE_PER_SECOND = 1;
+/**
+ * How much water Leaves absorb per second.
+ */
+export const LEAF_WATER_INTAKE_PER_SECOND = 0.5;
 
 /**
  * Number of seconds between Root Absorption events.

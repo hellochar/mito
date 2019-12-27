@@ -12,9 +12,9 @@ export class Fruit extends Cell {
   public committedResources: Inventory; // = new Inventory(Fruit.neededResources, this);
   public timeMatured?: number;
   static timeToBuild = 0;
-  public turnsToMature: number; // = TIME_PER_SEASON / 3 * 2; // takes two months to mature
-  get oneTurnCommitMax() {
-    return this.neededResources / this.turnsToMature;
+  public secondsToMature: number; // = TIME_PER_SEASON / 3 * 2; // takes two months to mature
+  get oneSecondCommitMax() {
+    return this.neededResources / this.secondsToMature;
   }
   constructor(pos: Vector2, world: World) {
     super(pos, world);
@@ -22,7 +22,7 @@ export class Fruit extends Cell {
       Math.ceil(traitMod(world.traits.fruitNeededResources, FRUIT_NEEDED_RESOURCES, 1 / 1.5) / 2) * 2;
     this.committedResources = new Inventory(this.neededResources, this);
     this.committedResources.on("get", this.handleGetResources);
-    this.turnsToMature = Math.ceil(traitMod(world.traits.fruitGrowthSpeed, FRUIT_TIME_TO_MATURE, 1 / 1.5));
+    this.secondsToMature = Math.ceil(traitMod(world.traits.fruitGrowthSpeed, FRUIT_TIME_TO_MATURE, 1 / 1.5));
   }
   handleGetResources = () => {
     if (this.timeMatured == null && this.isMature()) {
@@ -49,11 +49,11 @@ export class Fruit extends Cell {
   commitResources(dt: number) {
     const wantedWater = Math.min(
       this.neededResources / 2 - this.committedResources.water,
-      (this.oneTurnCommitMax / 2) * dt * this.tempo
+      (this.oneSecondCommitMax / 2) * dt * this.tempo
     );
     const wantedSugar = Math.min(
       this.neededResources / 2 - this.committedResources.sugar,
-      (this.oneTurnCommitMax / 2) * dt * this.tempo
+      (this.oneSecondCommitMax / 2) * dt * this.tempo
     );
     this.inventory.give(this.committedResources, wantedWater, wantedSugar);
   }

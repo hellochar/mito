@@ -2,6 +2,7 @@ import { Vector2 } from "three";
 import { Noise } from "../../../../common/perlin";
 import { map } from "../../../../math/index";
 import { Inventory } from "../../inventory";
+import { canPullResources } from "../canPullResources";
 import { World } from "../world";
 import { Tile } from "./tile";
 export class Air extends Tile {
@@ -62,7 +63,7 @@ export class Air extends Tile {
     }
   }
   tryDiffuse(t: Tile | null, dt: number) {
-    if (t != null && this.canDiffuse(t)) {
+    if (t != null && canPullResources(this, t)) {
       if (t.inventory.water > this.inventory.water) {
         this.diffuseWater(t, dt);
       }

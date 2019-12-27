@@ -49,7 +49,7 @@ export class Soil extends Tile {
       if (tile.pos.y >= this.pos.y) {
         continue;
       }
-      if (!this.canDiffuse(tile)) {
+      if (!canPullResources(this, tile)) {
         continue;
       }
       // take water from neighbors that have more water than you

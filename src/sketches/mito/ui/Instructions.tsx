@@ -49,7 +49,7 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
           <p>
             Underground, Soil holds water, rocks block your way, and occasionally Fountains (at the very bottom) are a
             permanent source of water. Soil holds up to {SOIL_INVENTORY_CAPACITY} water at a time. Fountains emit one
-            water per {params.fountainSecondsPerWater} turns.
+            water per {params.fountainSecondsPerWater} seconds.
           </p>
           <h3>Air and Aboveground</h3>
           <p>

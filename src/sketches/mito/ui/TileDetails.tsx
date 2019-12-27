@@ -11,8 +11,8 @@ interface TileDetailsProps {
   tile?: Tile;
 }
 
-function formatSeconds(seconds: number) {
-  return `${Math.max(0, seconds).toFixed(1)}s`;
+function formatSeconds(seconds: number, fractionDigits = 1) {
+  return `${Math.max(0, seconds).toFixed(fractionDigits)}s`;
 }
 
 export class TileDetails extends React.Component<TileDetailsProps> {
@@ -37,17 +37,17 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   private rootInfo(tile: Tile) {
     return tile instanceof Root ? (
       <div className="info-root">
-        <div>{tile.totalSucked} water absorbed.</div>
-        <div>Absorbs in {formatSeconds(tile.cooldown)}</div>
+        <div>Absorbs in {formatSeconds(tile.cooldown)}.</div>
+        <div>{tile.totalSucked} total water absorbed so far.</div>
       </div>
     ) : null;
   }
   private leafInfo(tile: Tile) {
     return tile instanceof Leaf ? (
       <div className="info-leaf">
-        <div>{tile.totalSugarProduced} sugar produced.</div>
-        <div>{formatSeconds(1 / (tile.averageSpeed * tile.reactionRate()))} per reaction.</div>
-        <div>{(1 / tile.averageEfficiency).toFixed(2)} water per sugar.</div>
+        <div>{formatSeconds(1 / (tile.averageSpeed * tile.reactionRate()), 2)} per reaction.</div>
+        <div>{(1 / tile.averageConversionRate).toFixed(2)} water per sugar.</div>
+        <div>{tile.totalSugarProduced.toFixed(2)} total sugar produced so far.</div>
       </div>
     ) : null;
   }

@@ -22,4 +22,5 @@ export interface EventPhotosynthesis {
   type: "photosynthesis";
   leaf: Leaf;
   where: Cell;
+  amount: number;
 }

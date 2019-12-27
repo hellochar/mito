@@ -106,7 +106,7 @@ export abstract class Tile implements Steppable, HasInventory {
   }
   stepDiffusion(neighbors: Map<Vector2, Tile>, dt: number) {
     for (const tile of neighbors.values()) {
-      if (!this.canDiffuse(tile)) {
+      if (!canPullResources(this, tile)) {
         continue;
       }
       // take water from neighbors that have more water than you
@@ -121,9 +121,6 @@ export abstract class Tile implements Steppable, HasInventory {
         }
       }
     }
-  }
-  canDiffuse(giver: Tile) {
-    return canPullResources(this, giver);
   }
   diffuseWater(giver: Tile, dt: number, diffusionRate = this.diffusionWater) {
     // Diffusion equation by finite difference: the purpose of this equation is to eventually

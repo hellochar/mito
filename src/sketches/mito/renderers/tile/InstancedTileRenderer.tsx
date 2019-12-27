@@ -15,7 +15,6 @@ import {
   Fountain,
   Fruit,
   GrowingCell,
-  hasTilePairs,
   Leaf,
   Rock,
   Root,
@@ -26,7 +25,6 @@ import {
 } from "sketches/mito/game/tile";
 import { WorldDOMElement } from "sketches/mito/WorldDOMElement";
 import {
-  ArrowHelper,
   Audio,
   BufferGeometry,
   Color,
@@ -40,31 +38,9 @@ import {
 } from "three";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";
+import { Animation, AnimationController } from "./Animation";
 import { CellEffectsRenderer } from "./CellEffectsRenderer";
 import TileBatcher, { BatchInstance } from "./tileBatcher";
-
-type Animation = (dt: number) => boolean;
-
-class AnimationController {
-  animation?: Animation;
-  timeStarted?: number;
-
-  set(a: Animation, now: number) {
-    this.animation = a;
-    this.timeStarted = now;
-  }
-
-  update(now: number) {
-    if (this.animation != null && this.timeStarted != null) {
-      const dt = now - this.timeStarted;
-      const ended = this.animation(dt);
-      if (ended) {
-        this.animation = undefined;
-        this.timeStarted = undefined;
-      }
-    }
-  }
-}
 
 export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   public static readonly TEMPERATURE_COLORS = {
@@ -81,7 +57,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private originalColor: Color;
   private audio?: Audio;
   private lastAudioValueTracker = 0;
-  private pairsLines = new Object3D();
+  private neighborLines = new Object3D();
   private worldDomElement?: WorldDOMElement;
   private cellEffectsRenderer?: CellEffectsRenderer;
   private animation = new AnimationController();
@@ -106,7 +82,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     this.inventoryRenderer = new InventoryRenderer(this.target.inventory, this.scene, this.mito);
     this.inventoryRenderer.animationOffset = (this.target.pos.x + this.target.pos.y) / 2;
     if (this.target instanceof Cell) {
-      // if it takes no turns to build, start it off small just for show
+      // if it takes no time to build, start it off small just for show
       if (!(this.target.constructor as Constructor<Cell>).timeToBuild) {
         this.scale.set(0.01, 0.01, 1);
       }
@@ -253,7 +229,9 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       }
       this.lastAudioValueTracker = newAudioValueTracker;
     }
-    this.scene.remove(this.pairsLines);
+    if (this.neighborLines.parent != null) {
+      this.scene.remove(this.neighborLines);
+    }
   }
 
   private temperatureColor: Color = InstancedTileRenderer.TEMPERATURE_COLORS[Temperature.Mild];
@@ -272,36 +250,19 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   updateHover() {
-    this.scene.add(this.pairsLines);
-    this.pairsLines.position.set(this.target.pos.x, this.target.pos.y, 1);
-    if (hasTilePairs(this.target)) {
-      const pairColor = this.target instanceof Leaf ? 0xffc90e : new Color("rgb(9, 12, 255)").getHex();
-      const pairs = this.target.tilePairs;
-      if (pairs.length !== this.pairsLines.children.length) {
-        // redo pairs
-        this.pairsLines.remove(...this.pairsLines.children);
-        pairs.forEach((dir) => {
-          const length = dir.length() * 2 - 0.25;
-          const arrowDir = new Vector3(dir.x, dir.y, 0).normalize();
-          const arrowHelper = this.makeLine(arrowDir, arrowDir.clone().multiplyScalar(-length / 2), length, pairColor);
-          this.pairsLines.add(arrowHelper);
-        });
-      }
-    }
     if (this.hasActiveNeighbors(this.target)) {
-      const color = this.target instanceof Root ? new Color("rgb(9, 12, 255)").getHex() : 0xffffff;
+      this.scene.add(this.neighborLines);
+      this.neighborLines.position.set(this.target.pos.x, this.target.pos.y, 1);
+      const color = this.target instanceof Root ? new Color("rgb(9, 12, 255)").getHex() : 0xffc90e;
       const lines = this.target.activeNeighbors;
-      if (lines.length !== this.pairsLines.children.length) {
-        // redo pairs
-        this.pairsLines.remove(...this.pairsLines.children);
+      if (lines.length !== this.neighborLines.children.length) {
+        // redo neighbor lines
+        this.neighborLines.remove(...this.neighborLines.children);
         lines.forEach((dir) => {
           const length = dir.length() - 0.25;
           const arrowDir = new Vector3(dir.x, dir.y, 0).normalize();
-          const arrowHelper =
-            this.target instanceof Root
-              ? this.makeLine(arrowDir, new Vector3(), length, color)
-              : new ArrowHelper(arrowDir, new Vector3(0, 0, 5), length, color);
-          this.pairsLines.add(arrowHelper);
+          const line = this.makeLine(arrowDir, new Vector3(), length, color);
+          this.neighborLines.add(line);
         });
       }
     }
@@ -363,7 +324,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (this.cellEffectsRenderer != null) {
       this.cellEffectsRenderer.destroy();
     }
-    this.scene.remove(this.pairsLines);
+    this.scene.remove(this.neighborLines);
   }
 }
 
