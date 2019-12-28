@@ -2,15 +2,19 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "react-dropdown/style.css";
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
+import { TestLoseScreen } from "tests/TestLoseScreen";
+import { TestWinScreen } from "tests/TestWinScreen";
 import App from "./app/App";
 import "./index.scss";
 import * as serviceWorker from "./serviceWorker";
 import TestStats from "./tests/TestStats";
-import { TestWinScreen } from "./tests/TestWinScreen";
 
 ReactDOM.render(
   <HashRouter>
     <Switch>
+      <Route path="/test-lose">
+        <TestLoseScreen />
+      </Route>
       <Route path="/test-win">
         <TestWinScreen />
       </Route>

@@ -1,11 +1,9 @@
 import classnames from "classnames";
-import * as React from "react";
-import * as THREE from "three";
-
-import { ISketch, SketchAudioContext, SketchConstructor, UI_EVENTS } from "./sketch";
-
-import { FaVolumeOff, FaVolumeUp } from "react-icons/fa";
 import Ticker from "global/ticker";
+import * as React from "react";
+import { FaVolumeOff, FaVolumeUp } from "react-icons/fa";
+import * as THREE from "three";
+import { ISketch, SketchAudioContext, SketchConstructor, UI_EVENTS } from "./sketch";
 
 export interface ISketchComponentProps extends React.DOMAttributes<HTMLDivElement> {
   eventsOnBody?: boolean;
@@ -78,7 +76,7 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
   }
 
   render() {
-    const sketchElementsWithKey: React.ReactElement[] = [];
+    const sketchElementsWithKey: React.ReactNode[] = [];
     if (this.props.sketch.render != null) {
       sketchElementsWithKey.push(this.props.sketch.render());
     }
@@ -87,7 +85,8 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
     }
     return (
       <div className="sketch-elements">
-        {sketchElementsWithKey.map((el, idx) => React.cloneElement(el, { key: idx }))}
+        {sketchElementsWithKey}
+        {/* {sketchElementsWithKey.map((el, idx) => React.cloneElement(el, { key: idx }))} */}
       </div>
     );
   }

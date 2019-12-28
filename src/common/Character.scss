@@ -17,4 +17,125 @@
   &.large {
     height: 72px;
   }
+
+  &.dance {
+    animation: walkInLeft 2s ease-in-out, dance 6s 2s ease infinite;
+
+    @keyframes dance {
+      0% {
+        transform: translateY(0);
+      }
+
+      2% {
+        transform: translateY(-50px);
+      }
+
+      4% {
+        transform: translateY(0);
+      }
+
+      6% {
+        transform: translateY(-50px);
+      }
+
+      8% {
+        transform: translateY(0);
+      }
+
+      10% {
+        transform: translateY(-50px);
+      }
+
+      12% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  &.sad {
+    animation: fallIn 2s ease-in, sadwiggle 3s 2.5s ease infinite;
+
+    @keyframes sadwiggle {
+      $distance: 25px;
+      0% {
+        transform: translateX(0);
+      }
+
+      4% {
+        transform: translateX(-$distance);
+      }
+
+      8% {
+        transform: translateX($distance);
+      }
+
+      12% {
+        transform: translateX(-$distance);
+      }
+
+      16% {
+        transform: translateX($distance);
+      }
+
+      20% {
+        transform: translateX(-$distance);
+      }
+
+      24% {
+        transform: translateX($distance);
+      }
+
+      28% {
+        transform: translateX(-$distance);
+      }
+
+      32% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+  }
+
+  @keyframes walkInLeft {
+    0% {
+      transform: translate(-52vw, 0);
+    }
+
+    100% {
+      transform: translate(0, 0);
+    }
+  }
+
+  @keyframes fallIn {
+    0% {
+      transform: translate(0, -100vh);
+    }
+
+    50% {
+      transform: translate(0, 20px);
+    }
+
+    55% {
+      transform: translate(0, 20px) scale(2, (1 / 2));
+    }
+
+    65% {
+      transform: translate(0, 20px) scale(2, (1 / 2));
+    }
+
+    75% {
+      transform: translate(0, -5px) scale(0.9, (1 / 0.9));
+    }
+
+    80% {
+      transform: scale(1);
+    }
+  }
 }

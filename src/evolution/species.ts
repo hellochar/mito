@@ -25,7 +25,7 @@ export const SpeciesSchema = createSimpleSchema<Species>({
 SpeciesSchema.props.descendants = list(object(SpeciesSchema));
 SpeciesSchema.props.parent = reference(SpeciesSchema);
 
-export function newBaseSpecies(name = "newBaseSpecies"): Species {
+export function newBaseSpecies(name = "plantum originus"): Species {
   return {
     id: uuid(),
     name,

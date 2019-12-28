@@ -16,6 +16,7 @@ import { environmentFromLevelInfo } from "./game/environment";
 import { isInteractable } from "./game/interactable";
 import { Cell, Fruit, Leaf, Root, Tile, Tissue, Transport, Vein } from "./game/tile";
 import { ACTION_KEYMAP, CELL_BAR_KEYS, MOVEMENT_KEYS } from "./keymap";
+import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
@@ -181,6 +182,9 @@ export class Mito extends ISketch {
   }
 
   public render() {
+    if (!params.hud) {
+      return null;
+    }
     const worldDomElementComponents: JSX.Element[] = [];
     for (const e of this.worldDomElements) {
       worldDomElementComponents.push(e.render());

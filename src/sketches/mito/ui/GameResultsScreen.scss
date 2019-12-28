@@ -51,68 +51,28 @@ $color-primary-4: #1d4b00;
       $color-primary-2,
       $color-primary-2
     );
-    // animation: gradientBG 15s ease infinite;
   }
 
-  .character-party-container {
+  &.lost {
+    background: linear-gradient(-100deg, $dark-gray3, $gray1, $violet1, $violet1, $violet1, $gray1, $dark-gray3);
+    color: $gray5;
+
+    h1 {
+      color: $light-gray3;
+    }
+  }
+
+  .character-container {
     height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
     animation: none !important;
-
-    .character {
-      animation: walkIn 2s ease-in-out, dance 6s 2s ease infinite;
-
-      @keyframes walkIn {
-        0% {
-          transform: translate(-52vw, 0) scale(1);
-        }
-
-        100% {
-          transform: translate(0, 0) scale(1);
-        }
-      }
-
-      @keyframes dance {
-        0% {
-          transform: translateY(0);
-        }
-
-        2% {
-          transform: translateY(-50px);
-        }
-
-        4% {
-          transform: translateY(0);
-        }
-
-        6% {
-          transform: translateY(-50px);
-        }
-
-        8% {
-          transform: translateY(0);
-        }
-
-        10% {
-          transform: translateY(-50px);
-        }
-
-        12% {
-          transform: translateY(0);
-        }
-
-        100% {
-          transform: translateY(0);
-        }
-      }
-    }
   }
 
   h1 {
     font-size: 3em;
-    color: black;
+    // color: black;
     margin-bottom: 0.333em;
     text-align: center;
   }
@@ -127,21 +87,55 @@ $color-primary-4: #1d4b00;
     font-family: $arial-family;
     font-weight: lighter;
     font-size: 1em;
-    color: #444444;
     padding: 0 0 10px 5px;
-    border-bottom: 1px solid #444444;
+  }
+
+  .done-button {
+    padding: 30px;
+    margin: 20px 0;
+    background-color: $color-primary-4;
+    font-size: 24px;
+    color: $light-gray3;
+    border-color: $light-gray3;
+  }
+}
+
+.fruit-list {
+  margin: 30px 0;
+
+  &:not(.dark) {
+    .fruit-info {
+      color: #333333;
+    }
+
+    .matured-info {
+      color: black;
+    }
+
+    h5 {
+      color: #333333;
+      border-bottom: 1px solid #333333;
+    }
+  }
+
+  &.dark {
+    h5 {
+      border-bottom: 1px solid $gray5;
+    }
+
+    .matured-info {
+      color: $light-gray3;
+    }
   }
 
   .fruit-info {
     margin: 30px 0;
     font-size: 1.25em;
-    color: #333333;
     display: flex;
     align-items: center;
 
     .matured-info {
       font-weight: bold;
-      color: black;
     }
   }
 
@@ -154,28 +148,6 @@ $color-primary-4: #1d4b00;
       width: 2em;
       height: 2em;
     }
-  }
-
-  .done-button {
-    padding: 30px;
-    margin: 20px 0;
-    background-color: $color-primary-4;
-    font-size: 24px;
-    color: white;
-  }
-}
-
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
   }
 }
 

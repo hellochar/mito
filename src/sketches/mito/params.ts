@@ -8,6 +8,7 @@ const PARAMS_DEFAULT = {
   sunlightReintroduction: 0.15,
   sunlightDiffusion: 0.0,
   maxResources: 100,
+  hud: true,
 };
 
 type Params = typeof PARAMS_DEFAULT;
