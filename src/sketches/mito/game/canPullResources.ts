@@ -1,10 +1,5 @@
-import { Constructor } from "../constructor";
 import { HasInventory } from "../inventory";
 import { Air, Cell, Fruit, Soil } from "./tile";
-
-export function allowPull(receiver: any, recieverType: Constructor<any>, giver: any, giverType: Constructor<any>) {
-  return receiver instanceof recieverType && giver instanceof giverType;
-}
 
 export function canPullResources(receiver: HasInventory, giver: HasInventory): boolean {
   // allow direct ancestors/child relationships to exchange resources with each other (e.g. Soil and Fountain)
@@ -16,8 +11,10 @@ export function canPullResources(receiver: HasInventory, giver: HasInventory): b
   // don't allow other cells to pull from fruit
   const giverIsNotFruit = !(giver instanceof Fruit);
 
-  // specifically allow air to give to soil
-  const isAirToSoil = allowPull(receiver, Soil, giver, Air);
+  const areSoils = receiver instanceof Soil && giver instanceof Soil;
 
-  return hasAncestry || (areCells && giverIsNotFruit) || isAirToSoil;
+  // specifically allow air to give to soil
+  const isAirToSoil = receiver instanceof Soil && giver instanceof Air;
+
+  return hasAncestry || areSoils || (areCells && giverIsNotFruit) || isAirToSoil;
 }

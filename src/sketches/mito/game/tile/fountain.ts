@@ -1,18 +1,12 @@
 import { Vector2 } from "three";
 import { World } from "../world";
-import { Soil } from "./soil";
-export class Fountain extends Soil {
+import { Silt } from "./soil";
+export class Fountain extends Silt {
   static displayName = "Fountain";
   isObstacle = true;
   public cooldown = 0;
-  constructor(
-    pos: Vector2,
-    water: number = 0,
-    world: World,
-    public secondsPerWater: number,
-    public waterRemaining: number
-  ) {
-    super(pos, water, 0, world);
+  constructor(pos: Vector2, world: World, public secondsPerWater: number, public waterRemaining: number) {
+    super(pos, world);
   }
 
   shouldStep(dt: number) {

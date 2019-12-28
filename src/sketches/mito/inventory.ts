@@ -107,6 +107,15 @@ export class Inventory {
     this.events.off(name, fn);
   }
 
+  /**
+   * Set resources to an exact value; usually used in tile generation.
+   */
+  public set(water: number, sugar: number) {
+    this.water = 0;
+    this.sugar = 0;
+    this.add(water, sugar);
+  }
+
   public add(water: number, sugar: number) {
     const spaceNeeded = fpref(water + sugar);
     const spaceAvailable = this.space();

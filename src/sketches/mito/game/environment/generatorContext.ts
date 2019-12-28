@@ -5,6 +5,7 @@ export interface GeneratorContext {
   noiseHeight: Noise;
   noiseRock: Noise;
   noiseWater: Noise;
+  noiseSoil: Noise;
 }
 
 function modulateSeed(seed: number, key: string) {
@@ -20,5 +21,6 @@ export function createGeneratorContext(seed: number): GeneratorContext {
     noiseHeight: new Noise(modulateSeed(seed, "height")),
     noiseRock: new Noise(modulateSeed(seed, "rock")),
     noiseWater: new Noise(modulateSeed(seed, "water")),
+    noiseSoil: new Noise(modulateSeed(seed, "soil")),
   };
 }

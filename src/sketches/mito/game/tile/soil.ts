@@ -1,32 +1,17 @@
-import { Vector2 } from "three";
+import { Inventory } from "sketches/mito/inventory";
 import { map, randRound } from "../../../../math/index";
-import { Inventory } from "../../inventory";
 import { canPullResources } from "../canPullResources";
-import { SOIL_DIFFUSION_WATER_TIME, SOIL_GRAVITY_PER_SECOND, SOIL_INVENTORY_CAPACITY } from "../constants";
-import { World } from "../world";
 import { Tile } from "./tile";
-export class Soil extends Tile {
-  static displayName = "Soil";
-  static diffusionWater = 1 / SOIL_DIFFUSION_WATER_TIME;
+export abstract class Soil extends Tile {
   /**
    * Soil will aggressively hold onto water below saturation;
    * after saturation, water is easily moved by forces diffusion or gravity.
    */
-  public saturation: number;
+  abstract get saturation(): number;
 
-  public inventory = new Inventory(SOIL_INVENTORY_CAPACITY, this);
-  get fallAmount() {
-    return SOIL_GRAVITY_PER_SECOND;
-  }
-
-  constructor(pos: Vector2, water: number = 0, saturation: number, world: World) {
-    super(pos, world);
-    this.saturation = saturation;
-    this.inventory.add(water, 0);
-  }
   shouldStep(dt: number) {
     // test this out
-    return dt > 0.3;
+    return dt > 0.2;
   }
   step(dt: number) {
     super.step(dt);
@@ -43,24 +28,15 @@ export class Soil extends Tile {
     }
   }
 
-  stepDiffusion(neighbors: Map<Vector2, Tile>, dt: number) {
-    for (const tile of neighbors.values()) {
-      // test - don't diffuse upwards ever
-      if (tile.pos.y >= this.pos.y) {
-        continue;
-      }
-      if (!canPullResources(this, tile)) {
-        continue;
-      }
-      // take water from neighbors that have more water than you
-      if (tile.inventory.water > this.inventory.water) {
-        // neighbor is not saturated; don't take
-        if (tile instanceof Soil && tile.inventory.water <= tile.saturation) {
-          continue;
-        }
-        this.diffuseWater(tile, dt);
-      }
+  diffuseWater(tile: Tile, dt: number, diffusionRate?: number) {
+    if (this.pos.y < tile.pos.y) {
+      // test: don't diffuse upwards
+      return;
     }
+    if (tile instanceof Soil && tile.inventory.water <= tile.saturation) {
+      return;
+    }
+    return super.diffuseWater(tile, dt, diffusionRate);
   }
 
   stepGravity(dt: number) {
@@ -79,4 +55,52 @@ export class Soil extends Tile {
       }
     }
   }
+}
+
+export class Sand extends Soil {
+  static displayName = "Sand";
+
+  static diffusionWater = 3;
+
+  get saturation() {
+    return 0;
+  }
+
+  get fallAmount() {
+    return 1.5;
+  }
+
+  public inventory = new Inventory(20, this);
+}
+
+export class Silt extends Soil {
+  static displayName = "Silt";
+
+  static diffusionWater = 12;
+
+  get saturation() {
+    return 2;
+  }
+
+  get fallAmount() {
+    return 0.2;
+  }
+
+  public inventory = new Inventory(10, this);
+}
+
+export class Clay extends Soil {
+  static displayName = "Clay";
+
+  static diffusionWater = 100;
+
+  get saturation() {
+    return 5;
+  }
+
+  get fallAmount() {
+    return 0.1;
+  }
+
+  public inventory = new Inventory(10, this);
 }

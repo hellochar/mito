@@ -33,17 +33,6 @@ export const TIME_PER_DAY = TIME_PER_MONTH / 3; // 50 seconds per day
 export const PERCENT_DAYLIGHT = 0.9; // 45 second days, 5 second nights
 
 /**
- * Each water between adjacent Soils (remember, up to eight neighbors) will diffuse, on average, after this many seconds.
- */
-export const SOIL_DIFFUSION_WATER_TIME = 10;
-
-export const SOIL_INVENTORY_CAPACITY = 20;
-
-export const SOIL_BASE_SATURATION = 1;
-
-export const SOIL_GRAVITY_PER_SECOND = 1;
-
-/**
  * How many seconds it takes for a Cell to go from 100% to 0% energy. One sugar will sustain one
  * Cell's energy for this many seconds. "Energy" is a unit of time in this game.
  */
