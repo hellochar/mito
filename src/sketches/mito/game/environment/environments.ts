@@ -58,8 +58,8 @@ export const Reservoires: Environment = {
   airEvaporation: 0.3,
   climate: {
     timeBetweenRainfall: 30,
-    rainDuration: 5,
-    waterPerSecond: 200,
+    rainDuration: 8,
+    waterPerSecond: 20,
   },
   evaporationRate: 0.006,
   evaporationBottom: 0.1,
