@@ -85,8 +85,14 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
     }
     return (
       <div className="sketch-elements">
-        {sketchElementsWithKey}
-        {/* {sketchElementsWithKey.map((el, idx) => React.cloneElement(el, { key: idx }))} */}
+        {/* {sketchElementsWithKey} */}
+        {sketchElementsWithKey.map((el, idx) => {
+          if (React.isValidElement(el)) {
+            return React.cloneElement(el, { key: idx });
+          } else {
+            return el;
+          }
+        })}
       </div>
     );
   }
