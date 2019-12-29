@@ -393,10 +393,10 @@ Number of Programs: ${this.renderer.info.programs!.length}
 
     this.renderer.render(this.scene, this.camera);
     // this.renderer.render(this.scene, this.hackCamera);
-    if (params.debug && this.frameCount % 100 === 0) {
-      // this.perfDebug();
-      this.logRenderInfo();
-    }
+    // if (params.debug && this.frameCount % 100 === 0) {
+    // this.perfDebug();
+    // this.logRenderInfo();
+    // }
   }
 
   public keysToMovement(keys: Set<string>): ActionMove | null {

@@ -21,7 +21,7 @@
   font-size: 12px;
 }
 
-.mito-inventory {
+.hud-bottom {
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -38,25 +38,6 @@
 
   &.hidden {
     transform: translateX(-50%) translateY(170%);
-  }
-
-  .mito-inventory-container {
-    z-index: 1;
-    padding: 10px;
-    background: hsl(111, 70%, 27%);
-    border: 1px solid grey;
-  }
-
-  .mito-inventory-indicator {
-    font-weight: bold;
-  }
-
-  .mito-inventory-water {
-    color: hsl(242, 81%, 42%);
-  }
-
-  .mito-inventory-sugar {
-    color: hsl(41, 73%, 67%);
   }
 
   .mito-inventory-maxed {
@@ -80,25 +61,8 @@
     }
   }
 
-  .mito-inventory-bar {
-    height: 10px;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-
-    .mito-inventory-bar-water {
-      background: hsl(242, 81%, 42%);
-      transition: width 0.05s;
-    }
-
-    .mito-inventory-bar-sugar {
-      background: hsl(41, 73%, 67%);
-      transition: width 0.05s;
-    }
-
-    .mito-inventory-bar-empty {
-      box-shadow: 0 5px 6px inset rgba(0, 0, 0, 0.25);
-      transition: width 0.05s;
-    }
+  .player-inventory-bar {
+    background: hsl(111, 70%, 27%);
+    padding: 10px;
   }
 }

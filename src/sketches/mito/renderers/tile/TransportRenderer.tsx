@@ -13,7 +13,7 @@ export class TransportRenderer extends InstancedTileRenderer<Transport> {
     const length = 0.75;
     const arrowDir = new Vector3(target.dir.x, target.dir.y, 0).normalize();
     const pos = arrowDir.clone().multiplyScalar(-length / 2);
-    this.origin = new Vector3(pos.x, pos.y, 0);
+    this.origin = new Vector3(pos.x, pos.y, 2);
     this.arrow = new ArrowHelper(arrowDir, this.origin, length, 0xffffff, 0.1, 0.1);
     this.scene.add(this.arrow);
   }
@@ -23,7 +23,7 @@ export class TransportRenderer extends InstancedTileRenderer<Transport> {
     this.arrow.position.set(
       this.target.pos.x + this.origin.x,
       this.target.pos.y + this.target.droopY + this.origin.y,
-      1
+      2
     );
   }
 

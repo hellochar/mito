@@ -199,6 +199,7 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
           preserveDrawingBuffer: true,
           antialias: true,
         });
+        renderer.debug.checkShaderErrors = true;
         ref.appendChild(renderer.domElement);
 
         const otherArgs = this.props.otherArgs || [];

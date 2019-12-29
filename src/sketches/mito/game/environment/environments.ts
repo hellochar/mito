@@ -92,7 +92,7 @@ export const Rocky: Environment = {
   evaporationBottom: 0.6,
   evaporationRate: 0.03,
   floorCo2: 1,
-  temperaturePerSeason: [27, 62, 36, 15],
+  temperaturePerSeason: [40, 62, 36, 15],
   fill: "Rocky",
 };
 

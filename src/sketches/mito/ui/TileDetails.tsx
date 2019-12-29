@@ -3,7 +3,7 @@ import * as React from "react";
 import { Constructor } from "../constructor";
 import { CELL_MAX_ENERGY } from "../game/constants";
 import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Leaf, Root, Tile } from "../game/tile";
-import { hasInventory } from "../inventory";
+import { InventoryBar } from "./InventoryBar";
 import TemperatureInfo from "./TemperatureInfo";
 import "./TileDetails.scss";
 
@@ -24,7 +24,6 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     return (
       <div className="tile-details">
         {this.tileInfo(tile)}
-        {this.inventoryInfo(tile)}
         {this.cellInfo(tile)}
         {this.growingCellInfo(tile)}
         {this.rootInfo(tile)}
@@ -38,7 +37,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     return tile instanceof Root ? (
       <div className="info-root">
         <div>Absorbs in {formatSeconds(tile.cooldown)}.</div>
-        <div>{tile.totalSucked} total water absorbed so far.</div>
+        <div>{tile.totalSucked.toFixed(1)} total water absorbed so far.</div>
       </div>
     ) : null;
   }
@@ -84,29 +83,18 @@ export class TileDetails extends React.Component<TileDetailsProps> {
           <div className="info-tile-name">{(tile.constructor as Constructor<Tile>).displayName}</div>
           {energyInfo}
           <TemperatureInfo tile={tile} />
+          <InventoryBar
+            water={tile.inventory.water}
+            sugar={tile.inventory.sugar}
+            capacity={tile.inventory.capacity}
+            format="icons"
+            capacityBasedWidth
+          />
         </div>
       </div>
     );
   }
 
-  private inventoryInfo(tile: Tile) {
-    if (hasInventory(tile)) {
-      const waterInfo =
-        tile.inventory.water > 0 ? (
-          <div className="info-inventory-item">💧 {tile.inventory.water.toFixed(2)}</div>
-        ) : null;
-      const sugarInfo =
-        tile.inventory.sugar > 0 ? (
-          <div className="info-inventory-item">Sugar {tile.inventory.sugar.toFixed(2)}</div>
-        ) : null;
-      return (
-        <div className="info-inventory">
-          {waterInfo}
-          {sugarInfo}
-        </div>
-      );
-    }
-  }
   private cellInfo(tile: Tile) {
     if (tile instanceof Cell) {
       return (

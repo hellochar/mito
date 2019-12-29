@@ -1,0 +1,58 @@
+@import "../../../variables";
+
+.inventory-bar-container {
+  z-index: 1;
+  // background: hsl(111, 70%, 27%);
+  // font-weight: bold;
+}
+
+.inventory-bar {
+  height: 10px;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+
+  .bar-water {
+    background: $color-water;
+    transition: width 0.05s;
+  }
+
+  .bar-sugar {
+    background: $color-sugar;
+    transition: width 0.05s;
+  }
+
+  .bar-empty {
+    box-shadow: 0 5px 6px inset rgba(0, 0, 0, 0.25);
+    transition: width 0.05s;
+  }
+
+  .markers {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      90deg,
+      transparentize($black, 0.75) 0px,
+      transparentize($black, 0.75) 1px,
+      transparent 1px,
+      transparent 10px
+    );
+  }
+}
+
+.inventory-text {
+  .text ~ .text {
+    margin-left: 10px;
+  }
+
+  .water {
+    color: $color-water;
+  }
+
+  .sugar {
+    color: $color-sugar;
+  }
+}

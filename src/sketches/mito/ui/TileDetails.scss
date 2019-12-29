@@ -1,14 +1,15 @@
 @import "../../../variables";
 
 .tile-details {
-  min-width: 120px;
-  min-height: 25px;
+  pointer-events: initial;
+  width: 100%;
+  min-height: 120px;
+  text-align: left;
   padding: 10px;
   display: flex;
-  background: rgba(255, 255, 255, 0.9);
+  // background: rgba(255, 255, 255, 0.9);
+  background: transparentize($gray1, 0.2);
   pointer-events: none;
-  border-radius: 2px;
-  border: 1px solid rgb(220, 220, 220);
   flex-direction: column;
 
   .info-tile-row {
@@ -63,4 +64,10 @@
       font-weight: bold;
     }
   }
+}
+
+.resource-icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
 }
