@@ -102,7 +102,7 @@ export abstract class Tile implements Steppable, HasInventory {
       const darknessFromNeighbor = t.darkness + t.darknessContrib;
       minDarkness = Math.min(minDarkness, darknessFromNeighbor);
     }
-    this.darkness = 0;
+    this.darkness = minDarkness;
   }
   stepDiffusion(neighbors: Map<Vector2, Tile>, dt: number) {
     for (const tile of neighbors.values()) {
