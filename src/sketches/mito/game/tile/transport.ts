@@ -10,16 +10,23 @@ export class Transport extends Tissue {
   public cooldownWater = 0;
   public cooldownSugar = 0;
   static buildDirection = new Vector2(0, -1);
+  public didJustTransport = false;
+  public readonly dir: Vector2;
 
-  constructor(pos: Vector2, world: World, public dir: Vector2) {
+  constructor(pos: Vector2, world: World, dir: Vector2) {
     super(pos, world);
+    this.dir = Object.freeze(dir.clone());
     if (isFractional(dir.x) || isFractional(dir.y)) {
       throw new Error("build transport with fractional dir " + dir.x + ", " + dir.y);
+    }
+    if (dir.lengthManhattan() < 1 || dir.lengthManhattan() > 3) {
+      console.error("bad dir length", dir);
     }
   }
 
   step(dt: number) {
     super.step(dt);
+    this.didJustTransport = false;
     // transport hungers at double speed
     this.energy -= this.tempo * dt;
     let waterToTransport = 0;
@@ -37,13 +44,23 @@ export class Transport extends Tissue {
 
     if (waterToTransport > 0 || sugarToTransport > 0) {
       const targetTile = this.getTarget();
+      let waterMoved = 0;
+      let sugarMoved = 0;
       if (targetTile) {
-        this.inventory.give(targetTile.inventory, waterToTransport, sugarToTransport);
+        const { water, sugar } = this.inventory.give(targetTile.inventory, waterToTransport, sugarToTransport);
+        waterMoved += water;
+        sugarMoved += sugar;
       }
 
       const fromTile = this.getFrom();
       if (fromTile) {
-        fromTile.inventory.give(this.inventory, waterToTransport, sugarToTransport);
+        const { water, sugar } = fromTile.inventory.give(this.inventory, waterToTransport, sugarToTransport);
+        waterMoved += water;
+        sugarMoved += sugar;
+      }
+
+      if (waterMoved > 0 || sugarMoved > 0) {
+        this.didJustTransport = true;
       }
     }
     this.cooldownWater -= dt * this.tempo;

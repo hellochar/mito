@@ -1,10 +1,12 @@
+import Ticker from "global/ticker";
+
 export type Animation = (dt: number) => boolean;
 export class AnimationController {
   animation?: Animation;
   timeStarted?: number;
-  set(a: Animation, now: number) {
+  set(a: Animation) {
     this.animation = a;
-    this.timeStarted = now;
+    this.timeStarted = Ticker.now / 1000;
   }
   update(now: number) {
     if (this.animation != null && this.timeStarted != null) {

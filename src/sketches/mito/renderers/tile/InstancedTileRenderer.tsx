@@ -60,7 +60,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private neighborLines = new Object3D();
   private worldDomElement?: WorldDOMElement;
   private cellEffectsRenderer?: CellEffectsRenderer;
-  private animation = new AnimationController();
+  protected animation = new AnimationController();
 
   private scale = new Vector3(1, 1, 1);
   private color = new Color();
@@ -208,7 +208,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
         // this.audio.setRefDistance(2);
         // play blop sound
         this.audio.play();
-        this.animation.set(this.growPulseAnimation(), Ticker.now / 1000);
+        this.animation.set(this.growPulseAnimation());
       }
       this.lastAudioValueTracker = newAudioValueTracker;
     }
@@ -225,7 +225,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
           this.audio.stop();
         }
         this.audio.play();
-        this.animation.set(this.growPulseAnimation(), Ticker.now / 1000);
+        this.animation.set(this.growPulseAnimation());
       }
       this.lastAudioValueTracker = newAudioValueTracker;
     }
