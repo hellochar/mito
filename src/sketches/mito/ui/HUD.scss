@@ -1,5 +1,16 @@
 @import "../../../variables";
 
+.hud-top-left {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+  border-radius: 2px;
+  border: 1px solid rgb(220, 220, 220);
+}
+
 .hud-panel-right {
   position: absolute;
   right: 10px;
@@ -23,8 +34,6 @@
   transition: transform 2s;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
-  border: 1px solid grey;
-  background: rgba(255, 255, 255, 0.25);
   pointer-events: none;
 
   &.hidden {
@@ -35,7 +44,7 @@
     z-index: 1;
     padding: 10px;
     background: hsl(111, 70%, 27%);
-    border-bottom: 1px solid grey;
+    border: 1px solid grey;
   }
 
   .mito-inventory-indicator {

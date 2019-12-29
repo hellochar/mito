@@ -5,9 +5,9 @@ import * as React from "react";
 import TraitDisplay from "../../../evolution/TraitDisplay";
 import Mito from "../index";
 import { params } from "../params";
-import CellBar from "./CellBar";
 import "./HUD.scss";
 import SeasonsTracker from "./SeasonsTracker";
+import SwitchableBarUI from "./SwitchableBarUI";
 
 export interface HUDProps {
   mito: Mito;
@@ -45,7 +45,6 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   public render() {
     const isMaxed = this.inventory.isMaxed();
     const isMaxedEl = <div className={`mito-inventory-maxed${isMaxed ? " is-maxed" : ""}`}>maxed</div>;
-    const buildError = this.player.getBuildError();
     return (
       <>
         <SeasonsTracker time={this.world.time} season={this.world.season} />
@@ -56,12 +55,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
             {this.renderInventoryBar()}
             {this.renderInventory()}
           </div>
-          <CellBar
-            bar={this.mito.cellBar}
-            index={this.mito.cellBarIndex}
-            onIndexClicked={(i) => this.mito.setCellBarIndex(i)}
-            buildError={buildError}
-          />
+          <SwitchableBarUI bar={this.mito.actionBar} />
         </div>
       </>
     );

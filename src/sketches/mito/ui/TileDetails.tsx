@@ -22,7 +22,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       return null;
     }
     return (
-      <div className="tile-hover">
+      <div className="tile-details">
         {this.tileInfo(tile)}
         {this.inventoryInfo(tile)}
         {this.cellInfo(tile)}

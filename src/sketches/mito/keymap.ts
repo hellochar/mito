@@ -38,12 +38,4 @@ export const MOVEMENT_KEYS: { [key: string]: ActionMove } = {
   },
 };
 
-export const CELL_BAR_KEYS: Record<string, number> = {
-  Digit1: 0,
-  Digit2: 1,
-  Digit3: 2,
-  Digit4: 3,
-  Digit5: 4,
-};
-
 export const MOVEMENTS = Object.keys(MOVEMENT_KEYS).map((key) => MOVEMENT_KEYS[key]);

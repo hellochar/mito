@@ -1,21 +1,19 @@
 import { PopulationAttempt } from "app";
 import { Button } from "common/Button";
 import VignetteCapturer from "common/vignette";
-import { parse } from "query-string";
 import * as React from "react";
 import * as THREE from "three";
 import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
-import { ActionBuild, ActionInteract, ActionMove } from "./action";
+import { ActionMove } from "./action";
+import { CellBar, InteractBar, SwitchableBar } from "./actionBar";
 import { drums, hookUpAudio, strings } from "./audio";
-import { Constructor } from "./constructor";
 import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
-import { isInteractable } from "./game/interactable";
-import { Cell, Fruit, Leaf, Root, Tile, Tissue, Transport, Vein } from "./game/tile";
-import { ACTION_KEYMAP, CELL_BAR_KEYS, MOVEMENT_KEYS } from "./keymap";
+import { Fruit, Tile } from "./game/tile";
+import { ACTION_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
@@ -33,19 +31,56 @@ export interface GameResult {
 export class Mito extends ISketch {
   static id = "mito";
   public readonly world: World;
-  public scene = new Scene();
-  private camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);
-  public cellBar: Constructor<Cell>[] = [Tissue, Leaf, Root, Transport, Fruit];
-  public cellBarIndex = 0;
+  public readonly actionBar: SwitchableBar;
+  public readonly scene = new Scene();
+  private readonly camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);
   public tutorialRef: NewPlayerTutorial | null = null;
-  public mouse = new THREE.Vector2();
+  public readonly mouse = new THREE.Vector2();
   public mouseDown = false;
   public mouseButton = -1;
   public instructionsOpen = false;
   private firstActionTakenYet = false;
-  public audioListener = new THREE.AudioListener();
-  private keyMap = new Set<string>();
+  public readonly audioListener = new THREE.AudioListener();
+  private readonly keyMap = new Set<string>();
   public highlightedTile?: Tile;
+  public readonly worldRenderer: WorldRenderer;
+  private vignetteCapturer = new VignetteCapturer(this);
+  private vignettes: HTMLCanvasElement[] = [];
+
+  private hackCamera: PerspectiveCamera;
+  private controls?: OrbitControls;
+
+  constructor(
+    renderer: WebGLRenderer,
+    context: SketchAudioContext,
+    attempt: PopulationAttempt,
+    public onWinLoss: (result: GameResult) => void
+  ) {
+    super(renderer, context);
+    const { info } = attempt.targetHex;
+    this.world = new World(environmentFromLevelInfo(info), info.seed, attempt.settlingSpecies);
+
+    this.camera.position.z = 10;
+    this.camera.lookAt(0, 0, 0);
+    this.camera.position.x = this.world.player.pos.x;
+    this.camera.position.y = this.world.player.pos.y;
+    this.camera.zoom = 1.5;
+    this.camera.add(this.audioListener);
+
+    this.hackCamera = new PerspectiveCamera(60, this.canvas.height / this.canvas.width);
+    this.hackCamera.position.copy(this.camera.position);
+    this.hackCamera.lookAt(0, 0, 0);
+    this.controls = new OrbitControls(this.hackCamera);
+    this.scene.add(new THREE.AxesHelper(25));
+
+    this.worldRenderer = new WorldRenderer(this.world, this.scene, this);
+
+    hookUpAudio(this.audioContext);
+    this.updateAmbientAudio();
+    this.attachWindowEvents();
+
+    this.actionBar = new SwitchableBar(new CellBar(this.world), new InteractBar(this));
+  }
 
   public events = {
     contextmenu: (event: MouseEvent) => {
@@ -89,96 +124,37 @@ export class Mito extends ISketch {
     const code = event.code;
     this.keyMap.add(code);
     if (!event.repeat) {
-      this.updateHUDFromKeyPress(code);
+      this.toggleInstructions(code);
     }
+    this.actionBar.keyDown(event);
   };
-
-  updateHUDFromKeyPress(code: string) {
-    if (code === "Slash") {
-      this.instructionsOpen = !this.instructionsOpen;
-      return;
-    }
-    if (this.instructionsOpen) {
-      if (code === "Escape") {
-        this.instructionsOpen = false;
-      }
-      return;
-    }
-
-    if (CELL_BAR_KEYS[code] != null) {
-      this.setCellBarIndex(CELL_BAR_KEYS[code]);
-    }
-  }
 
   private handleKeyUp = (event: KeyboardEvent) => {
     this.keyMap.delete(event.code);
   };
 
-  get selectedCell() {
-    return this.cellBar[this.cellBarIndex];
-  }
+  private handleBlur = () => {
+    this.keyMap.clear();
+  };
 
-  public readonly worldRenderer: WorldRenderer;
-  private vignetteCapturer = new VignetteCapturer(this);
-  private vignettes: HTMLCanvasElement[] = [];
+  private handleBeforeUnload = () => {
+    return true;
+  };
 
-  private hackCamera: PerspectiveCamera;
-  private controls?: OrbitControls;
-
-  constructor(
-    renderer: WebGLRenderer,
-    context: SketchAudioContext,
-    attempt: PopulationAttempt,
-    public onWinLoss: (result: GameResult) => void
-  ) {
-    super(renderer, context);
-    const { info } = attempt.targetHex;
-    this.world = new World(environmentFromLevelInfo(info), info.seed, attempt.settlingSpecies);
-
-    this.camera.position.z = 10;
-    this.camera.lookAt(0, 0, 0);
-    this.camera.position.x = this.world.player.pos.x;
-    this.camera.position.y = this.world.player.pos.y;
-    this.camera.zoom = 1.5;
-    this.camera.add(this.audioListener);
-
-    this.hackCamera = new PerspectiveCamera(60, this.canvas.height / this.canvas.width);
-    this.hackCamera.position.copy(this.camera.position);
-    this.hackCamera.lookAt(0, 0, 0);
-    // this.controls = new OrbitControls(this.hackCamera);
-    // this.scene.add(new AxesHelper(25));
-
-    this.worldRenderer = new WorldRenderer(this.world, this.scene, this);
-
-    hookUpAudio(this.audioContext);
-    this.updateAmbientAudio();
-    this.attachWindowEvents();
+  private attachWindowEvents() {
+    window.addEventListener("blur", () => this.handleBlur);
+    window.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("keyup", this.handleKeyUp);
+    window.onbeforeunload = this.handleBeforeUnload;
     (window as any).mito = this;
     (window as any).THREE = THREE;
   }
 
-  private attachWindowEvents() {
-    window.addEventListener("blur", () => {
-      this.keyMap.clear();
-    });
-    window.addEventListener("keydown", this.handleKeyDown);
-    window.addEventListener("keyup", this.handleKeyUp);
-  }
-
   destroy() {
+    window.removeEventListener("blur", this.handleBlur);
     window.removeEventListener("keydown", this.handleKeyDown);
     window.removeEventListener("keyup", this.handleKeyUp);
-  }
-
-  public setCellBarIndex(i: number) {
-    const lastIndex = this.cellBarIndex;
-    if (lastIndex === i && this.cellBar[i] === Transport) {
-      Transport.buildDirection
-        .rotateAround(new Vector2(), -Math.PI / 4)
-        .setLength(1)
-        .round();
-    }
-    this.cellBarIndex = ((i % this.cellBar.length) + this.cellBar.length) % this.cellBar.length;
+    window.onbeforeunload = null;
   }
 
   public render() {
@@ -204,17 +180,23 @@ export class Mito extends ISketch {
         mutationPointsPerEpoch: 0,
       });
     };
-    const endGameButtons =
-      process.env.NODE_ENV === "development" ? (
-        <div style={{ position: "absolute", top: 0, right: 50, display: "flex" }}>
-          <Button color="green" onClick={doWin}>
-            Win
-          </Button>
-          <Button color="green" onClick={doLose}>
-            Lose
-          </Button>
-        </div>
-      ) : null;
+    const endGameButtons = params.debug ? (
+      <div style={{ position: "absolute", top: 0, right: 50, display: "flex" }}>
+        <Button color="green" onClick={doWin}>
+          Win
+        </Button>
+        <Button color="green" onClick={doLose}>
+          Lose
+        </Button>
+      </div>
+    ) : null;
+    const waterInformation = params.debug ? (
+      <div style={{ position: "absolute", bottom: 0, left: 0, background: "white" }}>
+        <div>Rainwater: {this.world.numRainWater}</div>
+        <div>Evaporated Air: {this.world.numEvaporatedAir}</div>
+        <div>Evaporated Soil: {this.world.numEvaporatedSoil}</div>
+      </div>
+    ) : null;
     return (
       <>
         <HUD mito={this} />
@@ -222,13 +204,12 @@ export class Mito extends ISketch {
         {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
         {/* <ParamsGUI /> */}
         <Hover mito={this} />
+        {/* <div className="hud-top-left">
+          <TileDetails tile={this.highlightedTile} />
+        </div> */}
         <div className="world-dom-components">{worldDomElementComponents}</div>
         {endGameButtons}
-        <div style={{ position: "absolute", bottom: 0, left: 0, background: "white" }}>
-          <div>Rainwater: {this.world.numRainWater}</div>
-          <div>Evaporated Air: {this.world.numEvaporatedAir}</div>
-          <div>Evaporated Soil: {this.world.numEvaporatedSoil}</div>
-        </div>
+        {waterInformation}
       </>
     );
   }
@@ -239,6 +220,19 @@ export class Mito extends ISketch {
     const stringsVolume = map(yPos, this.world.height / 2, 0, 0, 0.5);
     drums.gain.gain.value = Math.max(0, drumVolume);
     strings.gain.gain.value = Math.max(0, stringsVolume);
+  }
+
+  toggleInstructions(code: string) {
+    if (code === "Slash") {
+      this.instructionsOpen = !this.instructionsOpen;
+      return;
+    }
+    if (this.instructionsOpen) {
+      if (code === "Escape") {
+        this.instructionsOpen = false;
+      }
+      return;
+    }
   }
 
   public logRenderInfo() {
@@ -399,7 +393,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
 
     this.renderer.render(this.scene, this.camera);
     // this.renderer.render(this.scene, this.hackCamera);
-    if (Boolean(parse(window.location.search).debug) && this.frameCount % 100 === 0) {
+    if (params.debug && this.frameCount % 100 === 0) {
       // this.perfDebug();
       this.logRenderInfo();
     }
@@ -437,16 +431,10 @@ Number of Programs: ${this.renderer.info.programs!.length}
 
   public handleRightClick() {
     const tile = this.getHighlightedTile();
-    if (tile != null) {
-      if (tile instanceof Fruit) {
-        return; // disallow deleting fruit
-      }
-      this.world.player.setAction({
-        type: "deconstruct",
-        position: tile.pos,
-      });
+    if (tile == null) {
+      return;
     }
-    // }
+    this.actionBar.rightClick(tile);
   }
 
   public handleLeftClick() {
@@ -455,33 +443,8 @@ Number of Programs: ${this.renderer.info.programs!.length}
     if (target == null) {
       return;
     }
-
-    // clicking a build candidate will try to build with the currently selected cell
-    if (this.world.player.isBuildCandidate(target, this.selectedCell)) {
-      const args: any[] = [];
-      if (this.selectedCell === Transport) {
-        args.push(Transport.buildDirection.clone());
-        // const highlightVector = this.getHighlightVector();
-        // const roundedHighlightVector = highlightVector.setLength(1).round();
-        // args.push(roundedHighlightVector);
-      }
-      const action: ActionBuild = {
-        type: "build",
-        cellType: this.selectedCell,
-        position: target.pos.clone(),
-        args,
-      };
-      this.world.player.setAction(action);
-    } else if (isInteractable(target)) {
-      const action: ActionInteract = {
-        type: "interact",
-        interactable: target,
-      };
-      this.world.player.setAction(action);
-      return;
-    }
+    this.actionBar.leftClick(target);
   }
-  static expansionTiles: Array<Constructor<Cell>> = [Tissue, Root, Vein];
 }
 
 export default Mito;

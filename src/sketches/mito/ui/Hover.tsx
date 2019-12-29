@@ -3,8 +3,6 @@ import Mito from "..";
 import { Tile } from "../game/tile";
 import PointHighlight from "../tutorial/PointHighlight";
 import TileHighlight from "../tutorial/tileHighlight";
-import { TileDetails } from "./TileDetails";
-
 
 interface HoverProps {
   mito: Mito;
@@ -19,7 +17,6 @@ export class Hover extends React.Component<HoverProps> {
     const highlightedPosition = this.props.mito.getHighlightPosition();
     return (
       <>
-        <TileDetails tile={highlightedTile} />
         <PointHighlight x={highlightedPosition.x} y={highlightedPosition.y} scene={this.scene} />
         {this.maybeRenderTileHighlight(highlightedTile)}
         {/* {this.maybeRenderPath()} */}

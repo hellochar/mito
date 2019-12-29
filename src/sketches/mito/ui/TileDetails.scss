@@ -1,18 +1,14 @@
 @import "../../../variables";
 
-.tile-hover {
-  text-align: left;
+.tile-details {
   min-width: 120px;
   min-height: 25px;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(255, 255, 255, 0.95);
+  padding: 10px;
+  display: flex;
+  background: rgba(255, 255, 255, 0.9);
   pointer-events: none;
   border-radius: 2px;
   border: 1px solid rgb(220, 220, 220);
-  padding: 10px;
-  display: flex;
   flex-direction: column;
 
   .info-tile-row {

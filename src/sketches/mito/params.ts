@@ -9,6 +9,7 @@ const PARAMS_DEFAULT = {
   sunlightDiffusion: 0.0,
   maxResources: 100,
   hud: true,
+  debug: process.env.NODE_ENV === "development",
 };
 
 type Params = typeof PARAMS_DEFAULT;
