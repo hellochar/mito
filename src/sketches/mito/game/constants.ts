@@ -77,7 +77,7 @@ export const ROOT_TIME_BETWEEN_ABSORPTIONS = 4.5;
 /**
  * How many total resources a Fruit needs to mature.
  */
-export const FRUIT_NEEDED_RESOURCES = 100;
+export const FRUIT_NEEDED_RESOURCES = 500;
 
 /**
  * How long it takes for a Fruit to reach full Maturation, given that it has

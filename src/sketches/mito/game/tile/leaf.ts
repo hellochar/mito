@@ -104,12 +104,12 @@ export class Leaf extends Cell {
     // if we have less than 1/efficiencyRatio water
     //      our rate of conversion scales down proportionally
     //      on conversion, we use up all the available water and get the corresponding amount of sugar
-    const bestEfficiencyWater = 0.1 / conversionRate;
+    const bestEfficiencyWater = 1 / conversionRate;
     const waterToConvert = Math.min(tissue.inventory.water, bestEfficiencyWater);
     // water (1 / time) * time / (water)
     const chance = (speed * reactionRate * dt) / bestEfficiencyWater;
     // console.log(chance);
-    if (Math.random() < chance) {
+    if (Math.random() < chance && waterToConvert > 0) {
       const sugarConverted = waterToConvert * conversionRate;
       tissue.inventory.add(-waterToConvert, sugarConverted);
       this.sugarConverted += sugarConverted;

@@ -20,11 +20,12 @@ export abstract class Soil extends Tile {
   stepEvaporation(dt: number) {
     const { evaporationRate, evaporationBottom } = this.world.environment;
     const evaporationHeightScalar = map(this.pos.y, this.world.height / 2, this.world.height * evaporationBottom, 1, 0);
-    const evaporationAmountScalar = this.inventory.water;
-    if (Math.random() < evaporationRate * evaporationHeightScalar * evaporationAmountScalar * dt) {
-      this.inventory.add(-1, 0);
+    const water = this.inventory.water;
+    if (Math.random() < evaporationRate * evaporationHeightScalar * water * dt) {
+      const waterToEvaporate = Math.min(water, 1);
+      this.inventory.add(-waterToEvaporate, 0);
       this.world.logEvent({ type: "evaporation", tile: this });
-      this.world.numEvaporatedSoil += 1;
+      this.world.numEvaporatedSoil += waterToEvaporate;
     }
   }
 
