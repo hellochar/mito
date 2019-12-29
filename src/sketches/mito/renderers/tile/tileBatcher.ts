@@ -170,6 +170,7 @@ class TileBatcher {
   constructor(public world: World) {
     this.geometry = TileBatcher.newGeometry();
     this.mesh = new Mesh(this.geometry, TileShaderMaterial);
+    this.mesh.name = "TileBatcher Mesh";
     this.mesh.frustumCulled = false;
     this.mesh.matrixAutoUpdate = false;
     this.mesh.updateMatrixWorld();

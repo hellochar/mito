@@ -22,6 +22,7 @@ export class PlayerRenderer extends Renderer<Player> {
         side: DoubleSide,
       })
     );
+    this.mesh.name = "Player Mesh";
     lerp2(this.mesh.position, this.target.pos, 1);
     this.mesh.position.z = 2;
     this.scene.add(this.mesh);
