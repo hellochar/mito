@@ -19,14 +19,16 @@ export class WorldRenderer extends Renderer<World> {
 
   constructor(target: World, scene: Scene, mito: Mito, renderResources = true) {
     super(target, scene, mito);
+
+    // must be added before all particles
+    this.tileBatcher = new TileBatcher(this.target);
+    scene.add(this.tileBatcher.mesh);
+
     if (renderResources) {
       scene.add(InventoryRenderer.WaterParticles());
       scene.add(InventoryRenderer.SugarParticles());
       this.eventLogRenderer = new EventLogRenderer(this);
     }
-    this.tileBatcher = new TileBatcher(this.target);
-    scene.add(this.tileBatcher.mesh);
-
     // this.lightRays = new LightRays(this.target);
     // scene.add(this.lightRays.lineSegments);
 

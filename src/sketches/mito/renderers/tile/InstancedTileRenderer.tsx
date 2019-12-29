@@ -345,7 +345,7 @@ export const materialInfoMapping = (() => {
   const siltColor = new Color("rgb(112, 89, 44)");
   materials.set(Sand, {
     texturePosition: new Vector2(1, 0),
-    color: new Color("rgb(223, 220, 231").multiplyScalar(1 / 1.2),
+    color: new Color("rgb(223, 220, 231)").multiplyScalar(1 / 1.2),
   });
   materials.set(Silt, {
     texturePosition: new Vector2(1, 0),

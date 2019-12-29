@@ -1,7 +1,17 @@
 import { World } from "sketches/mito/game";
 import { Cell, Tile } from "sketches/mito/game/tile";
 import { SPRITESHEET } from "sketches/mito/spritesheet";
-import { Color, DoubleSide, InstancedBufferAttribute, InstancedBufferGeometry, Mesh, PlaneBufferGeometry, RawShaderMaterial, Vector2, Vector3 } from "three";
+import {
+  Color,
+  DoubleSide,
+  InstancedBufferAttribute,
+  InstancedBufferGeometry,
+  Mesh,
+  PlaneBufferGeometry,
+  RawShaderMaterial,
+  Vector2,
+  Vector3,
+} from "three";
 import glsl from "../glsl";
 
 const vertexShader = glsl`
@@ -129,11 +139,10 @@ const TileShaderMaterial = new RawShaderMaterial({
     sunAngle: { value: 0 },
     sunAmount: { value: 1 },
   },
+  transparent: true,
   vertexShader,
   fragmentShader,
   side: DoubleSide,
-  depthTest: false,
-  depthWrite: false,
 });
 
 class TileBatcher {
