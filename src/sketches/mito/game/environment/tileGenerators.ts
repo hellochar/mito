@@ -35,17 +35,13 @@ const mixedSoilRock: TileGenerator = (pos, world) => {
   const { x, y } = pos;
   const level = noiseSoil.octaveSimplex2(x / 10, y / 10);
   const s = new (level < -0.37 ? Sand : level < 0.37 ? Silt : level < 1 ? Clay : Rock)(pos, world);
-  const water = clamp(
-    (noiseWater.simplex2(x / 5, y / 5) + 0.2 > 0.4 ? level : 0) * s.inventory.capacity,
-    0,
-    s.inventory.capacity
-  );
-  // s.inventory.add(water, 0);
+  const water = clamp((noiseWater.simplex2(x / 5, y / 5) + 0.2 > 0.4 ? level : 0) * 20, 1, 20);
+  s.inventory.add(water, 0);
   return s;
 };
 
 const Temperate: TileGenerator = (pos, world) => {
-  const { noiseHeight, noiseWater, noiseRock, noiseSoil } = world.generatorContext;
+  const { noiseHeight, noiseWater, noiseRock } = world.generatorContext;
   const { x, y } = pos;
   const soilLevel =
     world.height / 2 - (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 - 16 * noiseHeight.perlin2(10, x / 20 + 10);
@@ -81,7 +77,7 @@ const Temperate: TileGenerator = (pos, world) => {
 };
 
 const Desert: TileGenerator = (pos, world) => {
-  const { noiseSoil, noiseHeight, noiseRock } = world.generatorContext;
+  const { noiseHeight, noiseRock } = world.generatorContext;
   const { x, y } = pos;
   const soilLevel =
     world.height / 2 - (2 * (noiseHeight.perlin2(0, x / 20) + 1)) / 2 - 3 * noiseHeight.perlin2(10, x / 100 + 10);
@@ -99,7 +95,7 @@ const Desert: TileGenerator = (pos, world) => {
 };
 
 const Rocky: TileGenerator = (pos, world) => {
-  const { noiseHeight, noiseRock, noiseSoil } = world.generatorContext;
+  const { noiseHeight, noiseRock } = world.generatorContext;
   const { x, y } = pos;
   const soilLevel =
     world.height * 0.55 -
