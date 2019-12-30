@@ -17,7 +17,7 @@ import { hasInventory, Inventory } from "../inventory";
 import { params } from "../params";
 import { CELL_MAX_ENERGY, PLAYER_BASE_SPEED, PLAYER_MOVED_BY_TRANSPORT_SPEED } from "./constants";
 import { Steppable } from "./entity";
-import { Cell, FreezeEffect, Fruit, GrowingCell, Tile, Tissue, Transport } from "./tile";
+import { Cell, FreezeEffect, Fruit, GrowingCell, Tile, Transport } from "./tile";
 import { World } from "./world";
 
 export class Player implements Steppable {
@@ -191,23 +191,20 @@ export class Player implements Steppable {
     return true;
   }
 
-  public isBuildCandidate(tile: Tile | null, cellType: Constructor<Cell>): tile is Tile {
-    if (tile != null && !tile.isObstacle) {
-      if (tile instanceof Cell) {
-        const isFrozen = tile.findEffectOfType(FreezeEffect) != null;
-        if (isFrozen) {
-          return false;
-        }
-        const isTransportOnTissue = tile instanceof Tissue && cellType === Transport;
-        const isTissueOnTransport = tile instanceof Transport && cellType === Tissue;
-        if (isTransportOnTissue || isTissueOnTransport) {
-          return true;
-        }
+  public isBuildCandidate(tile: Tile | null, action: ActionBuild): tile is Tile {
+    if (tile == null) {
+      return false;
+    }
+
+    if (tile instanceof Cell) {
+      const isFrozen = tile.findEffectOfType(FreezeEffect) != null;
+      if (isFrozen) {
         return false;
       }
-      return true;
+
+      return this.isMeaningfulBuild(action, tile);
     } else {
-      return false;
+      return !tile.isObstacle;
     }
   }
 
@@ -246,7 +243,7 @@ export class Player implements Steppable {
   //     inv.give(this.inventory, this.suckWater ? inv.water : 0, this.suckSugar ? inv.sugar : 0);
   //   }
   // }
-  public tryConstructingNewCell<T extends Cell>(position: Vector2, cellType: Constructor<T>, args: any[]) {
+  public tryConstructingNewCell<T extends Cell>(position: Vector2, cellType: Constructor<T>, args?: any[]) {
     position = position.clone();
     const targetTile = this.world.tileAt(position.x, position.y);
     if (targetTile == null) {
@@ -257,11 +254,9 @@ export class Player implements Steppable {
     if (targetTile instanceof Fruit) {
       return;
     }
-    const tileAlreadyExists =
-      targetTile instanceof cellType && !((cellType as any) === Transport && targetTile instanceof Transport);
-    if (!tileAlreadyExists && !targetTile.isObstacle && this.getBuildError() == null) {
+    if (this.getBuildError() == null) {
       this.inventory.add(-1, -1);
-      const newTile = new cellType(position, this.world, ...args);
+      const newTile = new cellType(position, this.world, ...(args || []));
       newTile.args = args;
       build.audio.currentTime = 0;
       build.gain.gain.cancelScheduledValues(0);
@@ -323,7 +318,11 @@ export class Player implements Steppable {
       );
     }
     let cell: Cell;
-    if (action.cellType.timeToBuild) {
+    if (
+      action.cellType.timeToBuild &&
+      // immediately build if it's the same type (e.g. Transport on Transport)
+      (existingCell != null && existingCell.constructor !== action.cellType)
+    ) {
       cell = new GrowingCell(action.position, this.world, matureCell);
     } else {
       cell = matureCell;

@@ -79,7 +79,7 @@ export class Mito extends ISketch {
     this.updateAmbientAudio();
     this.attachWindowEvents();
 
-    this.actionBar = new SwitchableBar(new CellBar(this.world), new InteractBar(this));
+    this.actionBar = new SwitchableBar(new CellBar(this), new InteractBar(this));
   }
 
   public events = {

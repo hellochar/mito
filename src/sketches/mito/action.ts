@@ -15,7 +15,7 @@ export interface ActionMove {
 export interface ActionBuild<T extends Cell = any> {
   type: "build";
   cellType: Constructor<T>;
-  args: any[];
+  args?: any[];
   position: Vector2;
 }
 

@@ -22,7 +22,7 @@ export abstract class Cell extends Tile implements Interactable {
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
   // public offset = new Vector2();
   public droopY = 0;
-  public args: any[] = [];
+  public args?: any[];
   public effects: CellEffect[] = [];
   get tempo() {
     if (this.temperatureFloat <= 0) {

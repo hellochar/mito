@@ -11,11 +11,11 @@ export class Transport extends Tissue {
   public cooldownSugar = 0;
   static buildDirection = new Vector2(0, -1);
   public didJustTransport = false;
-  public readonly dir: Vector2;
+  public dir: Vector2;
 
   constructor(pos: Vector2, world: World, dir: Vector2) {
     super(pos, world);
-    this.dir = Object.freeze(dir.clone());
+    this.dir = dir.clone();
     if (isFractional(dir.x) || isFractional(dir.y)) {
       throw new Error("build transport with fractional dir " + dir.x + ", " + dir.y);
     }

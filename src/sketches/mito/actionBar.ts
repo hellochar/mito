@@ -1,7 +1,6 @@
 import { Vector2 } from "three";
 import Mito from ".";
 import { ActionBuild, ActionInteract } from "./action";
-import { World } from "./game";
 import { isInteractable } from "./game/interactable";
 import { Fruit, Leaf, Root, Tile, Tissue, Transport } from "./game/tile";
 
@@ -15,7 +14,7 @@ export class CellBar extends ActionBar {
   public bar = [Tissue, Leaf, Root, Transport, Fruit] as const;
   private _index = 0;
 
-  constructor(public world: World) {
+  constructor(public mito: Mito) {
     super();
   }
 
@@ -38,30 +37,39 @@ export class CellBar extends ActionBar {
   setIndex(i: number) {
     const lastIndex = this._index;
     if (lastIndex === i && this.bar[i] === Transport) {
+      if (this.mito.highlightedTile instanceof Transport) {
+        Transport.buildDirection.copy(this.mito.highlightedTile.dir);
+      }
+
       Transport.buildDirection
         .rotateAround(new Vector2(), -Math.PI / 4)
         .setLength(1)
         .round();
+
+      if (this.mito.highlightedTile instanceof Transport) {
+        this.mito.highlightedTile.dir = Transport.buildDirection.clone();
+      }
     }
     this._index = ((i % this.bar.length) + this.bar.length) % this.bar.length;
   }
 
   leftClick(target: Tile) {
-    if (this.world.player.isBuildCandidate(target, this.selectedCell)) {
-      const args: any[] = [];
-      if (this.selectedCell === Transport) {
-        args.push(Transport.buildDirection.clone());
-        // const highlightVector = this.getHighlightVector();
-        // const roundedHighlightVector = highlightVector.setLength(1).round();
-        // args.push(roundedHighlightVector);
-      }
-      const action: ActionBuild = {
-        type: "build",
-        cellType: this.selectedCell,
-        position: target.pos.clone(),
-        args,
-      };
-      this.world.player.setAction(action);
+    let args: any[] | undefined;
+    if (this.selectedCell === Transport) {
+      args = [Transport.buildDirection.clone()];
+      // const highlightVector = this.getHighlightVector();
+      // const roundedHighlightVector = highlightVector.setLength(1).round();
+      // args.push(roundedHighlightVector);
+    }
+    const action: ActionBuild = {
+      type: "build",
+      cellType: this.selectedCell,
+      position: target.pos.clone(),
+      args,
+    };
+
+    if (this.mito.world.player.isBuildCandidate(target, action)) {
+      this.mito.world.player.setAction(action);
     }
   }
 
@@ -69,7 +77,7 @@ export class CellBar extends ActionBar {
     if (tile instanceof Fruit) {
       return; // disallow deleting fruit
     }
-    this.world.player.setAction({
+    this.mito.world.player.setAction({
       type: "deconstruct",
       position: tile.pos,
     });
