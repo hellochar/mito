@@ -12,12 +12,13 @@ export interface SwitchableBarUIProps {
 
 export const SwitchableBarUI: React.FC<SwitchableBarUIProps> = ({ bar }) => {
   const { current } = bar;
+  const highlightedTile = bar.interactBar.mito.highlightedTile;
   const barElement =
     current instanceof CellBar ? (
       <CellBarUI bar={current} buildError={current.world.player.getBuildError()} />
-    ) : (
-      <TileDetails key={current.mito.highlightedTile!.toString()} tile={current.mito.highlightedTile} />
-    );
+    ) : highlightedTile != null ? (
+      <TileDetails key={highlightedTile.toString()} tile={highlightedTile} />
+    ) : null;
   const hudSwitcherHotkeyElement =
     current instanceof CellBar ? (
       <HotkeyButton className="switcher right" hotkey="Space&nbsp;➡" onClick={() => bar.setToInteract()} />

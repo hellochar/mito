@@ -43,7 +43,7 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
           <p>
             Underground, Soil holds water, rocks block your way, and occasionally Fountains (at the very bottom) are a
             permanent source of water. Soil is split up into Sand, Silt, and Clay. Water flows through sand easily, silt
-            normally, and clay slowly. Fountains emit one water per {params.fountainSecondsPerWater} seconds.
+            normally, and clay slowly. Fountains emit one water per 3 seconds.
           </p>
           <h3>Air and Aboveground</h3>
           <p>

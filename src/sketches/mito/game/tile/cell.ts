@@ -194,10 +194,16 @@ export abstract class Cell extends Tile implements Interactable {
         this.addEffect(new FreezeEffect());
       }
     } else if (this.temperatureFloat >= 64) {
-      const chanceToLoseWater =
-        traitMod(this.world.traits.heatTolerant, this.temperature === Temperature.Hot ? 0.03 : 0.3, 1 / 1.5) * dt;
-      if (Math.random() < chanceToLoseWater) {
-        this.inventory.add(Math.max(-1, this.inventory.water), 0);
+      const waterToLose = Math.min(this.inventory.water, 1);
+      const chanceEvaporate =
+        waterToLose *
+        traitMod(this.world.traits.heatTolerant, this.temperature === Temperature.Hot ? 0.003 : 0.3, 1 / 1.5);
+      if (Math.random() < chanceEvaporate * dt) {
+        this.inventory.add(-waterToLose, 0);
+        this.world.logEvent({
+          type: "evaporation",
+          tile: this,
+        });
       }
     }
   }

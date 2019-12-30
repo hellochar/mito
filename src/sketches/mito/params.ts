@@ -3,8 +3,6 @@ import { parse, stringify } from "query-string";
 const PARAMS_DEFAULT = {
   soilDarknessBase: 0.2,
   droop: 0.9,
-  fountainSecondsPerWater: 1,
-  fountainAppearanceRate: 1.5,
   sunlightReintroduction: 0.15,
   sunlightDiffusion: 0.0,
   maxResources: 100,

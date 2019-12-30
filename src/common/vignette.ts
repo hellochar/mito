@@ -35,8 +35,8 @@ class VignetteCapturer {
     this.lastCaptureTime = this.mito.world.time;
 
     // Cells that form the vignette:
-    const picturesqueCells = Array.from(this.mito.world.cells()).filter(
-      (t) => t.pos.y < 50 && !(t instanceof GrowingCell)
+    const picturesqueCells = Array.from(this.mito.world.allCells()).filter(
+      (t) => t.pos.y < t.world.height / 2 && !(t instanceof GrowingCell)
     );
 
     const [minBounds, maxBounds] = this.getBounds(picturesqueCells);

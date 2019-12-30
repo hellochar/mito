@@ -22,7 +22,7 @@ import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
-import { Air, Cell, DeadCell, Fruit, Tile, Tissue } from "./tile";
+import { Air, Cell, DeadCell, Fruit, Soil, Tile, Tissue } from "./tile";
 import { TileEvent, TileEventType } from "./tileEvent";
 
 export type TileEventLog = {
@@ -82,6 +82,8 @@ export class World {
     this.neighborCache = gridRange(this.width, this.height, (x, y) => this.computeTileNeighbors(x, y));
     this.fillCachedEntities();
 
+    this.computeSoilDepths();
+
     // always drop player on the Soil Air interface
     const start = new Vector2(this.width / 2, this.height / 2);
     const firstNonAir = this.gridEnvironment[start.x].find((t) => !(t instanceof Air) && t.pos.y > 30);
@@ -135,22 +137,6 @@ export class World {
     } else {
       return this.gridEnvironment[x][y];
     }
-  }
-
-  public cells() {
-    const { gridCells, width, height } = this;
-    return {
-      *[Symbol.iterator]() {
-        for (let x = 0; x < width; x++) {
-          for (let y = 0; y < height; y++) {
-            const g = gridCells[x][y];
-            if (g != null) {
-              yield g;
-            }
-          }
-        }
-      },
-    };
   }
 
   public cellAt(x: number, y: number): Cell | null {
@@ -453,8 +439,28 @@ export class World {
     }
   }
 
+  public computeSoilDepths() {
+    const airPositions = Array.from(this.allEnvironmentTiles())
+      .filter((t) => t instanceof Air)
+      .map((t) => t.pos);
+
+    for (const tile of this.bfsIterator(airPositions, () => true, () => 1, this.width * this.height)) {
+      if (tile instanceof Soil) {
+        let minNeighborDepth = tile.depth;
+        for (const [, neighbor] of this.tileNeighbors(tile.pos)) {
+          if (neighbor instanceof Air) {
+            minNeighborDepth = 0;
+          } else if (neighbor instanceof Soil) {
+            minNeighborDepth = Math.min(minNeighborDepth, neighbor.depth);
+          }
+        }
+        tile.depth = minNeighborDepth + 1;
+      }
+    }
+  }
+
   public updateTemperatures() {
-    for (const t of this.cells()) {
+    for (const t of this.allCells()) {
       t.temperatureFloat = t.nextTemperature;
     }
   }
@@ -505,7 +511,23 @@ export class World {
     devlog("sugar", totalSugar, "water", totalWater, "energy", totalEnergy);
   }
 
-  public environmentTiles() {
+  public allCells() {
+    const { gridCells, width, height } = this;
+    return {
+      *[Symbol.iterator]() {
+        for (let x = 0; x < width; x++) {
+          for (let y = 0; y < height; y++) {
+            const g = gridCells[x][y];
+            if (g != null) {
+              yield g;
+            }
+          }
+        }
+      },
+    };
+  }
+
+  public allEnvironmentTiles() {
     const self = this;
     return {
       *[Symbol.iterator]() {
@@ -522,16 +544,13 @@ export class World {
    * Breadth first search (floodfill) generator
    */
   public bfsIterator(
-    start: Vector2,
+    start: Vector2 | Vector2[],
     filter: (tile: Tile) => boolean,
     heuristic: (tile: Tile) => number,
     limit: number
   ) {
-    if (!this.isValidPosition(start.x, start.y)) {
-      throw new Error("bfsIterator on invalid position " + start.x + "," + start.y);
-    }
     const self = this;
-    const frontier = [this.tileAt(start)!];
+    const frontier = (Array.isArray(start) ? start : [start]).map((v) => this.tileAt(v)!);
     const processed = new Set<Tile>();
     return {
       *[Symbol.iterator]() {

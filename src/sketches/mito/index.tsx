@@ -301,7 +301,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     return new THREE.Vector2((clientX / this.canvas.width) * 2 - 1, (-clientY / this.canvas.height) * 2 + 1);
   }
 
-  public getHighlightVector(clientX = this.mouse.x, clientY = this.mouse.y) {
+  public getPlayerInfluenceVector(clientX = this.mouse.x, clientY = this.mouse.y) {
     const cursorCameraNorm = this.getCameraNormCoordinates(clientX, clientY);
     const cursorWorld = new Vector3(cursorCameraNorm.x, cursorCameraNorm.y, 0).unproject(this.camera);
 
@@ -311,12 +311,18 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   public getHighlightPosition(clientX = this.mouse.x, clientY = this.mouse.y) {
-    const offset = this.getHighlightVector(clientX, clientY);
+    // if (this.actionBar.current instanceof CellBar) {
+    const offset = this.getPlayerInfluenceVector(clientX, clientY);
     const { x, y } = this.world.player.posFloat;
 
     offset.x += x;
     offset.y += y;
     return offset;
+    // } else {
+    //   const cursorCameraNorm = this.getCameraNormCoordinates(clientX, clientY);
+    //   const cursorWorld = new Vector3(cursorCameraNorm.x, cursorCameraNorm.y, 0).unproject(this.camera);
+    //   return cursorWorld;
+    // }
   }
 
   private getHighlightedTile(clientX = this.mouse.x, clientY = this.mouse.y) {

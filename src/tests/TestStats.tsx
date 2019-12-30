@@ -13,7 +13,7 @@ interface Visitors {
 }
 
 function visit(world: World, visitors: Visitors): Trial {
-  const tiles = Array.from(world.environmentTiles());
+  const tiles = Array.from(world.allEnvironmentTiles());
   const results: Trial = {};
   for (const [name, visitor] of Object.entries(visitors)) {
     const result = visitor(tiles, world);

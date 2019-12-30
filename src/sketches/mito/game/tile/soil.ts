@@ -1,5 +1,5 @@
 import { Inventory } from "sketches/mito/inventory";
-import { map, randRound } from "../../../../math/index";
+import { clamp, map, randRound } from "../../../../math/index";
 import { canPullResources } from "../canPullResources";
 import { Tile } from "./tile";
 export abstract class Soil extends Tile {
@@ -8,6 +8,17 @@ export abstract class Soil extends Tile {
    * after saturation, water is easily moved by forces diffusion or gravity.
    */
   abstract get saturation(): number;
+
+  /**
+   * How far away is this soil from the nearest Air?
+   */
+  public depth = 1000;
+
+  get depthDiffusionFactor() {
+    // make water move slower in deeper soil. Every depth 10, slow down gravity and fallAmount by this much
+    return 1 + (this.depth - 1) / 10;
+    // return 1;
+  }
 
   shouldStep(dt: number) {
     // test this out
@@ -18,10 +29,10 @@ export abstract class Soil extends Tile {
     this.stepEvaporation(dt);
   }
   stepEvaporation(dt: number) {
-    const { evaporationRate, evaporationBottom } = this.world.environment;
-    const evaporationHeightScalar = map(this.pos.y, this.world.height / 2, this.world.height * evaporationBottom, 1, 0);
+    const { secondsToEvaporate } = this.world.environment;
     const water = this.inventory.water;
-    if (Math.random() < evaporationRate * evaporationHeightScalar * water * dt) {
+    const evaporationChance = (water / secondsToEvaporate) * clamp(map(this.depth, 1, 8, 1, 0), 0, 1);
+    if (Math.random() < evaporationChance * dt) {
       const waterToEvaporate = Math.min(water, 1);
       this.inventory.add(-waterToEvaporate, 0);
       this.world.logEvent({ type: "evaporation", tile: this });
@@ -61,14 +72,16 @@ export abstract class Soil extends Tile {
 export class Sand extends Soil {
   static displayName = "Sand";
 
-  static diffusionWater = 3;
+  get diffusionWater() {
+    return 3 * this.depthDiffusionFactor;
+  }
 
   get saturation() {
     return 0;
   }
 
   get fallAmount() {
-    return 1.5;
+    return 1.5 / this.depthDiffusionFactor;
   }
 
   public inventory = new Inventory(20, this);
@@ -77,14 +90,16 @@ export class Sand extends Soil {
 export class Silt extends Soil {
   static displayName = "Silt";
 
-  static diffusionWater = 12;
+  get diffusionWater() {
+    return 12 * this.depthDiffusionFactor;
+  }
 
   get saturation() {
     return 2;
   }
 
   get fallAmount() {
-    return 0.2;
+    return 0.2 / this.depthDiffusionFactor;
   }
 
   public inventory = new Inventory(10, this);
@@ -93,14 +108,16 @@ export class Silt extends Soil {
 export class Clay extends Soil {
   static displayName = "Clay";
 
-  static diffusionWater = 100;
+  get diffusionWater() {
+    return 100 * this.depthDiffusionFactor;
+  }
 
   get saturation() {
     return 5;
   }
 
   get fallAmount() {
-    return 0.1;
+    return 0.1 / this.depthDiffusionFactor;
   }
 
   public inventory = new Inventory(10, this);

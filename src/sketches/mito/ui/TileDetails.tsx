@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Constructor } from "../constructor";
 import { CELL_MAX_ENERGY } from "../game/constants";
-import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Leaf, Root, Tile } from "../game/tile";
+import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Leaf, Root, Soil, Tile } from "../game/tile";
 import { InventoryBar } from "./InventoryBar";
 import TemperatureInfo from "./TemperatureInfo";
 import "./TileDetails.scss";
@@ -29,6 +29,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
         {this.rootInfo(tile)}
         {this.leafInfo(tile)}
         {this.airInfo(tile)}
+        {this.soilInfo(tile)}
         {this.fountainInfo(tile)}
       </div>
     );
@@ -56,6 +57,16 @@ export class TileDetails extends React.Component<TileDetailsProps> {
         <div className="info-air">
           <div>☀️ {(tile.sunlight() * 100).toFixed(0)}%</div>
           <div>☁️ {(tile.co2() * 100).toFixed(0)}%</div>
+        </div>
+      );
+    }
+  }
+
+  private soilInfo(tile: Tile) {
+    if (tile instanceof Soil) {
+      return (
+        <div className="info-soil">
+          <div>Depth {tile.depth}.</div>
         </div>
       );
     }

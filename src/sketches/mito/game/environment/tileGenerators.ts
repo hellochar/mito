@@ -1,6 +1,5 @@
 import { Vector2 } from "three";
 import { clamp, map } from "../../../../math";
-import { params } from "../../params";
 import { Fountain, Rock, Tile } from "../tile";
 import { Clay, Sand, Silt } from "../tile/soil";
 import { World } from "../world";
@@ -61,16 +60,20 @@ const Temperate: TileGenerator = (pos, world) => {
       if (isFountain) {
         return new Fountain(pos, world, 3, map(y, world.height / 2, world.height, 100, 300));
       }
-      if (heightScalar * simplexValue > 1 / params.fountainAppearanceRate) {
+      if (heightScalar * simplexValue > 1) {
         const emitWaterScalar = Math.min(heightScalar * simplexValue, 1);
         return new Fountain(
           pos,
           world,
-          Math.round(params.fountainSecondsPerWater / emitWaterScalar),
+          Math.round(3 / emitWaterScalar),
           map(y, world.height / 2, world.height, 100, 300)
         );
       } else {
-        return mixedSoilRock(pos, world);
+        const s = mixedSoilRock(pos, world)!;
+        const water = Math.round(clamp((simplexValue > 0.4 ? heightScalar : 0) * 10, 1, 10));
+
+        s.inventory.set(water, 0);
+        return s;
       }
     }
   }
