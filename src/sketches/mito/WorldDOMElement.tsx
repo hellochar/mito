@@ -1,17 +1,38 @@
 import React from "react";
 import { Vector2 } from "three";
+import { Tile } from "./game/tile";
 import { Mito } from "./index";
 export class WorldDOMElement {
-  constructor(public mito: Mito, public positionFn: () => Vector2, public renderFn: () => JSX.Element) {}
+  constructor(public mito: Mito, public positionFn: () => Vector2 | Tile, public renderFn: () => JSX.Element) {}
   render() {
-    const worldPosition = this.positionFn();
-    const pixelPosition = this.mito.worldToScreen(worldPosition);
-    const left = pixelPosition.x;
-    const top = pixelPosition.y;
-    const style: React.CSSProperties = {
-      left,
-      top,
-    };
+    const posOrTile = this.positionFn();
+    let style: React.CSSProperties;
+    if (posOrTile instanceof Vector2) {
+      const pos = posOrTile;
+      const pixelPosition = this.mito.worldToScreen(pos);
+      const left = pixelPosition.x;
+      const top = pixelPosition.y;
+      style = {
+        left,
+        top,
+      };
+    } else {
+      const tile = posOrTile;
+      const worldTopLeft = tile.pos.clone().addScalar(-0.5);
+      const worldBottomRight = tile.pos.clone().addScalar(0.5);
+      const pixelTopLeft = this.mito.worldToScreen(worldTopLeft);
+      const pixelBottomRight = this.mito.worldToScreen(worldBottomRight);
+      const left = pixelTopLeft.x;
+      const top = pixelTopLeft.y;
+      const width = pixelBottomRight.x - left;
+      const height = pixelBottomRight.y - top;
+      style = {
+        left,
+        top,
+        width,
+        height,
+      };
+    }
     return <div style={style}>{this.renderFn()}</div>;
   }
 }

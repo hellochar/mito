@@ -7,6 +7,7 @@ import {
   ActionDeconstruct,
   ActionDrop,
   ActionInteract,
+  ActionLong,
   ActionMove,
   ActionMultiple,
   ActionPickup,
@@ -14,22 +15,22 @@ import {
 import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
-import { params } from "../params";
-import { CELL_MAX_ENERGY, PLAYER_BASE_SPEED, PLAYER_MOVED_BY_TRANSPORT_SPEED } from "./constants";
+import {
+  CELL_MAX_ENERGY,
+  PLAYER_BASE_SPEED,
+  PLAYER_MAX_RESOURCES,
+  PLAYER_MOVED_BY_TRANSPORT_SPEED,
+  PLAYER_STARTING_SUGAR,
+  PLAYER_STARTING_WATER,
+} from "./constants";
 import { Steppable } from "./entity";
 import { Cell, FreezeEffect, Fruit, GrowingCell, Tile, Transport } from "./tile";
 import { World } from "./world";
 
 export class Player implements Steppable {
-  public inventory = new Inventory(
-    params.maxResources,
-    this,
-    Math.round(params.maxResources / 3),
-    Math.round(params.maxResources / 3)
-  );
+  public inventory = new Inventory(PLAYER_MAX_RESOURCES, this, PLAYER_STARTING_WATER, PLAYER_STARTING_SUGAR);
   private action?: Action;
   private events = new EventEmitter();
-  public mapActions?: (player: Player, action: Action) => Action | undefined;
   public baseSpeed: number;
   public dtSinceLastStepped = 0;
 
@@ -52,12 +53,26 @@ export class Player implements Steppable {
 
   public setAction(action: Action) {
     if (this.action != null) {
-      this.action = {
-        type: "multiple",
-        actions: [this.action, action],
-      };
+      if (this.action.type === "long") {
+        // don't allow anything to happen during long actions.
+        return;
+      } else {
+        this.action = {
+          type: "multiple",
+          actions: [this.action, action],
+        };
+      }
     } else {
-      this.action = action;
+      if (action.type === "build" && action.cellType === Fruit) {
+        this.action = {
+          type: "long",
+          duration: 3.3,
+          effect: action,
+          elapsed: 0,
+        };
+      } else {
+        this.action = action;
+      }
     }
   }
 
@@ -105,6 +120,8 @@ export class Player implements Steppable {
     }
   }
 
+  public on(event: "action", cb: (action: Action) => void): void;
+  public on(event: "start-long-action", cb: (action: ActionLong) => void): void;
   public on(event: string, cb: (...args: any[]) => void) {
     this.events.on(event, cb);
   }
@@ -113,26 +130,18 @@ export class Player implements Steppable {
     if (this.action === undefined) {
       this.action = { type: "none" };
     }
-    if (this.mapActions) {
-      const mappedAction = this.mapActions(this, this.action);
-      if (mappedAction != null) {
-        this.action = mappedAction;
-      } else {
-        this.action = { type: "none" };
-      }
-    }
     const actionSuccessful = this.attemptAction(this.action, dt);
     this.maybeMoveWithTransports(dt);
-    // if (this.dropWater) {
-    //   this.attemptAction(ACTION_KEYMAP.q);
-    // }
-    // if (this.dropSugar) {
-    //   this.attemptAction(ACTION_KEYMAP.e);
-    // }
     if (actionSuccessful) {
       this.events.emit("action", this.action);
     }
-    this.action = undefined;
+    if (this.action.type === "long") {
+      if (actionSuccessful) {
+        this.action = undefined;
+      }
+    } else {
+      this.action = undefined;
+    }
   }
 
   private maybeMoveWithTransports(dt: number) {
@@ -163,8 +172,11 @@ export class Player implements Steppable {
         return this.attemptMultiple(action, dt);
       case "interact":
         return this.attemptInteract(action, dt);
+      case "long":
+        return this.attemptLong(action, dt);
     }
   }
+
   public verifyMove(action: ActionMove, dt: number) {
     const target = this.posFloat
       .clone()
@@ -206,6 +218,10 @@ export class Player implements Steppable {
     } else {
       return !tile.isObstacle;
     }
+  }
+
+  isTakingLongAction() {
+    return this.action != null && this.action.type === "long";
   }
 
   public attemptMove(action: ActionMove, dt: number) {
@@ -385,5 +401,18 @@ export class Player implements Steppable {
 
   public attemptInteract(action: ActionInteract, dt: number) {
     return action.interactable.interact(dt);
+  }
+
+  public attemptLong(action: ActionLong, dt: number) {
+    if (action.elapsed === 0) {
+      this.events.emit("start-long-action", action);
+    }
+    action.elapsed += dt;
+    if (action.elapsed > action.duration) {
+      this.attemptAction(action.effect, dt);
+      return true;
+    } else {
+      return false;
+    }
   }
 }

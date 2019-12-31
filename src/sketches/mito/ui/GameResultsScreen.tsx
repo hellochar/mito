@@ -8,14 +8,7 @@ import Character from "../../../common/Character";
 import { seasonDisplay, seasonFromTime } from "../game/Season";
 import { Fruit } from "../game/tile";
 import "./GameResultsScreen.scss";
-
-function Glow() {
-  return (
-    <div className="glow">
-      <span />
-    </div>
-  );
-}
+import { Glow } from "./Glow";
 
 interface GameResultsScreenProps {
   onDone: () => void;

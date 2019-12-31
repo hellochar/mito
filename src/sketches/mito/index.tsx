@@ -5,7 +5,7 @@ import * as React from "react";
 import * as THREE from "three";
 import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { lerp2, map } from "../../math/index";
+import { lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { ActionMove } from "./action";
 import { CellBar, InteractBar, SwitchableBar } from "./actionBar";
@@ -26,6 +26,11 @@ export interface GameResult {
   fruits: Fruit[];
   mutationPointsPerEpoch: number;
   world: World;
+}
+
+export interface CameraState {
+  center: THREE.Vector2;
+  zoom: number;
 }
 
 export class Mito extends ISketch {
@@ -50,6 +55,9 @@ export class Mito extends ISketch {
   private hackCamera: PerspectiveCamera;
   private controls?: OrbitControls;
 
+  private suggestedCamera?: CameraState;
+  private userZoom: number;
+
   constructor(
     renderer: WebGLRenderer,
     context: SketchAudioContext,
@@ -64,7 +72,7 @@ export class Mito extends ISketch {
     this.camera.lookAt(0, 0, 0);
     this.camera.position.x = this.world.player.pos.x;
     this.camera.position.y = this.world.player.pos.y;
-    this.camera.zoom = 1.5;
+    this.camera.zoom = this.userZoom = 1.5;
     this.camera.add(this.audioListener);
 
     this.hackCamera = new PerspectiveCamera(60, this.canvas.height / this.canvas.width);
@@ -102,14 +110,13 @@ export class Mito extends ISketch {
       // if (e.shiftKey) {
       // on my mouse, one scroll is + or - 125
       const delta = -(e.deltaX + e.deltaY) / 125 / 20;
-      const currZoom = this.camera.zoom;
+      const currZoom = this.userZoom;
       const scalar = Math.pow(2, delta);
       // console.log(currZoom);
       // zoom of 2 is zooming in
       // const newZoom = Math.min(Math.max(currZoom * scalar, 1), 2.5);
       const newZoom = currZoom * scalar;
-      this.camera.zoom = newZoom;
-      this.camera.updateProjectionMatrix();
+      this.userZoom = newZoom;
       // } else {
       //   if (e.deltaX + e.deltaY < 0) {
       //     this.setCellBarIndex(this.cellBarIndex - 1);
@@ -346,7 +353,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   private worldDomElements = new Set<WorldDOMElement>();
-  addWorldDOMElement(positionFn: () => THREE.Vector2, renderFn: () => JSX.Element): WorldDOMElement {
+  addWorldDOMElement(positionFn: () => THREE.Vector2 | Tile, renderFn: () => JSX.Element): WorldDOMElement {
     const e = new WorldDOMElement(this, positionFn, renderFn);
     this.worldDomElements.add(e);
     return e;
@@ -390,12 +397,9 @@ Number of Programs: ${this.renderer.info.programs!.length}
       (this.worldRenderer.getOrCreateRenderer(this.highlightedTile) as InstancedTileRenderer).updateHover();
     }
 
-    const mouseNorm = this.getCameraNormCoordinates(this.mouse.x, this.mouse.y);
-    const target = new THREE.Vector2(
-      this.world.player.posFloat.x + mouseNorm.x / 2,
-      this.world.player.posFloat.y - mouseNorm.y / 2
-    );
-    lerp2(this.camera.position, target, 0.3);
+    this.updateCamera(this.suggestedCamera || this.defaultCameraState());
+
+    this.suggestedCamera = undefined;
 
     this.renderer.render(this.scene, this.camera);
     // this.renderer.render(this.scene, this.hackCamera);
@@ -403,6 +407,43 @@ Number of Programs: ${this.renderer.info.programs!.length}
     // this.perfDebug();
     // this.logRenderInfo();
     // }
+  }
+
+  defaultCameraState(): CameraState {
+    const mouseNorm = this.getCameraNormCoordinates(this.mouse.x, this.mouse.y);
+
+    const cameraTarget = new THREE.Vector2(
+      this.world.player.posFloat.x + mouseNorm.x / 2,
+      this.world.player.posFloat.y - mouseNorm.y / 2
+    );
+    const nearbyFruits = this.world.wipResult.fruits.filter(
+      (f) => f.pos.distanceTo(cameraTarget) < 12 / this.camera.zoom
+    );
+    if (nearbyFruits.length > 0) {
+      const nearbyFruitsCenter = nearbyFruits
+        .map((f) => f.pos)
+        .reduce((v, p) => v.add(p), new Vector2())
+        .divideScalar(nearbyFruits.length);
+      lerp2(cameraTarget, nearbyFruitsCenter, 0.25);
+    }
+
+    return {
+      center: cameraTarget,
+      zoom: this.userZoom,
+    };
+  }
+
+  updateCamera(targetState: CameraState) {
+    const { center, zoom } = targetState;
+    lerp2(this.camera.position, center, 0.2);
+    if (Math.abs(this.camera.zoom - zoom) > 0.001) {
+      this.camera.zoom = lerp(this.camera.zoom, targetState.zoom, 0.1);
+      this.camera.updateProjectionMatrix();
+    }
+  }
+
+  suggestCamera(suggestedCamera: CameraState) {
+    this.suggestedCamera = suggestedCamera;
   }
 
   public keysToMovement(keys: Set<string>): ActionMove | null {

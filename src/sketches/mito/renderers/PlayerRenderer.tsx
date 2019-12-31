@@ -1,53 +1,118 @@
-import Ticker from "global/ticker";
-import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
-import { lerp2 } from "../../../math";
+import { easeExpOut } from "d3-ease";
+import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
+import { clamp, lerp2, map } from "../../../math";
+import { ActionBuild, ActionLong } from "../action";
 import { Player } from "../game";
 import { Mito } from "../index";
 import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
+import { also, Animation, AnimationController, animPause, chain } from "./tile/Animation";
 
 export class PlayerRenderer extends Renderer<Player> {
   public mesh: Mesh;
+  protected animation = new AnimationController();
   constructor(target: Player, scene: Scene, mito: Mito) {
     super(target, scene, mito);
-    this.mesh = new Mesh(
-      new PlaneBufferGeometry(0.75, 0.75),
-      // new THREE.CircleBufferGeometry(0.5, 20),
-      new MeshBasicMaterial({
-        transparent: true,
-        depthWrite: false,
-        depthTest: false,
-        map: textureFromSpritesheet(3, 2, "transparent"),
-        color: new Color("white"),
-        side: DoubleSide,
-      })
-    );
+    this.mesh = newMesh();
     this.mesh.name = "Player Mesh";
     lerp2(this.mesh.position, this.target.pos, 1);
     this.mesh.position.z = 2;
     this.scene.add(this.mesh);
+    this.target.on("start-long-action", this.handleStartLongAction);
   }
+
+  handleStartLongAction = (action: ActionLong) => {
+    if (action.effect.type === "build") {
+      this.animation.set(this.longBuildAnimation(action as ActionLong<ActionBuild>));
+    }
+  };
+
   update() {
     const pos = this.target.droopPosFloat().clone();
-    pos.x += Math.cos(Ticker.now / 1000) * 0.04;
-    pos.y += Math.sin(Ticker.now / 400) * 0.08;
-    lerp2(this.mesh.position, pos, 0.5);
-    this.mesh.position.z = 2;
-    // for (const [key, keyMesh] of MOVEMENT_KEY_MESHES) {
-    //   const action = MOVEMENT_KEYS[key];
-    //   const x = this.target.pos.x + action.dir.x;
-    //   const y = this.target.pos.y + action.dir.y;
-    //   if (this.target.isBuildCandidate(this.mito.world.tileAt(x, y)) && this.mito.uiState.type === "main") {
-    //     this.scene.add(keyMesh);
-    //     keyMesh.position.x = x;
-    //     keyMesh.position.y = y;
-    //     keyMesh.position.z = 2;
-    //   } else {
-    //     this.scene.remove(keyMesh);
-    //   }
-    // }
+    // pos.x += Math.cos(Ticker.now / 1000) * 0.04;
+    // pos.y += Math.sin(Ticker.now / 400) * 0.08;
+    this.mesh.position.set(pos.x, pos.y, 2);
+    // lerp2(this.mesh.position, pos, 0.5);
+
+    this.animation.update();
   }
+
   destroy() {
     this.scene.remove(this.mesh);
   }
+
+  longBuildAnimation(actionLong: ActionLong<ActionBuild>): Animation {
+    const animWaitForCameraZoomIn = animPause(0.4);
+    let w = 0;
+    const animShake: Animation = (t, dt) => {
+      const tNorm = t / 1.8;
+      const pow = clamp(4 * (tNorm - tNorm * tNorm), 0, 1);
+      const shakeFrequency = 9 * pow;
+      const shakeAmplitude = 0.15 * pow ** 1.5;
+      w += dt * Math.PI * 2 * shakeFrequency;
+      this.mesh.position.x += Math.sin(w) * shakeAmplitude;
+      return tNorm > 1;
+    };
+    const animPulse: Animation = (t) => {
+      const tNorm = t / 0.2;
+      const s = map(clamp(4 * (tNorm - tNorm * tNorm), 0, 1), 0, 1, 1, 1.5);
+      this.mesh.scale.set(s, s, 1);
+      return t > tNorm;
+    };
+    const animSendCopy = this.animSendCopy(actionLong.effect.position, 1.5);
+    const animWaitEnd = animPause(1);
+
+    const focusCamera: Animation = () => {
+      this.mito.suggestCamera({
+        center: this.target.posFloat,
+        zoom: 3,
+      });
+      return false;
+    };
+
+    return also(chain(animWaitForCameraZoomIn, animShake, also(animSendCopy, animPulse), animWaitEnd), focusCamera);
+  }
+
+  animSendCopy(target: Vector2, duration: number): Animation {
+    const copy = newMesh();
+    copy.scale.x = this.mesh.scale.x * 0.2;
+    copy.scale.y = this.mesh.scale.y * 0.2;
+    copy.position.z = this.mesh.position.z - 0.01;
+    this.scene.add(copy);
+    const animMove: Animation = (t) => {
+      const tNorm = t / (duration * 0.8);
+      lerp2(copy.position, this.mesh.position, 1);
+      lerp2(copy.position, target, easeExpOut(tNorm));
+
+      return tNorm > 1;
+    };
+    const pause = animPause(duration * 0.1);
+    const animShrink: Animation = (t) => {
+      const tNorm = t / (duration * 0.1);
+      lerp2(copy.scale, { x: 0, y: 0 }, easeExpOut(tNorm));
+
+      const ended = tNorm > 1;
+      if (ended) {
+        this.scene.remove(copy);
+      }
+      return ended;
+    };
+    return chain(animMove, pause, animShrink);
+  }
+}
+
+function newMesh() {
+  const m = new Mesh(
+    new PlaneBufferGeometry(0.75, 0.75),
+    new MeshBasicMaterial({
+      transparent: true,
+      // depthWrite: false,
+      // depthTest: false,
+      map: textureFromSpritesheet(3, 2, "transparent"),
+      color: new Color("white"),
+      side: DoubleSide,
+    })
+  );
+  m.renderOrder = 9;
+  return m;
 }

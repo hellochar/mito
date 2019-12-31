@@ -1,8 +1,6 @@
 import { easeCubic } from "d3-ease";
-import Ticker from "global/ticker";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
-import React from "react";
 import Mito from "sketches/mito";
 import { blopBuffer, suckWaterBuffer } from "sketches/mito/audio";
 import { Constructor } from "sketches/mito/constructor";
@@ -23,7 +21,6 @@ import {
   Transport,
 } from "sketches/mito/game/tile";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
-import { WorldDOMElement } from "sketches/mito/WorldDOMElement";
 import {
   Audio,
   BufferGeometry,
@@ -58,7 +55,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private audio?: Audio;
   private lastAudioValueTracker = 0;
   private neighborLines = new Object3D();
-  private worldDomElement?: WorldDOMElement;
   private cellEffectsRenderer?: CellEffectsRenderer;
   protected animation = new AnimationController();
 
@@ -89,25 +85,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     if (this.target instanceof Leaf || this.target instanceof Root) {
       this.audio = new Audio(this.mito.audioListener);
-    }
-
-    if (this.target instanceof Fruit) {
-      const fruit = this.target;
-      this.worldDomElement = mito.addWorldDOMElement(
-        () => this.target.pos,
-        () => {
-          return (
-            <div className="fruit-indicator">
-              <div>
-                {fruit.committedResources.water.toFixed(1)}/{fruit.neededResources / 2} water
-              </div>
-              <div>
-                {fruit.committedResources.sugar.toFixed(1)}/{fruit.neededResources / 2} sugar
-              </div>
-            </div>
-          );
-        }
-      );
     }
 
     if (this.target instanceof Cell) {
@@ -142,7 +119,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.updateInventory();
       this.maybeUpdateCellEffectsRenderer();
 
-      this.animation.update(Ticker.now / 1000);
+      this.animation.update();
       this.commit();
     }
   }
@@ -271,11 +248,11 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   growPulseAnimation(): Animation {
     const duration = 0.5;
     const ease = reversed(easeCubic);
-    return (dt) => {
-      const t = clamp((dt / duration) * ((this.target as any).tempo || 1), 0, 1);
-      const scale = map(ease(t), 0, 1, 1, 1.3);
+    return (t) => {
+      const tNorm = clamp((t / duration) * ((this.target as any).tempo || 1), 0, 1);
+      const scale = map(ease(tNorm), 0, 1, 1, 1.3);
       this.scale.setScalar(scale);
-      return t >= 1;
+      return tNorm >= 1;
     };
   }
 
@@ -315,9 +292,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   destroy() {
     this.instance.destroy();
     // this.scene.remove(this.mesh);
-    if (this.worldDomElement != null) {
-      this.mito.removeWorldDOMElement(this.worldDomElement);
-    }
     if (this.inventoryRenderer != null) {
       this.inventoryRenderer.destroy();
     }

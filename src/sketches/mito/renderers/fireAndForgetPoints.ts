@@ -13,8 +13,9 @@ interface PointState<S> {
 
 export class FireAndForgetPoints<S = any> extends CommittablePoints {
   private state: Set<PointState<S>> = new Set();
-  constructor(public lifeFn: (s: PointState<S>) => undefined | false, params: CommittablePointsParameters) {
+  constructor(public lifeFn: (s: PointState<S>, dt: number) => undefined | false, params: CommittablePointsParameters) {
     super(10000, params);
+    this.frustumCulled = false;
   }
 
   fire(s: PointState<S>) {
@@ -25,7 +26,7 @@ export class FireAndForgetPoints<S = any> extends CommittablePoints {
     const toRemove: PointState<S>[] = [];
     for (const p of this.state) {
       p.time += dt;
-      const nextState = this.lifeFn(p);
+      const nextState = this.lifeFn(p, dt);
       if (nextState === false) {
         toRemove.push(p);
       }

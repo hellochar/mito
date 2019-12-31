@@ -11,16 +11,16 @@ export function TestWinScreen() {
   const world = new World(Temperate, 0, newBaseSpecies());
   world.time = 5;
   const f1 = new Fruit(new Vector2(0, 0), world);
-  f1.committedResources.add(50, 50);
+  f1.committedResources.add(f1.neededResources / 2, f1.neededResources / 2);
   f1.timeMatured = 250;
 
   world.time = 15.9;
   const f2 = new Fruit(new Vector2(0, 0), world);
-  f2.committedResources.add(25, 15);
+  f2.committedResources.add((f1.neededResources / 2) * 0.4, (f1.neededResources / 2) * 0.4);
 
   world.time = 43.2;
   const f3 = new Fruit(new Vector2(0, 0), world);
-  f3.committedResources.add(50, 50);
+  f3.committedResources.add(f1.neededResources / 2, f1.neededResources / 2);
   const mockResults: GameResult = {
     status: "won",
     fruits: [f1, f2, f3],

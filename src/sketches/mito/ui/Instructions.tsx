@@ -1,6 +1,10 @@
 import * as React from "react";
-import { CELL_MAX_ENERGY, LEAF_REACTION_TIME, TISSUE_INVENTORY_CAPACITY } from "../game/constants";
-import { params } from "../params";
+import {
+  CELL_MAX_ENERGY,
+  LEAF_REACTION_TIME,
+  PLAYER_MAX_RESOURCES,
+  TISSUE_INVENTORY_CAPACITY,
+} from "../game/constants";
 
 interface InstructionsProps {
   play: () => void;
@@ -35,7 +39,7 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
           </p>
           <h3>You</h3>
           <p>
-            You can carry max {params.maxResources} resources, and you automatically suck in any resources you're
+            You can carry max {PLAYER_MAX_RESOURCES} resources, and you automatically suck in any resources you're
             standing over. You can only walk on Tissue (and Transport). You start at the center of the map, with soil
             below and air above.
           </p>

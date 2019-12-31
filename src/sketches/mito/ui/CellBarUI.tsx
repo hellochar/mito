@@ -30,6 +30,7 @@ function CellBarUI({ bar, buildError }: CellBarProps) {
           spritesheetLoaded={spritesheetLoaded}
         >
           {cellType === Transport ? <TransportDirArrow dir={Transport.buildDirection} /> : null}
+          {/* {cellType === Fruit ? <Glow /> : null} */}
         </CellBarItem>
       ))}
       {disabled ? <div className="disabled-cover">Need {buildError} to build!</div> : null}

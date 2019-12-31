@@ -466,32 +466,21 @@ export class World {
   }
 
   public maybeGetGameResult(): GameResult | null {
-    // you lose if you're standing on a dead cell
-    if (this.tileAt(this.player.pos.x, this.player.pos.y) instanceof DeadCell) {
-      return {
-        ...this.wipResult,
-        mutationPointsPerEpoch: 0,
-        status: "lost",
-      };
-    }
-    if (this.time < TIME_PER_YEAR) {
+    const isStandingOnDeadCell = this.tileAt(this.player.pos.x, this.player.pos.y) instanceof DeadCell;
+    const isTimePastOneYear = this.time >= TIME_PER_YEAR;
+    const shouldGameEnd = isStandingOnDeadCell || isTimePastOneYear;
+    if (!shouldGameEnd) {
       return null;
     }
-    // at the end of the year, we make a decision:
-    // you lose if you haven't made a single mature fruit
+
+    // make a decision
     const matureFruit = this.wipResult.fruits.filter((f) => f.isMature());
-    if (matureFruit.length === 0) {
-      return {
-        ...this.wipResult,
-        mutationPointsPerEpoch: 0,
-        status: "lost",
-      };
-    }
-    // you win if there's a seed with full capacity
+    const shouldWin = matureFruit.length > 0;
+
     return {
       ...this.wipResult,
       mutationPointsPerEpoch: matureFruit.length * traitMod(this.traits.fruitMutationPoints, 1, 1.5),
-      status: "won",
+      status: shouldWin ? "won" : "lost",
     };
   }
 

@@ -9,6 +9,9 @@
  * How many tiles per second the Player moves.
  */
 export const PLAYER_BASE_SPEED = 3;
+export const PLAYER_MAX_RESOURCES = 100;
+export const PLAYER_STARTING_WATER = 33;
+export const PLAYER_STARTING_SUGAR = 33;
 /**
  * How fast the Player moves from standing on Transport.
  */

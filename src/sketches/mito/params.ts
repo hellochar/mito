@@ -1,11 +1,9 @@
 import { parse, stringify } from "query-string";
 
 const PARAMS_DEFAULT = {
-  soilDarknessBase: 0.2,
   droop: 0.9,
   sunlightReintroduction: 0.15,
   sunlightDiffusion: 0.0,
-  maxResources: 100,
   hud: true,
   debug: process.env.NODE_ENV === "development",
 };

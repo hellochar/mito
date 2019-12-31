@@ -67,12 +67,20 @@ export interface ActionInteract {
   interactable: Interactable;
 }
 
+export interface ActionLong<T extends Action = Action> {
+  type: "long";
+  elapsed: number;
+  duration: number;
+  effect: T;
+}
+
 export type Action =
   | ActionStill
   | ActionMove
   | ActionBuild
   | ActionDeconstruct
   | ActionDrop
+  | ActionLong<any>
   | ActionNone
   | ActionMultiple
   | ActionPickup

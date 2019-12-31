@@ -13,6 +13,10 @@ export class Hover extends React.Component<HoverProps> {
     return this.props.mito.scene;
   }
   public render() {
+    const isTakingLongAction = this.props.mito.world.player.isTakingLongAction();
+    if (isTakingLongAction) {
+      return null;
+    }
     const { highlightedTile } = this.props.mito;
     const highlightedPosition = this.props.mito.getHighlightPosition();
     return (
