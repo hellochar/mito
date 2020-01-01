@@ -70,7 +70,7 @@ export abstract class Tile implements Steppable, HasInventory {
           // give 1 to this neighbor
           this.inventory.give(neighbor.inventory, 1, 1);
           // delete this neighbor from candidates to give
-          if (neighbor.inventory.isMaxed) {
+          if (neighbor.inventory.isMaxed()) {
             giveCandidates.splice(i, 1);
           }
           if (this.inventory.isEmpty()) {
