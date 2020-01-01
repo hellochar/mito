@@ -48,7 +48,8 @@ function createEffectRenderer<T extends CellEffect>(effect: T, scene: Scene, mit
   }
 }
 
-const COLD_BLUE = new Color("#1E90FF").lerp(new Color(0), 0.5);
+// export const FREEZE_BLUE = new Color("#1E90FF").lerp(new Color(0), 0.5);
+export const FREEZE_BLUE = new Color("lightblue");
 
 class FreezeEffectRenderer extends Renderer<FreezeEffect> {
   static newMesh = (() => {
@@ -56,7 +57,7 @@ class FreezeEffectRenderer extends Renderer<FreezeEffect> {
     const material = new MeshBasicMaterial({
       map: textureFromSpritesheet(1, 2),
       side: DoubleSide,
-      color: COLD_BLUE,
+      color: FREEZE_BLUE,
       transparent: true,
       opacity: 0.5,
     });

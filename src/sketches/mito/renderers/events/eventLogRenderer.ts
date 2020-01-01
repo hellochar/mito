@@ -5,6 +5,7 @@ import EventCellEatRenderer from "./eventCellEatRenderer";
 import EventCellTransferEnergyRenderer from "./eventCellTransferEnergyRenderer";
 import EventEvaporationRenderer from "./eventEvaporationRenderer";
 import EventPhotosynthesisRenderer from "./eventPhotosynthesisRenderer";
+import EventThawIceRenderer from "./eventThawIceRenderer";
 
 export class EventLogRenderer extends Renderer<WorldRenderer> {
   private singleEventRenderers = {
@@ -12,6 +13,7 @@ export class EventLogRenderer extends Renderer<WorldRenderer> {
     "cell-transfer-energy": new EventCellTransferEnergyRenderer(this.target),
     evaporation: new EventEvaporationRenderer(this.target),
     photosynthesis: new EventPhotosynthesisRenderer(this.target),
+    thaw: new EventThawIceRenderer(this.target),
   } as const;
 
   constructor(worldRenderer: WorldRenderer) {

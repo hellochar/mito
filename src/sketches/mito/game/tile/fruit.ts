@@ -4,6 +4,7 @@ import { Inventory } from "../../inventory";
 import { FRUIT_NEEDED_RESOURCES, FRUIT_TIME_TO_MATURE, TISSUE_INVENTORY_CAPACITY } from "../constants";
 import { World } from "../world";
 import { Cell } from "./cell";
+import { CellEffect, FreezeEffect } from "./cellEffect";
 export class Fruit extends Cell {
   static displayName = "Fruit";
   public isObstacle = true;
@@ -24,13 +25,23 @@ export class Fruit extends Cell {
     this.committedResources.on("get", this.handleGetResources);
     this.secondsToMature = Math.ceil(traitMod(world.traits.fruitGrowthSpeed, FRUIT_TIME_TO_MATURE, 1 / 1.5));
   }
+
   handleGetResources = () => {
     if (this.timeMatured == null && this.isMature()) {
       this.timeMatured = this.world.time;
       this.committedResources.off("get", this.handleGetResources);
     }
   };
-  // aggressively take the inventory from neighbors
+
+  addEffect(effect: CellEffect) {
+    // disallow fruit from freezing
+    if (effect instanceof FreezeEffect) {
+      return;
+    } else {
+      super.addEffect(effect);
+    }
+  }
+
   step(dt: number) {
     super.step(dt);
     // how fast Fruit takes resources from surrounding tiles and puts it onto itself
@@ -41,6 +52,7 @@ export class Fruit extends Cell {
       if (neighbor instanceof Cell && !(neighbor instanceof Fruit)) {
         const wantedWater = Math.min(this.neededResources / 2 - this.committedResources.water, maxResourceIntake);
         const wantedSugar = Math.min(this.neededResources / 2 - this.committedResources.sugar, maxResourceIntake);
+        // aggressively take the inventory from neighbors
         neighbor.inventory.give(this.inventory, wantedWater, wantedSugar);
       }
     }
@@ -61,10 +73,12 @@ export class Fruit extends Cell {
   stepEatSugar() {
     return 0;
   }
+
   getPercentMatured() {
     const r = this.committedResources;
     return (r.sugar + r.water) / r.capacity;
   }
+
   isMature() {
     // add 1 buffer for fp errors
     return this.committedResources.water + this.committedResources.sugar >= this.neededResources - 1;

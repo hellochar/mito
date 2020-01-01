@@ -33,21 +33,37 @@ export class FreezeEffect extends CellEffect implements Interactable {
   static stacks = false;
   public readonly secondsToDie = TIME_PER_DAY;
   public percentFrozen = 0.25;
+  chunkCooldown = 0;
   get timeUntilDeath() {
     return this.secondsToDie - this.age;
   }
   interact(dt: number) {
-    this.percentFrozen -= (20 / this.secondsToDie) * dt;
+    if (this.chunkCooldown <= 0) {
+      this.chunkCooldown += 0.5;
+      this.percentFrozen -= (15 / this.secondsToDie) * 0.5;
+      if (this.percentFrozen < 0.02) {
+        this.percentFrozen = 0;
+      }
+      this.cell.world.logEvent({
+        type: "thaw",
+        where: this.cell,
+      });
+    }
+    // this.percentFrozen -= (20 / this.secondsToDie) * dt;
     this.onFrozenChanged();
     return true;
   }
+
   step(dt: number) {
+    if (this.chunkCooldown > 0) {
+      this.chunkCooldown -= dt;
+    }
     if (this.cell.temperature === Temperature.Cold) {
       this.percentFrozen += (1 / this.secondsToDie) * dt;
     } else if (this.cell.temperature === Temperature.Freezing) {
       this.percentFrozen += (10 / this.secondsToDie) * dt;
     } else {
-      this.percentFrozen -= (10 / this.secondsToDie) * dt;
+      // this.percentFrozen -= (10 / this.secondsToDie) * dt;
     }
     this.onFrozenChanged();
     this.cell.energy -= (dt / this.secondsToDie) * CELL_MAX_ENERGY;
@@ -59,7 +75,7 @@ export class FreezeEffect extends CellEffect implements Interactable {
   onFrozenChanged() {
     if (this.percentFrozen > 1) {
       this.cell.die();
-    } else if (this.percentFrozen < 0) {
+    } else if (this.percentFrozen <= 0) {
       this.remove();
     }
   }

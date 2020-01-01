@@ -8,7 +8,6 @@ import { InventoryRenderer } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";
 import { Renderer } from "./Renderer";
 import { FruitRenderer } from "./tile/FruitRenderer";
-import fruitSparkle from "./tile/fruitSparkle";
 import { InstancedTileRenderer } from "./tile/InstancedTileRenderer";
 import TileBatcher from "./tile/tileBatcher";
 import { TransportRenderer } from "./tile/TransportRenderer";
@@ -30,7 +29,6 @@ export class WorldRenderer extends Renderer<World> {
       scene.add(InventoryRenderer.WaterParticles());
       scene.add(InventoryRenderer.SugarParticles());
       this.eventLogRenderer = new EventLogRenderer(this);
-      scene.add(fruitSparkle);
     }
     // this.lightRays = new LightRays(this.target);
     // scene.add(this.lightRays.lineSegments);
@@ -100,9 +98,6 @@ export class WorldRenderer extends Renderer<World> {
     });
     InventoryRenderer.endFrame();
     this.tileBatcher.endFrame();
-
-    fruitSparkle.update(1 / 30);
-    fruitSparkle.commitAll();
   }
 
   destroy(): void {

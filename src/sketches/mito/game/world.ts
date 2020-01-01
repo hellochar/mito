@@ -35,6 +35,7 @@ export class StepStats {
     "cell-transfer-energy": [],
     evaporation: [],
     photosynthesis: [],
+    thaw: [],
   };
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
   logEvent(event: TileEvent) {
@@ -107,10 +108,10 @@ export class World {
     // step all tiles first with 0 timestep to trigger any initial state
     gridRange(this.width, this.height, (x, y) => {
       const tileEnvironment = this.gridEnvironment[x][y];
-      tileEnvironment && tileEnvironment.step(0);
+      tileEnvironment && step(tileEnvironment, 0);
 
       const tileCell = this.gridCells[x][y];
-      tileCell && tileCell.step(0);
+      tileCell && step(tileCell, 0);
     });
 
     this.computeSunlight();
