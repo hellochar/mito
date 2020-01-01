@@ -117,8 +117,14 @@ export class InteractBar extends ActionBar {
     }
   }
 
-  rightClick(target: Tile): void {
-    // no op for now
+  rightClick(tile: Tile): void {
+    if (tile instanceof Fruit) {
+      return; // disallow deleting fruit
+    }
+    this.mito.world.player.setAction({
+      type: "deconstruct",
+      position: tile.pos,
+    });
   }
 
   keyDown(event: KeyboardEvent): void {

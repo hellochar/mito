@@ -1,4 +1,4 @@
-import { easeExpOut } from "d3-ease";
+import { easeSinInOut } from "d3-ease";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { clamp, lerp2, map } from "../../../math";
 import { ActionBuild, ActionLong } from "../action";
@@ -42,7 +42,7 @@ export class PlayerRenderer extends Renderer<Player> {
   }
 
   longBuildAnimation(actionLong: ActionLong<ActionBuild>): Animation {
-    const animWaitForCameraZoomIn = animPause(0.4);
+    const animWaitForCameraZoomIn = animPause(0.5);
     let w = 0;
     const animShake: Animation = (t, dt) => {
       const tNorm = t / 1.8;
@@ -54,12 +54,12 @@ export class PlayerRenderer extends Renderer<Player> {
       return tNorm > 1;
     };
     const animPulse: Animation = (t) => {
-      const tNorm = t / 0.2;
+      const tNorm = t / 0.25;
       const s = map(clamp(4 * (tNorm - tNorm * tNorm), 0, 1), 0, 1, 1, 1.5);
       this.mesh.scale.set(s, s, 1);
       return t > tNorm;
     };
-    const animSendCopy = this.animSendCopy(actionLong.effect.position, 1.5);
+    const animSendCopy = this.animSendCopy(actionLong.effect.position);
     const animWaitEnd = animPause(1);
 
     const focusCamera: Animation = () => {
@@ -73,23 +73,42 @@ export class PlayerRenderer extends Renderer<Player> {
     return also(chain(animWaitForCameraZoomIn, animShake, also(animSendCopy, animPulse), animWaitEnd), focusCamera);
   }
 
-  animSendCopy(target: Vector2, duration: number): Animation {
+  animSendCopy(target: Vector2): Animation {
     const copy = newMesh();
-    copy.scale.x = this.mesh.scale.x * 0.2;
-    copy.scale.y = this.mesh.scale.y * 0.2;
+    copy.scale.x = this.mesh.scale.x * 0.25;
+    copy.scale.y = this.mesh.scale.y * 0.25;
     copy.position.z = this.mesh.position.z - 0.01;
     this.scene.add(copy);
-    const animMove: Animation = (t) => {
-      const tNorm = t / (duration * 0.8);
-      lerp2(copy.position, this.mesh.position, 1);
-      lerp2(copy.position, target, easeExpOut(tNorm));
+    const animDuplicate: Animation = (t) => {
+      const tNorm = t / 0.5;
+      const dX = easeSinInOut(tNorm) * 0.5;
+      this.mesh.position.x -= dX;
+      lerp2(copy.position, this.target.droopPosFloat(), 1);
+      copy.position.x += dX;
+      return tNorm > 1;
+    };
+    const animStayLeft: Animation = (t) => {
+      this.mesh.position.x -= 0.5;
+      return false;
+    };
+    const animReturnOriginal: Animation = (t) => {
+      const tNorm = t / 0.5;
+      const dX = easeSinInOut(1 - tNorm) * 0.5;
+      this.mesh.position.x -= dX;
+      return tNorm > 1;
+    };
+    const animMove: Animation = (t, dt) => {
+      const tNorm = t / 1.3;
+      // lerp2(copy.position, this.mesh.position, 1);
+      lerp2(copy.position, target, 0.1);
+      // lerp2(copy.position, target, easeExpOut(tNorm));
 
       return tNorm > 1;
     };
-    const pause = animPause(duration * 0.1);
     const animShrink: Animation = (t) => {
-      const tNorm = t / (duration * 0.1);
-      lerp2(copy.scale, { x: 0, y: 0 }, easeExpOut(tNorm));
+      const tNorm = t / 0.5;
+      lerp2(copy.scale, { x: this.mesh.scale.x * 0.2, y: this.mesh.scale.y * 0.2 }, 1);
+      lerp2(copy.scale, { x: 0, y: 0 }, easeSinInOut(tNorm));
 
       const ended = tNorm > 1;
       if (ended) {
@@ -97,7 +116,13 @@ export class PlayerRenderer extends Renderer<Player> {
       }
       return ended;
     };
-    return chain(animMove, pause, animShrink);
+    return chain(
+      animDuplicate,
+      also(animPause(0.5), animStayLeft),
+      also(animMove, animReturnOriginal),
+      animPause(0.25),
+      animShrink
+    );
   }
 }
 

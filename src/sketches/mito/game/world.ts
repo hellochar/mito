@@ -108,10 +108,10 @@ export class World {
     // step all tiles first with 0 timestep to trigger any initial state
     gridRange(this.width, this.height, (x, y) => {
       const tileEnvironment = this.gridEnvironment[x][y];
-      tileEnvironment && step(tileEnvironment, 0);
+      tileEnvironment && tileEnvironment.step(0);
 
       const tileCell = this.gridCells[x][y];
-      tileCell && step(tileCell, 0);
+      tileCell && tileCell.step(0);
     });
 
     this.computeSunlight();

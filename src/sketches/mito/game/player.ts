@@ -66,7 +66,7 @@ export class Player implements Steppable {
       if (action.type === "build" && action.cellType === Fruit) {
         this.action = {
           type: "long",
-          duration: 3.3,
+          duration: 6.0,
           effect: action,
           elapsed: 0,
         };

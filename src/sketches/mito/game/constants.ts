@@ -65,7 +65,7 @@ export const TISSUE_INVENTORY_CAPACITY = 6;
 /**
  * On average, for each Air tile adjacent to each Leaf, water will be converted to sugar after this many seconds.
  */
-export const LEAF_REACTION_TIME = 5;
+export const LEAF_REACTION_TIME = 40;
 
 /**
  * How much water Leaves absorb per second.
