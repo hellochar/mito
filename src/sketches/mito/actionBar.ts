@@ -37,18 +37,10 @@ export class CellBar extends ActionBar {
   setIndex(i: number) {
     const lastIndex = this._index;
     if (lastIndex === i && this.bar[i] === Transport) {
-      if (this.mito.highlightedTile instanceof Transport) {
-        Transport.buildDirection.copy(this.mito.highlightedTile.dir);
-      }
-
       Transport.buildDirection
         .rotateAround(new Vector2(), -Math.PI / 4)
         .setLength(1)
         .round();
-
-      if (this.mito.highlightedTile instanceof Transport) {
-        this.mito.highlightedTile.dir = Transport.buildDirection.clone();
-      }
     }
     this._index = ((i % this.bar.length) + this.bar.length) % this.bar.length;
   }
