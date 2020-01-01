@@ -334,12 +334,13 @@ export class Player implements Steppable {
       );
     }
     let cell: Cell;
-    if (
-      action.cellType.timeToBuild &&
+    if (action.cellType.timeToBuild) {
       // immediately build if it's the same type (e.g. Transport on Transport)
-      (existingCell != null && existingCell.constructor !== action.cellType)
-    ) {
-      cell = new GrowingCell(action.position, this.world, matureCell);
+      if (existingCell != null && existingCell.constructor === action.cellType) {
+        cell = matureCell;
+      } else {
+        cell = new GrowingCell(action.position, this.world, matureCell);
+      }
     } else {
       cell = matureCell;
     }
