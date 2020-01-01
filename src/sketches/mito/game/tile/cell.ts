@@ -48,7 +48,6 @@ export abstract class Cell extends Tile implements Interactable {
     super(pos, world);
     this.temperatureFloat = 48;
     this.nextTemperature = this.temperatureFloat;
-    this.addEffect(new FreezeEffect());
   }
   addEffect(effect: CellEffect) {
     const stacks = (effect.constructor as CellEffectConstructor).stacks;
