@@ -1,5 +1,5 @@
 import * as React from "react";
-import { formatTime, Season, seasonDisplay } from "../game";
+import { formatTime, Season, SEASON_NAMES } from "../game";
 import { TIME_PER_YEAR } from "../game/constants";
 import "./SeasonsTracker.scss";
 
@@ -7,7 +7,7 @@ export default function SeasonsTracker({ time, season }: { time: number; season:
   const yearDonePercent = time / TIME_PER_YEAR;
   return (
     <div className="seasons-tracker">
-      <div className="container">
+      {/* <div className="container">
         <div className="end-brace" />
         <div className="bar">
           <BarMarker percent={0.25} />
@@ -16,10 +16,15 @@ export default function SeasonsTracker({ time, season }: { time: number; season:
           <SeasonBead percent={yearDonePercent} />
         </div>
         <div className="end-brace" />
-      </div>
+      </div> */}
       <div className="season-display">
-        {formatTime(time)}, {seasonDisplay(season)}
+        {SEASON_NAMES[season.season]}
+        <br />
+        Month {season.month}
+        <br />
+        Day {season.day}
       </div>
+      <div className="time">{formatTime(time)}</div>
     </div>
   );
 }

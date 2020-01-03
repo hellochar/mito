@@ -1,5 +1,4 @@
 import { PopulationAttempt } from "app";
-import { Button } from "common/Button";
 import VignetteCapturer from "common/vignette";
 import * as React from "react";
 import * as THREE from "three";
@@ -19,6 +18,7 @@ import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
 import { GameStack, Hover, HUD } from "./ui";
+import Debug from "./ui/Debug";
 import { WorldDOMElement } from "./WorldDOMElement";
 
 export interface GameResult {
@@ -172,38 +172,6 @@ export class Mito extends ISketch {
     for (const e of this.worldDomElements) {
       worldDomElementComponents.push(e.render());
     }
-    const doWin = () => {
-      this.onWinLoss({
-        ...this.world.wipResult,
-        status: "won",
-        mutationPointsPerEpoch: 2,
-      });
-    };
-
-    const doLose = () => {
-      this.onWinLoss({
-        ...this.world.wipResult,
-        status: "lost",
-        mutationPointsPerEpoch: 0,
-      });
-    };
-    const endGameButtons = params.debug ? (
-      <div style={{ position: "absolute", top: 0, right: 50, display: "flex" }}>
-        <Button color="green" onClick={doWin}>
-          Win
-        </Button>
-        <Button color="green" onClick={doLose}>
-          Lose
-        </Button>
-      </div>
-    ) : null;
-    const waterInformation = params.debug ? (
-      <div style={{ position: "absolute", bottom: 0, left: 0, background: "white" }}>
-        <div>Rainwater: {this.world.numRainWater}</div>
-        <div>Evaporated Air: {this.world.numEvaporatedAir}</div>
-        <div>Evaporated Soil: {this.world.numEvaporatedSoil}</div>
-      </div>
-    ) : null;
     return (
       <>
         <HUD mito={this} />
@@ -215,8 +183,7 @@ export class Mito extends ISketch {
           <TileDetails tile={this.highlightedTile} />
         </div> */}
         <div className="world-dom-components">{worldDomElementComponents}</div>
-        {endGameButtons}
-        {waterInformation}
+        {params.debug ? <Debug mito={this} /> : null}
       </>
     );
   }

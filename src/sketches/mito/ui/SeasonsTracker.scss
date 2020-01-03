@@ -3,13 +3,27 @@
 .seasons-tracker {
   position: absolute;
   top: 0;
-  left: 33%;
-  right: 33%;
+  left: 50%;
+  transform: translateX(-50%);
 
   .season-display {
-    color: white;
-    @include text-outline();
+    border-bottom-right-radius: 60px;
+    border-bottom-left-radius: 60px;
+    width: 120px;
+    height: 60px;
+    background: $light-gray3;
+    color: black;
+    font-size: 12px;
+    border-bottom: 2px solid $gray3;
+    border-right: 2px solid $gray3;
+    border-left: 2px solid $gray3;
+    padding-top: 5px;
     // font-family: $arial-family;
+  }
+
+  .time {
+    @include text-outline();
+    color: white;
   }
 
   .container {
