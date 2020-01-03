@@ -219,7 +219,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (tColor !== this.temperatureColor) {
       this.currentLerp = 0;
     }
-    const targetLerp = temperature === Temperature.Mild ? 0 : 0.5;
+    const targetLerp = temperature === Temperature.Mild ? 0 : 0.25;
     this.temperatureColor = tColor;
     this.currentLerp = lerp(this.currentLerp, targetLerp, 0.1);
     color.lerp(this.temperatureColor, this.currentLerp);
