@@ -1,11 +1,21 @@
 @import "../../../variables";
 
 .cell-bar {
-  display: flex;
-  flex-direction: row;
   padding: 10px;
   pointer-events: initial;
   position: relative;
+  // border: 1px solid grey;
+  // border-top: none;
+
+  .cell-bar-items {
+    display: flex;
+    flex-direction: row;
+    transition: all 0.05s;
+  }
+
+  &.disabled .cell-bar-items {
+    opacity: 0.2;
+  }
 
   .disabled-cover {
     position: absolute;
@@ -13,7 +23,10 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background: transparentize($gray1, 0.1);
+
+    &.build-error {
+      background: transparentize($gray1, 0.1);
+    }
 
     text-align: center;
     padding-top: 10px;

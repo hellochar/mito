@@ -7,7 +7,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { ActionMove } from "./action";
-import { CellBar, InteractBar, SwitchableBar } from "./actionBar";
+import { AltHeldBar } from "./actionBar";
 import { drums, hookUpAudio, strings } from "./audio";
 import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
@@ -17,7 +17,7 @@ import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
-import { GameStack, Hover, HUD } from "./ui";
+import { GameStack, Hover, HUD, TileDetails } from "./ui";
 import Debug from "./ui/Debug";
 import { Instructions } from "./ui/Instructions";
 import { WorldDOMElement } from "./WorldDOMElement";
@@ -37,7 +37,8 @@ export interface CameraState {
 export class Mito extends ISketch {
   static id = "mito";
   public readonly world: World;
-  public readonly actionBar: SwitchableBar;
+  // public readonly actionBar: SwitchableBar;
+  public readonly actionBar: AltHeldBar;
   public readonly scene = new Scene();
   private readonly camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);
   public tutorialRef: NewPlayerTutorial | null = null;
@@ -47,7 +48,7 @@ export class Mito extends ISketch {
   public instructionsOpen = false;
   private firstActionTakenYet = false;
   public readonly audioListener = new THREE.AudioListener();
-  private readonly keyMap = new Set<string>();
+  readonly keyMap = new Set<string>();
   public highlightedTile?: Tile;
   public readonly worldRenderer: WorldRenderer;
   private vignetteCapturer = new VignetteCapturer(this);
@@ -90,7 +91,8 @@ export class Mito extends ISketch {
     this.updateAmbientAudio();
     this.attachWindowEvents();
 
-    this.actionBar = new SwitchableBar(new CellBar(this), new InteractBar(this));
+    // this.actionBar = new SwitchableBar(new CellBar(this), new InteractBar(this));
+    this.actionBar = new AltHeldBar(this);
   }
 
   public events = {
@@ -129,6 +131,7 @@ export class Mito extends ISketch {
       // }
     },
   };
+  private altElement?: WorldDOMElement;
   private handleKeyDown = (event: KeyboardEvent) => {
     this.firstActionTakenYet = true;
     const code = event.code;
@@ -137,6 +140,10 @@ export class Mito extends ISketch {
       this.toggleInstructions(code);
     }
     this.actionBar.keyDown(event);
+    const isOpeningDevtoolsOnChrome = event.code === "KeyI" && event.shiftKey && event.ctrlKey;
+    if (!isOpeningDevtoolsOnChrome) {
+      event.preventDefault();
+    }
   };
 
   private handleKeyUp = (event: KeyboardEvent) => {
@@ -335,6 +342,21 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   public animate(millisElapsed: number) {
+    if (this.isAltHeld() && this.altElement == null) {
+      this.altElement = this.addWorldDOMElement(
+        () => this.getHighlightedTile()!,
+        () => {
+          return (
+            <div className="tile-details-container">
+              <TileDetails tile={this.getHighlightedTile()} />
+            </div>
+          );
+        }
+      );
+    } else if (!this.isAltHeld() && this.altElement != null) {
+      this.removeWorldDOMElement(this.altElement);
+      this.altElement = undefined;
+    }
     if (this.instructionsOpen) {
       return;
     }
@@ -418,6 +440,12 @@ Number of Programs: ${this.renderer.info.programs!.length}
 
   suggestCamera(suggestedCamera: CameraState) {
     this.suggestedCamera = suggestedCamera;
+  }
+
+  public isAltHeld() {
+    return (
+      this.keyMap.has("AltLeft") || this.keyMap.has("AltRight") || this.keyMap.has("") || this.keyMap.has("AltRight")
+    );
   }
 
   public keysToMovement(keys: Set<string>): ActionMove | null {

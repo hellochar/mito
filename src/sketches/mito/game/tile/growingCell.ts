@@ -18,6 +18,7 @@ export class GrowingCell extends Cell {
     this.completedCell.pos.copy(this.pos);
     if (this.timeRemaining <= 0) {
       this.world.maybeRemoveCellAt(this.pos);
+      this.completedCell.energy = this.energy;
       this.world.setTileAt(this.pos, this.completedCell);
     }
   }

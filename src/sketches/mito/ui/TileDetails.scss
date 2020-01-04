@@ -18,6 +18,16 @@
     align-items: center;
   }
 
+  .interact-info {
+    &.f {
+      margin-top: 20px;
+    }
+
+    font-family: $arial-family;
+    color: $gray1;
+    font-size: 12px;
+  }
+
   .info-tile-name {
     display: inline-block;
     font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;

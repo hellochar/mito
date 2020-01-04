@@ -31,8 +31,19 @@ export class TileDetails extends React.Component<TileDetailsProps> {
         {this.airInfo(tile)}
         {this.soilInfo(tile)}
         {this.fountainInfo(tile)}
+        {this.interactInfo(tile)}
       </div>
     );
+  }
+  private interactInfo(tile: Tile) {
+    if (tile instanceof Cell) {
+      return (
+        <>
+          <div className="interact-info f">Left click - interact.</div>
+          <div className="interact-info">Right click - deconstruct.</div>
+        </>
+      );
+    }
   }
   private rootInfo(tile: Tile) {
     return tile instanceof Root ? (
@@ -56,7 +67,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       return (
         <div className="info-air">
           <div>☀️ {(tile.sunlight() * 100).toFixed(0)}%</div>
-          <div>☁️ {(tile.co2() * 100).toFixed(0)}%</div>
+          <div>Co2 {(tile.co2() * 100).toFixed(0)}%</div>
         </div>
       );
     }
@@ -86,7 +97,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   private tileInfo(tile: Tile) {
     const energyInfo =
       tile instanceof Cell ? (
-        <span className="info-energy">💚{((tile.energy / CELL_MAX_ENERGY) * 100).toFixed(0)}%</span>
+        <span className="info-energy">💚&nbsp;{((tile.energy / CELL_MAX_ENERGY) * 100).toFixed(0)}%</span>
       ) : null;
     return (
       <div className="info-tile">

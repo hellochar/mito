@@ -11,29 +11,34 @@ import { HotkeyButton } from "./HotkeyButton";
 
 export interface CellBarProps {
   bar: CellBar;
-  buildError?: "water" | "sugar" | "water and sugar";
+  disabled?: true | "water" | "sugar" | "water and sugar";
 }
 
-function CellBarUI({ bar, buildError }: CellBarProps) {
+function CellBarUI({ bar, disabled }: CellBarProps) {
   const index = bar.index();
-  const disabled = buildError != null;
+  const disabledEl = disabled == null ? null : disabled === true ? "" : <>Need {disabled} to build!</>;
+  const isBuildError = typeof disabled === "string";
   return (
     <div className={classNames("cell-bar", { disabled })}>
-      {bar.bar.map((cellType, i) => (
-        <CellBarItem
-          key={i}
-          bar={bar}
-          index={i}
-          hotkey={String(i + 1)}
-          type={cellType}
-          isSelected={index === i}
-          spritesheetLoaded={spritesheetLoaded}
-        >
-          {cellType === Transport ? <TransportDirArrow dir={Transport.buildDirection} /> : null}
-          {/* {cellType === Fruit ? <Glow /> : null} */}
-        </CellBarItem>
-      ))}
-      {disabled ? <div className="disabled-cover">Need {buildError} to build!</div> : null}
+      <div className="cell-bar-items">
+        {bar.bar.map((cellType, i) => (
+          <CellBarItem
+            key={i}
+            bar={bar}
+            index={i}
+            hotkey={String(i + 1)}
+            type={cellType}
+            isSelected={index === i}
+            spritesheetLoaded={spritesheetLoaded}
+          >
+            {cellType === Transport ? <TransportDirArrow dir={Transport.buildDirection} /> : null}
+            {/* {cellType === Fruit ? <Glow /> : null} */}
+          </CellBarItem>
+        ))}
+      </div>
+      {disabled ? (
+        <div className={classNames("disabled-cover", { "build-error": isBuildError })}>{disabledEl}</div>
+      ) : null}
     </div>
   );
 }

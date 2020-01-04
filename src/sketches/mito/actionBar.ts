@@ -2,7 +2,7 @@ import { Vector2 } from "three";
 import Mito from ".";
 import { ActionBuild, ActionInteract } from "./action";
 import { isInteractable } from "./game/interactable";
-import { Fruit, Leaf, Root, Tile, Tissue, Transport } from "./game/tile";
+import { Cell, Fruit, Leaf, Root, Tile, Tissue, Transport } from "./game/tile";
 
 export abstract class ActionBar {
   abstract leftClick(target: Tile): void;
@@ -46,34 +46,26 @@ export class CellBar extends ActionBar {
   }
 
   leftClick(target: Tile) {
-    let args: any[] | undefined;
-    if (this.selectedCell === Transport) {
-      args = [Transport.buildDirection.clone()];
-      // const highlightVector = this.getHighlightVector();
-      // const roundedHighlightVector = highlightVector.setLength(1).round();
-      // args.push(roundedHighlightVector);
-    }
-    const action: ActionBuild = {
-      type: "build",
-      cellType: this.selectedCell,
-      position: target.pos.clone(),
-      args,
-    };
+    if (this.mito.world.player.canBuildAt(target)) {
+      let args: any[] | undefined;
+      if (this.selectedCell === Transport) {
+        args = [Transport.buildDirection.clone()];
+        // const highlightVector = this.getHighlightVector();
+        // const roundedHighlightVector = highlightVector.setLength(1).round();
+        // args.push(roundedHighlightVector);
+      }
 
-    if (this.mito.world.player.isBuildCandidate(target, action)) {
+      const action: ActionBuild = {
+        type: "build",
+        cellType: this.selectedCell,
+        position: target.pos.clone(),
+        args,
+      };
       this.mito.world.player.setAction(action);
     }
   }
 
-  rightClick(tile: Tile) {
-    if (tile instanceof Fruit) {
-      return; // disallow deleting fruit
-    }
-    this.mito.world.player.setAction({
-      type: "deconstruct",
-      position: tile.pos,
-    });
-  }
+  rightClick(tile: Tile) {}
 
   keyDown(event: KeyboardEvent) {
     if (this.shouldCapture(event)) {
@@ -163,5 +155,31 @@ export class SwitchableBar extends ActionBar {
     //   this.current = this.other;
     // }
     this.current.keyDown(event);
+  }
+}
+
+export class AltHeldBar extends ActionBar {
+  public buildBar = new CellBar(this.mito);
+  public interactBar = new InteractBar(this.mito);
+  constructor(public mito: Mito) {
+    super();
+  }
+
+  barFor(target: Tile) {
+    if (target instanceof Cell || this.mito.isAltHeld()) {
+      return this.interactBar;
+    } else {
+      return this.buildBar;
+    }
+  }
+
+  leftClick(target: Tile) {
+    this.barFor(target).leftClick(target);
+  }
+  rightClick(target: Tile) {
+    this.barFor(target).rightClick(target);
+  }
+  keyDown(event: KeyboardEvent) {
+    this.buildBar.keyDown(event);
   }
 }

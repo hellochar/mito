@@ -203,18 +203,11 @@ export class Player implements Steppable {
     return true;
   }
 
-  public isBuildCandidate(tile: Tile | null, action: ActionBuild): tile is Tile {
+  public canBuildAt(tile: Tile | null): tile is Tile {
     if (tile == null) {
       return false;
-    }
-
-    if (tile instanceof Cell) {
-      const isFrozen = tile.findEffectOfType(FreezeEffect) != null;
-      if (isFrozen) {
-        return false;
-      }
-
-      return this.isMeaningfulBuild(action, tile);
+    } else if (tile instanceof Cell) {
+      return false;
     } else {
       return !tile.isObstacle;
     }
@@ -284,63 +277,21 @@ export class Player implements Steppable {
     }
   }
 
-  private argsEq(args1: any, args2: any) {
-    if (typeof args1 !== typeof args2) {
-      return false;
-    }
-    if (args1 == null && args2 == null) {
-      return true;
-    }
-    if (args1 instanceof Vector2 && args2 instanceof Vector2) {
-      return args1.equals(args2);
-    }
-    if (args1 instanceof Array && args2 instanceof Array) {
-      const allEq = args1.every((_, index) => this.argsEq(args1[index], args2[index]));
-      return allEq;
-    }
-  }
-
-  private isMeaningfulBuild(action: ActionBuild, existingCell: Cell) {
-    if (existingCell.constructor !== action.cellType) {
-      return true;
-    }
-
-    if (!this.argsEq(action.args, existingCell.args)) {
-      return true;
-    }
-
-    return false;
-  }
-
   public attemptBuild(action: ActionBuild, dt: number) {
     const existingCell = this.world.cellAt(action.position.x, action.position.y);
-    if (existingCell != null && !this.isMeaningfulBuild(action, existingCell)) {
-      // already built, whatever.
-      return true;
+    if (existingCell != null) {
+      // don't allow building over
+      return false;
     }
     const matureCell = this.tryConstructingNewCell(action.position, action.cellType, action.args);
     if (matureCell == null) {
       return false;
     }
 
-    if (existingCell) {
-      this.attemptDeconstruct(
-        {
-          type: "deconstruct",
-          position: action.position,
-          force: true,
-        },
-        dt
-      );
-    }
     let cell: Cell;
     if (action.cellType.timeToBuild) {
       // immediately build if it's the same type (e.g. Transport on Transport)
-      if (existingCell != null && existingCell.constructor === action.cellType) {
-        cell = matureCell;
-      } else {
-        cell = new GrowingCell(action.position, this.world, matureCell);
-      }
+      cell = new GrowingCell(action.position, this.world, matureCell);
     } else {
       cell = matureCell;
     }

@@ -236,6 +236,14 @@
   }
 }
 
+.tile-details-container {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 10px;
+}
+
 .tutorial-build {
   animation: growIn 2s both;
   position: relative;

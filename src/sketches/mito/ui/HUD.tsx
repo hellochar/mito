@@ -4,10 +4,10 @@ import { isInteresting } from "evolution/traits";
 import * as React from "react";
 import TraitDisplay from "../../../evolution/TraitDisplay";
 import Mito from "../index";
+import CellBarUI from "./CellBarUI";
 import "./HUD.scss";
 import { InventoryBar } from "./InventoryBar";
 import SeasonsTracker from "./SeasonsTracker";
-import SwitchableBarUI from "./SwitchableBarUI";
 
 export interface HUDProps {
   mito: Mito;
@@ -59,7 +59,11 @@ export class HUD extends React.Component<HUDProps, HUDState> {
             format="icons"
             className="player-inventory-bar"
           />
-          <SwitchableBarUI bar={this.mito.actionBar} />
+          {/* <SwitchableBarUI bar={this.mito.actionBar} /> */}
+          <CellBarUI
+            bar={this.mito.actionBar.buildBar}
+            disabled={this.mito.world.player.getBuildError() || (this.mito.isAltHeld() ? true : undefined)}
+          />
         </div>
       </>
     );

@@ -15,7 +15,7 @@ export const SwitchableBarUI: React.FC<SwitchableBarUIProps> = ({ bar }) => {
   const highlightedTile = bar.interactBar.mito.highlightedTile;
   const barElement =
     current instanceof CellBar ? (
-      <CellBarUI bar={current} buildError={current.mito.world.player.getBuildError()} />
+      <CellBarUI bar={current} disabled={current.mito.world.player.getBuildError()} />
     ) : highlightedTile != null ? (
       <TileDetails key={highlightedTile.toString()} tile={highlightedTile} />
     ) : null;
