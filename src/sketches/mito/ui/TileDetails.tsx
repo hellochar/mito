@@ -56,7 +56,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   private leafInfo(tile: Tile) {
     return tile instanceof Leaf ? (
       <div className="info-leaf">
-        <div>{formatSeconds(1 / (tile.averageSpeed * tile.reactionRate()), 2)} per reaction.</div>
+        <div>{(tile.averageChancePerSecond * 100).toFixed(1)}% chance to photosynthesize per second.</div>
         <div>{(1 / tile.averageConversionRate).toFixed(2)} water per sugar.</div>
         <div>{tile.totalSugarProduced.toFixed(2)} total sugar produced so far.</div>
       </div>

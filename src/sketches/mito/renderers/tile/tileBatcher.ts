@@ -87,7 +87,7 @@ varying vec2 vUv;
 varying vec2 vTexturePosition;
 varying float vAirAmount;
 
-const vec2 spritesheetSize = vec2(128., 128.);
+const vec2 spritesheetSize = vec2(256., 256.);
 uniform sampler2D spriteSheet;
 
 float myRound(float x) {

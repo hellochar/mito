@@ -3,11 +3,13 @@ import { traitMod } from "../../../../evolution/traits";
 import { DIRECTIONS } from "../../directions";
 import { params } from "../../params";
 import { CELL_BUILD_TIME, CELL_DIFFUSION_SUGAR_TIME, CELL_DIFFUSION_WATER_TIME, CELL_MAX_ENERGY } from "../constants";
+import { step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
 import { World } from "../world";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
 import { DeadCell } from "./deadCell";
+import Genome, { GeneInstance } from "./genome";
 import { Rock } from "./rock";
 import { Soil } from "./soil";
 import { Tile } from "./tile";
@@ -24,6 +26,8 @@ export abstract class Cell extends Tile implements Interactable {
   public droopY = 0;
   public args?: any[];
   public effects: CellEffect[] = [];
+  public genome: Genome = new Genome();
+  public geneInstances: GeneInstance[];
   get tempo() {
     if (this.temperatureFloat <= 0) {
       // 50% slower - 1 / 2;
@@ -48,7 +52,12 @@ export abstract class Cell extends Tile implements Interactable {
     super(pos, world);
     this.temperatureFloat = 48;
     this.nextTemperature = this.temperatureFloat;
+    this.geneInstances = this.genome.newGeneInstances(this);
+    // TODO implement inventoryCapacity and diffuseWater
+    const { isObstacle, inventoryCapacity } = this.genome.getStaticProperties();
+    this.isObstacle = isObstacle;
   }
+
   addEffect(effect: CellEffect) {
     const stacks = (effect.constructor as CellEffectConstructor).stacks;
     if (!stacks) {
@@ -99,6 +108,7 @@ export abstract class Cell extends Tile implements Interactable {
     for (const effect of this.effects) {
       effect.step(dt);
     }
+    this.geneInstances.forEach((g) => step(g, dt));
     const tileNeighbors = this.world.tileNeighbors(this.pos);
     const neighbors = Array.from(tileNeighbors.values());
     let maxEnergyToEat = this.getMaxEnergyToEat(tempo * dt);

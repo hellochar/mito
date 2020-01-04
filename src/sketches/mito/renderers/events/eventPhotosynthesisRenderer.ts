@@ -4,9 +4,9 @@ import { Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { InstancedTileRenderer } from "../tile/InstancedTileRenderer";
 import { WorldRenderer } from "../WorldRenderer";
-import { EventRenderer } from "./eventRenderer";
+import { EventRendererFFPoints } from "./eventRendererFFPoints";
 
-export default class EventPhotosynthesisRenderer extends EventRenderer<EventPhotosynthesis> {
+export default class EventPhotosynthesisRenderer extends EventRendererFFPoints<EventPhotosynthesis> {
   static makePoints() {
     const duration = 0.5;
     return new FireAndForgetPoints<EventPhotosynthesis>(

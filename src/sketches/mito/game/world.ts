@@ -35,6 +35,7 @@ export class StepStats {
     evaporation: [],
     photosynthesis: [],
     thaw: [],
+    "collect-sunlight": [],
   };
   constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
   logEvent(event: TileEvent) {

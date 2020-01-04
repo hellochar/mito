@@ -25,6 +25,8 @@ export function polyUpDown(t: number) {
  * ...sharper downards curve
  * 1 = 0
  */
-export function polyBiasUpDown(t: number) {
+export function polyLateUpDown(t: number) {
   return (27 / 4) * (t * t - t * t * t);
 }
+
+export const polyEarlyUpDown = reversed(polyLateUpDown);

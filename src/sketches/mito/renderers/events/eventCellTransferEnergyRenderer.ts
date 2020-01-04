@@ -3,9 +3,9 @@ import { textureFromSpritesheet } from "sketches/mito/spritesheet";
 import { Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { WorldRenderer } from "../WorldRenderer";
-import { EventRenderer } from "./eventRenderer";
+import { EventRendererFFPoints } from "./eventRendererFFPoints";
 
-export default class EventCellTransferEnergyRenderer extends EventRenderer<EventCellTransferEnergy> {
+export default class EventCellTransferEnergyRenderer extends EventRendererFFPoints<EventCellTransferEnergy> {
   static makePoints() {
     const duration = 0.5;
     return new FireAndForgetPoints<EventCellTransferEnergy>(

@@ -1,3 +1,4 @@
+import { randRound } from "math";
 import { Vector2 } from "three";
 import { traitMod } from "../../../../evolution/traits";
 import { Inventory } from "../../inventory";
@@ -9,7 +10,7 @@ export class Leaf extends Cell {
   static displayName = "Leaf";
   public isObstacle = true;
   public averageConversionRate = 0;
-  public averageSpeed = 0;
+  public averageChancePerSecond = 0;
   public sugarConverted = 0;
   public activeNeighbors: Vector2[] = [];
   public totalSugarProduced = 0;
@@ -22,7 +23,7 @@ export class Leaf extends Cell {
   public step(dt: number) {
     super.step(dt);
     this.averageConversionRate = 0;
-    this.averageSpeed = 0;
+    this.averageChancePerSecond = 0;
     this.sugarConverted = 0;
     const neighbors = this.world.tileNeighbors(this.pos);
 
@@ -33,7 +34,7 @@ export class Leaf extends Cell {
       if (tile instanceof Leaf) {
         tile.diffuseWater(this, dt, this.diffusionWater * 5);
       } else if (canPullResources(this, tile)) {
-        tile.inventory.give(this.inventory, LEAF_WATER_INTAKE_PER_SECOND * dt, 0);
+        tile.inventory.give(this.inventory, randRound(LEAF_WATER_INTAKE_PER_SECOND * dt), 0);
       } else if (tile instanceof Air) {
         this.activeNeighbors.push(dir);
         numAir += 1;
@@ -46,6 +47,9 @@ export class Leaf extends Cell {
       // this.averageSpeed /= numAir;
     }
   }
+  // public sunlightCollected = 0;
+
+  public lastPhotosynthesisEvent = 0;
 
   maybePhotosynthesize(dt: number, air: Air, tissue: Cell) {
     // this.tilePairs.push(dir);
@@ -55,7 +59,6 @@ export class Leaf extends Cell {
     const conversionRate = air.co2();
     // const conversionRate = 1;
     this.averageConversionRate += conversionRate;
-    this.averageSpeed += speed;
     const reactionRate = this.reactionRate();
     // in prime conditions:
     //      our rate of conversion is speed * params.leafReactionRate
@@ -66,19 +69,41 @@ export class Leaf extends Cell {
     const bestEfficiencyWater = 1 / conversionRate;
     const waterToConvert = Math.min(tissue.inventory.water, bestEfficiencyWater);
     // water (1 / time) * time / (water)
-    const chance = (speed * reactionRate * dt) / bestEfficiencyWater;
-    // console.log(chance);
-    if (Math.random() < chance && waterToConvert > 0) {
-      const sugarConverted = waterToConvert * conversionRate;
-      tissue.inventory.add(-waterToConvert, sugarConverted);
-      this.sugarConverted += sugarConverted;
-      this.totalSugarProduced += sugarConverted;
-      this.world.logEvent({
-        type: "photosynthesis",
-        leaf: this,
-        where: tissue,
-        amount: sugarConverted,
-      });
+    const chance = speed * reactionRate; // * (waterToConvert / bestEfficiencyWater);
+    this.averageChancePerSecond += chance;
+
+    // this.sunlightCollected += chance * dt;
+    this.world.logEvent({
+      type: "collect-sunlight",
+      leaf: this,
+      air,
+      amount: speed,
+      // amount: chance,
+    });
+
+    // chance = 1 = speed * reactionRate * dt / bestEfficiencyWater
+    // dt = 40
+    // reactionRate = 1 / 40
+    // speed = 1 (perfect sunlight)
+    // bestEfficiencyWater
+    if (Math.random() < chance * dt && waterToConvert > 0) {
+      // if (this.sunlightCollected > 1) {
+      if (waterToConvert > 0) {
+        const sugarConverted = waterToConvert * conversionRate;
+        tissue.inventory.add(-waterToConvert, sugarConverted);
+        this.sugarConverted += sugarConverted;
+        this.totalSugarProduced += sugarConverted;
+        this.world.logEvent({
+          type: "photosynthesis",
+          leaf: this,
+          where: tissue,
+          amount: sugarConverted,
+        });
+      }
+      const elapsed = this.age - this.lastPhotosynthesisEvent;
+      console.log("elapsed", elapsed.toFixed(2));
+      this.lastPhotosynthesisEvent = this.age;
+      // this.sunlightCollected -= 1;
     }
   }
 }

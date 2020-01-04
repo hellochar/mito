@@ -4,9 +4,9 @@ import { EventThawIce } from "sketches/mito/game/tileEvent";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { FREEZE_BLUE } from "../tile/CellEffectsRenderer";
 import { WorldRenderer } from "../WorldRenderer";
-import { EventRenderer } from "./eventRenderer";
+import { EventRendererFFPoints } from "./eventRendererFFPoints";
 
-export default class EventThawIceRenderer extends EventRenderer<EventThawIce> {
+export default class EventThawIceRenderer extends EventRendererFFPoints<EventThawIce> {
   static makePoints() {
     const duration = 0.6;
     // fruitSparkle.renderOrder = 10;

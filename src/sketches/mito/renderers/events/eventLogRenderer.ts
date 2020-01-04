@@ -3,6 +3,7 @@ import { Renderer } from "../Renderer";
 import { WorldRenderer } from "../WorldRenderer";
 import EventCellEatRenderer from "./eventCellEatRenderer";
 import EventCellTransferEnergyRenderer from "./eventCellTransferEnergyRenderer";
+import EventCollectSunlightRenderer from "./eventCollectSunlightRenderer";
 import EventEvaporationRenderer from "./eventEvaporationRenderer";
 import EventPhotosynthesisRenderer from "./eventPhotosynthesisRenderer";
 import EventThawIceRenderer from "./eventThawIceRenderer";
@@ -14,6 +15,7 @@ export class EventLogRenderer extends Renderer<WorldRenderer> {
     evaporation: new EventEvaporationRenderer(this.target),
     photosynthesis: new EventPhotosynthesisRenderer(this.target),
     thaw: new EventThawIceRenderer(this.target),
+    "collect-sunlight": new EventCollectSunlightRenderer(this.target),
   } as const;
 
   constructor(worldRenderer: WorldRenderer) {

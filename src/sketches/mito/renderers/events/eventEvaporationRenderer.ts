@@ -3,9 +3,9 @@ import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { InstancedTileRenderer } from "../tile/InstancedTileRenderer";
 import { WorldRenderer } from "../WorldRenderer";
-import { EventRenderer } from "./eventRenderer";
+import { EventRendererFFPoints } from "./eventRendererFFPoints";
 
-export default class EventEvaporationRenderer extends EventRenderer<EventEvaporation> {
+export default class EventEvaporationRenderer extends EventRendererFFPoints<EventEvaporation> {
   static makePoints() {
     const duration = 1.5;
     return new FireAndForgetPoints<EventEvaporation>(
