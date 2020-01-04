@@ -44,10 +44,12 @@ export class PlayerRenderer extends Renderer<Player> {
   longBuildAnimation(actionLong: ActionLong<ActionBuild>): Animation {
     const animWaitForCameraZoomIn = animPause(0.5);
     let w = 0;
+    const animShakeDuration = 1.5;
     const animShake: Animation = (t, dt) => {
-      const tNorm = t / 1.8;
-      const pow = clamp(4 * (tNorm - tNorm * tNorm), 0, 1);
-      const shakeFrequency = 9 * pow;
+      const tNorm = t / animShakeDuration;
+      // const pow = clamp(polyBiasUpDown(tNorm), 0, 1);
+      const pow = clamp(tNorm, 0, 1);
+      const shakeFrequency = 9 * Math.sqrt(pow);
       const shakeAmplitude = 0.15 * pow ** 1.5;
       w += dt * Math.PI * 2 * shakeFrequency;
       this.mesh.position.x += Math.sin(w) * shakeAmplitude;
@@ -75,8 +77,8 @@ export class PlayerRenderer extends Renderer<Player> {
 
   animSendCopy(target: Vector2): Animation {
     const copy = newMesh();
-    copy.scale.x = this.mesh.scale.x * 0.25;
-    copy.scale.y = this.mesh.scale.y * 0.25;
+    copy.scale.x = this.mesh.scale.x * 1;
+    copy.scale.y = this.mesh.scale.y * 1;
     copy.position.z = this.mesh.position.z - 0.01;
     this.scene.add(copy);
     const animDuplicate: Animation = (t) => {
@@ -97,15 +99,17 @@ export class PlayerRenderer extends Renderer<Player> {
       this.mesh.position.x -= dX;
       return tNorm > 1;
     };
-    const animMove: Animation = (t, dt) => {
-      const tNorm = t / 1.3;
+    const animShrinkAndMove: Animation = (t, dt) => {
+      const tNorm = t / 1.2;
       // lerp2(copy.position, this.mesh.position, 1);
       lerp2(copy.position, target, 0.1);
       // lerp2(copy.position, target, easeExpOut(tNorm));
-
+      // lerp2(copy.scale, { x: this.mesh.scale.x, y: this.mesh.scale.y }, 1);
+      // lerp2(copy.scale, { x: this.mesh.scale.x * 0.2, y: this.mesh.scale.y * 0.2 }, easeSinInOut(tNorm));
+      lerp2(copy.scale, { x: this.mesh.scale.x * 0.2, y: this.mesh.scale.y * 0.2 }, 0.1);
       return tNorm > 1;
     };
-    const animShrink: Animation = (t) => {
+    const animShrinkToZeroAndRemove: Animation = (t) => {
       const tNorm = t / 0.5;
       lerp2(copy.scale, { x: this.mesh.scale.x * 0.2, y: this.mesh.scale.y * 0.2 }, 1);
       lerp2(copy.scale, { x: 0, y: 0 }, easeSinInOut(tNorm));
@@ -119,9 +123,8 @@ export class PlayerRenderer extends Renderer<Player> {
     return chain(
       animDuplicate,
       also(animPause(0.5), animStayLeft),
-      also(animMove, animReturnOriginal),
-      animPause(0.25),
-      animShrink
+      also(animShrinkAndMove, animReturnOriginal),
+      animShrinkToZeroAndRemove
     );
   }
 }

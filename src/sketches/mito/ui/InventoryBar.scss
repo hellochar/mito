@@ -48,11 +48,13 @@
     margin-left: 10px;
   }
 
-  .water {
-    color: $color-water;
-  }
+  &.colored {
+    .water {
+      color: $color-water;
+    }
 
-  .sugar {
-    color: $color-sugar;
+    .sugar {
+      color: $color-sugar;
+    }
   }
 }

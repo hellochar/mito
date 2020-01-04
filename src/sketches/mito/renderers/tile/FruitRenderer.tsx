@@ -9,10 +9,10 @@ import TileBatcher from "./tileBatcher";
 
 export class FruitRenderer extends InstancedTileRenderer<Fruit> {
   lastEmitAge: number = -Infinity;
-  worldDomElement: WorldDOMElement;
+  resourcesNeededElement: WorldDOMElement;
   constructor(fruit: Fruit, scene: Scene, mito: Mito, batchMesh: TileBatcher) {
     super(fruit, scene, mito, batchMesh);
-    this.worldDomElement = mito.addWorldDOMElement(
+    this.resourcesNeededElement = mito.addWorldDOMElement(
       () => this.target,
       () => {
         return (
@@ -51,7 +51,7 @@ export class FruitRenderer extends InstancedTileRenderer<Fruit> {
   }
 
   destroy() {
-    this.mito.removeWorldDOMElement(this.worldDomElement);
+    this.mito.removeWorldDOMElement(this.resourcesNeededElement);
     super.destroy();
   }
 }

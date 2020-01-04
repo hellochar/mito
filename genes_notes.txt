@@ -1,0 +1,69 @@
+Things I want genes to control:
+
+(Tile)
+* Water Diffusion
+* Sugar Diffusion
+* Is obstacle
+
+(Cell)
+* Time to Build
+* Inventory capacity
+* Convert sugar to energy
+* Take energy from neighboring Cells
+* Build cost
+
+(Fruit)
+* Immunity to freezing
+* Pull resources from neighbors
+* Provide reproduction through resource dumping
+
+(Leaf)
+* diffuse water with other Leaves
+* Pull water from neighbors
+* Perform photosynthesis: Water + Air into sugar
+
+(Root)
+* absorb water from Soil
+
+(Transport)
+* Directional: push water and sugar in a direction
+
+Caaaraaazy ideas:
+
+* not affected by temperatures
+* makes nearby cells build faster
+* water+sugar make Nutrient
+* Convert Toxic to Nutrient
+* Consume Energy; +1 slot
+* Interact to release Toxins into surrounding soil
+* Convert Nutrient into sugar
+* Use Nutrient to release aromas (repel enemies, attract allies)
+* Protect against fungus
+* poisonous - kill things that eat this tile
+* faster walk speed on it
+* nighttime emits an aroma
+* push resources away
+* diffusion easier
+* diffusion harder
+* water that leaves this cell also carries sugar
+* move 80% slower, +2
+* take much longer to build; +2
+* 1 sugar + 1 nutrient = 5 sugar
+* nutrient directly into energy (respiration?)
+* Turn nearby organic matter in Soil directly into nutrients
+* Collect water from adjacent Air tiles
+* thorns - insects distance 1 from you cannot get any nearer
+* fuzzy - prevent frost 1, prevent heat 1, capture Air water
+
+Things to play with:
+* When sunlight hits
+* During nighttime
+* When infected by disease
+* While there is a water on me
+* While not hungry
+* While there is sugar on me
+
+Required "addon" genes:
+* When photosynthesis occurs, produce 0.1 nutrient
+* Root hairs - roots suck from all adjacent soil, instead of just one
+* 

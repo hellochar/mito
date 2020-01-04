@@ -18,6 +18,7 @@ export default function SeasonsTracker({ time, season }: { time: number; season:
         <div className="end-brace" />
       </div> */}
       <div className="season-display">
+        {season.year > 0 ? <>Year {season.year + 1}, </> : null}
         {SEASON_NAMES[season.season]}
         <br />
         Month {season.month}

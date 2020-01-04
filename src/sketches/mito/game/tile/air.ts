@@ -11,7 +11,7 @@ export class Air extends Tile {
   static diffusionWater = 1.5;
   public sunlightCached: number = 1;
   public _co2: number;
-  public inventory = new Inventory(20, this);
+  public inventory = new Inventory(6, this);
   public constructor(public pos: Vector2, world: World) {
     super(pos, world);
     this.darkness = 0;

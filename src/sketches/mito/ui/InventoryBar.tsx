@@ -9,9 +9,10 @@ export const InventoryBar: React.FC<{
   sugar: number;
   capacity: number;
   format: "text" | "icons";
+  colored?: boolean;
   capacityBasedWidth?: boolean;
   className?: string;
-}> = React.memo(({ water, sugar, capacity, className, format, capacityBasedWidth }) => {
+}> = React.memo(({ water, sugar, capacity, className, colored = true, format, capacityBasedWidth }) => {
   if (capacity === 0) {
     return null;
   }
@@ -65,7 +66,7 @@ export const InventoryBar: React.FC<{
         <div style={emptyStyles} className="bar-empty"></div>
         {capacityBasedWidth ? <div className="markers" /> : null}
       </div>
-      <div className="inventory-text">{textElements}</div>
+      <div className={classNames("inventory-text", { colored })}>{textElements}</div>
     </div>
   );
 });

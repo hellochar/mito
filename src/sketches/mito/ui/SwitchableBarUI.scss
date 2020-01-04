@@ -5,10 +5,13 @@
   min-width: 370px;
   min-height: 120px;
   position: relative;
-  border: 1px solid grey;
+  // border: 1px solid grey;
   border-top: none;
-  background: rgba(255, 255, 255, 0.25);
+  // background: rgba(255, 255, 255, 0.25);
   pointer-events: initial;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .switcher {
     position: absolute;

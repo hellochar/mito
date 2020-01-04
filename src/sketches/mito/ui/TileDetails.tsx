@@ -99,6 +99,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
             sugar={tile.inventory.sugar}
             capacity={tile.inventory.capacity}
             format="icons"
+            colored={false}
             capacityBasedWidth
           />
         </div>

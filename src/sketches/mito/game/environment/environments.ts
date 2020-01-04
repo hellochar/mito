@@ -20,14 +20,16 @@ export function environmentFromLevelInfo(info: LevelInfo) {
 
   switch (info.height) {
     case 0:
-      return Temperate;
+      return Level0;
     case 1:
-      return Reservoires;
+      return Temperate;
     case 2:
-      return Rocky;
+      return Reservoires;
     case 3:
-      return SkySoil;
+      return Rocky;
     case 4:
+      return SkySoil;
+    case 5:
     default:
       return Desert;
   }
@@ -38,6 +40,19 @@ export const EnvironmentSchema = createSimpleSchema<Environment>({
   climate: object(createSimpleSchema({ "*": true })),
   "*": true,
 });
+
+export const Level0: Environment = {
+  airEvaporation: 0.2,
+  climate: {
+    timeBetweenRainfall: 40,
+    rainDuration: 2,
+    waterPerSecond: 100,
+  },
+  secondsToEvaporate: 166,
+  floorCo2: 0.5,
+  temperaturePerSeason: [51, 56, 52, 43],
+  fill: "Level0",
+};
 
 export const Temperate: Environment = {
   airEvaporation: 0.3,

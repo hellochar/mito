@@ -20,10 +20,10 @@ export const PLAYER_MOVED_BY_TRANSPORT_SPEED = 0.3;
 /**
  * Number of realtime seconds in a game year.
  */
-export const TIME_PER_YEAR = 60 * 30; // 60 seconds * 30 minutes = 1800 seconds
-export const TIME_PER_SEASON = TIME_PER_YEAR / 4; // 450 seconds per season (7.5 minutes)
-export const TIME_PER_MONTH = TIME_PER_SEASON / 3; // 150 seconds per month (2.5 minutes)
-export const TIME_PER_DAY = TIME_PER_MONTH / 3; // 50 seconds per day
+export const TIME_PER_YEAR = 60 * 36; // 60 seconds * 36 minutes = 1800 seconds
+export const TIME_PER_SEASON = TIME_PER_YEAR / 4; // 480 seconds per season (9 minutes)
+export const TIME_PER_MONTH = TIME_PER_SEASON / 3; // 180 seconds per month (3 minutes)
+export const TIME_PER_DAY = TIME_PER_MONTH / 3; // 60 seconds per day (1 minute)
 
 /**
  * The day is further split into a "daytime" and a "nighttime". Sunlight

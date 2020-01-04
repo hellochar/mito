@@ -1,4 +1,5 @@
 import classnames from "classnames";
+import { Button } from "common/Button";
 import { isInteresting } from "evolution/traits";
 import * as React from "react";
 import TraitDisplay from "../../../evolution/TraitDisplay";
@@ -48,6 +49,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
       <>
         <SeasonsTracker time={this.world.time} season={this.world.season} />
         {this.maybeRenderTraits()}
+        {this.maybeRenderCollectButton()}
         <div className={classnames("hud-bottom", { hidden: false })}>
           {isMaxedEl}
           <InventoryBar
@@ -61,6 +63,19 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         </div>
       </>
     );
+  }
+
+  maybeRenderCollectButton() {
+    const result = this.world.getDecidedGameResult();
+    if (result.status === "won") {
+      return (
+        <div className="hud-right-of-time">
+          <Button color="purple" onClick={() => this.mito.onWinLoss(result)}>
+            Win (+ {result.mutationPointsPerEpoch} MP)
+          </Button>
+        </div>
+      );
+    }
   }
 
   maybeRenderTraits() {

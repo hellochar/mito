@@ -16,7 +16,6 @@ import {
   CELL_DIFFUSION_WATER_TIME,
   PERCENT_DAYLIGHT,
   TIME_PER_DAY,
-  TIME_PER_YEAR,
 } from "./constants";
 import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
@@ -468,13 +467,17 @@ export class World {
 
   public maybeGetGameResult(): GameResult | null {
     const isStandingOnDeadCell = this.tileAt(this.player.pos.x, this.player.pos.y) instanceof DeadCell;
-    const isTimePastOneYear = this.time >= TIME_PER_YEAR;
-    const shouldGameEnd = isStandingOnDeadCell || isTimePastOneYear;
+    // const isTimePastOneYear = this.time >= TIME_PER_YEAR;
+    const shouldGameEnd = isStandingOnDeadCell;
     if (!shouldGameEnd) {
       return null;
     }
 
     // make a decision
+    return this.getDecidedGameResult();
+  }
+
+  public getDecidedGameResult(): GameResult {
     const matureFruit = this.wipResult.fruits.filter((f) => f.isMature());
     const shouldWin = matureFruit.length > 0;
 
