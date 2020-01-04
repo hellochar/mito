@@ -53,7 +53,7 @@ export class Mito extends ISketch {
   private vignetteCapturer = new VignetteCapturer(this);
   private vignettes: HTMLCanvasElement[] = [];
 
-  private hackCamera: PerspectiveCamera;
+  private hackCamera?: PerspectiveCamera;
   private controls?: OrbitControls;
 
   private suggestedCamera?: CameraState;
@@ -76,11 +76,13 @@ export class Mito extends ISketch {
     this.camera.zoom = this.userZoom = 1.5;
     this.camera.add(this.audioListener);
 
-    this.hackCamera = new PerspectiveCamera(60, this.canvas.height / this.canvas.width);
-    this.hackCamera.position.copy(this.camera.position);
-    this.hackCamera.lookAt(0, 0, 0);
-    this.controls = new OrbitControls(this.hackCamera);
-    this.scene.add(new THREE.AxesHelper(25));
+    // this.hackCamera = new PerspectiveCamera(60, this.canvas.height / this.canvas.width);
+    // this.hackCamera.position.copy(this.camera.position);
+    // this.hackCamera.lookAt(0, 0, 0);
+    if (this.hackCamera != null) {
+      this.controls = new OrbitControls(this.hackCamera);
+      this.scene.add(new THREE.AxesHelper(25));
+    }
 
     this.worldRenderer = new WorldRenderer(this.world, this.scene, this);
 
@@ -370,8 +372,11 @@ Number of Programs: ${this.renderer.info.programs!.length}
 
     this.suggestedCamera = undefined;
 
-    this.renderer.render(this.scene, this.camera);
-    // this.renderer.render(this.scene, this.hackCamera);
+    if (this.hackCamera != null) {
+      this.renderer.render(this.scene, this.hackCamera);
+    } else {
+      this.renderer.render(this.scene, this.camera);
+    }
     // if (params.debug && this.frameCount % 100 === 0) {
     // this.perfDebug();
     // this.logRenderInfo();
