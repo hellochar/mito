@@ -16,7 +16,6 @@ import { build, footsteps } from "../audio";
 import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
 import {
-  CELL_MAX_ENERGY,
   PLAYER_BASE_SPEED,
   PLAYER_MAX_RESOURCES,
   PLAYER_MOVED_BY_TRANSPORT_SPEED,
@@ -305,11 +304,13 @@ export class Player implements Steppable {
       const cell = this.world.maybeRemoveCellAt(action.position);
       if (cell != null) {
         // refund the resources back
-        const refund = cell.energy / CELL_MAX_ENERGY;
-        this.inventory.add(refund, refund);
-        if (hasInventory(cell)) {
-          cell.inventory.give(this.inventory, cell.inventory.water, cell.inventory.sugar);
-        }
+        // const refund = cell.energy / CELL_MAX_ENERGY;
+        // this.inventory.add(refund, refund);
+
+        // maybeRemoveCellAt has already tried redistributing inventory to neighbors,
+        // but if it couldn't do that, as a last ditch, give resources directly to
+        // the player
+        cell.inventory.give(this.inventory, cell.inventory.water, cell.inventory.sugar);
         return true;
       }
     }
