@@ -19,6 +19,7 @@ import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
 import { GameStack, Hover, HUD } from "./ui";
 import Debug from "./ui/Debug";
+import { Instructions } from "./ui/Instructions";
 import { WorldDOMElement } from "./WorldDOMElement";
 
 export interface GameResult {
@@ -184,6 +185,7 @@ export class Mito extends ISketch {
         </div> */}
         <div className="world-dom-components">{worldDomElementComponents}</div>
         {params.debug ? <Debug mito={this} /> : null}
+        {this.instructionsOpen ? <Instructions play={() => (this.instructionsOpen = false)} /> : null}
       </>
     );
   }
