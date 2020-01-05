@@ -1,10 +1,9 @@
 import { Layout, PlotData } from "plotly.js";
 import React from "react";
-import { Cell } from "sketches/mito/game/tile";
+import { Cell, Tissue } from "sketches/mito/game/tile";
 import { GeneVascular } from "sketches/mito/game/tile/genes";
 import Genome from "sketches/mito/game/tile/genome";
 import { Inventory } from "sketches/mito/inventory";
-import { Vector2 } from "three";
 import { newBaseSpecies } from "../evolution/species";
 import { step, World } from "../sketches/mito/game";
 import { Environment } from "../sketches/mito/game/environment";
@@ -28,28 +27,71 @@ const allSoilEnvironment: Environment = {
   temperaturePerSeason: [50, 50, 50, 50],
 };
 
-function runTest() {
+function testWorld(width: number, height: number) {
   const world = new World(allSoilEnvironment, 0, newBaseSpecies(), {
-    width: 20,
-    height: 1,
+    width,
+    height,
     growInitialTissue: false,
   });
-  for (let x = 0; x < world.width; x++) {
-    const p = new Vector2(x, 0);
-    world.setTileAt(p, new PureGenomeCell(p, world, vascularGenome));
+  for (const t of world.allEnvironmentTiles()) {
+    const p = t.pos;
+    world.setTileAt(p, new Tissue(p, world));
   }
-  world.cellAt(0, 0)!.inventory.set(10, 0);
-  const visitors: Visitors = {};
-  for (const cell of world.allCells()) {
-    visitors[cell.toString()] = () => {
-      return cell.inventory.water;
+  world.cellAt(0, 0)!.inventory.set(100, 0);
+  return world;
+}
+function runOneWideAbsolute() {
+  const world1 = testWorld(20, 1);
+  const visitors: Visitors = {
+    time: (t) => t[0].world.time,
+  };
+  for (const c of world1.allCells()) {
+    const pos = c.pos;
+    const cell1 = world1.cellAt(pos)!;
+    visitors[pos.x] = () => {
+      const c1w = cell1.inventory.water;
+      return c1w;
     };
   }
   const experiment = new Experiment(visitors);
+  console.time("run simulation");
   do {
-    experiment.recordDataFor(world);
-    world.step(0.1);
-  } while (world.time <= 1);
+    if (world1.time % 1 < 0.1) {
+      experiment.recordDataFor(Array.from(world1.allCells()));
+    }
+    world1.step(0.1);
+  } while (world1.time <= 10);
+  console.timeEnd("run simulation");
+  return experiment;
+}
+
+function runTwoWideCompare() {
+  const world1 = testWorld(20, 1);
+  const world2 = testWorld(20, 2);
+  const visitors: Visitors = {
+    time: (t) => t[0].world.time,
+  };
+  for (const c of world1.allCells()) {
+    const pos = c.pos;
+    const cell1 = world1.cellAt(pos)!;
+    const cell2 = world2.cellAt(pos)!;
+    visitors[pos.x] = () => {
+      const c1w = cell1.inventory.water;
+      const c2w = cell2.inventory.water;
+      // how much faster (or slower) a 2 wide channel goes compared to a one-wide
+      return c2w - c1w;
+    };
+  }
+  const experiment = new Experiment(visitors);
+  console.time("run simulation");
+  do {
+    if (world1.time % 1 < 0.1) {
+      experiment.recordDataFor(Array.from(world1.allCells()));
+    }
+    world1.step(0.1);
+    world2.step(0.1);
+  } while (world1.time <= 10);
+  console.timeEnd("run simulation");
   return experiment;
 }
 
@@ -85,12 +127,14 @@ function TestDiffusion() {
     var script = document.createElement("script");
     script.src = "https://cdn.plot.ly/plotly-latest.min.js";
     script.addEventListener("load", function() {
-      const e = runTest();
+      const e = runTwoWideCompare();
       plotStackedBar(e, "water-over-time");
     });
     script.addEventListener("error", () => {
-      const e = runTest();
-      console.table(e.trials);
+      const e1 = runOneWideAbsolute();
+      console.table(e1.trials);
+      const e2 = runTwoWideCompare();
+      console.table(e2.trials);
     });
 
     document.body.appendChild(script);

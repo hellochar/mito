@@ -1,17 +1,16 @@
 import { World } from "sketches/mito/game";
 import { Tile } from "sketches/mito/game/tile";
 
-export type Visitor = (tiles: Tile[], arg0: any) => number;
+export type Visitor = (tiles: Tile[], world: World) => number;
 
 export interface Visitors {
   [name: string]: Visitor;
 }
 
-export function visit(arg0: World | Tile[], visitors: Visitors): Trial {
-  const tiles = arg0 instanceof World ? Array.from(arg0.allEnvironmentTiles()) : arg0;
+export function visit(tiles: Tile[], visitors: Visitors): Trial {
   const results: Trial = {};
   for (const [name, visitor] of Object.entries(visitors)) {
-    const result = visitor(tiles, arg0);
+    const result = visitor(tiles, tiles[0].world);
     results[name] = result;
   }
   return results;
@@ -24,8 +23,8 @@ export interface Trial {
 export class Experiment {
   trials: Trial[] = [];
   constructor(public visitors: Visitors) {}
-  recordDataFor(world: World) {
-    const trial = visit(world, this.visitors);
+  recordDataFor(tiles: Tile[]) {
+    const trial = visit(tiles, this.visitors);
     this.trials.push(trial);
   }
   visitorNames() {
@@ -36,9 +35,9 @@ export class Experiment {
 export class ExperimentSuite {
   constructor(public experiments: Experiment[]) {}
 
-  recordDataFor(world: World) {
+  recordDataFor(tiles: Tile[]) {
     for (const e of this.experiments) {
-      e.recordDataFor(world);
+      e.recordDataFor(tiles);
     }
   }
 }

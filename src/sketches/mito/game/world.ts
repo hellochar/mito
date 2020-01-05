@@ -169,9 +169,15 @@ export class World {
     }
   }
 
-  public cellAt(x: number, y: number): Cell | null {
-    if (this.isValidPosition(x, y)) {
-      return this.gridCells[x][y];
+  public cellAt(v: Vector2): Cell | null;
+  public cellAt(x: number, y: number): Cell | null;
+  public cellAt(x: number | Vector2, y?: number): Cell | null {
+    if (x instanceof Vector2) {
+      y = x.y;
+      x = x.x;
+    }
+    if (this.isValidPosition(x, y!)) {
+      return this.gridCells[x][y!];
     } else {
       return null;
     }
@@ -557,6 +563,23 @@ export class World {
         for (const row of self.gridEnvironment) {
           for (const t of row) {
             yield t;
+          }
+        }
+      },
+    };
+  }
+
+  allTiles() {
+    const { width, height } = this;
+    const self = this;
+    return {
+      *[Symbol.iterator]() {
+        for (let x = 0; x < width; x++) {
+          for (let y = 0; y < height; y++) {
+            const g = self.tileAt(x, y);
+            if (g != null) {
+              yield g;
+            }
           }
         }
       },
