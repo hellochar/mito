@@ -8,13 +8,27 @@ import { textureFromSpritesheet } from "../spritesheet";
 import { CommittablePoints } from "./committablePoints";
 import { Renderer } from "./Renderer";
 
+// default
+const graphics = {
+  particlesPerWater: 1,
+  particleSize: 45,
+  particleRepelStrength: 0.003,
+};
+
+// woooow
+// const graphics = {
+//   particlesPerWater: 10,
+//   particleSize: 25,
+//   particleRepelStrength: 0.0005,
+// };
+
 // we represent Resources as dots of certain colors.
 export class InventoryRenderer extends Renderer<Inventory> {
   static WaterParticles = lazy(
     () =>
       new CommittablePoints(10000, {
         color: new Color("rgb(9, 12, 255)"),
-        size: 45,
+        size: graphics.particleSize,
         opacity: 0.75,
       })
   );
@@ -59,7 +73,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
   };
 
   private verifyArrayLengths() {
-    if (this.waters.length !== Math.ceil(this.target.water)) {
+    if (this.waters.length !== Math.ceil(this.target.water * graphics.particlesPerWater)) {
       throw new Error(
         "water array lengths mismatch: " + this.waters.length + " should be " + Math.ceil(this.target.water)
       );
@@ -80,7 +94,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
   };
 
   private updateSugarAndWaterParticles(giver?: Inventory) {
-    this.updateParticlesArray(this.waters, this.target.water, giver);
+    this.updateParticlesArray(this.waters, this.target.water * graphics.particlesPerWater, giver);
     this.updateParticlesArray(this.sugars, this.target.sugar, giver);
     this.verifyArrayLengths();
   }
@@ -88,6 +102,14 @@ export class InventoryRenderer extends Renderer<Inventory> {
   private updateParticlesArray(particles: Vector2[], resource: number, giver?: Inventory) {
     const wantedParticles = Math.ceil(resource);
     while (particles.length < wantedParticles) {
+      // // see if we can find the giver's InventoryRenderer
+      // if (giver != null) {
+      //   const carrier = giver.carrier;
+      //   const carrierRenderer = this.mito.worldRenderer.getOrCreateRenderer(carrier as any);
+      //   if (carrierRenderer instanceof InstancedTileRenderer) {
+      //     const carrierInventoryRenderer = carrierRenderer.inventoryRenderer;
+      //     const
+      //   }
       const v = giver != null ? giver.carrier.pos.clone().sub(this.target.carrier.pos) : newParticle();
       v.x += (Math.random() - 0.5) * 0.1;
       v.y += (Math.random() - 0.5) * 0.1;
@@ -157,7 +179,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
         const dy = r.y - l.y;
         const lengthSq = dx * dx + dy * dy;
         if (lengthSq > 0) {
-          const strength = 0.003 / lengthSq;
+          const strength = graphics.particleRepelStrength / lengthSq;
           vx += dx * strength;
           vy += dy * strength;
         }
@@ -169,7 +191,11 @@ export class InventoryRenderer extends Renderer<Inventory> {
 
   update() {
     this.simulateResourcePositions();
-    this.commitParticles(InventoryRenderer.WaterParticles(), this.target.water, this.waters);
+    this.commitParticles(
+      InventoryRenderer.WaterParticles(),
+      this.target.water * graphics.particlesPerWater,
+      this.waters
+    );
     this.commitParticles(InventoryRenderer.SugarParticles(), this.target.sugar, this.sugars);
     this.activeSugar = this.sugars[this.sugars.length - 1];
     this.stableWater = this.waters[0];

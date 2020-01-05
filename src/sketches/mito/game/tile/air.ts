@@ -44,7 +44,10 @@ export class Air extends Tile {
   step(dt: number) {
     // we do NOT call super, to avoid stepping darkness and diffusion.
     this.stepGravity(dt);
-    this.stepDiffusionCheap(dt);
+    const tileBelow = this.world.tileAt(this.pos.x, this.pos.y + 1);
+    if (!(tileBelow instanceof Air)) {
+      this.stepDiffusionCheap(dt);
+    }
     this.stepEvaporation(dt);
     this.stepTemperature(dt);
     this._co2 = this.computeCo2();
@@ -64,8 +67,9 @@ export class Air extends Tile {
   }
   tryDiffuse(t: Tile | null, dt: number) {
     if (t != null && canPullResources(this, t)) {
-      if (t.inventory.water > this.inventory.water) {
-        this.diffuseWater(t, dt);
+      if (t.inventory.water < this.inventory.water) {
+        t.diffuseWater(this, dt);
+        // this.diffuseWater(t, dt);
       }
     }
   }
