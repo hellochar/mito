@@ -13,6 +13,9 @@ import Genome, { GeneInstance } from "./genome";
 import { Rock } from "./rock";
 import { Soil } from "./soil";
 import { Tile } from "./tile";
+
+const defaultGenome = new Genome();
+
 export abstract class Cell extends Tile implements Interactable {
   static displayName = "Cell";
   static diffusionWater = 1 / CELL_DIFFUSION_WATER_TIME;
@@ -26,7 +29,7 @@ export abstract class Cell extends Tile implements Interactable {
   public droopY = 0;
   public args?: any[];
   public effects: CellEffect[] = [];
-  public genome: Genome = new Genome();
+  public genome: Genome;
   public geneInstances: GeneInstance[];
   get tempo() {
     if (this.temperatureFloat <= 0) {
@@ -48,10 +51,11 @@ export abstract class Cell extends Tile implements Interactable {
   get darknessContrib() {
     return 0;
   }
-  constructor(pos: Vector2, world: World) {
+  constructor(pos: Vector2, world: World, genome?: Genome) {
     super(pos, world);
     this.temperatureFloat = 48;
     this.nextTemperature = this.temperatureFloat;
+    this.genome = genome || defaultGenome;
     this.geneInstances = this.genome.newGeneInstances(this);
     // TODO implement inventoryCapacity and diffuseWater
     const { isObstacle, inventoryCapacity } = this.genome.getStaticProperties();

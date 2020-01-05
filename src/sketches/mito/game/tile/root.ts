@@ -3,8 +3,12 @@ import { traitMod } from "../../../../evolution/traits";
 import { Inventory } from "../../inventory";
 import { ROOT_TIME_BETWEEN_ABSORPTIONS, TISSUE_INVENTORY_CAPACITY } from "../constants";
 import { Interactable } from "../interactable";
+import { World } from "../world";
 import { Cell } from "./cell";
+import Genome from "./genome";
 import { Soil } from "./soil";
+
+const genomeRoot = new Genome();
 
 export class Root extends Cell implements Interactable {
   static displayName = "Root";
@@ -13,6 +17,9 @@ export class Root extends Cell implements Interactable {
   public inventory = new Inventory(TISSUE_INVENTORY_CAPACITY, this);
   cooldown = 0;
   public totalSucked = 0;
+  constructor(pos: Vector2, world: World) {
+    super(pos, world, genomeRoot);
+  }
   interact(dt: number) {
     super.interact(dt);
     // give water to player

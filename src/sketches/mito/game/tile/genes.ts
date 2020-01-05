@@ -1,0 +1,24 @@
+import { Cell } from "./cell";
+import { Gene } from "./genome";
+
+/**
+ * Vascular cells will connect to other adjacent Vascular cells.
+ * Water in a Vascular cell will do two things:
+ * a) Adhesion - Water will be pulled into this Cell.
+ * b) Cohesion - Water will move to be near other Water.
+ */
+export const GeneVascular = Gene.make(
+  {
+    name: "Vascular",
+    levelCosts: [1, 2, 3, 5, 8, 11],
+    levelProps: {},
+  },
+  () => {},
+  (dt, state, blueprint, cell) => {
+    const neighbors = Array.from(cell.world.tileNeighbors(cell.pos).values());
+    const vascularNeighbors = neighbors.filter((t) => t instanceof Cell && t.genome.has(GeneVascular));
+    for (const n of vascularNeighbors) {
+      cell.diffuseWater(n, dt, 0.05);
+    }
+  }
+);

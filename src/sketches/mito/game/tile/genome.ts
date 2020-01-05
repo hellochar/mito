@@ -10,6 +10,10 @@ const defaultProperties: GeneStaticProperties = {
 };
 
 export default class Genome {
+  has(gene: Gene<any>): boolean {
+    return this.genes.indexOf(gene) !== -1;
+  }
+
   public genes: Gene<any>[];
   private staticProperties: GeneStaticProperties = { ...defaultProperties };
   constructor(...genes: Gene<any>[]) {
@@ -68,6 +72,7 @@ export class Gene<S> {
       gene.blueprint.name = newName;
     }
     AllGenes[gene.blueprint.name] = gene;
+    return gene;
   }
 }
 

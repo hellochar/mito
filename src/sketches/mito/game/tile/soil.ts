@@ -73,7 +73,7 @@ export class Sand extends Soil {
   static displayName = "Sand";
 
   get diffusionWater() {
-    return 3 * this.depthDiffusionFactor;
+    return 1 / (3 * this.depthDiffusionFactor);
   }
 
   get saturation() {
@@ -91,7 +91,7 @@ export class Silt extends Soil {
   static displayName = "Silt";
 
   get diffusionWater() {
-    return 12 * this.depthDiffusionFactor;
+    return 1 / (12 * this.depthDiffusionFactor);
   }
 
   get saturation() {
@@ -109,7 +109,7 @@ export class Clay extends Soil {
   static displayName = "Clay";
 
   get diffusionWater() {
-    return 100 * this.depthDiffusionFactor;
+    return 1 / (100 * this.depthDiffusionFactor);
   }
 
   get saturation() {
@@ -117,7 +117,7 @@ export class Clay extends Soil {
   }
 
   get fallAmount() {
-    return 0.1 / this.depthDiffusionFactor;
+    return 0.05 / this.depthDiffusionFactor;
   }
 
   public inventory = new Inventory(10, this);
