@@ -21,7 +21,7 @@ import {
   Tissue,
   Transport,
 } from "sketches/mito/game/tile";
-import { GeneInstance } from "sketches/mito/game/tile/chromosome";
+import { Gene, GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GeneSoilAbsorb } from "sketches/mito/game/tile/genes";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
 import { Audio, Color, Object3D, Scene, Vector2, Vector3 } from "three";
@@ -91,9 +91,9 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
   }
 
-  private createGeneRendererFor(g: GeneInstance): GeneSoilAbsorbRenderer | undefined {
-    if (g.gene === GeneSoilAbsorb) {
-      return new GeneSoilAbsorbRenderer(g, this.scene, this.mito, this);
+  private createGeneRendererFor<G extends Gene>(inst: GeneInstance<G>): GeneSoilAbsorbRenderer | undefined {
+    if (inst.isType(GeneSoilAbsorb)) {
+      return new GeneSoilAbsorbRenderer(inst, this.scene, this.mito, this);
     }
   }
 

@@ -1,19 +1,20 @@
 import Mito from "sketches/mito";
 import { suckWaterBuffer } from "sketches/mito/audio";
-import { GeneInstance } from "sketches/mito/game/tile/chromosome";
+import { Gene, GeneInstance } from "sketches/mito/game/tile/chromosome";
+import { GeneSoilAbsorb } from "sketches/mito/game/tile/genes";
 import { Audio, Color, Object3D, Scene, Vector2, Vector3 } from "three";
 import { Renderer } from "../Renderer";
 import { InstancedTileRenderer } from "./InstancedTileRenderer";
 import makeLine from "./makeLine";
 
-export abstract class GeneRenderer extends Renderer<GeneInstance> {
+export abstract class GeneRenderer<G extends Gene = Gene> extends Renderer<GeneInstance<G>> {
   abstract hover(): void;
 }
 
-export class GeneSoilAbsorbRenderer extends GeneRenderer {
+export class GeneSoilAbsorbRenderer extends GeneRenderer<GeneSoilAbsorb> {
   private audio = new Audio(this.mito.audioListener).setBuffer(suckWaterBuffer);
   private lastAudioValueTracker = 0;
-  constructor(t: GeneInstance, s: Scene, m: Mito, public tr: InstancedTileRenderer) {
+  constructor(t: GeneInstance<GeneSoilAbsorb>, s: Scene, m: Mito, public tr: InstancedTileRenderer) {
     super(t, s, m);
   }
   update() {

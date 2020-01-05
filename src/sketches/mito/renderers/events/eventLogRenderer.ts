@@ -1,4 +1,4 @@
-import { TileEventType } from "../../game/tileEvent";
+import { TileEvent, TileEventType } from "../../game/tileEvent";
 import { Renderer } from "../Renderer";
 import { WorldRenderer } from "../WorldRenderer";
 import EventCellEatRenderer from "./eventCellEatRenderer";
@@ -6,6 +6,7 @@ import EventCellTransferEnergyRenderer from "./eventCellTransferEnergyRenderer";
 import EventCollectSunlightRenderer from "./eventCollectSunlightRenderer";
 import EventEvaporationRenderer from "./eventEvaporationRenderer";
 import EventPhotosynthesisRenderer from "./eventPhotosynthesisRenderer";
+import { EventRenderer } from "./eventRenderer";
 import EventThawIceRenderer from "./eventThawIceRenderer";
 
 export class EventLogRenderer extends Renderer<WorldRenderer> {
@@ -16,7 +17,7 @@ export class EventLogRenderer extends Renderer<WorldRenderer> {
     photosynthesis: new EventPhotosynthesisRenderer(this.target),
     thaw: new EventThawIceRenderer(this.target),
     "collect-sunlight": new EventCollectSunlightRenderer(this.target),
-  } as const;
+  } as { [K in TileEventType]: EventRenderer<Extract<TileEvent, { type: K }>> };
 
   constructor(worldRenderer: WorldRenderer) {
     super(worldRenderer, worldRenderer.scene, worldRenderer.mito);

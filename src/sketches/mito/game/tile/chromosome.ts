@@ -30,7 +30,7 @@ export default class Chromosome {
     const p = { ...defaultProperties };
     for (const g of this.genes) {
       // TODO beware of clobbering
-      Object.assign(p, g);
+      Object.assign(p, g.gene.blueprint.static);
     }
     this.staticProperties = p;
   }
@@ -54,7 +54,7 @@ export class Gene<S = any, K extends string = any> {
     public readonly shouldStepFn: GeneShouldStepFn<S, K>
   ) {}
 
-  level(level: number) {
+  level(level: number): RealizedGene<Gene<S, K>> {
     return new RealizedGene(this, level);
   }
 
@@ -79,10 +79,10 @@ export class Gene<S = any, K extends string = any> {
   }
 }
 
-export class RealizedGene<S = any, K extends string = any> {
-  public constructor(public gene: Gene<S, K>, public level: number) {}
+export class RealizedGene<G extends Gene = Gene> {
+  public constructor(public gene: G, public level: number) {}
 
-  public newInstance(cell: Cell): GeneInstance<S, K> {
+  public newInstance(cell: Cell): GeneInstance<G> {
     return new GeneInstance(this.gene, this.level, cell);
   }
 }
@@ -93,16 +93,24 @@ export type PType<K extends string> = Record<K, number[]>;
 
 export type RealizedProps<K extends string> = Record<K, number>;
 
-export class GeneInstance<S = any, K extends string = string> implements Steppable {
+// type GeneInstanceFor<G extends Gene> = ReturnType<ReturnType<G['level']>["newInstance"]>;
+// function doSomethingWithGeneSoilAbsorb(instance: GeneInstanceFor<GeneSoilAbsorb>)
+type GeneState<G extends Gene> = G extends Gene<infer S, any> ? S : never;
+type GenePropNames<G extends Gene> = G extends Gene<any, infer K> ? K : never;
+export class GeneInstance<G extends Gene, S = GeneState<G>, K extends string = GenePropNames<G>> implements Steppable {
   public dtSinceLastStepped = 0;
   public state: S;
   public props: RealizedProps<K>;
   public get blueprint() {
     return this.gene.blueprint;
   }
-  constructor(public gene: Gene<S, K>, public level: number, public cell: Cell) {
+  constructor(public gene: G, public level: number, public cell: Cell) {
     this.props = mapRecord(gene.blueprint.levelProps, (val) => val[level]);
     this.state = gene.initialStateFn(this);
+  }
+
+  public isType<S, K extends string>(gene: Gene<S, K>): this is GeneInstance<Gene<S, K>> {
+    return this.gene === gene;
   }
 
   shouldStep(dt: number) {
@@ -125,11 +133,11 @@ export interface GeneBlueprint<K extends string> {
   requirements?: Gene[];
 }
 
-export type GeneInitialStateFn<S, K extends string> = (instance: GeneInstance<S, K>) => S;
+export type GeneInitialStateFn<S, K extends string> = (instance: GeneInstance<Gene<S, K>>) => S;
 
-export type GeneStepFn<S, K extends string> = (dt: number, instance: GeneInstance<S, K>) => S | void;
+export type GeneStepFn<S, K extends string> = (dt: number, instance: GeneInstance<Gene<S, K>>) => S | void;
 
-export type GeneShouldStepFn<S, K extends string> = (dt: number, nstance: GeneInstance<S, K>) => boolean;
+export type GeneShouldStepFn<S, K extends string> = (dt: number, instance: GeneInstance<Gene<S, K>>) => boolean;
 
 const defaultShouldStepFn: GeneShouldStepFn<any, any> = (dt) => {
   return true;

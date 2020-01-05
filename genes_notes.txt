@@ -67,3 +67,49 @@ Required "addon" genes:
 * When photosynthesis occurs, produce 0.1 nutrient
 * Root hairs - roots suck from all adjacent soil, instead of just one
 * 
+
+
+Current implementation thoughts:
+
+Gene (GeneBlueprint, 3 functions)
+- .level() -> RealizedGene
+
+RealizedGene (Gene, level)
+- .newInstance() -> GeneInstance
+
+GeneInstance (Gene, Level, Cell)
+
+4 things: blueprint, step functions, level, cell
+
+I wanted to stay away from Classes because I need to tag the classes itself with lots of type info, and there's no good typeful way to do that.
+
+So, the current flow is:
+1. We make a Gene: Gene.make(blueprint, step functions)
+2. For any gene, we call gene.level(level)
+3. For a realized gene, we call realizedGene.newInstance(cell) to get a GeneInstance
+
+Things we want:
+1. Values for Genes themselves (Singletons)
+2. Type safety and convenience
+3. 
+
+Things the system needs:
+1. A place to store Gene + Level, without running it yet
+2. A place for state, where a specific GeneInstance is run
+
+problems:
+
+* Getting the right GeneInstance type parameters is hard. 
+  It'd be nice to do GeneInstance<GeneSoilAbsorb>
+    - GeneSoilAbsorb is a value, not a type.
+  GeneInstance<typeof GeneSoilAbsorb> ?
+
+This is what the type is currently:
+GeneInstance<{
+    cooldown: number;
+    totalSucked: number;
+    activeNeighbors: Vector2[];
+}, "secondsPerAbsorb">
+
+main problem: I don't know how to "extract" the type parameters out of another type and pass them into my own type parameters
+

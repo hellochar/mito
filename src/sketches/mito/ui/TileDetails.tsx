@@ -67,7 +67,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     }
   }
 
-  private soilAbsorbInfo(soilAbsorb: GeneInstance) {
+  private soilAbsorbInfo(soilAbsorb: GeneInstance<GeneSoilAbsorb>) {
     return (
       <div className="info-root">
         <div>Absorbs in {formatSeconds(soilAbsorb.state.cooldown)}.</div>

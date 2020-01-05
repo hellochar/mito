@@ -26,6 +26,7 @@ export const GeneVascular = Gene.make(
     }
   }
 );
+export type GeneVascular = typeof GeneVascular;
 
 export const GeneLiving = Gene.make(
   {
@@ -40,6 +41,7 @@ export const GeneLiving = Gene.make(
     cell.energy -= (1 / secondsPerUpkeep) * cell.tempo * dt;
   }
 );
+export type GeneLiving = typeof GeneLiving;
 
 export const GeneSoilAbsorb = Gene.make(
   {
@@ -59,6 +61,7 @@ export const GeneSoilAbsorb = Gene.make(
     state.cooldown -= cell.tempo * dt;
   }
 );
+export type GeneSoilAbsorb = typeof GeneSoilAbsorb;
 
 function absorbWater(activeNeighbors: Vector2[], cell: Cell) {
   const neighbors = cell.world.tileNeighbors(cell.pos);

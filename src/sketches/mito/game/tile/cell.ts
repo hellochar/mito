@@ -8,7 +8,7 @@ import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
 import { World } from "../world";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
-import Chromosome, { GeneInstance } from "./chromosome";
+import Chromosome, { Gene, GeneInstance } from "./chromosome";
 import { DeadCell } from "./deadCell";
 import { Rock } from "./rock";
 import { Soil } from "./soil";
@@ -30,7 +30,7 @@ export abstract class Cell extends Tile implements Interactable {
   public args?: any[];
   public effects: CellEffect[] = [];
   public chromosome: Chromosome;
-  public geneInstances: GeneInstance[];
+  public geneInstances: GeneInstance<Gene>[];
   get tempo() {
     if (this.temperatureFloat <= 0) {
       // 50% slower - 1 / 2;
