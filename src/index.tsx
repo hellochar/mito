@@ -1,33 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "react-dropdown/style.css";
-import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
-import { TestLoseScreen } from "tests/TestLoseScreen";
-import { TestWinScreen } from "tests/TestWinScreen";
-import App from "./app/App";
+import { HashRouter } from "react-router-dom";
+import Routes from "Routes";
 import "./index.scss";
 import * as serviceWorker from "./serviceWorker";
-import TestStats from "./tests/TestStats";
 
 ReactDOM.render(
   <HashRouter>
-    <Switch>
-      <Route path="/test-lose">
-        <TestLoseScreen />
-      </Route>
-      <Route path="/test-win">
-        <TestWinScreen />
-      </Route>
-      <Route path="/test-stats">
-        <TestStats />
-      </Route>
-      <Route exact path="/">
-        <App />
-      </Route>
-      <Route path="*">
-        <Redirect to="/" />
-      </Route>
-    </Switch>
+    <Routes />
   </HashRouter>,
 
   document.getElementById("root")

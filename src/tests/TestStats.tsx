@@ -3,49 +3,10 @@ import React from "react";
 import { newBaseSpecies } from "../evolution/species";
 import { World } from "../sketches/mito/game";
 import { Desert, Environment, Rocky, Temperate } from "../sketches/mito/game/environment";
-import { Air, Fountain, Rock, Soil, Tile } from "../sketches/mito/game/tile";
+import { Air, Fountain, Rock, Soil } from "../sketches/mito/game/tile";
 import { findBuildCandidateTiles } from "../sketches/mito/game/worldUtils";
 import { hasInventory } from "../sketches/mito/inventory";
-
-type Visitor = (tiles: Tile[], world: World) => number;
-interface Visitors {
-  [name: string]: Visitor;
-}
-
-function visit(world: World, visitors: Visitors): Trial {
-  const tiles = Array.from(world.allEnvironmentTiles());
-  const results: Trial = {};
-  for (const [name, visitor] of Object.entries(visitors)) {
-    const result = visitor(tiles, world);
-    results[name] = result;
-  }
-  return results;
-}
-
-interface Trial {
-  [key: string]: number;
-}
-class Experiment {
-  trials: Trial[] = [];
-  constructor(public visitors: Visitors) {}
-  recordDataFor(world: World) {
-    const trial = visit(world, this.visitors);
-    this.trials.push(trial);
-  }
-  visitorNames() {
-    return Object.keys(this.visitors);
-  }
-}
-
-class ExperimentSuite {
-  constructor(public experiments: Experiment[]) {}
-
-  recordDataFor(world: World) {
-    for (const e of this.experiments) {
-      e.recordDataFor(world);
-    }
-  }
-}
+import { Experiment, ExperimentSuite } from "./experiment";
 
 function runTests(environment: Environment, id: string) {
   console.log("running");

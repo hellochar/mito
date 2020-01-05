@@ -43,11 +43,23 @@ export class StepStats {
   }
 }
 
+export interface WorldOptions {
+  width: number;
+  height: number;
+  growInitialTissue: boolean;
+}
+
+const optionsDefault: WorldOptions = {
+  width: 50,
+  height: 100,
+  growInitialTissue: true,
+};
+
 export class World {
   public time: number = 0;
   public frame: number = 0;
-  public readonly width = 50;
-  public readonly height = 100;
+  public readonly width: number;
+  public readonly height: number;
   public readonly player: Player;
   private readonly gridEnvironment: Tile[][];
   private readonly gridCells: Array<Array<Cell | null>>;
@@ -61,7 +73,15 @@ export class World {
     return seasonFromTime(this.time);
   }
 
-  constructor(public environment: Environment, seed: number, species: Species) {
+  constructor(
+    public environment: Environment,
+    seed: number,
+    species: Species,
+    optionsPartial: Partial<WorldOptions> = {}
+  ) {
+    const options = { ...optionsDefault, ...optionsPartial };
+    this.width = options.width;
+    this.height = options.height;
     this.generatorContext = createGeneratorContext(seed);
     this.wipResult = {
       fruits: [],
@@ -73,7 +93,7 @@ export class World {
     Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, 1 / CELL_DIFFUSION_SUGAR_TIME, 2);
     Cell.timeToBuild = traitMod(this.traits.buildTime, CELL_BUILD_TIME, 1 / 2);
 
-    const tileGenerator = TileGenerators[environment.fill];
+    const tileGenerator = typeof environment.fill === "string" ? TileGenerators[environment.fill] : environment.fill;
     this.gridEnvironment = gridRange(this.width, this.height, (x, y) => {
       const pos = new Vector2(x, y);
       return tileGenerator(pos, this) || new Air(pos, this);
@@ -86,22 +106,31 @@ export class World {
     this.computeSoilDepths();
 
     // always drop player on the Soil Air interface
-    const start = new Vector2(this.width / 2, this.height / 2);
-    const firstNonAir = this.gridEnvironment[start.x].find((t) => !(t instanceof Air) && t.pos.y > 30);
-    if (firstNonAir != null) {
-      // if we hit a rock, go onto the Air right above it
-      start.y = firstNonAir.isObstacle ? firstNonAir.pos.y - 1 : firstNonAir.pos.y;
-    }
+    if (options.growInitialTissue) {
+      const start = new Vector2(Math.floor(this.width / 2), Math.floor(this.height / 2));
+      const firstNonAir = this.gridEnvironment[start.x].find((t) => !(t instanceof Air));
+      if (firstNonAir != null) {
+        // if we hit a rock, go onto the Air right above it
+        start.y = firstNonAir.isObstacle ? firstNonAir.pos.y - 1 : firstNonAir.pos.y;
+      }
 
-    const tissues = Array.from(
-      this.bfsIterator(start, (t) => !t.isObstacle && t.pos.distanceTo(start) < 3.5, (t) => t.pos.distanceTo(start), 21)
-    ).map((tile, n) => {
-      const t = new Tissue(tile.pos, this);
-      this.setTileAt(tile.pos, t);
-      return t;
-    });
-    const avgTissuePos = tissues.reduce((p, t) => p.add(t.pos), new Vector2()).divideScalar(tissues.length);
-    this.player = new Player(avgTissuePos, this);
+      const tissues = Array.from(
+        this.bfsIterator(
+          start,
+          (t) => !t.isObstacle && t.pos.distanceTo(start) < 3.5,
+          (t) => t.pos.distanceTo(start),
+          21
+        )
+      ).map((tile, n) => {
+        const t = new Tissue(tile.pos, this);
+        this.setTileAt(tile.pos, t);
+        return t;
+      });
+      const avgTissuePos = tissues.reduce((p, t) => p.add(t.pos), new Vector2()).divideScalar(tissues.length);
+      this.player = new Player(avgTissuePos, this);
+    } else {
+      this.player = new Player(new Vector2(0, 0), this);
+    }
 
     this.fillCachedEntities();
 

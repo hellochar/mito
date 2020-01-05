@@ -1,6 +1,6 @@
 import { LevelInfo } from "overworld/levelInfo";
 import { createSimpleSchema, object } from "serializr";
-import { TileGeneratorName } from "./tileGenerators";
+import { TileGenerator, TileGeneratorName } from "./tileGenerators";
 
 export interface Environment {
   airEvaporation: number;
@@ -12,7 +12,7 @@ export interface Environment {
   secondsToEvaporate: number;
   floorCo2: number;
   temperaturePerSeason: number[];
-  fill: TileGeneratorName;
+  fill: TileGeneratorName | TileGenerator;
 }
 
 export function environmentFromLevelInfo(info: LevelInfo) {
