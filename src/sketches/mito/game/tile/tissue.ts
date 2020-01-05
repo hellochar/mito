@@ -4,15 +4,15 @@ import { Inventory } from "../../inventory";
 import { TISSUE_INVENTORY_CAPACITY } from "../constants";
 import { World } from "../world";
 import { Cell } from "./cell";
-import Genome from "./genome";
+import Chromosome from "./chromosome";
 
-const genomeTissue = new Genome();
+const chromosomeTissue = new Chromosome();
 
 export class Tissue extends Cell {
   static displayName = "Tissue";
   public inventory: Inventory;
   constructor(pos: Vector2, world: World) {
-    super(pos, world, genomeTissue);
+    super(pos, world, chromosomeTissue);
     this.inventory = new Inventory(
       Math.floor(traitMod(world.traits.carryCapacity, TISSUE_INVENTORY_CAPACITY, 1.5)),
       this

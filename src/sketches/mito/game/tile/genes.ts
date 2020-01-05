@@ -1,5 +1,5 @@
 import { Cell } from "./cell";
-import { Gene } from "./genome";
+import { Gene } from "./chromosome";
 
 /**
  * Vascular cells will connect to other adjacent Vascular cells.
@@ -16,7 +16,7 @@ export const GeneVascular = Gene.make(
   () => {},
   (dt, state, blueprint, cell) => {
     const neighbors = Array.from(cell.world.tileNeighbors(cell.pos).values());
-    const vascularNeighbors = neighbors.filter((t) => t instanceof Cell && t.genome.has(GeneVascular));
+    const vascularNeighbors = neighbors.filter((t) => t instanceof Cell && t.chromosome.has(GeneVascular));
     for (const n of vascularNeighbors) {
       cell.diffuseWater(n, dt, 0.05);
     }

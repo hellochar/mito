@@ -9,7 +9,7 @@ const defaultProperties: GeneStaticProperties = {
   diffusionRate: 12,
 };
 
-export default class Genome {
+export default class Chromosome {
   has(gene: Gene<any>): boolean {
     return this.genes.indexOf(gene) !== -1;
   }

@@ -5,10 +5,10 @@ import { ROOT_TIME_BETWEEN_ABSORPTIONS, TISSUE_INVENTORY_CAPACITY } from "../con
 import { Interactable } from "../interactable";
 import { World } from "../world";
 import { Cell } from "./cell";
-import Genome from "./genome";
+import Chromosome from "./chromosome";
 import { Soil } from "./soil";
 
-const genomeRoot = new Genome();
+const chromosomeRoot = new Chromosome();
 
 export class Root extends Cell implements Interactable {
   static displayName = "Root";
@@ -18,7 +18,7 @@ export class Root extends Cell implements Interactable {
   cooldown = 0;
   public totalSucked = 0;
   constructor(pos: Vector2, world: World) {
-    super(pos, world, genomeRoot);
+    super(pos, world, chromosomeRoot);
   }
   interact(dt: number) {
     super.interact(dt);

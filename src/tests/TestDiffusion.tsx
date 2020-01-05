@@ -1,22 +1,22 @@
 import { Layout, PlotData } from "plotly.js";
 import React from "react";
 import { Cell, Tissue } from "sketches/mito/game/tile";
+import Chromosome from "sketches/mito/game/tile/chromosome";
 import { GeneVascular } from "sketches/mito/game/tile/genes";
-import Genome from "sketches/mito/game/tile/genome";
 import { Inventory } from "sketches/mito/inventory";
 import { newBaseSpecies } from "../evolution/species";
 import { step, World } from "../sketches/mito/game";
 import { Environment } from "../sketches/mito/game/environment";
 import { Experiment, Visitors } from "./experiment";
 
-class PureGenomeCell extends Cell {
+class PureChromosomeCell extends Cell {
   public inventory = new Inventory(10, this);
   step(dt: number) {
     this.geneInstances.forEach((g) => step(g, dt));
   }
 }
 
-const vascularGenome = new Genome(GeneVascular);
+const vascularChromosome = new Chromosome(GeneVascular);
 
 const allSoilEnvironment: Environment = {
   airEvaporation: 0,

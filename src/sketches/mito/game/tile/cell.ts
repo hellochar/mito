@@ -8,13 +8,13 @@ import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
 import { World } from "../world";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
+import Chromosome, { GeneInstance } from "./chromosome";
 import { DeadCell } from "./deadCell";
-import Genome, { GeneInstance } from "./genome";
 import { Rock } from "./rock";
 import { Soil } from "./soil";
 import { Tile } from "./tile";
 
-const defaultGenome = new Genome();
+const defaultChromosome = new Chromosome();
 
 export abstract class Cell extends Tile implements Interactable {
   static displayName = "Cell";
@@ -29,7 +29,7 @@ export abstract class Cell extends Tile implements Interactable {
   public droopY = 0;
   public args?: any[];
   public effects: CellEffect[] = [];
-  public genome: Genome;
+  public chromosome: Chromosome;
   public geneInstances: GeneInstance[];
   get tempo() {
     if (this.temperatureFloat <= 0) {
@@ -51,14 +51,14 @@ export abstract class Cell extends Tile implements Interactable {
   get darknessContrib() {
     return 0;
   }
-  constructor(pos: Vector2, world: World, genome?: Genome) {
+  constructor(pos: Vector2, world: World, chromosome?: Chromosome) {
     super(pos, world);
     this.temperatureFloat = 48;
     this.nextTemperature = this.temperatureFloat;
-    this.genome = genome || defaultGenome;
-    this.geneInstances = this.genome.newGeneInstances(this);
+    this.chromosome = chromosome || defaultChromosome;
+    this.geneInstances = this.chromosome.newGeneInstances(this);
     // TODO implement inventoryCapacity and diffuseWater
-    const { isObstacle, inventoryCapacity } = this.genome.getStaticProperties();
+    const { isObstacle, inventoryCapacity } = this.chromosome.getStaticProperties();
     this.isObstacle = isObstacle;
   }
 
