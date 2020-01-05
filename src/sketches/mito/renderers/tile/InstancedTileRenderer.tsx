@@ -1,8 +1,9 @@
+import { arrayProxy } from "common/arrayProxy";
 import { easeCubic } from "d3-ease";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
 import Mito from "sketches/mito";
-import { blopBuffer, suckWaterBuffer } from "sketches/mito/audio";
+import { blopBuffer } from "sketches/mito/audio";
 import { Constructor } from "sketches/mito/constructor";
 import { CELL_MAX_ENERGY } from "sketches/mito/game/constants";
 import { Temperature } from "sketches/mito/game/temperature";
@@ -20,23 +21,16 @@ import {
   Tissue,
   Transport,
 } from "sketches/mito/game/tile";
+import { GeneInstance } from "sketches/mito/game/tile/chromosome";
+import { GeneSoilAbsorb } from "sketches/mito/game/tile/genes";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
-import {
-  Audio,
-  BufferGeometry,
-  Color,
-  Float32BufferAttribute,
-  Line,
-  LineBasicMaterial,
-  Object3D,
-  Scene,
-  Vector2,
-  Vector3,
-} from "three";
+import { Audio, Color, Object3D, Scene, Vector2, Vector3 } from "three";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";
 import { Animation, AnimationController } from "./Animation";
 import { CellEffectsRenderer } from "./CellEffectsRenderer";
+import { GeneRenderer, GeneSoilAbsorbRenderer } from "./GeneRenderer";
+import makeLine from "./makeLine";
 import TileBatcher, { BatchInstance } from "./tileBatcher";
 
 export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
@@ -56,7 +50,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private lastAudioValueTracker = 0;
   private neighborLines = new Object3D();
   private cellEffectsRenderer?: CellEffectsRenderer;
-  protected animation = new AnimationController();
+  private geneRenderer?: GeneRenderer;
+  animation = new AnimationController();
 
   private scale = new Vector3(1, 1, 1);
   private color = new Color();
@@ -82,17 +77,23 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       if (!(this.target.constructor as Constructor<Cell>).timeToBuild) {
         this.scale.set(0.01, 0.01, 1);
       }
-    }
-    if (this.target instanceof Leaf || this.target instanceof Root) {
-      this.audio = new Audio(this.mito.audioListener);
-    }
-
-    if (this.target instanceof Cell) {
       this.cellEffectsRenderer = new CellEffectsRenderer(this.target, this.scene, this.mito);
+      this.geneRenderer = arrayProxy(
+        this.target.geneInstances.map((g) => this.createGeneRendererFor(g)!).filter((g) => g != null)
+      );
+      if (this.target instanceof Leaf) {
+        this.audio = new Audio(this.mito.audioListener);
+      }
     }
 
     if (this.target.darkness < 1) {
       this.commit();
+    }
+  }
+
+  private createGeneRendererFor(g: GeneInstance): GeneSoilAbsorbRenderer | undefined {
+    if (g.gene === GeneSoilAbsorb) {
+      return new GeneSoilAbsorbRenderer(g, this.scene, this.mito, this);
     }
   }
 
@@ -118,6 +119,10 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
       this.updateInventory();
       this.maybeUpdateCellEffectsRenderer();
+
+      if (this.geneRenderer) {
+        this.geneRenderer.update();
+      }
 
       this.animation.update();
       this.commit();
@@ -189,23 +194,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       }
       this.lastAudioValueTracker = newAudioValueTracker;
     }
-    if (this.target instanceof Root && this.audio != null) {
-      const newAudioValueTracker = this.target.totalSucked;
-      if (newAudioValueTracker !== this.lastAudioValueTracker) {
-        this.audio.setBuffer(suckWaterBuffer);
-        // const baseVolume = this.target.waterTransferAmount / (2 + this.target.waterTransferAmount);
-        const baseVolume = 1;
-        const dist = this.target.pos.distanceToSquared(this.mito.world.player.pos);
-        const volume = Math.min(1, 1 / (1 + dist / 25)) * baseVolume;
-        this.audio.setVolume(volume);
-        if (this.audio.source != null) {
-          this.audio.stop();
-        }
-        this.audio.play();
-        this.animation.set(this.growPulseAnimation());
-      }
-      this.lastAudioValueTracker = newAudioValueTracker;
-    }
     if (this.neighborLines.parent != null) {
       this.scene.remove(this.neighborLines);
     }
@@ -227,6 +215,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   updateHover() {
+    this.geneRenderer && this.geneRenderer.hover();
     if (this.hasActiveNeighbors(this.target)) {
       this.scene.add(this.neighborLines);
       this.neighborLines.position.set(this.target.pos.x, this.target.pos.y, 1);
@@ -238,7 +227,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
         lines.forEach((dir) => {
           const length = dir.length() - 0.25;
           const arrowDir = new Vector3(dir.x, dir.y, 0).normalize();
-          const line = this.makeLine(arrowDir, new Vector3(), length, color);
+          const line = makeLine(arrowDir, new Vector3(), length, color);
           this.neighborLines.add(line);
         });
       }
@@ -264,31 +253,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     return Array.isArray(t.activeNeighbors);
   }
 
-  static lineGeometry = (() => {
-    const g = new BufferGeometry();
-    g.addAttribute("position", new Float32BufferAttribute([0, 0, 0, 0, 1, 0], 3));
-    return g;
-  })();
-  private makeLine(dir: Vector3, origin: Vector3, length: number, color: number) {
-    // copied from https://github.com/mrdoob/js/blob/master/src/helpers/ArrowHelper.js
-    const line = new Line(InstancedTileRenderer.lineGeometry, new LineBasicMaterial({ color: color }));
-    line.position.copy(origin);
-    // dir is assumed to be normalized
-    if (dir.y > 0.99999) {
-      line.quaternion.set(0, 0, 0, 1);
-    } else if (dir.y < -0.99999) {
-      line.quaternion.set(1, 0, 0, 0);
-    } else {
-      const axis = new Vector3(dir.z, 0, -dir.x).normalize();
-      const radians = Math.acos(dir.y);
-      line.quaternion.setFromAxisAngle(axis, radians);
-    }
-    line.scale.set(1, Math.max(0, length), 1);
-    line.position.z = 0.1;
-    line.updateMatrix();
-    line.matrixAutoUpdate = false;
-    return line;
-  }
   destroy() {
     this.instance.destroy();
     // this.scene.remove(this.mesh);

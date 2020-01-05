@@ -1,3 +1,4 @@
+import mapRecord from "common/mapRecord";
 import plantNames from "common/plantNames";
 import { sampleArray } from "math";
 import { Cell } from ".";
@@ -10,13 +11,13 @@ const defaultProperties: GeneStaticProperties = {
 };
 
 export default class Chromosome {
-  has(gene: Gene<any>): boolean {
-    return this.genes.indexOf(gene) !== -1;
+  has(gene: Gene): boolean {
+    return this.genes.find((r) => r.gene === gene) != null;
   }
 
-  public genes: Gene<any>[];
+  public genes: RealizedGene[];
   private staticProperties: GeneStaticProperties = { ...defaultProperties };
-  constructor(...genes: Gene<any>[]) {
+  constructor(...genes: RealizedGene[]) {
     this.genes = genes;
     this.recomputeStaticProperties();
   }
@@ -45,69 +46,91 @@ export interface GeneStaticProperties {
   diffusionRate: number;
 }
 
-export class Gene<S> {
+export class Gene<S = any, K extends string = any> {
   private constructor(
-    public readonly blueprint: GeneBlueprint,
-    public readonly initialStateFn: GeneInitialStateFn<S>,
-    public readonly stepFn: GeneStepFn<S>,
-    public readonly shouldStepFn: GeneShouldStepFn<S>
+    public readonly blueprint: GeneBlueprint<K>,
+    public readonly initialStateFn: GeneInitialStateFn<S, K>,
+    public readonly stepFn: GeneStepFn<S, K>,
+    public readonly shouldStepFn: GeneShouldStepFn<S, K>
   ) {}
 
-  public newInstance(cell: Cell): GeneInstance<S> {
-    return new GeneInstance(this, cell);
+  level(level: number) {
+    return new RealizedGene(this, level);
   }
 
-  static make<S>(
-    blueprint: GeneBlueprint,
-    initialState: GeneInitialStateFn<S>,
-    step: GeneStepFn<S>,
-    shouldStep: GeneShouldStepFn<S> = defaultShouldStepFn
+  static make<S = any, K extends string = string>(
+    blueprint: GeneBlueprint<K>,
+    initialState: GeneInitialStateFn<S, K> | S,
+    step: GeneStepFn<S, K>,
+    shouldStep: GeneShouldStepFn<S, K> = defaultShouldStepFn
   ) {
-    const gene = new Gene(blueprint, initialState, step, shouldStep);
+    const initialStateFn =
+      typeof initialState === "function" ? (initialState as GeneInitialStateFn<S, K>) : () => initialState;
+    const gene = new Gene(blueprint, initialStateFn, step, shouldStep);
     const { name } = gene.blueprint;
-    const exists = AllGenes[name] != null;
+    const exists = AllGenes.has(name);
     if (exists) {
       const newName = name + " " + sampleArray(plantNames);
       console.warn("A gene named", name, "already exists! Renaming this one to", newName);
       gene.blueprint.name = newName;
     }
-    AllGenes[gene.blueprint.name] = gene;
+    AllGenes.set(gene.blueprint.name, (gene as unknown) as Gene);
     return gene;
   }
 }
 
-export const AllGenes: Record<string, Gene<any>> = {};
+export class RealizedGene<S = any, K extends string = any> {
+  public constructor(public gene: Gene<S, K>, public level: number) {}
 
-export class GeneInstance<S = any> implements Steppable {
+  public newInstance(cell: Cell): GeneInstance<S, K> {
+    return new GeneInstance(this.gene, this.level, cell);
+  }
+}
+
+export const AllGenes: Map<string, Gene> = new Map();
+
+export type PType<K extends string> = Record<K, number[]>;
+
+export type RealizedProps<K extends string> = Record<K, number>;
+
+export class GeneInstance<S = any, K extends string = string> implements Steppable {
   public dtSinceLastStepped = 0;
   public state: S;
-  constructor(public gene: Gene<S>, public cell: Cell) {
-    this.state = gene.initialStateFn(gene.blueprint, cell);
+  public props: RealizedProps<K>;
+  public get blueprint() {
+    return this.gene.blueprint;
+  }
+  constructor(public gene: Gene<S, K>, public level: number, public cell: Cell) {
+    this.props = mapRecord(gene.blueprint.levelProps, (val) => val[level]);
+    this.state = gene.initialStateFn(this);
   }
 
   shouldStep(dt: number) {
-    return this.gene.shouldStepFn(dt, this.state, this.gene.blueprint, this.cell);
+    return this.gene.shouldStepFn(dt, this);
   }
 
   step(dt: number) {
-    this.state = this.gene.stepFn(dt, this.state, this.gene.blueprint, this.cell);
+    const maybeNewState = this.gene.stepFn(dt, this);
+    if (maybeNewState !== undefined) {
+      this.state = maybeNewState;
+    }
   }
 }
 
-export interface GeneBlueprint {
+export interface GeneBlueprint<K extends string> {
   name: string;
   levelCosts: number[];
-  levelProps: Record<string, number[]>;
+  levelProps: PType<K>;
   static?: GeneStaticProperties;
-  requirements?: Gene<any>[];
+  requirements?: Gene[];
 }
 
-export type GeneInitialStateFn<S> = (blueprint: GeneBlueprint, cell: Cell) => S;
+export type GeneInitialStateFn<S, K extends string> = (instance: GeneInstance<S, K>) => S;
 
-export type GeneStepFn<S> = (dt: number, state: S, blueprint: GeneBlueprint, cell: Cell) => S;
+export type GeneStepFn<S, K extends string> = (dt: number, instance: GeneInstance<S, K>) => S | void;
 
-export type GeneShouldStepFn<S> = (dt: number, state: S, blueprint: GeneBlueprint, cell: Cell) => boolean;
+export type GeneShouldStepFn<S, K extends string> = (dt: number, nstance: GeneInstance<S, K>) => boolean;
 
-const defaultShouldStepFn: GeneShouldStepFn<any> = (dt) => {
+const defaultShouldStepFn: GeneShouldStepFn<any, any> = (dt) => {
   return true;
 };

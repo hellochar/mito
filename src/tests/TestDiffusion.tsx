@@ -16,7 +16,7 @@ class PureChromosomeCell extends Cell {
   }
 }
 
-const vascularChromosome = new Chromosome(GeneVascular);
+const vascularChromosome = new Chromosome(GeneVascular.level(2));
 
 const allSoilEnvironment: Environment = {
   airEvaporation: 0,

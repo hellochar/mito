@@ -2,7 +2,9 @@
 import * as React from "react";
 import { Constructor } from "../constructor";
 import { CELL_MAX_ENERGY } from "../game/constants";
-import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Leaf, Root, Soil, Tile } from "../game/tile";
+import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Leaf, Soil, Tile } from "../game/tile";
+import { GeneInstance } from "../game/tile/chromosome";
+import { GeneSoilAbsorb } from "../game/tile/genes";
 import { InventoryBar } from "./InventoryBar";
 import TemperatureInfo from "./TemperatureInfo";
 import "./TileDetails.scss";
@@ -26,7 +28,6 @@ export class TileDetails extends React.Component<TileDetailsProps> {
         {this.tileInfo(tile)}
         {this.cellInfo(tile)}
         {this.growingCellInfo(tile)}
-        {this.rootInfo(tile)}
         {this.leafInfo(tile)}
         {this.airInfo(tile)}
         {this.soilInfo(tile)}
@@ -45,13 +46,34 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       );
     }
   }
-  private rootInfo(tile: Tile) {
-    return tile instanceof Root ? (
+
+  private cellInfo(tile: Tile) {
+    if (tile instanceof Cell) {
+      return (
+        <>
+          {tile.droopY * 200 > 1 ? <div className="info-cell">{(tile.droopY * 200).toFixed(0)}% droop</div> : null}
+          {this.cellEffects(tile)}
+          {this.geneInfo(tile)}
+        </>
+      );
+    }
+  }
+
+  private geneInfo(cell: Cell) {
+    for (const gene of cell.geneInstances) {
+      if (gene.gene === GeneSoilAbsorb) {
+        return this.soilAbsorbInfo(gene);
+      }
+    }
+  }
+
+  private soilAbsorbInfo(soilAbsorb: GeneInstance) {
+    return (
       <div className="info-root">
-        <div>Absorbs in {formatSeconds(tile.cooldown)}.</div>
-        <div>{tile.totalSucked.toFixed(1)} total water absorbed so far.</div>
+        <div>Absorbs in {formatSeconds(soilAbsorb.state.cooldown)}.</div>
+        <div>{soilAbsorb.state.totalSucked.toFixed(1)} total water absorbed so far.</div>
       </div>
-    ) : null;
+    );
   }
   private leafInfo(tile: Tile) {
     return tile instanceof Leaf ? (
@@ -116,17 +138,6 @@ export class TileDetails extends React.Component<TileDetailsProps> {
         </div>
       </div>
     );
-  }
-
-  private cellInfo(tile: Tile) {
-    if (tile instanceof Cell) {
-      return (
-        <>
-          {tile.droopY * 200 > 1 ? <div className="info-cell">{(tile.droopY * 200).toFixed(0)}% droop</div> : null}
-          {this.cellEffects(tile)}
-        </>
-      );
-    }
   }
 
   private cellEffects(cell: Cell) {
