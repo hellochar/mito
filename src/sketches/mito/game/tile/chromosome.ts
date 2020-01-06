@@ -7,32 +7,36 @@ import { Steppable } from "../entity";
 const defaultProperties: GeneStaticProperties = {
   isObstacle: false,
   inventoryCapacity: 0,
-  diffusionRate: 12,
+  diffusionRate: 0.01,
 };
 
 export default class Chromosome {
   public genes: RealizedGene[];
-  private staticProperties: GeneStaticProperties = { ...defaultProperties };
   constructor(...genes: RealizedGene[]) {
     this.genes = genes;
-    this.recomputeStaticProperties();
+  }
+
+  /**
+   * Booleans overwrite each other; numbers add together.
+   */
+  public mergeStaticProperties() {
+    const finalProps = { ...defaultProperties };
+    for (const g of this.genes) {
+      // TODO beware of clobbering
+      for (const [k, v] of Object.entries(g.getStaticProperties())) {
+        if (typeof v === "boolean") {
+          finalProps[k] = v;
+        } else if (typeof v === "number") {
+          finalProps[k] = (finalProps[k] as number) + v;
+        }
+      }
+      // Object.assign(finalProps, g.getStaticProperties());
+    }
+    return finalProps;
   }
 
   newGeneInstances(cell: Cell) {
     return this.genes.map((g) => g.newInstance(cell));
-  }
-
-  recomputeStaticProperties() {
-    const p = { ...defaultProperties };
-    for (const g of this.genes) {
-      // TODO beware of clobbering
-      Object.assign(p, g.gene.blueprint.static);
-    }
-    this.staticProperties = p;
-  }
-
-  getStaticProperties(): GeneStaticProperties {
-    return this.staticProperties;
   }
 
   has(gene: Gene): boolean {
@@ -44,11 +48,12 @@ export default class Chromosome {
   }
 }
 
-export interface GeneStaticProperties {
+export type GeneStaticProperties = {
   isObstacle: boolean;
   inventoryCapacity: number;
   diffusionRate: number;
-}
+  [k: string]: number | boolean;
+};
 
 export class Gene<S = any, K extends string = any> {
   private constructor(
@@ -85,6 +90,12 @@ export class Gene<S = any, K extends string = any> {
 
 export class RealizedGene<G extends Gene = Gene> {
   public constructor(public gene: G, public level: number) {}
+
+  getStaticProperties() {
+    const staticBlueprint = this.gene.blueprint.static || {};
+    return mapRecord(staticBlueprint, (arr) => arr![this.level]) as Partial<GeneStaticProperties>;
+  }
+
   public getProps() {
     return mapRecord(this.gene.blueprint.levelProps, (val) => val[this.level]);
   }
@@ -126,7 +137,7 @@ export class GeneInstance<G extends Gene, S = GeneState<G>, K extends string = G
     return this.gene === gene;
   }
 
-  shouldStep(dt: number) {
+  shouldStep(dt: number): boolean {
     return this.gene.shouldStepFn(dt, this);
   }
 
@@ -140,12 +151,16 @@ export class GeneInstance<G extends Gene, S = GeneState<G>, K extends string = G
 
 export interface GeneBlueprint<K extends string> {
   name: string;
-  description: (props: RealizedProps<K>) => React.ReactNode;
+  description: (props: RealizedProps<K>, sProps: Partial<GeneStaticProperties>) => React.ReactNode;
   levelCosts: number[];
   levelProps: PropBlueprint<K>;
-  static?: GeneStaticProperties;
+  static?: GeneStaticPropertiesBlueprint;
   requirements?: Gene[];
 }
+
+export type GeneStaticPropertiesBlueprint = {
+  [K in keyof GeneStaticProperties]?: Array<GeneStaticProperties[K]>;
+};
 
 // export type GeneInitialStateFn<S, K extends string> = (instance: GeneInstance<Gene<S, K>>) => S;
 export type GeneInitialStateFn<S, K extends string> = (gene: Gene<S, K>, props: RealizedProps<K>, cell: Cell) => S;

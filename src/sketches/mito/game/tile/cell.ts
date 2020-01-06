@@ -1,3 +1,4 @@
+import { Inventory } from "sketches/mito/inventory";
 import { Vector2 } from "three";
 import { traitMod } from "../../../../evolution/traits";
 import { DIRECTIONS } from "../../directions";
@@ -14,7 +15,7 @@ import { Rock } from "./rock";
 import { Soil } from "./soil";
 import { Tile } from "./tile";
 
-const defaultChromosome = new Chromosome();
+const emptyChromosome = new Chromosome();
 
 export abstract class Cell extends Tile implements Interactable {
   static displayName = "Cell";
@@ -51,15 +52,17 @@ export abstract class Cell extends Tile implements Interactable {
   get darknessContrib() {
     return 0;
   }
+  public inventory: Inventory;
   constructor(pos: Vector2, world: World, chromosome?: Chromosome) {
     super(pos, world);
     this.temperatureFloat = 48;
     this.nextTemperature = this.temperatureFloat;
-    this.chromosome = chromosome || defaultChromosome;
+    this.chromosome = chromosome || emptyChromosome;
     this.geneInstances = this.chromosome.newGeneInstances(this);
     // TODO implement inventoryCapacity and diffuseWater
-    const { isObstacle, inventoryCapacity } = this.chromosome.getStaticProperties();
+    const { isObstacle, inventoryCapacity } = this.chromosome.mergeStaticProperties();
     this.isObstacle = isObstacle;
+    this.inventory = new Inventory(inventoryCapacity, this);
   }
 
   addEffect(effect: CellEffect) {

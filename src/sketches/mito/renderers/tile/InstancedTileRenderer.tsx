@@ -219,7 +219,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (this.hasActiveNeighbors(this.target)) {
       this.scene.add(this.neighborLines);
       this.neighborLines.position.set(this.target.pos.x, this.target.pos.y, 1);
-      const color = this.target instanceof Root ? new Color("rgb(9, 12, 255)").getHex() : 0xffc90e;
+      const color = 0xffc90e;
       const lines = this.target.activeNeighbors;
       if (lines.length !== this.neighborLines.children.length) {
         // redo neighbor lines

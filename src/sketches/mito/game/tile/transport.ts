@@ -3,7 +3,11 @@ import { Vector2 } from "three";
 import { TRANSPORT_TIME_BETWEEN_TRANSFERS } from "../constants";
 import { World } from "../world";
 import { Cell } from "./cell";
+import Chromosome from "./chromosome";
+import { GeneInventory } from "./genes";
 import { Tissue } from "./tissue";
+
+export const chromosomeTransport = new Chromosome(GeneInventory.level(2));
 
 export class Transport extends Tissue {
   static displayName = "Transport";
@@ -14,7 +18,7 @@ export class Transport extends Tissue {
   public dir: Vector2;
 
   constructor(pos: Vector2, world: World, dir: Vector2) {
-    super(pos, world);
+    super(pos, world, chromosomeTransport);
     this.dir = dir.clone();
     if (isFractional(dir.x) || isFractional(dir.y)) {
       throw new Error("build transport with fractional dir " + dir.x + ", " + dir.y);

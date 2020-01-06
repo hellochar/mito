@@ -2,6 +2,10 @@
   display: inline-block;
   position: relative;
 
+  &.display-block {
+    display: block;
+  }
+
   .look-at-mouse-transform {
     width: 100%;
     height: 100%;

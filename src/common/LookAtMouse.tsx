@@ -1,19 +1,19 @@
-import React from "react";
 // import useMouse from "@rooks/use-mouse";
 import useBoundingclientrectRef from "@rooks/use-boundingclientrect-ref";
-
-import "./LookAtMouse.scss";
 import classNames from "classnames";
+import React from "react";
+import "./LookAtMouse.scss";
 import useMousePosition from "./useMousePosition";
 
 interface LookAtMouseProps {
+  displayBlock?: boolean;
   zScale?: number;
 }
 
 function LookAtMouse(props: JSX.IntrinsicElements["div"] & LookAtMouseProps) {
   const mouse = useMousePosition();
   const [ref, size] = useBoundingclientrectRef() as any;
-  const { children, className, zScale = 5, ...restProps } = props;
+  const { displayBlock = false, children, className, zScale = 5, ...restProps } = props;
 
   const z = window.innerWidth * zScale;
 
@@ -39,7 +39,7 @@ function LookAtMouse(props: JSX.IntrinsicElements["div"] & LookAtMouseProps) {
   }, [mouse.x, mouse.y, size, z]);
 
   return (
-    <div ref={ref} className={classNames("look-at-mouse", className)} {...restProps}>
+    <div ref={ref} className={classNames("look-at-mouse", className, { "display-block": displayBlock })} {...restProps}>
       <div className="look-at-mouse-transform" style={style}>
         {children}
       </div>

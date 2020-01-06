@@ -1,14 +1,17 @@
 import { Vector2 } from "three";
 import { traitMod } from "../../../../evolution/traits";
 import { Inventory } from "../../inventory";
-import { FRUIT_NEEDED_RESOURCES, FRUIT_TIME_TO_MATURE, TISSUE_INVENTORY_CAPACITY } from "../constants";
+import { FRUIT_NEEDED_RESOURCES, FRUIT_TIME_TO_MATURE } from "../constants";
 import { World } from "../world";
 import { Cell } from "./cell";
 import { CellEffect, FreezeEffect } from "./cellEffect";
+import Chromosome from "./chromosome";
+import { GeneInventory } from "./genes";
+
+export const chromosomeFruit = new Chromosome(GeneInventory.level(0));
 export class Fruit extends Cell {
   static displayName = "Fruit";
   public isObstacle = true;
-  public inventory = new Inventory(TISSUE_INVENTORY_CAPACITY, this);
   public neededResources: number;
   public committedResources: Inventory; // = new Inventory(Fruit.neededResources, this);
   public timeMatured?: number;
@@ -18,7 +21,7 @@ export class Fruit extends Cell {
     return this.neededResources / this.secondsToMature;
   }
   constructor(pos: Vector2, world: World) {
-    super(pos, world);
+    super(pos, world, chromosomeFruit);
     this.neededResources =
       Math.ceil(traitMod(world.traits.fruitNeededResources, FRUIT_NEEDED_RESOURCES, 1 / 1.5) / 2) * 2;
     this.committedResources = new Inventory(this.neededResources, this);

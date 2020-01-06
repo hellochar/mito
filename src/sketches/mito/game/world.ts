@@ -22,10 +22,12 @@ import { createGeneratorContext, Environment, GeneratorContext, TileGenerators }
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
 import { Air, Cell, DeadCell, Fruit, Leaf, Soil, Tile, Tissue, Transport } from "./tile";
-import Chromosome from "./tile/chromosome";
+import { chromosomeFruit } from "./tile/fruit";
 import Genome from "./tile/genome";
+import { chromosomeLeaf } from "./tile/leaf";
 import { chromosomeRoot, Root } from "./tile/root";
 import { chromosomeTissue } from "./tile/tissue";
+import { chromosomeTransport } from "./tile/transport";
 import { TileEvent, TileEventType } from "./tileEvent";
 
 export type TileEventLog = {
@@ -102,7 +104,7 @@ export class World {
       },
       {
         name: "Leaf",
-        chromosome: new Chromosome(),
+        chromosome: chromosomeLeaf,
         geneSlots: 10,
         c: Leaf,
       },
@@ -114,13 +116,13 @@ export class World {
       },
       {
         name: "Transport",
-        chromosome: new Chromosome(),
+        chromosome: chromosomeTransport,
         geneSlots: 10,
         c: Transport,
       },
       {
         name: "Fruit",
-        chromosome: new Chromosome(),
+        chromosome: chromosomeFruit,
         geneSlots: 10,
         c: Fruit,
       },

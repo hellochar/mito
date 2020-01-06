@@ -1,11 +1,16 @@
 import { randRound } from "math";
 import { Vector2 } from "three";
 import { traitMod } from "../../../../evolution/traits";
-import { Inventory } from "../../inventory";
 import { canPullResources } from "../canPullResources";
-import { LEAF_REACTION_TIME, LEAF_WATER_INTAKE_PER_SECOND, TISSUE_INVENTORY_CAPACITY } from "../constants";
+import { LEAF_REACTION_TIME, LEAF_WATER_INTAKE_PER_SECOND } from "../constants";
+import { World } from "../world";
 import { Air } from "./air";
 import { Cell } from "./cell";
+import Chromosome from "./chromosome";
+import { GeneInventory } from "./genes";
+
+export const chromosomeLeaf = new Chromosome(GeneInventory.level(2));
+
 export class Leaf extends Cell {
   static displayName = "Leaf";
   public isObstacle = true;
@@ -14,7 +19,10 @@ export class Leaf extends Cell {
   public sugarConverted = 0;
   public activeNeighbors: Vector2[] = [];
   public totalSugarProduced = 0;
-  public inventory = new Inventory(TISSUE_INVENTORY_CAPACITY, this);
+
+  constructor(pos: Vector2, world: World) {
+    super(pos, world, chromosomeLeaf);
+  }
 
   reactionRate() {
     return (1 / traitMod(this.world.traits.photosynthesis, LEAF_REACTION_TIME, 1 / 1.5)) * this.tempo;

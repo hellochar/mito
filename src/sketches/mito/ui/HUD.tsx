@@ -50,7 +50,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   }
 
   private handleKeyDown = (e: KeyboardEvent) => {
-    if (e.code === "KeyI") {
+    if (e.code === "Tab") {
       this.setState({
         genomeViewerOpen: !this.state.genomeViewerOpen,
       });

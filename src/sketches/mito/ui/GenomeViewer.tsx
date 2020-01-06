@@ -90,7 +90,7 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
     [cellType, gene, setDragState]
   );
   return (
-    <LookAtMouse zScale={10}>
+    <LookAtMouse zScale={10} displayBlock>
       <div className="gene" draggable onDragStart={handleDragStart}>
         <div className="gene-header">
           <span className="gene-cost">
@@ -117,7 +117,7 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
             </button>
           ))}
         </div>
-        <p className="description">{gd.blueprint.description(gene.getProps())}</p>
+        <p className="description">{gd.blueprint.description(gene.getProps(), gene.getStaticProperties())}</p>
       </div>
     </LookAtMouse>
   );
