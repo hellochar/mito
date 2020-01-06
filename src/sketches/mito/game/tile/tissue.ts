@@ -6,7 +6,7 @@ import { World } from "../world";
 import { Cell } from "./cell";
 import Chromosome from "./chromosome";
 
-const chromosomeTissue = new Chromosome();
+export const chromosomeTissue = new Chromosome();
 
 export class Tissue extends Cell {
   static displayName = "Tissue";

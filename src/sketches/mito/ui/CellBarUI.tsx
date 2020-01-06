@@ -4,10 +4,10 @@ import { Vector2 } from "three";
 import { CellBar } from "../actionBar";
 import { Constructor } from "../constructor";
 import { Cell, Transport } from "../game/tile";
-import { materialInfoMapping } from "../renderers/tile/InstancedTileRenderer";
-import { spritesheetLoaded, textureFromSpritesheet } from "../spritesheet";
+import { spritesheetLoaded } from "../spritesheet";
 import "./CellBarUI.scss";
 import { HotkeyButton } from "./HotkeyButton";
+import IconCell from "./IconCell";
 
 export interface CellBarProps {
   bar: CellBar;
@@ -61,35 +61,12 @@ const CellBarItem: React.FC<CellBarItemProps> = React.memo(
     const onClick = React.useCallback(() => {
       bar.setIndex(index);
     }, [bar, index]);
-    const material = materialInfoMapping.get(type)!;
-    const color = (material.color && material.color.getStyle()) || "transparent";
-    const texture = textureFromSpritesheet(material.texturePosition.x, material.texturePosition.y, color);
-    const style: React.CSSProperties = React.useMemo(() => {
-      const image = texture.image;
-      const url = (() => {
-        if (image != null) {
-          if (image instanceof HTMLCanvasElement && spritesheetLoaded) {
-            return image.toDataURL();
-          } else if (image instanceof Image) {
-            return image.src;
-          } else {
-            throw new Error("image is" + image);
-          }
-        } else {
-          return "";
-        }
-      })();
-      const backgroundImage = `url(${url}), linear-gradient(${color}, ${color})`;
-      return {
-        backgroundImage,
-      };
-    }, [color, spritesheetLoaded, texture.image]);
     return (
       <div className={classNames("cell-bar-item", { selected: isSelected })}>
-        <div className="cell-bar-item-icon" onClick={onClick} style={style}>
+        <IconCell onClick={onClick} cellType={type} spritesheetLoaded={spritesheetLoaded}>
           {type.displayName}
           {children}
-        </div>
+        </IconCell>
         <HotkeyButton className="mito-hud-build-item" hotkey={hotkey} onClick={onClick} />
       </div>
     );

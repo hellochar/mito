@@ -1,5 +1,6 @@
 import { PopulationAttempt } from "app";
 import VignetteCapturer from "common/vignette";
+import { EventEmitter } from "events";
 import * as React from "react";
 import * as THREE from "three";
 import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
@@ -59,6 +60,7 @@ export class Mito extends ISketch {
 
   private suggestedCamera?: CameraState;
   private userZoom: number;
+  eventEmitter: EventEmitter = new EventEmitter();
 
   constructor(
     renderer: WebGLRenderer,
@@ -137,9 +139,10 @@ export class Mito extends ISketch {
     const code = event.code;
     this.keyMap.add(code);
     if (!event.repeat) {
-      this.toggleInstructions(code);
+      this.maybeToggleInstructions(code);
     }
     this.actionBar.keyDown(event);
+    this.eventEmitter.emit("keydown", event);
     const isOpeningDevtoolsOnChrome = event.code === "KeyI" && event.shiftKey && event.ctrlKey;
     if (!isOpeningDevtoolsOnChrome) {
       event.preventDefault();
@@ -148,6 +151,7 @@ export class Mito extends ISketch {
 
   private handleKeyUp = (event: KeyboardEvent) => {
     this.keyMap.delete(event.code);
+    this.eventEmitter.emit("keyup", event);
   };
 
   private handleBlur = () => {
@@ -207,7 +211,7 @@ export class Mito extends ISketch {
     strings.gain.gain.value = Math.max(0, stringsVolume);
   }
 
-  toggleInstructions(code: string) {
+  maybeToggleInstructions(code: string) {
     if (code === "Slash") {
       this.instructionsOpen = !this.instructionsOpen;
       return;

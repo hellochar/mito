@@ -21,7 +21,11 @@ import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
-import { Air, Cell, DeadCell, Fruit, Soil, Tile, Tissue } from "./tile";
+import { Air, Cell, DeadCell, Fruit, Leaf, Soil, Tile, Tissue, Transport } from "./tile";
+import Chromosome from "./tile/chromosome";
+import Genome from "./tile/genome";
+import { chromosomeRoot, Root } from "./tile/root";
+import { chromosomeTissue } from "./tile/tissue";
 import { TileEvent, TileEventType } from "./tileEvent";
 
 export type TileEventLog = {
@@ -68,6 +72,7 @@ export class World {
   public readonly species: Species;
   public readonly traits: Traits;
   public readonly generatorContext: GeneratorContext;
+  defaultGenome: Genome;
 
   get season(): Season {
     return seasonFromTime(this.time);
@@ -88,6 +93,38 @@ export class World {
       world: this,
     };
     this.species = species;
+    this.defaultGenome = new Genome([
+      {
+        name: "Tissue",
+        chromosome: chromosomeTissue,
+        geneSlots: 10,
+        c: Tissue,
+      },
+      {
+        name: "Leaf",
+        chromosome: new Chromosome(),
+        geneSlots: 10,
+        c: Leaf,
+      },
+      {
+        name: "Root",
+        chromosome: chromosomeRoot,
+        geneSlots: 10,
+        c: Root,
+      },
+      {
+        name: "Transport",
+        chromosome: new Chromosome(),
+        geneSlots: 10,
+        c: Transport,
+      },
+      {
+        name: "Fruit",
+        chromosome: new Chromosome(),
+        geneSlots: 10,
+        c: Fruit,
+      },
+    ]);
     this.traits = getTraits(this.species.genes);
     Cell.diffusionWater = traitMod(this.traits.diffuseWater, 1 / CELL_DIFFUSION_WATER_TIME, 2);
     Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, 1 / CELL_DIFFUSION_SUGAR_TIME, 2);

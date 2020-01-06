@@ -7,7 +7,7 @@ import { Cell } from "./cell";
 import Chromosome from "./chromosome";
 import { GeneSoilAbsorb } from "./genes";
 
-const chromosomeRoot = new Chromosome(GeneSoilAbsorb.level(2));
+export const chromosomeRoot = new Chromosome(GeneSoilAbsorb.level(2));
 
 export class Root extends Cell implements Interactable {
   static displayName = "Root";

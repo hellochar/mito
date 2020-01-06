@@ -5,6 +5,7 @@ import * as React from "react";
 import TraitDisplay from "../../../evolution/TraitDisplay";
 import Mito from "../index";
 import CellBarUI from "./CellBarUI";
+import GenomeViewer from "./GenomeViewer";
 import "./HUD.scss";
 import { InventoryBar } from "./InventoryBar";
 import SeasonsTracker from "./SeasonsTracker";
@@ -15,11 +16,13 @@ export interface HUDProps {
 
 export interface HUDState {
   traitsPanelOpen: boolean;
+  genomeViewerOpen: boolean;
 }
 
 export class HUD extends React.Component<HUDProps, HUDState> {
   state: HUDState = {
     traitsPanelOpen: true,
+    genomeViewerOpen: true,
   };
 
   get mito() {
@@ -42,6 +45,18 @@ export class HUD extends React.Component<HUDProps, HUDState> {
     return this.mito.tutorialRef == null ? true : this.mito.tutorialRef.isFinished();
   }
 
+  componentDidMount() {
+    this.mito.eventEmitter.on("keydown", this.handleKeyDown);
+  }
+
+  private handleKeyDown = (e: KeyboardEvent) => {
+    if (e.code === "KeyI") {
+      this.setState({
+        genomeViewerOpen: !this.state.genomeViewerOpen,
+      });
+    }
+  };
+
   public render() {
     const isMaxed = this.inventory.isMaxed();
     const isMaxedEl = <div className={`mito-inventory-maxed${isMaxed ? " is-maxed" : ""}`}>maxed</div>;
@@ -49,6 +64,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
       <>
         <SeasonsTracker time={this.world.time} season={this.world.season} />
         {this.maybeRenderTraits()}
+        {this.maybeRenderGenomeViewer()}
         {this.maybeRenderCollectButton()}
         <div className={classnames("hud-bottom", { hidden: false })}>
           {isMaxedEl}
@@ -87,6 +103,16 @@ export class HUD extends React.Component<HUDProps, HUDState> {
       return (
         <div className="hud-panel-right">
           <TraitDisplay traits={this.world.traits} />
+        </div>
+      );
+    }
+  }
+
+  maybeRenderGenomeViewer() {
+    if (this.state.genomeViewerOpen) {
+      return (
+        <div className="hud-top">
+          <GenomeViewer genome={this.mito.world.defaultGenome} />
         </div>
       );
     }

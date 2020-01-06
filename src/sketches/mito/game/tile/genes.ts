@@ -16,6 +16,7 @@ export const GeneVascular = Gene.make(
     levelProps: {
       diffusionRate: [0.01, 0.05, 0.1, 0.2, 0.4],
     },
+    description: ({ diffusionRate }) => `Diffuses water to other Vascular cells with rate ${diffusionRate}.`,
   },
   {},
   (dt, { cell, props: { diffusionRate } }) => {
@@ -35,6 +36,7 @@ export const GeneLiving = Gene.make(
     levelProps: {
       secondsPerUpkeep: [720, 600, 480, 240, 120],
     },
+    description: ({ secondsPerUpkeep }) => `Uses 100% of its energy every ${secondsPerUpkeep} seconds.`,
   },
   {},
   (dt, { cell, props: { secondsPerUpkeep } }) => {
@@ -50,6 +52,7 @@ export const GeneSoilAbsorb = Gene.make(
     levelProps: {
       secondsPerAbsorb: [20, 10, 5, 3, 2],
     },
+    description: ({ secondsPerAbsorb }) => `Absorb 1 water every ${secondsPerAbsorb} seconds from neighboring Soil.`,
   },
   { cooldown: 0, totalSucked: 0, activeNeighbors: [] as Vector2[] },
   (dt, { cell, state, props: { secondsPerAbsorb } }) => {

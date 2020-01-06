@@ -1,0 +1,56 @@
+@import "../../../variables";
+
+.genome-viewer {
+  padding: 10px;
+  overflow-y: hidden;
+  overflow-x: auto;
+  pointer-events: all;
+  text-align: left;
+
+  .cell-types {
+    display: flex;
+  }
+
+  .cell-type {
+    padding: 10px;
+    min-width: 300px;
+    min-height: 400px;
+    margin: 10px;
+    background: transparentize($color: $light-gray5, $amount: 0.1);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+
+    .cell-header {
+      display: flex;
+    }
+
+    .chromosome {
+      margin-top: 5px;
+      flex-grow: 1;
+      background: transparentize($sepia1, 0.9);
+      border-radius: 2px;
+      padding: 5px;
+    }
+
+    .gene {
+      border: 1px solid $gray5;
+      border-radius: 2px;
+      padding: 5px;
+
+      .gene-header {
+        display: flex;
+        align-items: center;
+
+        .gene-cost {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+
+  p {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+}
