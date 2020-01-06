@@ -42,11 +42,11 @@ export abstract class Cell extends Tile implements Interactable {
     } else if (this.temperatureFloat <= 64) {
       return 1;
     } else if (this.temperatureFloat <= 96) {
+      // 25% faster
+      return 1.25;
+    } else {
       // 50% faster
       return 1.5;
-    } else {
-      // 100% faster
-      return 2;
     }
   }
   get darknessContrib() {
@@ -111,7 +111,6 @@ export abstract class Cell extends Tile implements Interactable {
   step(dt: number) {
     const { tempo } = this;
     super.step(dt);
-    this.energy -= tempo * dt;
     for (const effect of this.effects) {
       effect.step(dt);
     }

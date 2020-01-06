@@ -7,10 +7,10 @@ import { World } from "../world";
 import { Air } from "./air";
 import { Cell } from "./cell";
 import Chromosome from "./chromosome";
-import { GeneInventory } from "./genes";
+import { GeneInventory, GeneLiving } from "./genes";
 import { GeneObstacle } from "./genes/GeneObstacle";
 
-export const chromosomeLeaf = new Chromosome(GeneInventory.level(2), GeneObstacle.level(0));
+export const chromosomeLeaf = new Chromosome(GeneLiving.level(2), GeneInventory.level(2), GeneObstacle.level(0));
 
 export class Leaf extends Cell {
   static displayName = "Leaf";

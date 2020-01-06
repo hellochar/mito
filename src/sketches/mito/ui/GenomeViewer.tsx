@@ -93,7 +93,7 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
   );
   return (
     <LookAtMouse zScale={8} displayBlock>
-      <div className="gene" draggable onDragStart={handleDragStart}>
+      <div className={classNames("gene", gd.blueprint.name)} draggable onDragStart={handleDragStart}>
         <div className="gene-header">
           <span className="gene-cost">
             <DynamicNumber value={gene.getCost()} speed={0.5} />
@@ -116,6 +116,7 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
             {arrayRange(gene.gene.blueprint.levelCosts.length).map((i) => (
               <button className={classNames({ selected: gene.level === i })} onClick={() => gene.setLevel(i)}>
                 {i + 1}
+                {/* <span className="gene-cost">{gene.gene.blueprint.levelCosts[i]}</span> */}
               </button>
             ))}
           </div>

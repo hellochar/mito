@@ -6,10 +6,10 @@ import { World } from "../world";
 import { Cell } from "./cell";
 import { CellEffect, FreezeEffect } from "./cellEffect";
 import Chromosome from "./chromosome";
-import { GeneInventory } from "./genes";
+import { GeneInventory, GeneLiving } from "./genes";
 import { GeneObstacle } from "./genes/GeneObstacle";
 
-export const chromosomeFruit = new Chromosome(GeneInventory.level(0), GeneObstacle.level(0));
+export const chromosomeFruit = new Chromosome(GeneLiving.level(2), GeneInventory.level(0), GeneObstacle.level(0));
 export class Fruit extends Cell {
   static displayName = "Fruit";
   public neededResources: number;

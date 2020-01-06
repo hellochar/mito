@@ -4,10 +4,10 @@ import { TRANSPORT_TIME_BETWEEN_TRANSFERS } from "../constants";
 import { World } from "../world";
 import { Cell } from "./cell";
 import Chromosome from "./chromosome";
-import { GeneInventory } from "./genes";
+import { GeneInventory, GeneLiving } from "./genes";
 import { Tissue } from "./tissue";
 
-export const chromosomeTransport = new Chromosome(GeneInventory.level(2));
+export const chromosomeTransport = new Chromosome(GeneLiving.level(1), GeneInventory.level(2));
 
 export class Transport extends Tissue {
   static displayName = "Transport";
@@ -31,8 +31,6 @@ export class Transport extends Tissue {
   step(dt: number) {
     super.step(dt);
     this.didJustTransport = false;
-    // transport hungers at double speed
-    this.energy -= this.tempo * dt;
     let waterToTransport = 0;
     let sugarToTransport = 0;
     if (this.cooldownWater <= 0) {

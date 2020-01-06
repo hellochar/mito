@@ -58,21 +58,6 @@
         display: flex;
         align-items: center;
 
-        .gene-cost {
-          font-weight: bold;
-          border-radius: 100%;
-          // background: transparentize($color: $sepia1, $amount: 0.2);
-          // color: white;
-          background: white;
-          color: black;
-          box-shadow: 0 2px 4px inset rgba(64, 64, 64, 0.5);
-          font-size: 12px;
-          width: 18px;
-          height: 18px;
-          display: inline-flex;
-          justify-content: center;
-        }
-
         h4 {
           font-size: 1em;
           text-align: center;
@@ -94,6 +79,21 @@
     font-family: $arial-family;
     line-height: 1.25;
     margin: 10px 0 0;
+  }
+
+  .gene-cost {
+    font-weight: bold;
+    border-radius: 100%;
+    // background: transparentize($color: $sepia1, $amount: 0.2);
+    // color: white;
+    background: white;
+    color: black;
+    box-shadow: 0 2px 4px inset rgba(64, 64, 64, 0.5);
+    font-size: 12px;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    justify-content: center;
   }
 
   .gene-level-arrows {
@@ -137,3 +137,9 @@
   font-size: 1.1em;
   font-weight: 600;
 }
+
+// .gene.Living {
+//   background: none !important;
+//   border: 1px solid $sepia3;
+//   box-shadow: none !important;
+// }
