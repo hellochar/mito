@@ -62,7 +62,9 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
         <IconCell cellType={cellType.c} spritesheetLoaded={spritesheetLoaded} />
         <div>
           <h2>{name}</h2>
-          <DynamicNumber value={chromosome.geneSlotsUsed()} />/{geneSlots} gene slots used
+          <span className="slots-used">
+            <DynamicNumber value={chromosome.geneSlotsUsed()} />/{geneSlots} gene slots used
+          </span>
         </div>
       </div>
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>

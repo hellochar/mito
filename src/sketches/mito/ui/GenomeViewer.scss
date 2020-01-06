@@ -11,6 +11,15 @@
     display: flex;
   }
 
+  .slots-used {
+    font-weight: bold;
+    // border-radius: 5px;
+    // background: transparentize($color: $sepia1, $amount: 0.2);
+    // color: white;
+    // padding: 0.1em 0.5em;
+    font-size: 12px;
+  }
+
   .cell-type {
     padding: 10px;
     min-width: 300px;
@@ -52,8 +61,11 @@
         .gene-cost {
           font-weight: bold;
           border-radius: 100%;
-          background: transparentize($color: $turquoise1, $amount: 0.5);
-          color: white;
+          // background: transparentize($color: $sepia1, $amount: 0.2);
+          // color: white;
+          background: white;
+          color: black;
+          box-shadow: 0 2px 4px inset rgba(64, 64, 64, 0.5);
           font-size: 12px;
           width: 18px;
           height: 18px;
