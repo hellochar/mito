@@ -28,13 +28,13 @@
     .chromosome {
       margin-top: 5px;
       flex-grow: 1;
-      background: transparentize($sepia1, 0.9);
-      border-radius: 2px;
+      // background: transparentize($sepia1, 0.9);
+      // border-radius: 2px;
       padding: 5px;
     }
 
     .look-at-mouse ~ .look-at-mouse {
-      margin-top: 5px;
+      margin-top: 10px;
     }
 
     .gene {
@@ -49,15 +49,23 @@
         display: flex;
         align-items: center;
 
+        .gene-cost {
+          font-weight: bold;
+          border-radius: 100%;
+          background: transparentize($color: $turquoise1, $amount: 0.5);
+          color: white;
+          font-size: 12px;
+          width: 18px;
+          height: 18px;
+          display: inline-flex;
+          justify-content: center;
+        }
+
         h4 {
           font-size: 1em;
           text-align: center;
           margin-right: auto;
           flex-grow: 1;
-        }
-
-        .gene-cost {
-          margin-right: 5px;
         }
 
         .grip-lines {
@@ -72,7 +80,24 @@
   p {
     font-size: 12px;
     font-family: $arial-family;
-    margin-top: 5px;
+    line-height: 1.25;
+    margin: 10px 0 0;
+  }
+
+  .gene-level-arrows {
+    display: inline-flex;
+    flex-direction: column;
+    margin-left: 2px;
+    vertical-align: middle;
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      font-size: 0.5em;
+    }
   }
 
   .gene-level-picker {
@@ -85,7 +110,7 @@
       background: none;
       cursor: pointer;
       font-family: $arial-family;
-      font-size: 0.75em;
+      font-size: 12px;
       border-width: thin;
 
       &.selected {

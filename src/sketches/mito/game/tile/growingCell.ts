@@ -3,7 +3,7 @@ import { Inventory } from "../../inventory";
 import { World } from "../world";
 import { Cell } from "./cell";
 export class GrowingCell extends Cell {
-  static displayName = "Maturing Cell";
+  static displayName = "Growing Cell";
   public isObstacle = true;
   public timeRemaining: number;
   public timeToBuild: number;

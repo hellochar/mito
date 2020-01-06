@@ -62,12 +62,12 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
         <IconCell cellType={cellType.c} spritesheetLoaded={spritesheetLoaded} />
         <div>
           <h2>{name}</h2>
-          {chromosome.geneSlotsUsed()}/{geneSlots} gene slots used
+          <DynamicNumber value={chromosome.geneSlotsUsed()} />/{geneSlots} gene slots used
         </div>
       </div>
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
         {chromosome.genes.map((g) => (
-          <GeneViewer cellType={cellType} gene={g} />
+          <GeneViewer key={g.gene.blueprint.name} cellType={cellType} gene={g} />
         ))}
       </div>
     </div>
@@ -90,33 +90,34 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
     [cellType, gene, setDragState]
   );
   return (
-    <LookAtMouse zScale={10} displayBlock>
+    <LookAtMouse zScale={8} displayBlock>
       <div className="gene" draggable onDragStart={handleDragStart}>
         <div className="gene-header">
           <span className="gene-cost">
             <DynamicNumber value={gene.getCost()} speed={0.5} />
           </span>
           <h4>
-            {gd.blueprint.name}
-            {/* {level + 1} */}
+            {gd.blueprint.name} {/*level + 1*/}
+            {/* <div className="gene-level-arrows">
+              <button className="up" onClick={() => gene.setLevel(level + 1)}>
+                <FaArrowUp />
+              </button>
+              <button className="down" onClick={() => gene.setLevel(level - 1)}>
+                <FaArrowDown />
+              </button>
+            </div> */}
           </h4>
-          {/* <div className="buttons">
-            <button className="up" onClick={() => gene.changeLevel(level + 1)}>
-              <FaArrowUp />
-            </button>
-            <button className="down" onClick={() => gene.changeLevel(level - 1)}>
-              <FaArrowDown />
-            </button>
-          </div> */}
           <FaGripLines className="grip-lines" />
         </div>
-        <div className="gene-level-picker">
-          {arrayRange(5).map((i) => (
-            <button className={classNames({ selected: gene.level === i })} onClick={() => gene.changeLevel(i)}>
-              {i}
-            </button>
-          ))}
-        </div>
+        {gene.gene.blueprint.levelCosts.length > 1 ? (
+          <div className="gene-level-picker">
+            {arrayRange(gene.gene.blueprint.levelCosts.length).map((i) => (
+              <button className={classNames({ selected: gene.level === i })} onClick={() => gene.setLevel(i)}>
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <p className="description">{gd.blueprint.description(gene.getProps(), gene.getStaticProperties())}</p>
       </div>
     </LookAtMouse>

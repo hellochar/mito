@@ -89,7 +89,9 @@ export class Gene<S = any, K extends string = any> {
 }
 
 export class RealizedGene<G extends Gene = Gene> {
-  public constructor(public gene: G, public level: number) {}
+  public constructor(public gene: G, public level: number) {
+    this.setLevel(level);
+  }
 
   getStaticProperties() {
     const staticBlueprint = this.gene.blueprint.static || {};
@@ -104,8 +106,8 @@ export class RealizedGene<G extends Gene = Gene> {
     return this.gene.blueprint.levelCosts[this.level];
   }
 
-  changeLevel(newLevel: number): void {
-    this.level = clamp(newLevel, 0, 4);
+  setLevel(newLevel: number): void {
+    this.level = clamp(newLevel, 0, this.gene.blueprint.levelCosts.length);
   }
 
   public newInstance(cell: Cell): GeneInstance<G> {
