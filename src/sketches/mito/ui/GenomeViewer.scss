@@ -34,16 +34,29 @@
     }
 
     .gene {
-      border: 1px solid $gray5;
+      // border: 1px solid $gray5;
       border-radius: 2px;
       padding: 5px;
+      box-shadow: 0 4px 8px rgba(64, 64, 64, 0.5);
+      background: transparentize($sepia1, 0.7);
+      cursor: grab;
 
       .gene-header {
         display: flex;
         align-items: center;
 
+        h4 {
+          font-size: 1em;
+        }
+
         .gene-cost {
           margin-right: 5px;
+        }
+
+        .grip-lines {
+          align-self: start;
+          margin-left: auto;
+          color: $gray3;
         }
       }
     }
@@ -51,6 +64,22 @@
 
   p {
     font-size: 12px;
+    font-family: $arial-family;
     margin-top: 5px;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+
+    button {
+      margin: 0;
+      padding: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.75em;
+    }
   }
 }

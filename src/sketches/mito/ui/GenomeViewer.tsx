@@ -1,4 +1,7 @@
+import DynamicNumber from "common/DynamicNumber";
+import LookAtMouse from "common/LookAtMouse";
 import * as React from "react";
+import { FaArrowDown, FaArrowUp, FaGripLines } from "react-icons/fa";
 import { RealizedGene } from "../game/tile/chromosome";
 import Genome, { CellType } from "../game/tile/genome";
 import { spritesheetLoaded } from "../spritesheet";
@@ -40,8 +43,8 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
       event.preventDefault();
       if (dragState.dragged != null) {
         const { gene, cellType: leavingCellType } = dragState.dragged;
-        cellType.chromosome.genes.push(gene);
         leavingCellType.chromosome.genes = leavingCellType.chromosome.genes.filter((g) => g !== gene);
+        cellType.chromosome.genes.push(gene);
         setDragState({});
       }
     },
@@ -57,7 +60,7 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
         <IconCell cellType={cellType.c} spritesheetLoaded={spritesheetLoaded} />
         <div>
           <h2>{name}</h2>
-          {geneSlots - chromosome.geneSlotsUsed()} gene slots remaining
+          {chromosome.geneSlotsUsed()}/{geneSlots} gene slots used
         </div>
       </div>
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
@@ -85,17 +88,28 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
     [cellType, gene, setDragState]
   );
   return (
-    <div className="gene" draggable onDragStart={handleDragStart}>
-      <div className="gene-header">
-        <span className="gene-cost">{gene.getCost()}</span>
-        <h4>
-          {gd.blueprint.name} {level + 1}
-        </h4>
-        <button onClick={() => gene.changeLevel(level + 1)}>+</button>
-        <button onClick={() => gene.changeLevel(level - 1)}>-</button>
+    <LookAtMouse zScale={10}>
+      <div className="gene" draggable onDragStart={handleDragStart}>
+        <div className="gene-header">
+          <span className="gene-cost">
+            <DynamicNumber value={gene.getCost()} speed={0.5} />
+          </span>
+          <h4>
+            {gd.blueprint.name} {level + 1}
+          </h4>
+          <div className="buttons">
+            <button className="up" onClick={() => gene.changeLevel(level + 1)}>
+              <FaArrowUp />
+            </button>
+            <button className="down" onClick={() => gene.changeLevel(level - 1)}>
+              <FaArrowDown />
+            </button>
+          </div>
+          <FaGripLines className="grip-lines" />
+        </div>
+        <p className="description">{gd.blueprint.description(gene.getProps())}</p>
       </div>
-      <p className="description">{gd.blueprint.description(gene.getProps())}</p>
-    </div>
+    </LookAtMouse>
   );
 };
 
