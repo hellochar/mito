@@ -1,7 +1,9 @@
+import classNames from "classnames";
 import DynamicNumber from "common/DynamicNumber";
 import LookAtMouse from "common/LookAtMouse";
+import { arrayRange } from "math/arrays";
 import * as React from "react";
-import { FaArrowDown, FaArrowUp, FaGripLines } from "react-icons/fa";
+import { FaGripLines } from "react-icons/fa";
 import { RealizedGene } from "../game/tile/chromosome";
 import Genome, { CellType } from "../game/tile/genome";
 import { spritesheetLoaded } from "../spritesheet";
@@ -95,17 +97,25 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
             <DynamicNumber value={gene.getCost()} speed={0.5} />
           </span>
           <h4>
-            {gd.blueprint.name} {level + 1}
+            {gd.blueprint.name}
+            {/* {level + 1} */}
           </h4>
-          <div className="buttons">
+          {/* <div className="buttons">
             <button className="up" onClick={() => gene.changeLevel(level + 1)}>
               <FaArrowUp />
             </button>
             <button className="down" onClick={() => gene.changeLevel(level - 1)}>
               <FaArrowDown />
             </button>
-          </div>
+          </div> */}
           <FaGripLines className="grip-lines" />
+        </div>
+        <div className="gene-level-picker">
+          {arrayRange(5).map((i) => (
+            <button className={classNames({ selected: gene.level === i })} onClick={() => gene.changeLevel(i)}>
+              {i}
+            </button>
+          ))}
         </div>
         <p className="description">{gd.blueprint.description(gene.getProps())}</p>
       </div>

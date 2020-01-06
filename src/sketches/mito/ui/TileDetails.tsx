@@ -4,7 +4,7 @@ import { Constructor } from "../constructor";
 import { CELL_MAX_ENERGY } from "../game/constants";
 import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Leaf, Soil, Tile } from "../game/tile";
 import { GeneInstance } from "../game/tile/chromosome";
-import { GeneSoilAbsorb } from "../game/tile/genes";
+import { GeneSoilAbsorption } from "../game/tile/genes";
 import { InventoryBar } from "./InventoryBar";
 import TemperatureInfo from "./TemperatureInfo";
 import "./TileDetails.scss";
@@ -61,17 +61,17 @@ export class TileDetails extends React.Component<TileDetailsProps> {
 
   private geneInfo(cell: Cell) {
     for (const gene of cell.geneInstances) {
-      if (gene.gene === GeneSoilAbsorb) {
+      if (gene.gene === GeneSoilAbsorption) {
         return this.soilAbsorbInfo(gene);
       }
     }
   }
 
-  private soilAbsorbInfo(soilAbsorb: GeneInstance<GeneSoilAbsorb>) {
+  private soilAbsorbInfo(g: GeneInstance<GeneSoilAbsorption>) {
     return (
       <div className="info-root">
-        <div>Absorbs in {formatSeconds(soilAbsorb.state.cooldown)}.</div>
-        <div>{soilAbsorb.state.totalSucked.toFixed(1)} total water absorbed so far.</div>
+        <div>Absorbs in {formatSeconds(g.state.cooldown)}.</div>
+        <div>{g.state.totalSucked.toFixed(1)} total water absorbed so far.</div>
       </div>
     );
   }

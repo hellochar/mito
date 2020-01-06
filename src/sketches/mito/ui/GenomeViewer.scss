@@ -47,6 +47,9 @@
 
         h4 {
           font-size: 1em;
+          text-align: center;
+          margin-right: auto;
+          flex-grow: 1;
         }
 
         .gene-cost {
@@ -55,7 +58,7 @@
 
         .grip-lines {
           align-self: start;
-          margin-left: auto;
+          // margin-left: auto;
           color: $gray3;
         }
       }
@@ -68,18 +71,28 @@
     margin-top: 5px;
   }
 
-  .buttons {
+  .gene-level-picker {
     display: flex;
-    flex-direction: column;
-    margin-left: 5px;
+    margin: 5px 0 0;
 
     button {
+      flex: 1;
       margin: 0;
-      padding: 0;
       background: none;
-      border: none;
       cursor: pointer;
+      font-family: $arial-family;
       font-size: 0.75em;
+      border-width: thin;
+
+      &.selected {
+        border-style: inset;
+        font-weight: bold;
+      }
     }
   }
+}
+
+.gn {
+  font-size: 1.1em;
+  font-weight: 600;
 }

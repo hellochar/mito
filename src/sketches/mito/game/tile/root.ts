@@ -5,9 +5,9 @@ import { Interactable } from "../interactable";
 import { World } from "../world";
 import { Cell } from "./cell";
 import Chromosome from "./chromosome";
-import { GeneSoilAbsorb } from "./genes";
+import { GeneSoilAbsorption } from "./genes";
 
-export const chromosomeRoot = new Chromosome(GeneSoilAbsorb.level(2));
+export const chromosomeRoot = new Chromosome(GeneSoilAbsorption.level(2));
 
 export class Root extends Cell implements Interactable {
   static displayName = "Root";

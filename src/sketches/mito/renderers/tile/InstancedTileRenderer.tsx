@@ -22,14 +22,14 @@ import {
   Transport,
 } from "sketches/mito/game/tile";
 import { Gene, GeneInstance } from "sketches/mito/game/tile/chromosome";
-import { GeneSoilAbsorb } from "sketches/mito/game/tile/genes";
+import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
 import { Audio, Color, Object3D, Scene, Vector2, Vector3 } from "three";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";
 import { Animation, AnimationController } from "./Animation";
 import { CellEffectsRenderer } from "./CellEffectsRenderer";
-import { GeneRenderer, GeneSoilAbsorbRenderer } from "./GeneRenderer";
+import { GeneRenderer, GeneSoilAbsorptionRenderer } from "./GeneRenderer";
 import makeLine from "./makeLine";
 import TileBatcher, { BatchInstance } from "./tileBatcher";
 
@@ -91,9 +91,9 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
   }
 
-  private createGeneRendererFor<G extends Gene>(inst: GeneInstance<G>): GeneSoilAbsorbRenderer | undefined {
-    if (inst.isType(GeneSoilAbsorb)) {
-      return new GeneSoilAbsorbRenderer(inst, this.scene, this.mito, this);
+  private createGeneRendererFor<G extends Gene>(inst: GeneInstance<G>): GeneSoilAbsorptionRenderer | undefined {
+    if (inst.isType(GeneSoilAbsorption)) {
+      return new GeneSoilAbsorptionRenderer(inst, this.scene, this.mito, this);
     }
   }
 

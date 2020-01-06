@@ -1,5 +1,5 @@
-import React from "react";
 import Ticker from "global/ticker";
+import React from "react";
 
 interface DynamicNumberProps {
   value: number;
@@ -12,7 +12,7 @@ const NUMBER_FORMATTER = new Intl.NumberFormat(undefined, {
   useGrouping: true,
 });
 
-function DynamicNumber({ value, speed = 0.1, formatter = NUMBER_FORMATTER }: DynamicNumberProps) {
+function DynamicNumber({ value, speed = 0.5, formatter = NUMBER_FORMATTER }: DynamicNumberProps) {
   const [v, setV] = React.useState(value);
 
   React.useEffect(() => {
