@@ -5,29 +5,47 @@ import { spritesheetLoaded } from "../spritesheet";
 import "./GenomeViewer.scss";
 import IconCell from "./IconCell";
 
+interface DragInfo {
+  gene: RealizedGene;
+  cellType: CellType;
+}
+
+interface DragState {
+  dragged?: DragInfo;
+}
+
+type DragStateTupleType = [DragState, React.Dispatch<React.SetStateAction<DragState>>];
+const DraggedContext = React.createContext<DragStateTupleType>(null!);
+
 const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
+  const tuple = React.useState<DragState>({});
   return (
-    <div className="genome-viewer">
-      <div className="cell-types">
-        {genome.cellTypes.map((c) => (
-          <CellTypeViewer cellType={c} />
-        ))}
+    <DraggedContext.Provider value={tuple}>
+      <div className="genome-viewer">
+        <div className="cell-types">
+          {genome.cellTypes.map((c) => (
+            <CellTypeViewer cellType={c} />
+          ))}
+        </div>
       </div>
-    </div>
+    </DraggedContext.Provider>
   );
 };
 
 const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
   const { chromosome, geneSlots, name } = cellType;
+  const [dragState, setDragState] = React.useContext(DraggedContext);
   const handleDrop = React.useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
-      if (dragged != null) {
-        cellType.chromosome.genes.push(dragged);
-        dragged = undefined;
+      if (dragState.dragged != null) {
+        const { gene, cellType: leavingCellType } = dragState.dragged;
+        cellType.chromosome.genes.push(gene);
+        leavingCellType.chromosome.genes = leavingCellType.chromosome.genes.filter((g) => g !== gene);
+        setDragState({});
       }
     },
-    [cellType.chromosome.genes]
+    [cellType.chromosome.genes, dragState.dragged, setDragState]
   );
   const handleDragOver = React.useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -44,23 +62,27 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
       </div>
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
         {chromosome.genes.map((g) => (
-          <GeneViewer gene={g} />
+          <GeneViewer cellType={cellType} gene={g} />
         ))}
       </div>
     </div>
   );
 };
 
-let dragged: RealizedGene | undefined;
-
-const GeneViewer: React.FC<{ gene: RealizedGene }> = ({ gene }) => {
+const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cellType, gene }) => {
+  const [dragState, setDragState] = React.useContext(DraggedContext);
   const { gene: gd, level } = gene;
   const handleDragStart = React.useCallback(
     (event: React.DragEvent) => {
       event.dataTransfer.setData("mito/gene", "data");
-      dragged = gene;
+      setDragState({
+        dragged: {
+          cellType,
+          gene,
+        },
+      });
     },
-    [gene]
+    [cellType, gene, setDragState]
   );
   return (
     <div className="gene" draggable onDragStart={handleDragStart}>
