@@ -5,7 +5,6 @@ import { reversed } from "math/easing";
 import Mito from "sketches/mito";
 import { blopBuffer } from "sketches/mito/audio";
 import { Constructor } from "sketches/mito/constructor";
-import { CELL_MAX_ENERGY } from "sketches/mito/game/constants";
 import { Temperature } from "sketches/mito/game/temperature";
 import {
   Air,
@@ -171,7 +170,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     this.color.copy(this.originalColor);
     if (this.target instanceof Cell) {
-      this.color.lerp(new Color(0), 1 - this.target.energy / CELL_MAX_ENERGY);
+      this.color.lerp(new Color(0), 1 - this.target.energy);
     }
 
     this.color = this.lerpColorTemperature(this.color);

@@ -9,15 +9,10 @@ export type MPProps = JSX.IntrinsicElements["div"] & {
   total?: number;
 };
 
-const MP_NUMBER_FORMATTER = new Intl.NumberFormat(undefined, {
-  maximumFractionDigits: 0,
-  useGrouping: true,
-});
-
 function MP({ amount, total, ...props }: MPProps) {
   return (
     <span {...props} className={classNames("mp", props.className)}>
-      <DynamicNumber speed={0.3} formatter={MP_NUMBER_FORMATTER} value={amount} />
+      <DynamicNumber speed={0.3} fractionDigits={0} value={amount} />
       {total != null ? <>/{total}</> : null}
       <GiDna1 className="mp-icon" />
     </span>

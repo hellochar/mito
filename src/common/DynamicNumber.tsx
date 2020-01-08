@@ -1,19 +1,22 @@
 import Ticker from "global/ticker";
 import React from "react";
 
-interface DynamicNumberProps {
+export interface DynamicNumberProps {
   value: number;
   speed?: number;
-  formatter?: Intl.NumberFormat;
+  fractionDigits?: number;
 }
 
-const NUMBER_FORMATTER = new Intl.NumberFormat(undefined, {
-  maximumFractionDigits: 2,
-  useGrouping: true,
-});
-
-function DynamicNumber({ value, speed = 0.5, formatter = NUMBER_FORMATTER }: DynamicNumberProps) {
+function DynamicNumber({ value, speed = 0.5, fractionDigits = 2 }: DynamicNumberProps) {
   const [v, setV] = React.useState(value);
+  const formatter = React.useMemo(
+    () =>
+      new Intl.NumberFormat(undefined, {
+        maximumFractionDigits: fractionDigits,
+        useGrouping: true,
+      }),
+    [fractionDigits]
+  );
 
   React.useEffect(() => {
     const id = Ticker.addAnimation(() => {

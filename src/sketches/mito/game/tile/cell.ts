@@ -3,7 +3,7 @@ import { Vector2 } from "three";
 import { traitMod } from "../../../../evolution/traits";
 import { DIRECTIONS } from "../../directions";
 import { params } from "../../params";
-import { CELL_BUILD_TIME, CELL_DIFFUSION_SUGAR_TIME, CELL_DIFFUSION_WATER_TIME, CELL_MAX_ENERGY } from "../constants";
+import { CELL_BUILD_TIME, CELL_DIFFUSION_SUGAR_TIME, CELL_DIFFUSION_WATER_TIME } from "../constants";
 import { step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
@@ -22,7 +22,7 @@ export abstract class Cell extends Tile implements Interactable {
   static diffusionWater = 1 / CELL_DIFFUSION_WATER_TIME;
   static diffusionSugar = 1 / CELL_DIFFUSION_SUGAR_TIME;
   static timeToBuild = CELL_BUILD_TIME;
-  public energy = CELL_MAX_ENERGY;
+  public energy = 1;
   public darkness = 0;
   public nextTemperature: number;
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
@@ -93,51 +93,23 @@ export abstract class Cell extends Tile implements Interactable {
     }
     return anyInteracted;
   }
+
   die() {
     this.world.setTileAt(this.pos, new DeadCell(this.pos, this.world));
   }
-  getMaxEnergyToEat(dt: number) {
-    const hunger = CELL_MAX_ENERGY - this.energy;
-    if (hunger < CELL_MAX_ENERGY * 0.05) {
-      return 0;
-    }
-    const EAT_ENERGY_PER_SECOND = CELL_MAX_ENERGY / 5;
-    return Math.min(hunger, EAT_ENERGY_PER_SECOND * dt);
-  }
-  // Step cells every 3 frames
+
   shouldStep(dt: number) {
     return dt > 0.1;
   }
+
   step(dt: number) {
-    const { tempo } = this;
     super.step(dt);
     for (const effect of this.effects) {
       effect.step(dt);
     }
     this.geneInstances.forEach((g) => step(g, dt));
     const tileNeighbors = this.world.tileNeighbors(this.pos);
-    const neighbors = Array.from(tileNeighbors.values());
-    let maxEnergyToEat = this.getMaxEnergyToEat(tempo * dt);
-    // eat from self
-    if (maxEnergyToEat > 0) {
-      maxEnergyToEat -= this.stepEatSugar(this, maxEnergyToEat);
-    }
-    // eat from neighbor's sugars
-    // if (maxEnergyToEat > 0) {
-    //   // const neighborsAndSelf = [this, ...neighbors];
-    //   for (const tile of neighbors) {
-    //     maxEnergyToEat -= this.stepEatSugar(tile, maxEnergyToEat);
-    //     if (maxEnergyToEat <= 0) {
-    //       break;
-    //     }
-    //   }
-    // }
-    // still hungry; take neighbor's energy
-    if (maxEnergyToEat > 0) {
-      const energeticNeighbors = neighbors.filter((t) => t instanceof Cell) as Cell[];
-      this.stepEqualizeEnergy(energeticNeighbors, maxEnergyToEat);
-    }
-    // this.stepStress(tileNeighbors);
+
     this.stepDroop(tileNeighbors, dt);
     // TODO scale freefalling by dt
     if (this.droopY > 0.5) {
@@ -156,24 +128,7 @@ export abstract class Cell extends Tile implements Interactable {
       this.die();
     }
   }
-  stepEatSugar(tile: Tile, maxEnergyToEat: number): number {
-    const hunger = maxEnergyToEat;
-    // if this number goes up, we become less energy efficient
-    // if this number goes down, we are more energy efficient
-    const energyToSugarConversion = traitMod(this.world.traits.energyEfficiency, 1 / CELL_MAX_ENERGY, 1 / 1.5);
-    const sugarToEat = Math.min(hunger * energyToSugarConversion, tile.inventory.sugar);
-    // eat if we're hungry
-    if (sugarToEat > 0) {
-      tile.inventory.add(0, -sugarToEat);
-      const gotEnergy = sugarToEat / energyToSugarConversion;
-      this.energy += gotEnergy;
-      if (gotEnergy > 0) {
-        this.world.logEvent({ type: "cell-eat", who: this });
-      }
-      return gotEnergy;
-    }
-    return 0;
-  }
+
   /**
    * Take energy from neighbors who have more than you
    */
@@ -234,7 +189,7 @@ export abstract class Cell extends Tile implements Interactable {
     const aboveRight = tileNeighbors.get(DIRECTIONS.ne)!;
     const droopAmount = traitMod(this.world.traits.structuralStability, params.droop, 1 / 1.5) * dt;
     this.droopY += droopAmount;
-    if (this.energy < CELL_MAX_ENERGY / 2) {
+    if (this.energy < 0.5) {
       this.droopY += droopAmount;
     }
     let hasSupportBelow = false;

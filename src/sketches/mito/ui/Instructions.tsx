@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  CELL_MAX_ENERGY,
-  LEAF_REACTION_TIME,
-  PLAYER_MAX_RESOURCES,
-  TISSUE_INVENTORY_CAPACITY,
-} from "../game/constants";
+import { LEAF_REACTION_TIME, PLAYER_MAX_RESOURCES, TISSUE_INVENTORY_CAPACITY } from "../game/constants";
 
 interface InstructionsProps {
   play: () => void;
@@ -78,7 +73,7 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
           <h3>Cells</h3>
           <p>
             All cells require energy upkeep and will automatically eat sugar on their tile, or get energy from their
-            neighbors. Each cell consumes 1 sugar every {CELL_MAX_ENERGY} seconds.
+            neighbors.
           </p>
           <h3>Tissue</h3>
           <p>

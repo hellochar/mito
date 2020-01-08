@@ -1,10 +1,10 @@
-import DynamicNumber from "common/DynamicNumber";
+import DynamicNumber, { DynamicNumberProps } from "common/DynamicNumber";
 import React from "react";
 
-const GN: React.FC<{ value: number }> = ({ value }) => {
+const GN: React.FC<DynamicNumberProps> = (props) => {
   return (
     <span className="gn">
-      <DynamicNumber speed={0.5} value={value} />
+      <DynamicNumber {...props} />
     </span>
   );
 };

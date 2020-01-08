@@ -1,5 +1,5 @@
 import { Constructor } from "../../constructor";
-import { CELL_MAX_ENERGY, TIME_PER_DAY } from "../constants";
+import { TIME_PER_DAY } from "../constants";
 import { StopStep } from "../entity";
 import { Interactable } from "../interactable";
 import { Temperature } from "../temperature";
@@ -66,11 +66,11 @@ export class FreezeEffect extends CellEffect implements Interactable {
       // this.percentFrozen -= (10 / this.secondsToDie) * dt;
     }
     this.onFrozenChanged();
-    this.cell.energy -= (dt / this.secondsToDie) * CELL_MAX_ENERGY;
+    this.cell.energy -= dt / this.secondsToDie;
     throw new StopStep();
   }
   onAttached() {
-    this.cell.energy -= CELL_MAX_ENERGY * 0.2;
+    this.cell.energy -= 0.2;
   }
   onFrozenChanged() {
     if (this.percentFrozen > 1) {

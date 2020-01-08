@@ -63,8 +63,9 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
         <div>
           <h2>{name}</h2>
           <span className="slots-used">
-            <DynamicNumber value={chromosome.geneSlotsUsed()} />/{geneSlots} gene slots used
-          </span>
+            <DynamicNumber value={chromosome.geneSlotsUsed()} />/{geneSlots}
+          </span>{" "}
+          gene slots used
         </div>
       </div>
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>

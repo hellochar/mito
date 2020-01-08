@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import * as React from "react";
 import { Constructor } from "../constructor";
-import { CELL_MAX_ENERGY } from "../game/constants";
 import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Leaf, Soil, Tile } from "../game/tile";
 import { GeneInstance } from "../game/tile/chromosome";
 import { GeneSoilAbsorption } from "../game/tile/genes";
@@ -118,9 +117,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
 
   private tileInfo(tile: Tile) {
     const energyInfo =
-      tile instanceof Cell ? (
-        <span className="info-energy">💚&nbsp;{((tile.energy / CELL_MAX_ENERGY) * 100).toFixed(0)}%</span>
-      ) : null;
+      tile instanceof Cell ? <span className="info-energy">💚&nbsp;{(tile.energy * 100).toFixed(0)}%</span> : null;
     return (
       <div className="info-tile">
         <div className="info-tile-row">

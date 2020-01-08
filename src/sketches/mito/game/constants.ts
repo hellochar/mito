@@ -36,12 +36,6 @@ export const TIME_PER_DAY = TIME_PER_MONTH / 3; // 60 seconds per day (1 minute)
 export const PERCENT_DAYLIGHT = 0.9; // 45 second days, 5 second nights
 
 /**
- * How many seconds it takes for a Cell to go from 100% to 0% energy. One sugar will sustain one
- * Cell's energy for this many seconds. "Energy" is a unit of time in this game.
- */
-export const CELL_MAX_ENERGY = TIME_PER_SEASON;
-
-/**
  * How many seconds it takes to build a Cell.
  */
 export const CELL_BUILD_TIME = 1;
