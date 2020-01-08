@@ -51,6 +51,7 @@ export class GeneSoilAbsorptionRenderer extends GeneRenderer<GeneSoilAbsorption>
   }
 
   destroy() {
+    this.scene.remove(this.neighborLines);
     this.audio.disconnect();
   }
 }
