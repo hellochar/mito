@@ -31,7 +31,7 @@ export abstract class Cell extends Tile implements Interactable {
   public args?: any[];
   public effects: CellEffect[] = [];
   public chromosome: Chromosome;
-  public geneInstances: GeneInstance<Gene>[];
+  public geneInstances: GeneInstance<Gene<unknown, string>>[];
   get tempo() {
     if (this.temperatureFloat <= 0) {
       // 50% slower - 1 / 2;

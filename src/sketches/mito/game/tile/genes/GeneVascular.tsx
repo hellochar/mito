@@ -1,7 +1,7 @@
 import { Cell } from "../cell";
 import { Gene } from "../chromosome";
 /**
- * Vascular cells will connect to other adjacent Vascular cells.
+ * Vascular cells will connect to other neighboring Vascular cells.
  * Water in a Vascular cell will do two things:
  * a) Adhesion - Water will be pulled into this Cell.
  * b) Cohesion - Water will move to be near other Water.

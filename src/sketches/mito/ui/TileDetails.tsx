@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import * as React from "react";
 import { Constructor } from "../constructor";
-import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Leaf, Soil, Tile } from "../game/tile";
-import { GeneInstance } from "../game/tile/chromosome";
-import { GeneSoilAbsorption } from "../game/tile/genes";
+import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Soil, Tile } from "../game/tile";
+import { GeneSoilAbsorption, SoilAbsorptionState } from "../game/tile/genes";
+import { GenePhotosynthesis, PhotosynthesisState } from "../game/tile/genes/GenePhotosynthesis";
 import { InventoryBar } from "./InventoryBar";
 import TemperatureInfo from "./TemperatureInfo";
 import "./TileDetails.scss";
@@ -27,7 +27,6 @@ export class TileDetails extends React.Component<TileDetailsProps> {
         {this.tileInfo(tile)}
         {this.cellInfo(tile)}
         {this.growingCellInfo(tile)}
-        {this.leafInfo(tile)}
         {this.airInfo(tile)}
         {this.soilInfo(tile)}
         {this.fountainInfo(tile)}
@@ -52,36 +51,44 @@ export class TileDetails extends React.Component<TileDetailsProps> {
         <>
           {tile.droopY * 200 > 1 ? <div className="info-cell">{(tile.droopY * 200).toFixed(0)}% droop</div> : null}
           {this.cellEffects(tile)}
-          {this.geneInfo(tile)}
+          {this.geneInfos(tile)}
         </>
       );
     }
   }
 
-  private geneInfo(cell: Cell) {
-    for (const gene of cell.geneInstances) {
-      if (gene.gene === GeneSoilAbsorption) {
-        return this.soilAbsorbInfo(gene);
-      }
-    }
+  private geneInfos(cell: Cell) {
+    return (
+      <>
+        {cell.geneInstances.map((gene) => {
+          if (gene.isType(GeneSoilAbsorption)) {
+            return this.soilAbsorptionInfo(gene.state);
+          } else if (gene.isType(GenePhotosynthesis)) {
+            return this.photosynthesisInfo(gene.state);
+          } else {
+            return null;
+          }
+        })}
+      </>
+    );
   }
 
-  private soilAbsorbInfo(g: GeneInstance<GeneSoilAbsorption>) {
+  private soilAbsorptionInfo(state: SoilAbsorptionState) {
     return (
       <div className="info-root">
-        <div>Absorbs in {formatSeconds(g.state.cooldown)}.</div>
-        <div>{g.state.totalSucked.toFixed(1)} total water absorbed so far.</div>
+        <div>Absorbs in {formatSeconds(state.cooldown)}.</div>
+        <div>{state.totalSucked.toFixed(1)} total water absorbed so far.</div>
       </div>
     );
   }
-  private leafInfo(tile: Tile) {
-    return tile instanceof Leaf ? (
+  private photosynthesisInfo(state: PhotosynthesisState) {
+    return (
       <div className="info-leaf">
-        <div>{(tile.averageChancePerSecond * 100).toFixed(1)}% chance to photosynthesize per second.</div>
-        <div>{(1 / tile.averageConversionRate).toFixed(2)} water per sugar.</div>
-        <div>{tile.totalSugarProduced.toFixed(2)} total sugar produced so far.</div>
+        <div>{(state.averageChancePerSecond * 100).toFixed(1)}% chance to photosynthesize per second.</div>
+        <div>{(1 / state.averageConversionRate).toFixed(2)} water per sugar.</div>
+        <div>{state.totalSugarProduced.toFixed(2)} total sugar produced so far.</div>
       </div>
-    ) : null;
+    );
   }
   private airInfo(tile: Tile) {
     if (tile instanceof Air) {

@@ -1,4 +1,4 @@
-import { Air, Cell, Leaf, Tile } from "./tile";
+import { Air, Cell, Tile } from "./tile";
 export type TileEvent =
   | EventCellTransferEnergy
   | EventCellEat
@@ -26,8 +26,7 @@ export interface EventCellEat {
 
 export interface EventPhotosynthesis {
   type: "photosynthesis";
-  leaf: Leaf;
-  where: Cell;
+  cell: Cell;
   amount: number;
 }
 
@@ -38,7 +37,7 @@ export interface EventThawIce {
 
 export interface EventCollectSunlight {
   type: "collect-sunlight";
-  leaf: Leaf;
+  leaf: Cell;
   air: Air;
   amount: number;
 }

@@ -3,7 +3,6 @@ import { easeCubic } from "d3-ease";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
 import Mito from "sketches/mito";
-import { blopBuffer } from "sketches/mito/audio";
 import { Constructor } from "sketches/mito/constructor";
 import { Temperature } from "sketches/mito/game/temperature";
 import {
@@ -20,16 +19,18 @@ import {
   Tissue,
   Transport,
 } from "sketches/mito/game/tile";
-import { Gene, GeneInstance } from "sketches/mito/game/tile/chromosome";
+import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
+import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
-import { Audio, Color, Object3D, Scene, Vector2, Vector3 } from "three";
+import { Color, Object3D, Scene, Vector2, Vector3 } from "three";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";
 import { Animation, AnimationController } from "./Animation";
 import { CellEffectsRenderer } from "./CellEffectsRenderer";
-import { GeneRenderer, GeneSoilAbsorptionRenderer } from "./GeneRenderer";
-import makeLine from "./makeLine";
+import { GenePhotosynthesisRenderer } from "./GenePhotosynthesisRenderer";
+import { GeneRenderer } from "./GeneRenderer";
+import { GeneSoilAbsorptionRenderer } from "./GeneSoilAbsorptionRenderer";
 import TileBatcher, { BatchInstance } from "./tileBatcher";
 
 export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
@@ -45,8 +46,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   public inventoryRenderer: InventoryRenderer;
   private originalColor: Color;
-  private audio?: Audio;
-  private lastAudioValueTracker = 0;
   private neighborLines = new Object3D();
   private cellEffectsRenderer?: CellEffectsRenderer;
   private geneRenderer?: GeneRenderer;
@@ -80,9 +79,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.geneRenderer = arrayProxy(
         this.target.geneInstances.map((g) => this.createGeneRendererFor(g)!).filter((g) => g != null)
       );
-      if (this.target instanceof Leaf) {
-        this.audio = new Audio(this.mito.audioListener);
-      }
     }
 
     if (this.target.darkness < 1) {
@@ -90,9 +86,13 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
   }
 
-  private createGeneRendererFor<G extends Gene>(inst: GeneInstance<G>): GeneSoilAbsorptionRenderer | undefined {
+  private createGeneRendererFor(inst: GeneInstance<any>): GeneRenderer<any> | undefined {
     if (inst.isType(GeneSoilAbsorption)) {
-      return new GeneSoilAbsorptionRenderer(inst, this.scene, this.mito, this);
+      return new GeneSoilAbsorptionRenderer(inst, this);
+    } else if (inst.isType(GenePhotosynthesis)) {
+      return new GenePhotosynthesisRenderer(inst, this);
+    } else {
+      return;
     }
   }
 
@@ -111,8 +111,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   update() {
     if (this.target.darkness < 1) {
-      this.respondToEvents();
-
       this.updateScale();
       this.updateColor();
 
@@ -177,27 +175,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     this.color = new Color(0).lerp(this.color, map(lightAmount, 0, 1, 0.2, 1));
   }
 
-  respondToEvents() {
-    // audio
-    if (this.target instanceof Leaf && this.audio != null) {
-      const newAudioValueTracker = this.target.totalSugarProduced;
-      if (newAudioValueTracker > this.lastAudioValueTracker) {
-        this.audio.setBuffer(blopBuffer);
-        const dist = this.target.pos.distanceToSquared(this.mito.world.player.pos);
-        const volume = Math.min(1, 1 / (1 + dist / 25)) * this.target.sugarConverted * this.target.sugarConverted;
-        this.audio.setVolume(volume);
-        // this.audio.setRefDistance(2);
-        // play blop sound
-        this.audio.play();
-        this.animation.set(this.growPulseAnimation());
-      }
-      this.lastAudioValueTracker = newAudioValueTracker;
-    }
-    if (this.neighborLines.parent != null) {
-      this.scene.remove(this.neighborLines);
-    }
-  }
-
   private temperatureColor: Color = InstancedTileRenderer.TEMPERATURE_COLORS[Temperature.Mild];
   private currentLerp = 0;
   lerpColorTemperature(color: Color) {
@@ -215,22 +192,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   updateHover() {
     this.geneRenderer && this.geneRenderer.hover();
-    if (this.hasActiveNeighbors(this.target)) {
-      this.scene.add(this.neighborLines);
-      this.neighborLines.position.set(this.target.pos.x, this.target.pos.y, 1);
-      const color = 0xffc90e;
-      const lines = this.target.activeNeighbors;
-      if (lines.length !== this.neighborLines.children.length) {
-        // redo neighbor lines
-        this.neighborLines.remove(...this.neighborLines.children);
-        lines.forEach((dir) => {
-          const length = dir.length() - 0.25;
-          const arrowDir = new Vector3(dir.x, dir.y, 0).normalize();
-          const line = makeLine(arrowDir, new Vector3(), length, color);
-          this.neighborLines.add(line);
-        });
-      }
-    }
   }
 
   growPulseAnimation(): Animation {

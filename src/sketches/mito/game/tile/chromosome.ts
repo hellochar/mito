@@ -74,7 +74,7 @@ export class Gene<S = any, K extends string = any> {
     shouldStep: GeneShouldStepFn<S, K> = defaultShouldStepFn
   ) {
     const initialStateFn =
-      typeof initialState === "function" ? (initialState as GeneInitialStateFn<S, K>) : () => initialState;
+      typeof initialState === "function" ? (initialState as GeneInitialStateFn<S, K>) : () => ({ ...initialState });
     const gene = new Gene(blueprint, initialStateFn, step, shouldStep);
     const { name } = gene.blueprint;
     const exists = AllGenes.has(name);

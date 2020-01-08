@@ -4,7 +4,14 @@ import { Vector2 } from "three";
 import { Cell } from "../cell";
 import { Gene } from "../chromosome";
 import { Soil } from "../soil";
-export const GeneSoilAbsorption = Gene.make(
+
+export interface SoilAbsorptionState {
+  cooldown: number;
+  totalSucked: number;
+  activeNeighbors: Vector2[];
+}
+
+export const GeneSoilAbsorption = Gene.make<SoilAbsorptionState>(
   {
     name: "Soil Absorption",
     levelCosts: [4, 6, 8, 10, 12],
@@ -17,7 +24,7 @@ export const GeneSoilAbsorption = Gene.make(
       </>
     ),
   },
-  { cooldown: 0, totalSucked: 0, activeNeighbors: [] as Vector2[] },
+  { cooldown: 0, totalSucked: 0, activeNeighbors: [] },
   (dt, { cell, state, props: { secondsPerAbsorb } }) => {
     if (state.cooldown <= 0) {
       state.activeNeighbors = [];

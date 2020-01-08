@@ -1,0 +1,58 @@
+import { blopBuffer } from "sketches/mito/audio";
+import { GeneInstance } from "sketches/mito/game/tile/chromosome";
+import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";
+import { Audio, Object3D, Vector2, Vector3 } from "three";
+import { GeneRenderer } from "./GeneRenderer";
+import { InstancedTileRenderer } from "./InstancedTileRenderer";
+import makeLine from "./makeLine";
+export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis> {
+  private audio = new Audio(this.mito.audioListener).setBuffer(blopBuffer);
+  private lastAudioValueTracker = 0;
+  private neighborLines = new Object3D();
+
+  constructor(t: GeneInstance<GenePhotosynthesis>, public tr: InstancedTileRenderer) {
+    super(t, tr.scene, tr.mito);
+  }
+
+  update() {
+    // audio
+    const newAudioValueTracker = this.target.state.totalSugarProduced;
+    if (newAudioValueTracker > this.lastAudioValueTracker) {
+      this.audio.setBuffer(blopBuffer);
+      const dist = this.target.cell.pos.distanceToSquared(this.mito.world.player.pos);
+      const volume =
+        Math.min(1, 1 / (1 + dist / 25)) * this.target.state.sugarConverted * this.target.state.sugarConverted;
+      this.audio.setVolume(volume);
+      // this.audio.setRefDistance(2);
+      // play blop sound
+      this.audio.play();
+      this.tr.animation.set(this.tr.growPulseAnimation());
+    }
+    this.lastAudioValueTracker = newAudioValueTracker;
+    if (this.neighborLines.parent != null) {
+      this.scene.remove(this.neighborLines);
+    }
+  }
+
+  hover() {
+    this.scene.add(this.neighborLines);
+    this.neighborLines.position.set(this.tr.target.pos.x, this.tr.target.pos.y, 1);
+    const lines: Vector2[] = this.target.state.activeNeighbors;
+    if (lines.length !== this.neighborLines.children.length) {
+      // redo neighbor lines
+      this.neighborLines.remove(...this.neighborLines.children);
+      lines.forEach((dir) => {
+        const length = dir.length() - 0.25;
+        const arrowDir = new Vector3(dir.x, dir.y, 0).normalize();
+        const line = makeLine(arrowDir, new Vector3(), length, color);
+        this.neighborLines.add(line);
+      });
+    }
+  }
+
+  destroy() {
+    this.audio.disconnect();
+  }
+}
+
+const color = 0xffc90e;
