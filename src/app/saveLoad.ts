@@ -39,7 +39,6 @@ const ACTIONS_TO_SAVE_ON: Partial<Record<AppActions["type"], true>> = {
 };
 
 export function saveOnActionMiddleware(reducer: React.Reducer<AppState, AppActions>) {
-  console.log("new reducer made");
   return (state: AppState, action: AppActions) => {
     const newState = reducer(state, action);
     if (ACTIONS_TO_SAVE_ON.hasOwnProperty(action.type)) {

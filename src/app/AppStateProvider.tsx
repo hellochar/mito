@@ -25,7 +25,6 @@ export const LocalForageStateProvider: React.FC<{ loadingComponent: JSX.Element 
   useEffect(() => {
     load()
       .then((appState) => {
-        console.log("loaded", appState);
         if (appState) setState(appState);
       })
       .catch(() => {
