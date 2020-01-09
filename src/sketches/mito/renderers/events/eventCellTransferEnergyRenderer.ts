@@ -29,7 +29,7 @@ export default class EventCellTransferEnergyRenderer extends EventRendererFFPoin
       {
         color: new Color("yellow"),
         opacity: 0.8,
-        size: 200,
+        size: 400,
         map: textureFromSpritesheet(2, 3, "transparent"),
       }
     );

@@ -1,7 +1,7 @@
 import { polyEarlyUpDown } from "math/easing";
 import { EventCollectSunlight } from "sketches/mito/game/tileEvent";
 import { textureFromSpritesheet } from "sketches/mito/spritesheet";
-import { Color, Vector2 } from "three";
+import { Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { WorldRenderer } from "../WorldRenderer";
 import { EventRenderer } from "./eventRenderer";
@@ -36,18 +36,10 @@ export default class EventCollectSunlightRenderer extends EventRenderer<EventCol
   }
 
   handle(event: EventCollectSunlight) {
-    const { air, amount, leaf } = event;
+    const { amount, leaf } = event;
     if (amount < Math.random()) {
       return;
     }
-    let end: Vector2;
-    // if (air.pos.x === leaf.pos.x) {
-    //   // same X; average Y and move X randomly
-    //   end = new Vector2(leaf.pos.x + (Math.random() - 0.5), lerp(leaf.pos.y, air.pos.y, 0.5));
-    // } else {
-    //   // same Y; average X and move Y randomly
-    //   end = new Vector2(lerp(leaf.pos.x, air.pos.x, 0.5), leaf.pos.y + (Math.random() - 0.5));
-    // }
     this.ffPoints.fire({
       x: leaf.pos.x + (Math.random() - 0.5),
       y: leaf.pos.y + (Math.random() - 0.5),

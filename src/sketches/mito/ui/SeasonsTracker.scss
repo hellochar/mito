@@ -26,42 +26,4 @@
     @include text-outline();
     color: white;
   }
-
-  .container {
-    display: flex;
-    position: relative;
-  }
-
-  .end-brace {
-    width: 5px;
-    height: 40px;
-    background: darkgray;
-  }
-
-  .bar {
-    height: 20px;
-    align-self: center;
-    flex-grow: 1;
-    border-top: 5px solid darkgray;
-    border-bottom: 5px solid darkgray;
-
-    .bar-marker {
-      position: absolute;
-      top: 50%;
-      transform: translate(0, -50%);
-      height: 20px;
-      width: 5px;
-      background: lightgray;
-    }
-
-    .season-bead {
-      position: absolute;
-      height: 30px;
-      width: 10px;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      border: 1px solid darkgrey;
-    }
-  }
 }

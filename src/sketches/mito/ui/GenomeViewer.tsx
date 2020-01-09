@@ -29,7 +29,7 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
       <div className="genome-viewer">
         <div className="cell-types">
           {genome.cellTypes.map((c) => (
-            <CellTypeViewer cellType={c} />
+            <CellTypeViewer key={c.name} cellType={c} />
           ))}
         </div>
       </div>
@@ -78,8 +78,8 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
 };
 
 const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cellType, gene }) => {
-  const [dragState, setDragState] = React.useContext(DraggedContext);
-  const { gene: gd, level } = gene;
+  const [, setDragState] = React.useContext(DraggedContext);
+  const { gene: gd } = gene;
   const handleDragStart = React.useCallback(
     (event: React.DragEvent) => {
       event.dataTransfer.setData("mito/gene", "data");
@@ -115,7 +115,7 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
         {gene.gene.blueprint.levelCosts.length > 1 ? (
           <div className="gene-level-picker">
             {arrayRange(gene.gene.blueprint.levelCosts.length).map((i) => (
-              <button className={classNames({ selected: gene.level === i })} onClick={() => gene.setLevel(i)}>
+              <button key={i} className={classNames({ selected: gene.level === i })} onClick={() => gene.setLevel(i)}>
                 {i + 1}
                 {/* <span className="gene-cost">{gene.gene.blueprint.levelCosts[i]}</span> */}
               </button>
