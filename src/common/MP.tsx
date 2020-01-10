@@ -12,7 +12,7 @@ export type MPProps = JSX.IntrinsicElements["div"] & {
 function MP({ amount, total, ...props }: MPProps) {
   return (
     <span {...props} className={classNames("mp", props.className)}>
-      <DynamicNumber speed={0.3} fractionDigits={0} value={amount} />
+      <DynamicNumber speed={0.5} sigFigs={5} value={amount} />
       {total != null ? <>/{total}</> : null}
       <GiDna1 className="mp-icon" />
     </span>

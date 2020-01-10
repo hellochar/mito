@@ -6,7 +6,7 @@ export const GeneObstacle = Gene.make(
     levelCosts: [-4],
     levelProps: {},
     static: {
-      isObstacle: [true],
+      isObstacle: true,
     },
     description: () => <>You may not walk on this Cell.</>,
   },

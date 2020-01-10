@@ -22,8 +22,8 @@ export const GenePhotosynthesis = Gene.make<PhotosynthesisState>(
     },
     description: ({ reactionChancePerSecond }) => (
       <>
-        Each neighboring Air provides a <GN value={reactionChancePerSecond * 100} fractionDigits={3} />% chance per
-        second, scaled with sunlight, to convert up to 2 Water into 1 Sugar.
+        Each neighboring Air provides a <GN value={reactionChancePerSecond * 100} sigFigs={3} />% chance per second,
+        scaled with sunlight, to convert up to 2 Water into 1 Sugar.
       </>
     ),
   },

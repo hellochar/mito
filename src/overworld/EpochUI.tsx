@@ -19,7 +19,7 @@ export function EpochUI({ onNextEpoch, onFocusHex }: EpochUIProps) {
   return (
     <div className={classNames("epoch-display", { "ready-to-advance": isReadyToAdvance, transitioning })}>
       <span className="number">
-        <DynamicNumber fractionDigits={0} value={epoch * 1e6} speed={0.08} /> Years
+        <DynamicNumber sigFigs={6} value={epoch * 1e6} speed={0.08} /> Years
       </span>
       {unusedHexes.length > 0 ? (
         <div onClick={() => onFocusHex(unusedHexes[0])}>{unusedHexes.length} hexes unused</div>

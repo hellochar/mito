@@ -12,7 +12,7 @@ export const GeneAttractsWater = Gene.make(
     },
     description: ({ secondsPerPull }) => (
       <>
-        Every <GN value={secondsPerPull} fractionDigits={0} /> seconds, take 1 Water from any neighboring Cell.
+        Every <GN value={secondsPerPull} sigFigs={2} /> seconds, take 1 Water from any neighboring Cell.
       </>
     ),
   },

@@ -18,12 +18,4 @@ export class Root extends Cell implements Interactable {
   constructor(pos: Vector2, world: World, args?: CellArgs) {
     super(pos, world, chromosomeRoot, args);
   }
-
-  interact(dt: number) {
-    super.interact(dt);
-    // give water to player
-    const player = this.world.player;
-    this.inventory.give(player.inventory, 7.5 * dt, 0);
-    return true;
-  }
 }

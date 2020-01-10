@@ -12,8 +12,8 @@ export const GeneEnergyTransfer = Gene.make(
     },
     description: ({ differenceThreshold }) => (
       <>
-        Give Energy to neighboring Cells until they're within{" "}
-        <GN value={differenceThreshold * 100} fractionDigits={1} />% energy difference of this Cell.
+        Give Energy to neighboring Cells until they're within <GN value={differenceThreshold * 100} sigFigs={3} />%
+        energy difference of this Cell.
       </>
     ),
   },

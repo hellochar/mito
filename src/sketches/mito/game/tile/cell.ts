@@ -106,6 +106,7 @@ export abstract class Cell extends Tile implements Interactable {
         anyInteracted = anyInteracted || interacted;
       }
     }
+    // Cell interaction: give water to player
     if (this.inventory.water > 0 || this.inventory.sugar > 0) {
       anyInteracted = true;
       this.inventory.give(this.world.player.inventory, 30 * dt, 30 * dt);

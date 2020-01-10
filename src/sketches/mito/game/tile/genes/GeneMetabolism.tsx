@@ -12,7 +12,7 @@ export const GeneMetabolism = Gene.make(
     },
     description: ({ energyPerSugar }) => (
       <>
-        Convert 1 Sugar into <GN value={energyPerSugar * 100} fractionDigits={0} />% energy.
+        Convert 1 Sugar into <GN value={energyPerSugar * 100} sigFigs={3} />% energy.
         <br />
         Starts below 95% energy. Restores 20% energy per second.
       </>

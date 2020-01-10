@@ -109,11 +109,13 @@ export class RealizedGene<G extends Gene = Gene> {
 
   getStaticProperties() {
     const staticBlueprint = this.gene.blueprint.static || {};
-    return mapRecord(staticBlueprint, (arr) => arr![this.level]) as Partial<GeneStaticProperties>;
+    return mapRecord(staticBlueprint, (arr) => (Array.isArray(arr) ? arr[this.level] : arr)) as Partial<
+      GeneStaticProperties
+    >;
   }
 
   public getProps() {
-    return mapRecord(this.gene.blueprint.levelProps, (val) => val[this.level]);
+    return mapRecord(this.gene.blueprint.levelProps, (val) => (typeof val === "number" ? val : val[this.level]));
   }
 
   public getCost() {
@@ -131,7 +133,7 @@ export class RealizedGene<G extends Gene = Gene> {
 
 export const AllGenes: Map<string, Gene> = new Map();
 
-export type PropBlueprint<K extends string> = Record<K, number[]>;
+export type PropBlueprint<K extends string> = Record<K, number | number[]>;
 
 export type RealizedProps<K extends string> = Record<K, number>;
 
@@ -175,7 +177,7 @@ export interface GeneBlueprint<K extends string> {
 }
 
 export type GeneStaticPropertiesBlueprint = {
-  [K in keyof GeneStaticProperties]?: Array<GeneStaticProperties[K]>;
+  [K in keyof GeneStaticProperties]?: GeneStaticProperties[K] | Array<GeneStaticProperties[K]>;
 };
 
 // export type GeneInitialStateFn<S, K extends string> = (instance: GeneInstance<Gene<S, K>>) => S;

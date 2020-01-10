@@ -5,7 +5,7 @@ import { Gene } from "../chromosome";
 
 export const GeneDirectionalPush = Gene.make(
   {
-    name: "Directional Push",
+    name: "⬆ Directional Push",
     levelCosts: [2, 3, 4, 5, 6],
     levelProps: {
       secondsPerPush: [20, 10, 5, 3, 2],
@@ -14,12 +14,12 @@ export const GeneDirectionalPush = Gene.make(
       <>
         <b>Directional.</b>
         <br />
-        Every <GN value={secondsPerPush} fractionDigits={0} /> seconds, directionally push 1 Water and 1 Sugar from this
-        Cell into the directed Cell.
+        Every <GN value={secondsPerPush} sigFigs={2} /> seconds, directionally push 1 Water and 1 Sugar from this Cell
+        into the directed Cell.
       </>
     ),
     static: {
-      isDirectional: [true, true, true, true, true],
+      isDirectional: true,
     },
   },
   {
