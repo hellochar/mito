@@ -23,7 +23,7 @@ import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
 import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
-import { Color, Object3D, Scene, Vector2, Vector3 } from "three";
+import { Color, Scene, Vector2, Vector3 } from "three";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";
 import { Animation, AnimationController } from "./Animation";
@@ -46,7 +46,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   public inventoryRenderer: InventoryRenderer;
   private originalColor: Color;
-  private neighborLines = new Object3D();
   private cellEffectsRenderer?: CellEffectsRenderer;
   private geneRenderer?: GeneRenderer;
   animation = new AnimationController();
@@ -222,7 +221,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (this.cellEffectsRenderer != null) {
       this.cellEffectsRenderer.destroy();
     }
-    this.scene.remove(this.neighborLines);
+    this.geneRenderer && this.geneRenderer.destroy();
   }
 }
 

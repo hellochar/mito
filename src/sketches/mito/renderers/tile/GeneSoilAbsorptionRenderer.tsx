@@ -1,18 +1,12 @@
 import { suckWaterBuffer } from "sketches/mito/audio";
-import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
 import { Audio, Color, Object3D, Vector2, Vector3 } from "three";
 import { GeneRenderer } from "./GeneRenderer";
-import { InstancedTileRenderer } from "./InstancedTileRenderer";
 import makeLine from "./makeLine";
 export class GeneSoilAbsorptionRenderer extends GeneRenderer<GeneSoilAbsorption> {
   private audio = new Audio(this.mito.audioListener).setBuffer(suckWaterBuffer);
   private lastAudioValueTracker = 0;
   private neighborLines = new Object3D();
-
-  constructor(t: GeneInstance<GeneSoilAbsorption>, public tr: InstancedTileRenderer) {
-    super(t, tr.scene, tr.mito);
-  }
 
   update() {
     const newAudioValueTracker = this.target.state.totalSucked;

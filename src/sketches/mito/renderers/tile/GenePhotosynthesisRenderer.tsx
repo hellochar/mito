@@ -1,18 +1,12 @@
 import { blopBuffer } from "sketches/mito/audio";
-import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";
 import { Audio, Object3D, Vector2, Vector3 } from "three";
 import { GeneRenderer } from "./GeneRenderer";
-import { InstancedTileRenderer } from "./InstancedTileRenderer";
 import makeLine from "./makeLine";
 export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis> {
   private audio = new Audio(this.mito.audioListener).setBuffer(blopBuffer);
   private lastAudioValueTracker = 0;
   private neighborLines = new Object3D();
-
-  constructor(t: GeneInstance<GenePhotosynthesis>, public tr: InstancedTileRenderer) {
-    super(t, tr.scene, tr.mito);
-  }
 
   update() {
     // audio
