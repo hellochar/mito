@@ -112,7 +112,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
     if (this.state.genomeViewerOpen) {
       return (
         <div className="hud-top">
-          <GenomeViewer genome={this.mito.world.defaultGenome} />
+          <GenomeViewer genome={this.mito.world.genome} />
         </div>
       );
     }

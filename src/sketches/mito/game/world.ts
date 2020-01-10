@@ -74,7 +74,7 @@ export class World {
   public readonly species: Species;
   public readonly traits: Traits;
   public readonly generatorContext: GeneratorContext;
-  defaultGenome: Genome;
+  genome: Genome;
 
   get season(): Season {
     return seasonFromTime(this.time);
@@ -95,7 +95,7 @@ export class World {
       world: this,
     };
     this.species = species;
-    this.defaultGenome = new Genome([
+    this.genome = new Genome([
       {
         name: "Tissue",
         chromosome: chromosomeTissue,
