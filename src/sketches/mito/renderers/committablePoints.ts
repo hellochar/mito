@@ -131,7 +131,8 @@ void main() {
   #ifdef USE_MAP
     vec2 uv = gl_PointCoord;
 
-    uv = clamp(rotateAround(uv, vec2(0.5), vRotation), vec2(0.), vec2(1.));
+    // flip vRotation to account for flipped y viewport
+    uv = clamp(rotateAround(uv, vec2(0.5), -vRotation), vec2(0.), vec2(1.));
     vec4 mapTexel = texture2D( map, uv );
     gl_FragColor *= mapTexelToLinear( mapTexel );
   #endif
