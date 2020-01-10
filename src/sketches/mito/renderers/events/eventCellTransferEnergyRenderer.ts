@@ -1,3 +1,4 @@
+import { map } from "math";
 import { EventCellTransferEnergy } from "sketches/mito/game/tileEvent";
 import { textureFromSpritesheet } from "sketches/mito/spritesheet";
 import { Color } from "three";
@@ -17,19 +18,17 @@ export default class EventCellTransferEnergyRenderer extends EventRendererFFPoin
         const size = 4 * (t - t * t);
 
         const { from, to } = s.info;
-        // const { x, y } = s.info.from.pos.clone().lerp(s.info.to.pos, map(t, 0, 1, 0.4, 0.6));
-        const x = (from.pos.x + to.pos.x) / 2;
-        const y = (from.pos.y + to.pos.y) / 2;
-        const r = Math.atan2(to.pos.y - from.pos.y, to.pos.x - from.pos.x);
+        const { x, y } = s.info.from.pos.clone().lerp(s.info.to.pos, map(t, 0, 1, 0.45, 0.55));
+        // const x = (from.pos.x + to.pos.x) / 2;
+        // const y = (from.pos.y + to.pos.y) / 2;
         s.x = x;
         s.y = y;
-        s.r = r;
         s.size = size;
       },
       {
         color: new Color("yellow"),
         opacity: 0.8,
-        size: 400,
+        size: 350,
         map: textureFromSpritesheet(2, 3, "transparent"),
       }
     );
@@ -40,11 +39,15 @@ export default class EventCellTransferEnergyRenderer extends EventRendererFFPoin
   }
 
   handle(event: EventCellTransferEnergy) {
+    const { from, to } = event;
+    const r = Math.atan2(to.pos.y - from.pos.y, to.pos.x - from.pos.x);
+
     this.ffPoints.fire({
       x: event.from.pos.x,
       y: event.from.pos.y,
+      r,
       z: 1,
-      size: 1,
+      size: 0.1,
       alpha: 1,
       info: event,
       time: 0,
