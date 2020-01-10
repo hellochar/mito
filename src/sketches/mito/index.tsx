@@ -163,7 +163,7 @@ export class Mito extends ISketch {
   };
 
   private attachWindowEvents() {
-    window.addEventListener("blur", () => this.handleBlur);
+    window.addEventListener("blur", this.handleBlur);
     window.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("keyup", this.handleKeyUp);
     window.onbeforeunload = this.handleBeforeUnload;
