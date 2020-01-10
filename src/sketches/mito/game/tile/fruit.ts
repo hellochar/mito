@@ -3,7 +3,7 @@ import { traitMod } from "../../../../evolution/traits";
 import { Inventory } from "../../inventory";
 import { FRUIT_NEEDED_RESOURCES, FRUIT_TIME_TO_MATURE } from "../constants";
 import { World } from "../world";
-import { Cell } from "./cell";
+import { Cell, CellArgs } from "./cell";
 import { CellEffect, FreezeEffect } from "./cellEffect";
 import Chromosome from "./chromosome";
 import { GeneInventory, GeneLiving } from "./genes";
@@ -20,8 +20,8 @@ export class Fruit extends Cell {
   get oneSecondCommitMax() {
     return this.neededResources / this.secondsToMature;
   }
-  constructor(pos: Vector2, world: World) {
-    super(pos, world, chromosomeFruit);
+  constructor(pos: Vector2, world: World, args?: CellArgs) {
+    super(pos, world, chromosomeFruit, args);
     this.neededResources =
       Math.ceil(traitMod(world.traits.fruitNeededResources, FRUIT_NEEDED_RESOURCES, 1 / 1.5) / 2) * 2;
     this.committedResources = new Inventory(this.neededResources, this);

@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
 import { Interactable } from "../interactable";
 import { World } from "../world";
-import { Cell } from "./cell";
+import { Cell, CellArgs } from "./cell";
 import Chromosome from "./chromosome";
 import { GeneInventory, GeneLiving, GeneSoilAbsorption } from "./genes";
 import { GeneObstacle } from "./genes/GeneObstacle";
@@ -15,8 +15,8 @@ export const chromosomeRoot = new Chromosome(
 
 export class Root extends Cell implements Interactable {
   static displayName = "Root";
-  constructor(pos: Vector2, world: World) {
-    super(pos, world, chromosomeRoot);
+  constructor(pos: Vector2, world: World, args?: CellArgs) {
+    super(pos, world, chromosomeRoot, args);
   }
 
   interact(dt: number) {

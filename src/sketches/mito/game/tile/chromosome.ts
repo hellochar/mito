@@ -8,6 +8,7 @@ const defaultProperties: GeneStaticProperties = {
   isObstacle: false,
   inventoryCapacity: 0,
   diffusionRate: 0.01,
+  isDirectional: false,
 };
 
 export default class Chromosome {
@@ -44,11 +45,24 @@ export default class Chromosome {
   }
 
   geneSlotsUsed() {
-    return this.genes.map((g) => g.getCost()).reduce((a, b) => a + b, 0);
+    return this.genes
+      .map((g) => g.getCost())
+      .filter((c) => c >= 0)
+      .reduce((a, b) => a + b, 0);
+  }
+
+  geneSlotsAdded() {
+    return (
+      this.genes
+        .map((g) => g.getCost())
+        .filter((c) => c < 0)
+        .reduce((a, b) => a + b, 0) * -1
+    );
   }
 }
 
 export type GeneStaticProperties = {
+  isDirectional: boolean;
   isObstacle: boolean;
   inventoryCapacity: number;
   diffusionRate: number;

@@ -1,6 +1,6 @@
 import { Vector2 } from "three";
 import { World } from "../world";
-import { Cell } from "./cell";
+import { Cell, CellArgs } from "./cell";
 import Chromosome from "./chromosome";
 import { GeneInventory, GeneLiving } from "./genes";
 import { GeneEnergyTransfer } from "./genes/GeneEnergyTransfer";
@@ -15,7 +15,7 @@ export const chromosomeTissue = new Chromosome(
 
 export class Tissue extends Cell {
   static displayName = "Tissue";
-  constructor(pos: Vector2, world: World, chromosome: Chromosome = chromosomeTissue) {
-    super(pos, world, chromosome);
+  constructor(pos: Vector2, world: World, args?: CellArgs) {
+    super(pos, world, chromosomeTissue, args);
   }
 }

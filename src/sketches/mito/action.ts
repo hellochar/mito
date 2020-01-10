@@ -2,6 +2,7 @@ import { Vector2 } from "three";
 import { Constructor } from "./constructor";
 import { Interactable } from "./game/interactable";
 import { Cell } from "./game/tile";
+import { CellArgs } from "./game/tile/cell";
 
 export interface ActionStill {
   type: "still";
@@ -15,7 +16,7 @@ export interface ActionMove {
 export interface ActionBuild<T extends Cell = any> {
   type: "build";
   cellType: Constructor<T>;
-  args?: any[];
+  args?: CellArgs;
   position: Vector2;
 }
 

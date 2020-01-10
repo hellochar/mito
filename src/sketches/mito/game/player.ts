@@ -23,7 +23,9 @@ import {
   PLAYER_STARTING_WATER,
 } from "./constants";
 import { Steppable } from "./entity";
-import { Cell, FreezeEffect, Fruit, GrowingCell, Tile, Transport } from "./tile";
+import { Cell, FreezeEffect, Fruit, GrowingCell, Tile } from "./tile";
+import { CellArgs } from "./tile/cell";
+import { GeneDirectionalPush } from "./tile/genes/GeneDirectionalPush";
 import { World } from "./world";
 
 export class Player implements Steppable {
@@ -145,8 +147,16 @@ export class Player implements Steppable {
 
   private maybeMoveWithTransports(dt: number) {
     const tile = this.currentTile();
-    if (tile instanceof Transport) {
-      this.posFloat.add(tile.dir.clone().setLength(PLAYER_MOVED_BY_TRANSPORT_SPEED * dt));
+    if (tile instanceof Cell) {
+      const directionalPush = tile.findGene(GeneDirectionalPush);
+      if (directionalPush != null) {
+        const pushedPos = this.posFloat
+          .clone()
+          .add(tile.args!.direction!.clone().setLength(PLAYER_MOVED_BY_TRANSPORT_SPEED * dt));
+        if (this.isWalkable(pushedPos)) {
+          this.posFloat.copy(pushedPos);
+        }
+      }
     }
   }
 
@@ -176,23 +186,14 @@ export class Player implements Steppable {
     }
   }
 
-  public verifyMove(action: ActionMove, dt: number) {
-    const target = this.posFloat
-      .clone()
-      .add(action.dir.clone().setLength(this.speed * dt))
-      .round();
-    return this.isWalkable(target);
-  }
-
   public isWalkable(pos: Tile | Vector2) {
     if (pos instanceof Tile) {
       pos = pos.pos;
     }
-    if (!this.world.isValidPosition(pos.x, pos.y)) {
-      return false;
-    }
-    const tile = this.world.tileAt(pos.x, pos.y);
-    if (!(tile instanceof Cell) || tile == null || tile.isObstacle) {
+    const x = Math.round(pos.x);
+    const y = Math.round(pos.y);
+    const tile = this.world.tileAt(x, y);
+    if (!(tile instanceof Cell) || tile.isObstacle) {
       // can't move!
       return false;
     }
@@ -217,7 +218,8 @@ export class Player implements Steppable {
   }
 
   public attemptMove(action: ActionMove, dt: number) {
-    if (this.verifyMove(action, dt)) {
+    const nextPos = this.posFloat.clone().add(action.dir.clone().setLength(this.speed * dt));
+    if (this.isWalkable(nextPos)) {
       // const t = this.currentTile();
       // if (t instanceof Cell) {
       //   if (t.temperature < 40) {
@@ -231,7 +233,7 @@ export class Player implements Steppable {
       footsteps.gain.gain.value = 0.5;
       footsteps.gain.gain.linearRampToValueAtTime(0, footsteps.gain.context.currentTime + 0.05);
       // do the move
-      this.posFloat.add(action.dir.clone().setLength(this.speed * dt));
+      this.posFloat.copy(nextPos);
       // this._pos = this.posFloat.clone().round();
       // this.autopickup();
       return true;
@@ -251,7 +253,7 @@ export class Player implements Steppable {
   //     inv.give(this.inventory, this.suckWater ? inv.water : 0, this.suckSugar ? inv.sugar : 0);
   //   }
   // }
-  public tryConstructingNewCell<T extends Cell>(position: Vector2, cellType: Constructor<T>, args?: any[]) {
+  public tryConstructingNewCell<T extends Cell>(position: Vector2, cellType: Constructor<T>, args?: CellArgs) {
     position = position.clone();
     const targetTile = this.world.tileAt(position.x, position.y);
     if (targetTile == null) {
@@ -264,8 +266,7 @@ export class Player implements Steppable {
     }
     if (this.getBuildError() == null) {
       this.inventory.add(-1, -1);
-      const newTile = new cellType(position, this.world, ...(args || []));
-      newTile.args = args;
+      const newTile = new cellType(position, this.world, args);
       build.audio.currentTime = 0;
       build.gain.gain.cancelScheduledValues(0);
       build.gain.gain.value = 0.2;

@@ -21,6 +21,7 @@ import {
 } from "sketches/mito/game/tile";
 import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
+import { GeneDirectionalPush } from "sketches/mito/game/tile/genes/GeneDirectionalPush";
 import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
 import { Color, Scene, Vector2, Vector3 } from "three";
@@ -28,6 +29,7 @@ import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";
 import { Animation, AnimationController } from "./Animation";
 import { CellEffectsRenderer } from "./CellEffectsRenderer";
+import { GeneDirectionalPushRenderer } from "./GeneDirectionalPushRenderer";
 import { GenePhotosynthesisRenderer } from "./GenePhotosynthesisRenderer";
 import { GeneRenderer } from "./GeneRenderer";
 import { GeneSoilAbsorptionRenderer } from "./GeneSoilAbsorptionRenderer";
@@ -90,6 +92,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       return new GeneSoilAbsorptionRenderer(inst, this);
     } else if (inst.isType(GenePhotosynthesis)) {
       return new GenePhotosynthesisRenderer(inst, this);
+    } else if (inst.isType(GeneDirectionalPush)) {
+      return new GeneDirectionalPushRenderer(inst, this);
     } else {
       return;
     }

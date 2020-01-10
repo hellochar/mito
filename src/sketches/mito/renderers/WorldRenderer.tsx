@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 import { Scene } from "three";
 import Mito from "..";
 import { Entity, Player, StepStats, World } from "../game";
-import { Fruit, Tile, Transport } from "../game/tile";
+import { Fruit, Tile } from "../game/tile";
 import { EventLogRenderer } from "./events/eventLogRenderer";
 import { InventoryRenderer } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";
@@ -10,7 +10,6 @@ import { Renderer } from "./Renderer";
 import { FruitRenderer } from "./tile/FruitRenderer";
 import { InstancedTileRenderer } from "./tile/InstancedTileRenderer";
 import TileBatcher from "./tile/tileBatcher";
-import { TransportRenderer } from "./tile/TransportRenderer";
 
 export class WorldRenderer extends Renderer<World> {
   public renderers = new Map<Entity, Renderer<Entity>>();
@@ -55,10 +54,7 @@ export class WorldRenderer extends Renderer<World> {
       return new PlayerRenderer(object, this.scene, this.mito);
     } else if (object instanceof Fruit) {
       return new FruitRenderer(object, this.scene, this.mito, this.tileBatcher);
-    } else if (object instanceof Transport) {
-      return new TransportRenderer(object, this.scene, this.mito, this.tileBatcher);
     } else if (object instanceof Tile) {
-      //  return new TileRenderer(object, this.scene, this.mito);
       return new InstancedTileRenderer(object, this.scene, this.mito, this.tileBatcher);
     } else {
       throw new Error(`Couldn't find renderer for ${object}`);

@@ -1,6 +1,6 @@
 import { Vector2 } from "three";
 import { World } from "../world";
-import { Cell } from "./cell";
+import { Cell, CellArgs } from "./cell";
 import Chromosome from "./chromosome";
 import { GeneAttractsWater, GeneInventory, GeneLiving } from "./genes";
 import { GeneObstacle } from "./genes/GeneObstacle";
@@ -17,19 +17,7 @@ export const chromosomeLeaf = new Chromosome(
 export class Leaf extends Cell {
   static displayName = "Leaf";
 
-  constructor(pos: Vector2, world: World) {
-    super(pos, world, chromosomeLeaf);
-  }
-
-  public step(dt: number) {
-    super.step(dt);
-    // const neighbors = this.world.tileNeighbors(this.pos);
-
-    // for (const [, tile] of neighbors) {
-    //   // pull water from nearby sources
-    //   if (tile instanceof Leaf) {
-    //     tile.diffuseWater(this, dt, this.diffusionWater * 5);
-    //   }
-    // }
+  constructor(pos: Vector2, world: World, args?: CellArgs) {
+    super(pos, world, chromosomeLeaf, args);
   }
 }

@@ -3,6 +3,7 @@ import Mito from ".";
 import { ActionBuild, ActionInteract } from "./action";
 import { isInteractable } from "./game/interactable";
 import { Cell, Fruit, Leaf, Root, Tile, Tissue, Transport } from "./game/tile";
+import { CellArgs } from "./game/tile/cell";
 
 export abstract class ActionBar {
   abstract leftClick(target: Tile): void;
@@ -46,10 +47,14 @@ export class CellBar extends ActionBar {
   }
 
   leftClick(target: Tile) {
-    if (this.mito.world.player.canBuildAt(target)) {
-      let args: any[] | undefined;
-      if (this.selectedCell === Transport) {
-        args = [Transport.buildDirection.clone()];
+    const { world } = this.mito;
+    if (world.player.canBuildAt(target)) {
+      let args: CellArgs | undefined;
+      const cellType = world.genome.cellTypes.find((cType) => cType.c === this.selectedCell)!;
+      if (cellType.chromosome.mergeStaticProperties().isDirectional) {
+        args = {
+          direction: Transport.buildDirection.clone(),
+        };
         // const highlightVector = this.getHighlightVector();
         // const roundedHighlightVector = highlightVector.setLength(1).round();
         // args.push(roundedHighlightVector);

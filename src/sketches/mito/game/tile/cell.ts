@@ -9,13 +9,17 @@ import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
 import { World } from "../world";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
-import Chromosome, { Gene, GeneInstance } from "./chromosome";
+import Chromosome, { Gene, GeneInstance, GeneStaticProperties } from "./chromosome";
 import { DeadCell } from "./deadCell";
 import { Rock } from "./rock";
 import { Soil } from "./soil";
 import { Tile } from "./tile";
 
 const emptyChromosome = new Chromosome();
+
+export interface CellArgs {
+  direction?: Vector2;
+}
 
 export abstract class Cell extends Tile implements Interactable {
   static displayName = "Cell";
@@ -28,7 +32,7 @@ export abstract class Cell extends Tile implements Interactable {
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
   // public offset = new Vector2();
   public droopY = 0;
-  public args?: any[];
+  public args?: CellArgs;
   public effects: CellEffect[] = [];
   public chromosome: Chromosome;
   public geneInstances: GeneInstance<Gene<unknown, string>>[];
@@ -53,16 +57,29 @@ export abstract class Cell extends Tile implements Interactable {
     return 0;
   }
   public inventory: Inventory;
-  constructor(pos: Vector2, world: World, chromosome?: Chromosome) {
+  public readonly staticProperties: GeneStaticProperties;
+  constructor(pos: Vector2, world: World, chromosome: Chromosome, args?: CellArgs) {
     super(pos, world);
-    this.temperatureFloat = 48;
-    this.nextTemperature = this.temperatureFloat;
+    this.args = args;
     this.chromosome = chromosome || emptyChromosome;
-    this.geneInstances = this.chromosome.newGeneInstances(this);
-    // TODO implement inventoryCapacity and diffuseWater
-    const { isObstacle, inventoryCapacity } = this.chromosome.mergeStaticProperties();
+    this.staticProperties = this.chromosome.mergeStaticProperties();
+    // TODO implement diffuseWater
+    const { isObstacle, inventoryCapacity, isDirectional } = this.staticProperties;
     this.isObstacle = isObstacle;
     this.inventory = new Inventory(inventoryCapacity, this);
+    if (isDirectional) {
+      const dir = args!.direction!.clone();
+      if (isFractional(dir.x) || isFractional(dir.y)) {
+        throw new Error("build transport with fractional dir " + dir.x + ", " + dir.y);
+      }
+      if (dir.lengthManhattan() < 1 || dir.lengthManhattan() > 3) {
+        console.error("bad dir length", dir);
+      }
+    }
+    this.temperatureFloat = 48;
+    this.nextTemperature = this.temperatureFloat;
+
+    this.geneInstances = this.chromosome.newGeneInstances(this);
   }
 
   addEffect(effect: CellEffect) {
@@ -76,9 +93,11 @@ export abstract class Cell extends Tile implements Interactable {
     effect.attachTo(this);
     this.effects.push(effect);
   }
+
   findEffectOfType(type: CellEffectConstructor) {
     return this.effects.find((e) => e.constructor === type);
   }
+
   interact(dt: number) {
     let anyInteracted = false;
     for (const e of this.effects) {
@@ -100,6 +119,10 @@ export abstract class Cell extends Tile implements Interactable {
 
   shouldStep(dt: number) {
     return dt > 0.1;
+  }
+
+  findGene<G extends Gene>(gene: G): GeneInstance<G> | undefined {
+    return this.geneInstances.find((g) => g.isType(gene)) as GeneInstance<G>;
   }
 
   step(dt: number) {
@@ -129,31 +152,6 @@ export abstract class Cell extends Tile implements Interactable {
     }
   }
 
-  /**
-   * Take energy from neighbors who have more than you
-   */
-  stepEqualizeEnergy(neighbors: Cell[], maxEnergyToEat: number) {
-    for (const neighbor of neighbors) {
-      if (neighbor.pos.manhattanDistanceTo(this.pos) > 1) continue;
-      if (maxEnergyToEat > 0) {
-        const difference = neighbor.energy - this.energy;
-        if (difference > 20) {
-          // safe method but lower upper bound on equalization rate
-          // energyTransfer = Math.floor((neighbor.energy - this.energy) / energeticNeighbors.length);
-          // this may be unstable w/o double buffering
-          const energyTransfer = Math.min(difference / 2, maxEnergyToEat);
-          this.energy += energyTransfer;
-          neighbor.energy -= energyTransfer;
-          maxEnergyToEat -= energyTransfer;
-          if (energyTransfer > 1) {
-            this.world.logEvent({ type: "cell-transfer-energy", from: neighbor, to: this, amount: energyTransfer });
-          }
-        }
-      } else {
-        break; // we're all full, eat no more
-      }
-    }
-  }
   stepTemperature(dt: number) {
     const neighbors = this.world.tileNeighbors(this.pos);
     this.nextTemperature = nextTemperature(this, neighbors, dt);
@@ -178,6 +176,7 @@ export abstract class Cell extends Tile implements Interactable {
       }
     }
   }
+
   stepDroop(tileNeighbors: Map<Vector2, Tile>, dt: number) {
     const below = tileNeighbors.get(DIRECTIONS.s)!;
     const belowLeft = tileNeighbors.get(DIRECTIONS.sw)!;
@@ -214,7 +213,12 @@ export abstract class Cell extends Tile implements Interactable {
       this.droopY = springNeighborCells.reduce((sum, n) => sum + n.droopY, 0) / springNeighborCells.length;
     }
   }
+
   stepDarkness(neighbors: Map<Vector2, Tile>) {
     return 0;
   }
+}
+
+function isFractional(x: number) {
+  return x % 1 !== 0;
 }
