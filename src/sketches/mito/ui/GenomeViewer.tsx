@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import DynamicNumber from "common/DynamicNumber";
-import LookAtMouse from "common/LookAtMouse";
 import { arrayRange } from "math/arrays";
 import * as React from "react";
 import { FaGripLines } from "react-icons/fa";
@@ -56,6 +55,13 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
+  const additionalGeneSlots = chromosome.geneSlotsAdded();
+  const totalGeneSlotsEl = (
+    <>
+      {geneSlots}
+      {additionalGeneSlots > 0 ? `+${additionalGeneSlots}` : null}
+    </>
+  );
   return (
     <div className="cell-type">
       <div className="cell-header">
@@ -63,14 +69,14 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
         <div>
           <h2>{name}</h2>
           <span className="slots-used">
-            <DynamicNumber value={chromosome.geneSlotsUsed()} />/{geneSlots}
+            <DynamicNumber value={chromosome.geneSlotsUsed()} />/{totalGeneSlotsEl}
           </span>{" "}
           gene slots used
         </div>
       </div>
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
-        {chromosome.genes.map((g) => (
-          <GeneViewer key={g.gene.blueprint.name} cellType={cellType} gene={g} />
+        {chromosome.genes.map((g, i) => (
+          <GeneViewer key={i} cellType={cellType} gene={g} />
         ))}
       </div>
     </div>
@@ -92,16 +98,28 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
     },
     [cellType, gene, setDragState]
   );
+  const cost = gene.getCost();
+  const draggable = !(gene.gene.blueprint.name === "Living" || gene.gene.blueprint.name === "Inventory");
   return (
-    <LookAtMouse zScale={8} displayBlock>
-      <div className={classNames("gene", gd.blueprint.name)} draggable onDragStart={handleDragStart}>
-        <div className="gene-header">
-          <span className="gene-cost">
-            <DynamicNumber value={gene.getCost()} speed={0.5} />
-          </span>
-          <h4>
-            {gd.blueprint.name} {/*level + 1*/}
-            {/* <div className="gene-level-arrows">
+    // <LookAtMouse zScale={8} displayBlock>
+    <div
+      className={classNames("gene", gd.blueprint.name.replace(" ", ""), { draggable })}
+      draggable={draggable}
+      onDragStart={handleDragStart}
+    >
+      <div className="gene-header">
+        <span
+          className={classNames("gene-cost", {
+            negative: cost < 0,
+          })}
+        >
+          {cost < 0 ? "+" : null}
+          <DynamicNumber value={Math.abs(cost)} speed={0.5} />
+        </span>
+        <h4>
+          {gd.blueprint.name}
+          {/* <span style={{ opacity: 0.5 }}>{gene.level + 1}</span> */}
+          {/* <div className="gene-level-arrows">
               <button className="up" onClick={() => gene.setLevel(level + 1)}>
                 <FaArrowUp />
               </button>
@@ -109,22 +127,22 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
                 <FaArrowDown />
               </button>
             </div> */}
-          </h4>
-          <FaGripLines className="grip-lines" />
-        </div>
-        {gene.gene.blueprint.levelCosts.length > 1 ? (
-          <div className="gene-level-picker">
-            {arrayRange(gene.gene.blueprint.levelCosts.length).map((i) => (
-              <button key={i} className={classNames({ selected: gene.level === i })} onClick={() => gene.setLevel(i)}>
-                {i + 1}
-                {/* <span className="gene-cost">{gene.gene.blueprint.levelCosts[i]}</span> */}
-              </button>
-            ))}
-          </div>
-        ) : null}
-        <p className="description">{gd.blueprint.description(gene.getProps(), gene.getStaticProperties())}</p>
+        </h4>
+        {draggable ? <FaGripLines className="grip-lines" /> : null}
       </div>
-    </LookAtMouse>
+      {gene.gene.blueprint.levelCosts.length > 1 ? (
+        <div className="gene-level-picker">
+          {arrayRange(gene.gene.blueprint.levelCosts.length).map((i) => (
+            <button key={i} className={classNames({ selected: gene.level === i })} onClick={() => gene.setLevel(i)}>
+              {i + 1}
+              {/* <span className="gene-cost">{gene.gene.blueprint.levelCosts[i]}</span> */}
+            </button>
+          ))}
+        </div>
+      ) : null}
+      <p className="description">{gd.blueprint.description(gene.getProps(), gene.getStaticProperties())}</p>
+    </div>
+    // </LookAtMouse>
   );
 };
 

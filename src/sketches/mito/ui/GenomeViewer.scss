@@ -42,17 +42,27 @@
       padding: 5px;
     }
 
-    .look-at-mouse ~ .look-at-mouse {
+    .gene ~ .gene {
       margin-top: 10px;
     }
 
     .gene {
+      position: relative;
       border-radius: 2px;
       padding: 5px;
-      box-shadow: 0 4px 8px rgba(64, 64, 64, 0.5);
       background: transparentize($sepia1, 0.7);
-      cursor: grab;
       transition: all 0.1s;
+      overflow: hidden;
+      max-height: 28px;
+
+      &.draggable {
+        cursor: grab;
+        box-shadow: 0 4px 8px rgba(64, 64, 64, 0.5);
+      }
+
+      &:hover {
+        max-height: 500px;
+      }
 
       .gene-header {
         display: flex;
@@ -60,7 +70,8 @@
 
         h4 {
           font-size: 1em;
-          text-align: center;
+          margin-left: 30px;
+          // text-align: center;
           margin-right: auto;
           flex-grow: 1;
         }
@@ -96,13 +107,18 @@
     top: 0;
     left: 0;
     background: $turquoise1;
-    color: white;
+    color: $white;
     font-size: 16px;
     width: 20px;
     height: 20px;
     font-family: $palatino-family;
     display: inline-flex;
     justify-content: center;
+
+    &.negative {
+      // background: $forest3;
+      width: 25px;
+    }
   }
 
   .gene-level-arrows {
@@ -145,6 +161,33 @@
 .gn {
   font-size: 1.1em;
   font-weight: 600;
+}
+
+.Living,
+.Inventory {
+  border: 1px solid $gray5 !important;
+  box-shadow: none !important;
+  background: none !important;
+  background: $light-gray2 !important;
+}
+
+.Obstacle {
+  background: $dark-gray4 !important;
+  color: white;
+}
+
+.Metabolism,
+.EnergyTransfer {
+  background-color: $gold4 !important;
+}
+
+.Photosynthesis {
+  background-color: $color-primary-1 !important;
+}
+
+.AttractsWater,
+.SoilAbsorption {
+  background-color: $blue4 !important;
 }
 
 // .gene.Living {
