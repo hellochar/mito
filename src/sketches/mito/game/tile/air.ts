@@ -12,6 +12,7 @@ export class Air extends Tile {
   public sunlightCached: number = 1;
   public _co2: number;
   public inventory = new Inventory(6, this);
+  isObstacle = false;
   public constructor(public pos: Vector2, world: World) {
     super(pos, world);
     this.darkness = 0;

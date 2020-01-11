@@ -3,6 +3,7 @@ import { Constructor } from "../constructor";
 import { Tile } from "../game/tile";
 import { materialInfoMapping } from "../renderers/tile/InstancedTileRenderer";
 import { textureFromSpritesheet } from "../spritesheet";
+import "./IconCell.scss";
 
 const IconCell: React.FC<
   { cellType: Constructor<Tile>; spritesheetLoaded: boolean } & React.HTMLProps<HTMLDivElement>
@@ -31,7 +32,7 @@ const IconCell: React.FC<
     };
   }, [color, spritesheetLoaded, texture.image]);
   return (
-    <div {...props} className="cell-bar-item-icon" style={style}>
+    <div {...props} className="icon-cell" style={style}>
       {children}
     </div>
   );

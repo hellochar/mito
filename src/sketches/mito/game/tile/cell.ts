@@ -3,7 +3,7 @@ import { Vector2 } from "three";
 import { traitMod } from "../../../../evolution/traits";
 import { DIRECTIONS } from "../../directions";
 import { params } from "../../params";
-import { CELL_BUILD_TIME, CELL_DIFFUSION_SUGAR_TIME, CELL_DIFFUSION_WATER_TIME } from "../constants";
+import { CELL_BUILD_TIME } from "../constants";
 import { step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
@@ -23,8 +23,6 @@ export interface CellArgs {
 
 export abstract class Cell extends Tile implements Interactable {
   static displayName = "Cell";
-  static diffusionWater = 1 / CELL_DIFFUSION_WATER_TIME;
-  static diffusionSugar = 1 / CELL_DIFFUSION_SUGAR_TIME;
   static timeToBuild = CELL_BUILD_TIME;
   public energy = 1;
   public darkness = 0;
@@ -36,6 +34,47 @@ export abstract class Cell extends Tile implements Interactable {
   public effects: CellEffect[] = [];
   public chromosome: Chromosome;
   public geneInstances: GeneInstance<Gene<unknown, string>>[];
+  public inventory: Inventory;
+  public readonly staticProperties: GeneStaticProperties;
+
+  get isObstacle() {
+    return this.staticProperties.isObstacle;
+  }
+
+  get isReproductive() {
+    return this.staticProperties.isReproductive;
+  }
+
+  get diffusionWater() {
+    return this.staticProperties.diffusionWater;
+  }
+
+  get diffusionSugar() {
+    return this.staticProperties.diffusionSugar;
+  }
+
+  constructor(pos: Vector2, world: World, chromosome: Chromosome, args?: CellArgs) {
+    super(pos, world);
+    this.args = args;
+    this.chromosome = chromosome || emptyChromosome;
+    this.staticProperties = this.chromosome.mergeStaticProperties();
+    const { inventoryCapacity, isDirectional } = this.staticProperties;
+    this.inventory = new Inventory(inventoryCapacity, this);
+    if (isDirectional) {
+      const dir = args!.direction!.clone();
+      if (isFractional(dir.x) || isFractional(dir.y)) {
+        throw new Error("build transport with fractional dir " + dir.x + ", " + dir.y);
+      }
+      if (dir.lengthManhattan() < 1 || dir.lengthManhattan() > 3) {
+        console.error("bad dir length", dir);
+      }
+    }
+    this.temperatureFloat = 48;
+    this.nextTemperature = this.temperatureFloat;
+
+    this.geneInstances = this.chromosome.newGeneInstances(this);
+  }
+
   get tempo() {
     if (this.temperatureFloat <= 0) {
       // 50% slower - 1 / 2;
@@ -53,33 +92,9 @@ export abstract class Cell extends Tile implements Interactable {
       return 1.5;
     }
   }
+
   get darknessContrib() {
     return 0;
-  }
-  public inventory: Inventory;
-  public readonly staticProperties: GeneStaticProperties;
-  constructor(pos: Vector2, world: World, chromosome: Chromosome, args?: CellArgs) {
-    super(pos, world);
-    this.args = args;
-    this.chromosome = chromosome || emptyChromosome;
-    this.staticProperties = this.chromosome.mergeStaticProperties();
-    // TODO implement diffuseWater
-    const { isObstacle, inventoryCapacity, isDirectional } = this.staticProperties;
-    this.isObstacle = isObstacle;
-    this.inventory = new Inventory(inventoryCapacity, this);
-    if (isDirectional) {
-      const dir = args!.direction!.clone();
-      if (isFractional(dir.x) || isFractional(dir.y)) {
-        throw new Error("build transport with fractional dir " + dir.x + ", " + dir.y);
-      }
-      if (dir.lengthManhattan() < 1 || dir.lengthManhattan() > 3) {
-        console.error("bad dir length", dir);
-      }
-    }
-    this.temperatureFloat = 48;
-    this.nextTemperature = this.temperatureFloat;
-
-    this.geneInstances = this.chromosome.newGeneInstances(this);
   }
 
   addEffect(effect: CellEffect) {

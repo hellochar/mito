@@ -10,7 +10,6 @@ const chromosomeGrowingCell = new Chromosome(GeneLiving.level(2), GeneObstacle.l
 
 export class GrowingCell extends Cell {
   static displayName = "Growing Cell";
-  public isObstacle = true;
   public timeRemaining: number;
   public timeToBuild: number;
   public inventory = new Inventory(0, this);

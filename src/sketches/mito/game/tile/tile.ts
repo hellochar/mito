@@ -11,7 +11,7 @@ import { World } from "../world";
 export abstract class Tile implements Steppable, HasInventory {
   static displayName = "Tile";
   static fallAmount = 0;
-  public isObstacle = false;
+  public abstract get isObstacle(): boolean;
   public darkness = Infinity;
   public temperatureFloat: number;
   public dtSinceLastStepped = 0;
@@ -83,10 +83,6 @@ export abstract class Tile implements Steppable, HasInventory {
   }
   // test tiles diffusing water around on same-type tiles
   public step(dt: number) {
-    // const cellHere = this.world.cellAt(this.pos.x, this.pos.y) != null;
-    // if (cellHere) {
-    //   console.error("stepping environmental tile even when a cell is on-top:", cellHere);
-    // }
     const neighbors = this.world.tileNeighbors(this.pos);
     this.stepDarkness(neighbors);
     this.stepDiffusion(neighbors, dt);

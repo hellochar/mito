@@ -5,9 +5,11 @@ import { Cell } from ".";
 import { Steppable } from "../entity";
 
 const defaultProperties: GeneStaticProperties = {
+  isReproductive: false,
   isObstacle: false,
   inventoryCapacity: 0,
-  diffusionRate: 0.01,
+  diffusionWater: 0,
+  diffusionSugar: 0,
   isDirectional: false,
 };
 
@@ -62,10 +64,12 @@ export default class Chromosome {
 }
 
 export type GeneStaticProperties = {
+  isReproductive: boolean;
   isDirectional: boolean;
   isObstacle: boolean;
   inventoryCapacity: number;
-  diffusionRate: number;
+  diffusionWater: number;
+  diffusionSugar: number;
   [k: string]: number | boolean;
 };
 

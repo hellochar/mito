@@ -1,9 +1,10 @@
 import classNames from "classnames";
 import DynamicNumber from "common/DynamicNumber";
+import { nf } from "common/formatters";
 import { arrayRange } from "math/arrays";
 import * as React from "react";
 import { FaGripLines } from "react-icons/fa";
-import { RealizedGene } from "../game/tile/chromosome";
+import { GeneStaticProperties, RealizedGene } from "../game/tile/chromosome";
 import Genome, { CellType } from "../game/tile/genome";
 import { spritesheetLoaded } from "../spritesheet";
 import "./GenomeViewer.scss";
@@ -62,17 +63,21 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
       {additionalGeneSlots > 0 ? `+${additionalGeneSlots}` : null}
     </>
   );
+  const staticProperties = chromosome.mergeStaticProperties();
   return (
     <div className="cell-type">
       <div className="cell-header">
         <IconCell cellType={cellType.c} spritesheetLoaded={spritesheetLoaded} />
         <div>
           <h2>{name}</h2>
-          <span className="slots-used">
-            <DynamicNumber value={chromosome.geneSlotsUsed()} />/{totalGeneSlotsEl}
-          </span>{" "}
-          gene slots used
+          {/* <StaticPropertiesViewer {...staticProperties} /> */}
         </div>
+      </div>
+      <div>
+        <span className="slots-used">
+          <DynamicNumber value={chromosome.geneSlotsUsed()} />/{totalGeneSlotsEl}
+        </span>{" "}
+        gene slots used
       </div>
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
         {chromosome.genes.map((g, i) => (
@@ -82,6 +87,20 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
     </div>
   );
 };
+
+const StaticPropertiesViewer: React.FC<GeneStaticProperties> = React.memo(
+  ({ diffusionWater: diffusionRate, inventoryCapacity, isDirectional, isObstacle, isReproductive }) => {
+    return (
+      <div className="static-properties">
+        {diffusionRate !== 0 ? <span className="diffusion-rate">Diffusion {nf(diffusionRate, 4)}</span> : null}
+        <span className="diffusion-rate">Inventory capacity: {inventoryCapacity}</span>
+        {isDirectional ? <span className="directional">Directional</span> : null}
+        {isReproductive ? <span className="reproductive">Reproductive</span> : null}
+        {isObstacle ? <span className="obstacle">Obstacle</span> : null}
+      </div>
+    );
+  }
+);
 
 const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cellType, gene }) => {
   const [, setDragState] = React.useContext(DraggedContext);
@@ -140,7 +159,7 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
           ))}
         </div>
       ) : null}
-      <p className="description">{gd.blueprint.description(gene.getProps(), gene.getStaticProperties())}</p>
+      <div className="description">{gd.blueprint.description(gene.getProps(), gene.getStaticProperties())}</div>
     </div>
     // </LookAtMouse>
   );

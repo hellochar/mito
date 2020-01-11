@@ -42,7 +42,8 @@
   }
 
   .cell-bar-item {
-    &.selected .cell-bar-item-icon {
+    margin: 0 5px;
+    &.selected .icon-cell {
       transform: scale(1.25);
     }
   }
@@ -56,24 +57,4 @@
     top: 10%;
     left: 10%;
   }
-}
-
-.cell-bar-item-icon {
-  transform: scale(1);
-  transition: transform 0.025s;
-  width: 60px;
-  height: 60px;
-  border: 1px solid darkgrey;
-  border-radius: 2px;
-  margin: 0 5px;
-  color: white;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  font-size: 12px;
-  font-family: $arial-family;
-  cursor: pointer;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-blend-mode: multiply;
-  image-rendering: pixelated;
 }

@@ -13,6 +13,7 @@ export abstract class Soil extends Tile {
    * How far away is this soil from the nearest Air?
    */
   public depth = 1000;
+  isObstacle = false;
 
   get depthDiffusionFactor() {
     // make water move slower in deeper soil. Every depth 10, slow down gravity and fallAmount by this much
