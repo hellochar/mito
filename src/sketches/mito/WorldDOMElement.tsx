@@ -3,7 +3,7 @@ import { Vector2 } from "three";
 import { Tile } from "./game/tile";
 import { Mito } from "./index";
 export class WorldDOMElement {
-  constructor(public mito: Mito, public positionFn: () => Vector2 | Tile, public renderFn: () => JSX.Element) {}
+  constructor(public mito: Mito, public positionFn: () => Vector2 | Tile, public renderFn: () => React.ReactNode) {}
   render() {
     const posOrTile = this.positionFn();
     let style: React.CSSProperties;

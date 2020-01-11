@@ -1,12 +1,15 @@
 import mitoDeathMp3 from "assets/audio/mitodeath.mp3";
 import fruitSrc from "assets/images/fruit.png";
 import classNames from "classnames";
+import MP from "common/MP";
 import { map } from "math";
 import * as React from "react";
 import { GameResult } from "..";
 import Character from "../../../common/Character";
 import { seasonDisplay, seasonFromTime } from "../game/Season";
-import { Fruit } from "../game/tile";
+import { Cell } from "../game/tile";
+import { GeneInstance } from "../game/tile/chromosome";
+import { fruitGetPercentMatured, GeneFruit } from "../game/tile/genes/GeneFruit";
 import "./GameResultsScreen.scss";
 import { Glow } from "./Glow";
 
@@ -15,8 +18,8 @@ interface GameResultsScreenProps {
   results: GameResult;
 }
 
-function FruitInfo({ fruit }: { fruit: Fruit }) {
-  const scale = map(fruit.getPercentMatured(), 0, 1, 0.2, 1);
+function FruitResult({ fruit, mpEarned }: { fruit: GeneInstance<GeneFruit>; mpEarned: number }) {
+  const scale = map(fruitGetPercentMatured(fruit), 0, 1, 0.2, 1);
   const style = React.useMemo(() => {
     return {
       transform: `scale(${scale})`,
@@ -25,29 +28,44 @@ function FruitInfo({ fruit }: { fruit: Fruit }) {
   return (
     <div className="fruit-info">
       <div className="fruit-visual">
-        {fruit.isMature() ? <Glow /> : null}
+        {fruit.state.isMature ? <Glow /> : null}
         <img alt="" src={fruitSrc} style={style} />
       </div>
-      {fruit.timeMatured != null ? (
+      {fruit.state.timeMatured != null ? (
         <>
-          <span className="matured-info success">Matured</span>&nbsp;at{" "}
-          {seasonDisplay(seasonFromTime(fruit.timeMatured))}, Mutation Points earned: 1
+          <span className="matured-info success">
+            +<MP amount={mpEarned} />
+          </span>
+          &nbsp;at {seasonDisplay(seasonFromTime(fruit.state.timeMatured))}, Mutation Points earned: 1
         </>
       ) : (
-        <span className="matured-info in-progress">{(fruit.getPercentMatured() * 100).toFixed(0)}% maturity</span>
+        <span className="matured-info in-progress">{(fruitGetPercentMatured(fruit) * 100).toFixed(0)}% maturity</span>
       )}
-      , built at {seasonDisplay(seasonFromTime(fruit.timeMade))}.
+      , started at {seasonDisplay(seasonFromTime(fruit.cell.timeMade))}.
     </div>
   );
 }
 
-function FruitList({ results, className }: { results: GameResult; className?: string }) {
-  return (
-    <div className={classNames("fruit-list", className)}>
-      <h5>Fruit Made</h5>
+function ReproductiveCellResult({ cell, mpEarned }: { cell: Cell; mpEarned: number }) {
+  const fruit = cell.findGene(GeneFruit);
+  if (fruit != null) {
+    return <FruitResult fruit={fruit} mpEarned={mpEarned} />;
+  } else {
+    return (
       <div>
-        {results.fruits.map((f) => (
-          <FruitInfo fruit={f} />
+        {cell.toString()} +<MP amount={mpEarned} />
+      </div>
+    );
+  }
+}
+
+function MPEarnerList({ results, className }: { results: GameResult; className?: string }) {
+  return (
+    <div className={classNames("mp-earner-list", className)}>
+      <h5>Reproductive Cells</h5>
+      <div>
+        {Array.from(results.mpEarners.entries()).map(([cell, mpEarned]) => (
+          <ReproductiveCellResult cell={cell} mpEarned={mpEarned} />
         ))}
       </div>
     </div>
@@ -55,15 +73,16 @@ function FruitList({ results, className }: { results: GameResult; className?: st
 }
 
 function GameWonScreen({ results }: GameResultsScreenProps) {
-  const matureFruit = results.fruits.filter((f) => f.isMature());
+  const winDescription =
+    Array.from(results.mpEarners.entries()).filter(([c, mp]) => mp > 0).length < 3 ? "survived" : "thrived";
   return (
     <>
       <div className="character-container">
         <Character size="large" className="dance" />
       </div>
-      <h1>You {matureFruit.length >= 3 ? "thrived" : "survived"}!</h1>
+      <h1>You {winDescription}!</h1>
       <h2>{results.mutationPointsPerEpoch} Mutation Points earned.</h2>
-      <FruitList results={results} />
+      <MPEarnerList results={results} />
     </>
   );
 }
@@ -79,7 +98,7 @@ function GameLostScreen({ results }: GameResultsScreenProps) {
         <i>{results.world.species.name}</i> couldn't survive!
       </h1>
       <div>You survived until {seasonDisplay(results.world.season)}!</div>
-      <FruitList results={results} className="dark" />
+      <MPEarnerList results={results} className="dark" />
     </>
   );
 }

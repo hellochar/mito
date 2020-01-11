@@ -2,12 +2,11 @@ import { createSelector } from "reselect";
 import { Scene } from "three";
 import Mito from "..";
 import { Entity, Player, StepStats, World } from "../game";
-import { Fruit, Tile } from "../game/tile";
+import { Tile } from "../game/tile";
 import { EventLogRenderer } from "./events/eventLogRenderer";
 import { InventoryRenderer } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";
 import { Renderer } from "./Renderer";
-import { FruitRenderer } from "./tile/FruitRenderer";
 import { InstancedTileRenderer } from "./tile/InstancedTileRenderer";
 import TileBatcher from "./tile/tileBatcher";
 
@@ -52,8 +51,6 @@ export class WorldRenderer extends Renderer<World> {
   public createRendererFor<E extends Entity>(object: E): Renderer<Entity> {
     if (object instanceof Player) {
       return new PlayerRenderer(object, this.scene, this.mito);
-    } else if (object instanceof Fruit) {
-      return new FruitRenderer(object, this.scene, this.mito, this.tileBatcher);
     } else if (object instanceof Tile) {
       return new InstancedTileRenderer(object, this.scene, this.mito, this.tileBatcher);
     } else {

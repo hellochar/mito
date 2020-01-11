@@ -12,7 +12,7 @@ import { AltHeldBar } from "./actionBar";
 import { drums, hookUpAudio, strings } from "./audio";
 import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
-import { Fruit, Tile } from "./game/tile";
+import { Cell, Tile } from "./game/tile";
 import { ACTION_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
@@ -25,7 +25,10 @@ import { WorldDOMElement } from "./WorldDOMElement";
 
 export interface GameResult {
   status: "won" | "lost";
-  fruits: Fruit[];
+  mpEarners: Map<Cell, number>;
+  /**
+   * Computed - sum of mpEarners.
+   */
   mutationPointsPerEpoch: number;
   world: World;
 }
@@ -335,7 +338,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   private worldDomElements = new Set<WorldDOMElement>();
-  addWorldDOMElement(positionFn: () => THREE.Vector2 | Tile, renderFn: () => JSX.Element): WorldDOMElement {
+  addWorldDOMElement(positionFn: () => THREE.Vector2 | Tile, renderFn: () => React.ReactNode): WorldDOMElement {
     const e = new WorldDOMElement(this, positionFn, renderFn);
     this.worldDomElements.add(e);
     return e;
@@ -416,7 +419,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
       this.world.player.posFloat.x + mouseNorm.x / 2,
       this.world.player.posFloat.y - mouseNorm.y / 2
     );
-    const nearbyFruits = this.world.wipResult.fruits.filter(
+    const nearbyFruits = Array.from(this.world.mpEarners.keys()).filter(
       (f) => f.pos.distanceTo(cameraTarget) < 12 / this.camera.zoom
     );
     if (nearbyFruits.length > 0) {

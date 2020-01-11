@@ -10,13 +10,7 @@ import shuffle from "../../../math/shuffle";
 import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
-import {
-  CELL_BUILD_TIME,
-  CELL_DIFFUSION_SUGAR_TIME,
-  CELL_DIFFUSION_WATER_TIME,
-  PERCENT_DAYLIGHT,
-  TIME_PER_DAY,
-} from "./constants";
+import { CELL_BUILD_TIME, PERCENT_DAYLIGHT, TIME_PER_DAY } from "./constants";
 import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
@@ -70,7 +64,8 @@ export class World {
   private readonly gridEnvironment: Tile[][];
   private readonly gridCells: Array<Array<Cell | null>>;
   private readonly neighborCache: Array<Array<Map<Vector2, Tile>>>;
-  public readonly wipResult: Omit<GameResult, "status" | "mutationPointsPerEpoch">;
+  public readonly mpEarners = new Map<Cell, number>();
+
   public readonly species: Species;
   public readonly traits: Traits;
   public readonly generatorContext: GeneratorContext;
@@ -90,10 +85,6 @@ export class World {
     this.width = options.width;
     this.height = options.height;
     this.generatorContext = createGeneratorContext(seed);
-    this.wipResult = {
-      fruits: [],
-      world: this,
-    };
     this.species = species;
     this.genome = new Genome([
       {
@@ -128,8 +119,6 @@ export class World {
       },
     ]);
     this.traits = getTraits(this.species.genes);
-    Cell.diffusionWater = traitMod(this.traits.diffuseWater, 1 / CELL_DIFFUSION_WATER_TIME, 2);
-    Cell.diffusionSugar = traitMod(this.traits.diffuseSugar, 1 / CELL_DIFFUSION_SUGAR_TIME, 2);
     Cell.timeToBuild = traitMod(this.traits.buildTime, CELL_BUILD_TIME, 1 / 2);
 
     const tileGenerator = typeof environment.fill === "string" ? TileGenerators[environment.fill] : environment.fill;
@@ -238,8 +227,8 @@ export class World {
     if (!this.isValidPosition(x, y)) {
       throw new Error(`invalid position ${x}, ${y} `);
     }
-    if (tile instanceof Fruit) {
-      this.wipResult.fruits.push(tile);
+    if (tile instanceof Cell && tile.isReproductive) {
+      this.mpEarners.set(tile, 0);
     }
     const oldTile = this.tileAt(x, y)!;
     // if replacing a tile with inventory, try giving resources to neighbors of the same type
@@ -553,14 +542,19 @@ export class World {
   }
 
   public getDecidedGameResult(): GameResult {
-    const matureFruit = this.wipResult.fruits.filter((f) => f.isMature());
-    const shouldWin = matureFruit.length > 0;
+    const matureEarners = Array.from(this.mpEarners.entries()).filter(([f, mpEarned]) => mpEarned > 0);
+    const shouldWin = matureEarners.length > 0;
 
     return {
-      ...this.wipResult,
-      mutationPointsPerEpoch: matureFruit.length * traitMod(this.traits.fruitMutationPoints, 1, 1.5),
+      mpEarners: this.mpEarners,
+      mutationPointsPerEpoch: matureEarners.map(([, mp]) => mp).reduce((a, b) => a + b, 0),
       status: shouldWin ? "won" : "lost",
+      world: this,
     };
+  }
+
+  earnMP(cell: Cell, mpEarned: number) {
+    this.mpEarners.set(cell, mpEarned);
   }
 
   public checkResources() {

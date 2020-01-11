@@ -169,6 +169,10 @@ export class GeneInstance<G extends Gene, S = GeneState<G>, K extends string = G
       this.state = maybeNewState;
     }
   }
+
+  earnMP(cell: Cell, mpEarned: number) {
+    cell.world.earnMP(cell, mpEarned);
+  }
 }
 
 export interface GeneBlueprint<K extends string> {

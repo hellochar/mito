@@ -5,7 +5,8 @@ import Mito from "..";
 const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
   const doWin = React.useCallback(() => {
     mito.onWinLoss({
-      ...mito.world.wipResult,
+      mpEarners: mito.world.mpEarners,
+      world: mito.world,
       status: "won",
       mutationPointsPerEpoch: 2,
     });
@@ -13,7 +14,8 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
 
   const doLose = React.useCallback(() => {
     mito.onWinLoss({
-      ...mito.world.wipResult,
+      mpEarners: mito.world.mpEarners,
+      world: mito.world,
       status: "lost",
       mutationPointsPerEpoch: 0,
     });

@@ -22,6 +22,7 @@ import {
 import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
 import { GeneDirectionalPush } from "sketches/mito/game/tile/genes/GeneDirectionalPush";
+import { GeneFruit } from "sketches/mito/game/tile/genes/GeneFruit";
 import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
 import { Color, Scene, Vector2, Vector3 } from "three";
@@ -30,6 +31,7 @@ import { Renderer } from "../Renderer";
 import { Animation, AnimationController } from "./Animation";
 import { CellEffectsRenderer } from "./CellEffectsRenderer";
 import { GeneDirectionalPushRenderer } from "./GeneDirectionalPushRenderer";
+import { GeneFruitRenderer } from "./GeneFruitRenderer";
 import { GenePhotosynthesisRenderer } from "./GenePhotosynthesisRenderer";
 import { GeneRenderer } from "./GeneRenderer";
 import { GeneSoilAbsorptionRenderer } from "./GeneSoilAbsorptionRenderer";
@@ -52,7 +54,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private geneRenderer?: GeneRenderer;
   animation = new AnimationController();
 
-  private scale = new Vector3(1, 1, 1);
+  scale = new Vector3(1, 1, 1);
   private color = new Color();
 
   private instance: BatchInstance;
@@ -94,6 +96,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       return new GenePhotosynthesisRenderer(inst, this);
     } else if (inst.isType(GeneDirectionalPush)) {
       return new GeneDirectionalPushRenderer(inst, this);
+    } else if (inst.isType(GeneFruit)) {
+      return new GeneFruitRenderer(inst, this);
     } else {
       return;
     }
@@ -147,9 +151,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       const s = 1 - this.target.timeRemaining / this.target.timeToBuild;
       lerp2(this.scale, { x: s, y: s }, 0.5);
     } else if (this.target instanceof Fruit) {
-      const scale = map(this.target.getPercentMatured(), 0, 1, 0.2, 1);
-      const targetScale = new Vector2(scale, scale);
-      lerp2(this.scale, targetScale, 0.1);
     } else {
       lerp2(this.scale, InstancedTileRenderer.ONE, 0.1);
     }
@@ -194,7 +195,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   updateHover() {
-    this.geneRenderer && this.geneRenderer.hover();
+    this.geneRenderer && this.geneRenderer.hover!();
   }
 
   growPulseAnimation(): Animation {
