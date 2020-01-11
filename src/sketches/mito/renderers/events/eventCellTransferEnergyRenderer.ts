@@ -18,7 +18,7 @@ export default class EventCellTransferEnergyRenderer extends EventRendererFFPoin
         const size = 4 * (t - t * t);
 
         const { from, to } = s.info;
-        const { x, y } = s.info.from.pos.clone().lerp(s.info.to.pos, map(t, 0, 1, 0.45, 0.55));
+        const { x, y } = from.pos.clone().lerp(to.pos, map(t, 0, 1, 0.45, 0.55));
         // const x = (from.pos.x + to.pos.x) / 2;
         // const y = (from.pos.y + to.pos.y) / 2;
         s.x = x;

@@ -74,7 +74,12 @@ function commitResources(
   const oneSecondCommitMax = neededResources / secondsToMature;
   const wantedWater = clamp(neededResources / 2 - inventory.water, 0, oneSecondCommitMax * dt);
   const wantedSugar = clamp(neededResources / 2 - inventory.sugar, 0, oneSecondCommitMax * dt);
-  cell.inventory.give(inventory, wantedWater, wantedSugar);
+  const { water, sugar } = cell.inventory.give(inventory, wantedWater, wantedSugar);
+  cell.world.logEvent({
+    type: "grow-fruit",
+    cell,
+    resourcesUsed: water + sugar,
+  });
 }
 
 export function fruitGetPercentMatured(g: GeneInstance<GeneFruit>) {

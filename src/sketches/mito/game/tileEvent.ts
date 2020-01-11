@@ -5,7 +5,8 @@ export type TileEvent =
   | EventEvaporation
   | EventPhotosynthesis
   | EventThawIce
-  | EventCollectSunlight;
+  | EventCollectSunlight
+  | EventGrowFruit;
 
 export type TileEventType = TileEvent["type"];
 
@@ -43,4 +44,10 @@ export interface EventCollectSunlight {
   leaf: Cell;
   air: Air;
   amount: number;
+}
+
+export interface EventGrowFruit {
+  type: "grow-fruit";
+  cell: Cell;
+  resourcesUsed: number;
 }

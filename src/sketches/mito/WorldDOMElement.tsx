@@ -1,8 +1,10 @@
 import React from "react";
 import { Vector2 } from "three";
+import uuid from "uuid";
 import { Tile } from "./game/tile";
 import { Mito } from "./index";
 export class WorldDOMElement {
+  uuid = uuid();
   constructor(public mito: Mito, public positionFn: () => Vector2 | Tile, public renderFn: () => React.ReactNode) {}
   render() {
     const posOrTile = this.positionFn();
@@ -33,6 +35,10 @@ export class WorldDOMElement {
         height,
       };
     }
-    return <div style={style}>{this.renderFn()}</div>;
+    return (
+      <div key={this.uuid} style={style}>
+        {this.renderFn()}
+      </div>
+    );
   }
 }

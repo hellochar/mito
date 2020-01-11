@@ -12,7 +12,6 @@ export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis>
     // audio
     const newAudioValueTracker = this.target.state.totalSugarProduced;
     if (newAudioValueTracker > this.lastAudioValueTracker) {
-      this.audio.setBuffer(blopBuffer);
       const dist = this.target.cell.pos.distanceToSquared(this.mito.world.player.pos);
       const volume =
         Math.min(1, 1 / (1 + dist / 25)) * this.target.state.sugarConverted * this.target.state.sugarConverted;
