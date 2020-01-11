@@ -7,11 +7,11 @@
   .mp-icon {
     // border-radius: 2px;
     border-radius: 100%;
-    background: purple;
+    background: $color-mutation;
     padding: 0.25em;
     width: calc(1em + 0.5em);
     height: calc(1em + 0.5em);
-    fill: white;
+    fill: $white;
     margin-left: 0.2em;
   }
 }

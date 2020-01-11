@@ -7,7 +7,7 @@
 .arrow {
   margin: 30px;
   font-size: 48px;
-  color: darken(purple, 5%);
+  color: darken($color-mutation, 5%);
   align-self: center;
   pointer-events: none;
 }
