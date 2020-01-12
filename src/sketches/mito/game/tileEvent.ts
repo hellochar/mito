@@ -43,7 +43,7 @@ export interface EventCollectSunlight {
   type: "collect-sunlight";
   leaf: Cell;
   air: Air;
-  amount: number;
+  numSunlight: number;
 }
 
 export interface EventGrowFruit {

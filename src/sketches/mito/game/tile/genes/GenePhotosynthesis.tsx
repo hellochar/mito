@@ -79,18 +79,21 @@ function maybePhotosynthesize(
   //      on conversion, we use up all the available water and get the corresponding amount of sugar
   const bestEfficiencyWater = 1 / conversionRate;
   const waterToConvert = Math.min(cell.inventory.water, bestEfficiencyWater);
-  const chance = reactionChancePerSecond * sunlight; // * (waterToConvert / bestEfficiencyWater);
-  state.averageChancePerSecond += chance;
+  const chancePerSecond = reactionChancePerSecond * sunlight; // * (waterToConvert / bestEfficiencyWater);
+  state.averageChancePerSecond += chancePerSecond;
 
   // this.sunlightCollected += chance * dt;
   cell.world.logEvent({
     type: "collect-sunlight",
     leaf: cell,
     air,
-    amount: chance / 0.025, // scale with both sunlight and reaction rate
+    // the renderer creates one dot per sunlight unit.
+    // 0.025 normalizes chancePerSecond (which is 0.025 for photosynthesis 3),
+    // * 20 means photosynthesis 3 gets 20 dots per second (this is the new player experience)
+    numSunlight: (chancePerSecond / 0.025) * dt * 20,
   });
 
-  if (Math.random() < chance * dt && waterToConvert > 0) {
+  if (Math.random() < chancePerSecond * dt && waterToConvert > 0) {
     const sugarConverted = waterToConvert * conversionRate;
     cell.inventory.add(-waterToConvert, sugarConverted);
     state.sugarConverted += sugarConverted;

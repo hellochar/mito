@@ -1,3 +1,4 @@
+import { polyUpDown } from "math/easing";
 import { EventPhotosynthesis } from "sketches/mito/game/tileEvent";
 import { textureFromSpritesheet } from "sketches/mito/spritesheet";
 import { Color } from "three";
@@ -16,15 +17,15 @@ export default class EventPhotosynthesisRenderer extends EventRendererFFPoints<E
         }
         const t = s.time / duration;
 
-        s.alpha = (4 * (t - t * t)) ** (1 / 4);
-        s.size = (1 - t) * 2 * s.info.amount;
+        s.alpha = polyUpDown(t) ** (1 / 4);
+        s.size = ((1 - t) ** 1 / 2) * 2 * s.info.amount;
         s.r = t * s.time;
       },
       {
         color: new Color("yellow"),
-        opacity: 0.8,
+        opacity: 0.95,
         size: 200,
-        map: textureFromSpritesheet(3, 3, "transparent"),
+        map: textureFromSpritesheet(3, 3),
       }
     );
   }

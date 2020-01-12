@@ -14,7 +14,6 @@ export default class EventCollectSunlightRenderer extends EventRenderer<EventCol
     // this.lightRays = new LightRays();
     // this.scene.add(this.lightRays.lineSegments);
     const duration = 0.5;
-    const t = textureFromSpritesheet(0, 4);
     // t.magFilter = LinearFilter;
     this.ffPoints = new FireAndForgetPoints(
       (s) => {
@@ -28,28 +27,32 @@ export default class EventCollectSunlightRenderer extends EventRenderer<EventCol
       {
         color: new Color("white"),
         opacity: 0.95,
-        size: 30,
-        map: t,
+        size: 25,
+        map: textureFromSpritesheet(0, 4),
       }
     );
     this.scene.add(this.ffPoints);
   }
 
   handle(event: EventCollectSunlight) {
-    const { amount, leaf } = event;
-    if (amount < Math.random()) {
-      return;
+    let { numSunlight, leaf } = event;
+    while (numSunlight > 0) {
+      // if numSunlight is 0.5, only show half the sunlight events
+      if (numSunlight < 1 && numSunlight < Math.random()) {
+        return;
+      }
+      this.ffPoints.fire({
+        x: leaf.pos.x + (Math.random() - 0.5),
+        y: leaf.pos.y + (Math.random() - 0.5),
+        z: 10,
+        size: 1,
+        alpha: 1,
+        info: 0,
+        // stagger with the shouldUpdate of Tile so they look more continuous
+        time: Math.random() * (1 / 10),
+      });
+      numSunlight--;
     }
-    this.ffPoints.fire({
-      x: leaf.pos.x + (Math.random() - 0.5),
-      y: leaf.pos.y + (Math.random() - 0.5),
-      z: 10,
-      size: 1,
-      alpha: 1,
-      info: 0,
-      // stagger with the shouldUpdate of Tile so they look more continuous
-      time: Math.random() * (1 / 10),
-    });
   }
 
   update() {

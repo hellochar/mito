@@ -63,14 +63,13 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
       {additionalGeneSlots > 0 ? `+${additionalGeneSlots}` : null}
     </>
   );
-  const staticProperties = chromosome.mergeStaticProperties();
   return (
     <div className="cell-type">
       <div className="cell-header">
         <IconCell cellType={cellType.c} spritesheetLoaded={spritesheetLoaded} />
         <div>
           <h2>{name}</h2>
-          {/* <StaticPropertiesViewer {...staticProperties} /> */}
+          <StaticPropertiesViewer {...chromosome.mergeStaticProperties()} />
         </div>
       </div>
       <div>
@@ -88,12 +87,21 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
   );
 };
 
-const StaticPropertiesViewer: React.FC<GeneStaticProperties> = React.memo(
-  ({ diffusionWater: diffusionRate, inventoryCapacity, isDirectional, isObstacle, isReproductive }) => {
+export const StaticPropertiesViewer: React.FC<GeneStaticProperties> = React.memo(
+  ({ diffusionWater, diffusionSugar, inventoryCapacity, isDirectional, isObstacle, isReproductive }) => {
     return (
       <div className="static-properties">
-        {diffusionRate !== 0 ? <span className="diffusion-rate">Diffusion {nf(diffusionRate, 4)}</span> : null}
-        <span className="diffusion-rate">Inventory capacity: {inventoryCapacity}</span>
+        {diffusionWater !== 0 ? (
+          <span className="diffusion-water">
+            Diffusion Water <b>{nf(diffusionWater, 4)}</b>
+          </span>
+        ) : null}
+        {diffusionSugar !== 0 ? (
+          <span className="diffusion-sugar">
+            Diffusion Sugar <b>{nf(diffusionSugar, 4)}</b>
+          </span>
+        ) : null}
+        <span className="diffusion-rate">Inventory {inventoryCapacity}</span>
         {isDirectional ? <span className="directional">Directional</span> : null}
         {isReproductive ? <span className="reproductive">Reproductive</span> : null}
         {isObstacle ? <span className="obstacle">Obstacle</span> : null}

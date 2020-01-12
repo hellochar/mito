@@ -28,6 +28,9 @@ import { CellArgs } from "./tile/cell";
 import { GeneDirectionalPush } from "./tile/genes/GeneDirectionalPush";
 import { World } from "./world";
 
+const waterCost = 1;
+const sugarCost = 1;
+
 export class Player implements Steppable {
   public inventory = new Inventory(PLAYER_MAX_RESOURCES, this, PLAYER_STARTING_WATER, PLAYER_STARTING_SUGAR);
   private action?: Action;
@@ -105,8 +108,6 @@ export class Player implements Steppable {
   }
 
   getBuildError(): "water" | "sugar" | "water and sugar" | undefined {
-    const waterCost = 1;
-    const sugarCost = 1;
     const needWater = this.inventory.water < waterCost;
     const needSugar = this.inventory.sugar < sugarCost;
 
@@ -265,7 +266,7 @@ export class Player implements Steppable {
       return;
     }
     if (this.getBuildError() == null) {
-      this.inventory.add(-1, -1);
+      this.inventory.add(-waterCost, -sugarCost);
       const newTile = new cellType(position, this.world, args);
       build.audio.currentTime = 0;
       build.gain.gain.cancelScheduledValues(0);

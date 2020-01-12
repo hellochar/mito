@@ -18,7 +18,7 @@ import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
-import { GameStack, Hover, HUD, TileDetails } from "./ui";
+import { Hover, HUD, TileDetails } from "./ui";
 import Debug from "./ui/Debug";
 import { Instructions } from "./ui/Instructions";
 import { WorldDOMElement } from "./WorldDOMElement";
@@ -192,7 +192,6 @@ export class Mito extends ISketch {
     return (
       <>
         <HUD mito={this} />
-        <GameStack mito={this} />
         {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
         {/* <ParamsGUI /> */}
         <Hover mito={this} />
