@@ -2,9 +2,7 @@ import { Vector2 } from "three";
 import { World } from "../world";
 import { Cell, CellArgs } from "./cell";
 import Chromosome from "./chromosome";
-import { GeneInventory, GeneLiving } from "./genes";
-import { GeneEnergyTransfer } from "./genes/GeneEnergyTransfer";
-import { GeneMetabolism } from "./genes/GeneMetabolism";
+import { GeneEnergyTransfer, GeneInventory, GeneLiving, GeneMetabolism } from "./genes";
 
 export const chromosomeTissue = new Chromosome(
   GeneLiving.level(2),

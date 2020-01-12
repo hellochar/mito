@@ -5,7 +5,8 @@ import { TIME_PER_SEASON } from "../game/constants";
 import { GenePhotosynthesis, GeneSoilAbsorption } from "../game/tile/genes";
 import { ResourceIcon } from "./ResourceIcon";
 
-const PlantStats: React.FC<{ world: World; frame: number }> = memo(({ world, frame }) => {
+// time is just used for re-rendering
+const PlantStats: React.FC<{ world: World; time: number }> = memo(({ world }) => {
   const lastTotalEnergy = useRef(0);
   let numWater = 0;
   let numSugar = 0;

@@ -32,7 +32,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
           Lose
         </Button>
       </div>
-      <PlantStats world={mito.world} frame={mito.world.frame} />
+      <PlantStats world={mito.world} time={Math.floor(mito.world.time)} />
       <div>
         <div>Rainwater: {mito.world.numRainWater}</div>
         <div>Evaporated Air: {mito.world.numEvaporatedAir}</div>
