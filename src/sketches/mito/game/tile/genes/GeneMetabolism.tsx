@@ -12,9 +12,10 @@ export const GeneMetabolism = Gene.make(
     },
     description: ({ energyPerSugar }) => (
       <>
-        Convert 1 Sugar into <GN value={energyPerSugar * 100} sigFigs={3} />% energy.
-        <br />
-        Starts below 95% energy. Restores 20% energy per second.
+        <p>
+          Convert 1 Sugar into <GN value={energyPerSugar * 100} sigFigs={3} />% energy.
+        </p>
+        <p>Starts below 95% energy. Restores {EAT_ENERGY_PER_SECOND * 100}% energy per second.</p>
       </>
     ),
   },
@@ -31,7 +32,7 @@ export const GeneMetabolism = Gene.make(
 );
 export type GeneMetabolism = typeof GeneMetabolism;
 
-const EAT_ENERGY_PER_SECOND = 0.2;
+const EAT_ENERGY_PER_SECOND = 0.25;
 
 function getMaxEnergyToEat(cell: Cell, dt: number) {
   const hunger = 1 - cell.energy;

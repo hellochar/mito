@@ -12,8 +12,11 @@ export const GeneEnergyTransfer = Gene.make(
     },
     description: ({ differenceThreshold }) => (
       <>
-        Give Energy to neighboring Cells until they're within <GN value={differenceThreshold * 100} sigFigs={3} />%
-        energy difference of this Cell.
+        <p>
+          Give energy to neighboring Cells until they're within <GN value={differenceThreshold * 100} sigFigs={3} />%
+          energy difference of this Cell.
+        </p>
+        <p>Gives up to {ENERGY_GIVE_RATE * 100}% energy per second.</p>
       </>
     ),
   },
@@ -27,7 +30,7 @@ export const GeneEnergyTransfer = Gene.make(
   }
 );
 
-const ENERGY_GIVE_RATE = 0.2; // 20% energy per second
+const ENERGY_GIVE_RATE = 0.25;
 
 function maybeGiveEnergy(dt: number, cell: Cell, neighbor: Cell, differenceThreshold: number) {
   const difference = cell.energy - neighbor.energy;
@@ -35,6 +38,7 @@ function maybeGiveEnergy(dt: number, cell: Cell, neighbor: Cell, differenceThres
     const energyToGive = Math.min(difference - differenceThreshold, ENERGY_GIVE_RATE * dt);
     // safe method but lower upper bound on equalization rate
     // energyTransfer = Math.floor((neighbor.energy - this.energy) / energeticNeighbors.length);
+
     // this may be unstable w/o double buffering
     cell.energy -= energyToGive;
     neighbor.energy += energyToGive;
