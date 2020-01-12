@@ -26,7 +26,7 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
   const tuple = React.useState<DragState>({});
   return (
     <DraggedContext.Provider value={tuple}>
-      <div className="genome-viewer">
+      <div className={classNames("genome-viewer", { dragging: tuple[0].dragged != null })}>
         <div className="cell-types">
           {genome.cellTypes.map((c) => (
             <CellTypeViewer key={c.name} cellType={c} />

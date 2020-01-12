@@ -7,8 +7,23 @@
   pointer-events: all;
   text-align: left;
 
+  &.dragging .chromosome {
+    border-color: $blue3;
+  }
+
   .cell-types {
     display: flex;
+  }
+
+  .chromosome {
+    margin-top: 5px;
+    flex-grow: 1;
+    // background: transparentize($sepia1, 0.9);
+    // border-radius: 2px;
+    padding: 5px;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    border-radius: 5px;
   }
 
   .slots-used {
@@ -35,14 +50,6 @@
       .icon-cell {
         margin-right: 5px;
       }
-    }
-
-    .chromosome {
-      margin-top: 5px;
-      flex-grow: 1;
-      // background: transparentize($sepia1, 0.9);
-      // border-radius: 2px;
-      padding: 5px;
     }
 
     .gene ~ .gene {
