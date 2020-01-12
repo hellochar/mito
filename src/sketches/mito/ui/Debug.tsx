@@ -1,6 +1,7 @@
 import { Button } from "common/Button";
 import * as React from "react";
 import Mito from "..";
+import PlantStats from "./PlantStats";
 
 const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
   const doWin = React.useCallback(() => {
@@ -22,7 +23,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
   }, [mito]);
 
   return (
-    <div style={{ position: "absolute", bottom: 0, left: 0 }}>
+    <div style={{ position: "absolute", bottom: 0, left: 0, background: "white" }}>
       <div style={{ display: "flex" }}>
         <Button color="green" onClick={doWin}>
           Win
@@ -31,7 +32,8 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
           Lose
         </Button>
       </div>
-      <div style={{ background: "white" }}>
+      <PlantStats world={mito.world} frame={mito.world.frame} />
+      <div>
         <div>Rainwater: {mito.world.numRainWater}</div>
         <div>Evaporated Air: {mito.world.numEvaporatedAir}</div>
         <div>Evaporated Soil: {mito.world.numEvaporatedSoil}</div>

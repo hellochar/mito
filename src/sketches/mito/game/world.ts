@@ -38,7 +38,7 @@ export class StepStats {
     "collect-sunlight": [],
     "grow-fruit": [],
   };
-  constructor(public deleted: Entity[] = [], public added: Entity[] = []) {}
+  constructor(public dt: number, public frame: number, public deleted: Entity[] = [], public added: Entity[] = []) {}
   logEvent(event: TileEvent) {
     this.events[event.type].push(event);
   }
@@ -380,10 +380,10 @@ export class World {
     // })();
   }
   // iterate through all the actions
-  private stepStats: StepStats = new StepStats();
+  private stepStats: StepStats = new StepStats(0, this.frame);
   public step(dt: number): StepStats {
     const entities = this.entities();
-    this.stepStats = new StepStats();
+    this.stepStats = new StepStats(dt, this.frame);
     // dear god
     entities.forEach((entity) => {
       if (isSteppable(entity)) {
