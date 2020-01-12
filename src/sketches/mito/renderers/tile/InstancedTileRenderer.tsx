@@ -104,7 +104,14 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   commit() {
-    if (this.target instanceof Cell) {
+    if (this.target instanceof GrowingCell) {
+      const { start, pos } = this.target;
+      const p = start.pos.clone().lerp(pos, 0.5);
+      const t1Pos = pos;
+      const t = this.scale.x;
+      lerp2(p, t1Pos, t);
+      this.instance.commitCenter(p.x, p.y, 1);
+    } else if (this.target instanceof Cell) {
       this.instance.commitCenter(this.target.pos.x, this.target.pos.y + this.target.droopY, 1);
     } else {
       const z = this.target instanceof Air ? -10 : 0;

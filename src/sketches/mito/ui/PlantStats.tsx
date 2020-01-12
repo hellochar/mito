@@ -6,8 +6,11 @@ import { GenePhotosynthesis, GeneSoilAbsorption } from "../game/tile/genes";
 import { ResourceIcon } from "./ResourceIcon";
 
 // time is just used for re-rendering
-const PlantStats: React.FC<{ world: World; time: number }> = memo(({ world }) => {
+const PlantStats: React.FC<{ world: World; time: number }> = memo(({ world, time }) => {
+  const lastTime = useRef(0);
   const lastTotalEnergy = useRef(0);
+  const dt = time - lastTime.current;
+
   let numWater = 0;
   let numSugar = 0;
   let totalEnergy = 0;
@@ -29,7 +32,7 @@ const PlantStats: React.FC<{ world: World; time: number }> = memo(({ world }) =>
     }
   }
   const energyUsed = lastTotalEnergy.current - totalEnergy;
-  const energyUsePerSecond = energyUsed / world.getLastStepStats().dt;
+  const energyUsePerSecond = energyUsed / dt;
   const energyUsePerSeason = energyUsePerSecond * TIME_PER_SEASON;
   const sugarUsePerSeason = energyUsePerSeason;
   const timeUntilStarvation = totalEnergy / energyUsePerSecond;
@@ -37,6 +40,7 @@ const PlantStats: React.FC<{ world: World; time: number }> = memo(({ world }) =>
   const averageSugarPerSeason = (totalSugarProduced / world.time) * TIME_PER_SEASON;
 
   lastTotalEnergy.current = totalEnergy;
+  lastTime.current = time;
 
   return (
     <div className="plant-stats" style={{ margin: "10px 0", textAlign: "left" }}>

@@ -116,8 +116,15 @@ export class InventoryRenderer extends Renderer<Inventory> {
       particles.push(v);
     }
     if (particles.length > wantedParticles) {
-      // delete from the start
-      particles.splice(0, particles.length - wantedParticles);
+      // delete from the start - makes soil water feel
+      // more dynamic since every small movement shows an animation
+      // particles.splice(0, particles.length - wantedParticles);
+
+      // delete from the end:
+      // otherwise going from 2.1 -> 2 water looks broken
+      // (the size 0.1 water suddenly becomes the size 1 water)
+      // makes soil water feel much more static
+      particles.splice(wantedParticles);
     }
     if (particles.length !== wantedParticles) {
       throw new Error("array lengths mismatch: " + particles.length + " should be " + wantedParticles);
@@ -152,11 +159,16 @@ export class InventoryRenderer extends Renderer<Inventory> {
       const r = i < numWaters ? this.waters[i] : this.sugars[i - numWaters];
       let vx = 0,
         vy = 0;
+
       const angle = Ticker.now / 3000 + this.animationOffset;
       vx += Math.cos(angle) * 0.02;
+
       const goTowardsCenterStrength = 0.1 + r.length() * 0.1;
       vx += -r.x * goTowardsCenterStrength;
       vy += -r.y * goTowardsCenterStrength;
+
+      // vx += -((r.x * 2) ** 1) * 0.2;
+      // vy += -((r.y * 2) ** 3) * 0.1;
       const player = this.mito.world.player;
       if (player.pos.equals(this.target.carrier.pos)) {
         const playerX = player.posFloat.x - player.pos.x;
@@ -179,13 +191,19 @@ export class InventoryRenderer extends Renderer<Inventory> {
         const dy = r.y - l.y;
         const lengthSq = dx * dx + dy * dy;
         if (lengthSq > 0) {
-          const strength = graphics.particleRepelStrength / lengthSq;
+          const isFractional = j < numWaters ? j === this.waters.length - 1 : j - numWaters === this.sugars.length - 1;
+          let strength = graphics.particleRepelStrength / lengthSq; // + graphics.particleRepelStrength / Math.sqrt(lengthSq);
+          if (isFractional) {
+            const fraction = j < numWaters ? this.target.water % 1 : this.target.sugar % 1;
+            strength *= fraction;
+          }
           vx += dx * strength;
           vy += dy * strength;
         }
       }
       r.x += vx;
       r.y += vy;
+      // r.x *= 0.9;
     }
   }
 

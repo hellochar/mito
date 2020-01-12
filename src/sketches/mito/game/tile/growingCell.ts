@@ -5,6 +5,7 @@ import { Cell } from "./cell";
 import Chromosome from "./chromosome";
 import { GeneLiving } from "./genes";
 import { GeneObstacle } from "./genes/GeneObstacle";
+import { Tile } from "./tile";
 
 const chromosomeGrowingCell = new Chromosome(GeneLiving.level(2), GeneObstacle.level(0));
 
@@ -13,7 +14,7 @@ export class GrowingCell extends Cell {
   public timeRemaining: number;
   public timeToBuild: number;
   public inventory = new Inventory(0, this);
-  constructor(pos: Vector2, world: World, public completedCell: Cell) {
+  constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Tile) {
     super(pos, world, chromosomeGrowingCell);
     this.timeRemaining = this.timeToBuild = (completedCell.constructor as any).timeToBuild || 0;
   }
