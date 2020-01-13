@@ -1,5 +1,9 @@
 @import "../../../variables";
 
+@mixin smalltext() {
+  font: 12px $arial-family;
+}
+
 .genome-viewer {
   padding: 10px;
   overflow-y: hidden;
@@ -98,8 +102,7 @@
 
   .description,
   p {
-    font-size: 12px;
-    font-family: $arial-family;
+    @include smalltext();
     line-height: 1.25;
     margin: 10px 0 0;
   }
@@ -175,6 +178,17 @@
   display: flex;
   flex-direction: column;
   font: 12px $arial-family;
+}
+
+.interaction-select-container {
+  @include smalltext();
+}
+
+.interaction-select {
+  border: none;
+  background: none;
+  border-bottom: 1px solid $black;
+  outline: none;
 }
 
 .gn {

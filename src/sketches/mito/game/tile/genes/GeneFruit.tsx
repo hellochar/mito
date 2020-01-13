@@ -6,13 +6,13 @@ import { TIME_PER_MONTH } from "../../constants";
 import { Cell } from "../cell";
 import { Gene, GeneInstance } from "../chromosome";
 
-export interface GeneFruitState {
+export interface FruitState {
   timeMatured?: number;
   isMature: boolean;
   committedResources: Inventory;
 }
 
-export const GeneFruit = Gene.make<GeneFruitState>(
+export const GeneFruit = Gene.make<FruitState>(
   {
     name: "Fruit",
     levelCosts: [10, 15, 20, 25, 30],
@@ -27,12 +27,16 @@ export const GeneFruit = Gene.make<GeneFruitState>(
     description: ({ mpEarned, neededResources, secondsToMature }) => (
       <>
         <p>
-          Consume {neededResources / 2} Water and {neededResources / 2} Sugar on this Cell to reach Maturity.{" "}
+          Consumes {neededResources / 2} Water and {neededResources / 2} Sugar on this Cell to reach Maturity.{" "}
         </p>
         <p>
-          On Maturity, achieve <span className="reproduction">Reproduction</span> and earn <MP amount={mpEarned} />.
+          On Maturity,{" "}
+          <b>
+            achieve <span className="reproduction">Reproduction</span>
+          </b>{" "}
+          and earn <MP amount={mpEarned} />.
         </p>
-        <p>With constant feeding, Fruit can mature in {secondsToMature / TIME_PER_MONTH} months.</p>
+        <p>With constant feeding, Fruit can mature in {secondsToMature} seconds.</p>
       </>
     ),
   },
@@ -75,11 +79,13 @@ function commitResources(
   const wantedWater = clamp(neededResources / 2 - inventory.water, 0, oneSecondCommitMax * dt);
   const wantedSugar = clamp(neededResources / 2 - inventory.sugar, 0, oneSecondCommitMax * dt);
   const { water, sugar } = cell.inventory.give(inventory, wantedWater, wantedSugar);
-  cell.world.logEvent({
-    type: "grow-fruit",
-    cell,
-    resourcesUsed: water + sugar,
-  });
+  if (water + sugar > 0) {
+    cell.world.logEvent({
+      type: "grow-fruit",
+      cell,
+      resourcesUsed: water + sugar,
+    });
+  }
 }
 
 export function fruitGetPercentMatured(g: GeneInstance<GeneFruit>) {

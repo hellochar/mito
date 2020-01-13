@@ -11,11 +11,10 @@ import { World } from "../world";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
 import Chromosome, { Gene, GeneInstance, GeneStaticProperties } from "./chromosome";
 import { DeadCell } from "./deadCell";
+import { CellType } from "./genome";
 import { Rock } from "./rock";
 import { Soil } from "./soil";
 import { Tile } from "./tile";
-
-const emptyChromosome = new Chromosome();
 
 export interface CellArgs {
   direction?: Vector2;
@@ -30,7 +29,6 @@ export abstract class Cell extends Tile implements Interactable {
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
   // public offset = new Vector2();
   public droopY = 0;
-  public args?: CellArgs;
   public effects: CellEffect[] = [];
   public chromosome: Chromosome;
   public geneInstances: GeneInstance<Gene<unknown, string>>[];
@@ -53,10 +51,9 @@ export abstract class Cell extends Tile implements Interactable {
     return this.staticProperties.diffusionSugar;
   }
 
-  constructor(pos: Vector2, world: World, chromosome: Chromosome, args?: CellArgs) {
+  constructor(pos: Vector2, world: World, public type: CellType, public args?: CellArgs) {
     super(pos, world);
-    this.args = args;
-    this.chromosome = chromosome || emptyChromosome;
+    this.chromosome = type.chromosome;
     this.staticProperties = this.chromosome.mergeStaticProperties();
     const { inventoryCapacity, isDirectional } = this.staticProperties;
     this.inventory = new Inventory(inventoryCapacity, this);
@@ -105,6 +102,9 @@ export abstract class Cell extends Tile implements Interactable {
         return;
       }
     }
+    if (this.staticProperties.cantFreeze && effect instanceof FreezeEffect) {
+      return;
+    }
     effect.attachTo(this);
     this.effects.push(effect);
   }
@@ -121,10 +121,33 @@ export abstract class Cell extends Tile implements Interactable {
         anyInteracted = anyInteracted || interacted;
       }
     }
-    // Cell interaction: give water to player
-    if (this.inventory.water > 0 || this.inventory.sugar > 0) {
-      anyInteracted = true;
-      this.inventory.give(this.world.player.inventory, 30 * dt, 30 * dt);
+    // Cell interaction
+    const { interaction } = this.type;
+    if (interaction != null) {
+      const [from, to] =
+        interaction.type === "give"
+          ? [this.world.player.inventory, this.inventory]
+          : [this.inventory, this.world.player.inventory];
+      const [waterToGive, sugarToGive] = (() => {
+        switch (interaction.resources) {
+          case "water":
+            return [1, 0];
+          case "sugar":
+            return [0, 1];
+          case "water and sugar":
+            return [1, 1];
+          case "sugar take water":
+            return [-1, 1];
+          case "water take sugar":
+            return [1, -1];
+        }
+      })();
+      const exchangeSpeed = 5;
+      const { water, sugar } = from.give(to, exchangeSpeed * waterToGive * dt, exchangeSpeed * sugarToGive * dt);
+
+      if (water > 0 || sugar > 0) {
+        anyInteracted = true;
+      }
     }
     return anyInteracted;
   }

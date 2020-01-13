@@ -5,7 +5,7 @@ import { arrayRange } from "math/arrays";
 import * as React from "react";
 import { FaGripLines } from "react-icons/fa";
 import { GeneStaticProperties, RealizedGene } from "../game/tile/chromosome";
-import Genome, { CellType } from "../game/tile/genome";
+import Genome, { CellInteraction, CellType, describeCellInteraction } from "../game/tile/genome";
 import { spritesheetLoaded } from "../spritesheet";
 import "./GenomeViewer.scss";
 import IconCell from "./IconCell";
@@ -63,13 +63,24 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
       {additionalGeneSlots > 0 ? `+${additionalGeneSlots}` : null}
     </>
   );
+  const handleSetInteraction = React.useCallback(
+    (i: CellInteraction | undefined) => {
+      cellType.interaction = i;
+    },
+    [cellType.interaction]
+  );
   return (
     <div className="cell-type">
       <div className="cell-header">
         <IconCell cellType={cellType.c} spritesheetLoaded={spritesheetLoaded} />
         <div>
           <h2>{name}</h2>
-          <StaticPropertiesViewer {...chromosome.mergeStaticProperties()} />
+          <CellInteractionSelector
+            key={cellType.name}
+            interaction={cellType.interaction}
+            setInteraction={handleSetInteraction}
+          />
+          {/* <StaticPropertiesViewer {...chromosome.mergeStaticProperties()} /> */}
         </div>
       </div>
       <div>
@@ -86,6 +97,56 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
     </div>
   );
 };
+
+const interactionTypes = ["give", "take"] as const;
+const resourceTypes = ["water", "sugar", "water and sugar"] as const;
+const possibleInteractions: CellInteraction[] = interactionTypes.flatMap((type) =>
+  resourceTypes.map((resources) => ({
+    type,
+    resources,
+  }))
+);
+possibleInteractions.push(
+  {
+    type: "give",
+    resources: "water take sugar",
+  },
+  {
+    type: "give",
+    resources: "sugar take water",
+  }
+);
+export const CellInteractionSelector: React.FC<{
+  interaction?: CellInteraction;
+  setInteraction: (i: CellInteraction | undefined) => void;
+}> = React.memo(({ interaction, setInteraction }) => {
+  const handleSelect = React.useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const indexOrUndefined = event.target.value;
+      if (indexOrUndefined === "none") {
+        setInteraction(undefined);
+        // cellType.interaction = undefined;
+      } else {
+        setInteraction(possibleInteractions[Number(indexOrUndefined)]);
+        // cellType.interaction = possibleInteractions[Number(indexOrUndefined)];
+      }
+    },
+    [setInteraction]
+  );
+  const selectValue =
+    interaction == null
+      ? undefined
+      : possibleInteractions.findIndex((i) => interaction.resources === i.resources && interaction.type === i.type);
+  const interactionEl = (
+    <select className="interaction-select" onChange={handleSelect} value={selectValue}>
+      <option value={undefined}>do nothing</option>
+      {possibleInteractions.map((interaction, index) => {
+        return <option value={index}>{describeCellInteraction(interaction)}</option>;
+      })}
+    </select>
+  );
+  return <div className="interaction-select-container">Left-click to {interactionEl}.</div>;
+});
 
 export const StaticPropertiesViewer: React.FC<GeneStaticProperties> = React.memo(
   ({ diffusionWater, diffusionSugar, inventoryCapacity, isDirectional, isObstacle, isReproductive }) => {

@@ -5,6 +5,7 @@ import { Cell, CellArgs } from "./cell";
 import Chromosome from "./chromosome";
 import { GeneInventory, GeneLiving, GeneSoilAbsorption } from "./genes";
 import { GeneObstacle } from "./genes/GeneObstacle";
+import { CellType } from "./genome";
 
 export const chromosomeRoot = new Chromosome(
   GeneLiving.level(2),
@@ -16,6 +17,17 @@ export const chromosomeRoot = new Chromosome(
 export class Root extends Cell implements Interactable {
   static displayName = "Root";
   constructor(pos: Vector2, world: World, args?: CellArgs) {
-    super(pos, world, chromosomeRoot, args);
+    super(pos, world, cellTypeRoot, args);
   }
 }
+
+export const cellTypeRoot: CellType = {
+  name: "Root",
+  chromosome: chromosomeRoot,
+  geneSlots: 10,
+  c: Root,
+  interaction: {
+    type: "take",
+    resources: "water",
+  },
+};

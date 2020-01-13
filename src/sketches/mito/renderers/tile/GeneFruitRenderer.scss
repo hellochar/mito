@@ -5,6 +5,7 @@
   white-space: nowrap;
   position: absolute;
   left: 50%;
-  top: 0;
+  // top: 0;
+  bottom: 100%;
   transform: translate(-50%, 0);
 }

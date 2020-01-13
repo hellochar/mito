@@ -5,6 +5,7 @@ import { Cell } from ".";
 import { Steppable } from "../entity";
 
 const defaultProperties: GeneStaticProperties = {
+  cantFreeze: false,
   isReproductive: false,
   isObstacle: false,
   inventoryCapacity: 0,
@@ -64,6 +65,7 @@ export default class Chromosome {
 }
 
 export type GeneStaticProperties = {
+  cantFreeze: boolean;
   isReproductive: boolean;
   isDirectional: boolean;
   isObstacle: boolean;

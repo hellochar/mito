@@ -1,37 +1,22 @@
+import { nf } from "common/formatters";
 import { map } from "math";
 import React from "react";
 import { fruitGetPercentMatured, GeneFruit } from "sketches/mito/game/tile/genes/GeneFruit";
-import "./FruitRenderer.scss";
+import "./GeneFruitRenderer.scss";
 import { GeneRenderer } from "./GeneRenderer";
 
 export class GeneFruitRenderer extends GeneRenderer<GeneFruit> {
-  private showElement = false;
   resourcesNeededElement = this.mito.addWorldDOMElement(
     () => this.target.cell,
     () => {
-      if (!this.showElement) {
-        return null;
-      }
-      const { state, props } = this.target;
-      return (
-        <div className="fruit-indicator">
-          <div>
-            {state.committedResources.water.toFixed(1)}/{props.neededResources / 2} water
-          </div>
-          <div>
-            {state.committedResources.sugar.toFixed(1)}/{props.neededResources / 2} sugar
-          </div>
-        </div>
-      );
+      const matured = fruitGetPercentMatured(this.target);
+      return <div className="fruit-indicator">{nf(matured * 100, 2)}%</div>;
     }
   );
 
-  hover() {
-    this.showElement = true;
-  }
+  hover() {}
 
   update() {
-    this.showElement = false;
     this.updateScale();
   }
 

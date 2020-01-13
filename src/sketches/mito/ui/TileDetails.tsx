@@ -8,6 +8,7 @@ import { GeneInstance } from "../game/tile/chromosome";
 import { GeneSoilAbsorption, SoilAbsorptionState } from "../game/tile/genes";
 import { GeneFruit } from "../game/tile/genes/GeneFruit";
 import { GenePhotosynthesis, PhotosynthesisState } from "../game/tile/genes/GenePhotosynthesis";
+import { describeCellInteraction } from "../game/tile/genome";
 import { InventoryBar } from "./InventoryBar";
 import TemperatureInfo from "./TemperatureInfo";
 import "./TileDetails.scss";
@@ -40,11 +41,15 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   }
   private interactInfo(tile: Tile) {
     if (tile instanceof Cell) {
+      const leftClickEl =
+        tile.type.interaction != null ? (
+          <div className="interact-info first">Left click - {describeCellInteraction(tile.type.interaction)}.</div>
+        ) : null;
       return (
-        <>
-          <div className="interact-info f">Left click - interact.</div>
+        <div className="interact-infos">
+          {leftClickEl}
           <div className="interact-info">Right click - deconstruct.</div>
-        </>
+        </div>
       );
     }
   }

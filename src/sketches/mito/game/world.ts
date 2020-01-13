@@ -15,13 +15,13 @@ import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
-import { Air, Cell, DeadCell, Fruit, Leaf, Soil, Tile, Tissue, Transport } from "./tile";
-import { chromosomeFruit } from "./tile/fruit";
+import { Air, Cell, DeadCell, Soil, Tile, Tissue } from "./tile";
+import { cellTypeFruit } from "./tile/fruit";
 import Genome from "./tile/genome";
-import { chromosomeLeaf } from "./tile/leaf";
-import { chromosomeRoot, Root } from "./tile/root";
-import { chromosomeTissue } from "./tile/tissue";
-import { chromosomeTransport } from "./tile/transport";
+import { cellTypeLeaf } from "./tile/leaf";
+import { cellTypeRoot } from "./tile/root";
+import { cellTypeTissue } from "./tile/tissue";
+import { cellTypeTransport } from "./tile/transport";
 import { TileEvent, TileEventType } from "./tileEvent";
 
 export type TileEventLog = {
@@ -87,38 +87,7 @@ export class World {
     this.height = options.height;
     this.generatorContext = createGeneratorContext(seed);
     this.species = species;
-    this.genome = new Genome([
-      {
-        name: "Tissue",
-        chromosome: chromosomeTissue,
-        geneSlots: 10,
-        c: Tissue,
-      },
-      {
-        name: "Leaf",
-        chromosome: chromosomeLeaf,
-        geneSlots: 10,
-        c: Leaf,
-      },
-      {
-        name: "Root",
-        chromosome: chromosomeRoot,
-        geneSlots: 10,
-        c: Root,
-      },
-      {
-        name: "Transport",
-        chromosome: chromosomeTransport,
-        geneSlots: 10,
-        c: Transport,
-      },
-      {
-        name: "Fruit",
-        chromosome: chromosomeFruit,
-        geneSlots: 10,
-        c: Fruit,
-      },
-    ]);
+    this.genome = new Genome([cellTypeTissue, cellTypeLeaf, cellTypeRoot, cellTypeTransport, cellTypeFruit]);
     this.traits = getTraits(this.species.genes);
     Cell.timeToBuild = traitMod(this.traits.buildTime, CELL_BUILD_TIME, 1 / 2);
 
