@@ -12,17 +12,15 @@
   // background: transparentize($gray1, 0.2);
   pointer-events: none;
   flex-direction: column;
+  white-space: nowrap;
 
   .info-tile-row {
     display: flex;
     align-items: center;
   }
 
-  .interact-info {
-    &.f {
-      margin-top: 20px;
-    }
-
+  .interact-infos {
+    margin-top: 20px;
     font-family: $arial-family;
     color: $gray1;
     font-size: 12px;
@@ -32,10 +30,6 @@
     display: inline-block;
     font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
     padding-right: 5px;
-  }
-
-  .info-energy {
-    // font-size: 0.75em;
   }
 
   .info-tile-temperature {
@@ -73,6 +67,13 @@
       font-family: $arial-family;
       font-size: $size * 0.28;
       font-weight: bold;
+    }
+  }
+
+  .info-air {
+    display: flex;
+    > div:first-of-type {
+      width: 75px;
     }
   }
 }

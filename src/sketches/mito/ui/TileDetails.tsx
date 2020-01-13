@@ -1,8 +1,12 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
+import { nf } from "common/formatters";
 import * as React from "react";
+import { GiDustCloud } from "react-icons/gi";
 import { Constructor } from "../constructor";
 import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Soil, Tile } from "../game/tile";
+import { GeneInstance } from "../game/tile/chromosome";
 import { GeneSoilAbsorption, SoilAbsorptionState } from "../game/tile/genes";
+import { GeneFruit } from "../game/tile/genes/GeneFruit";
 import { GenePhotosynthesis, PhotosynthesisState } from "../game/tile/genes/GenePhotosynthesis";
 import { InventoryBar } from "./InventoryBar";
 import TemperatureInfo from "./TemperatureInfo";
@@ -65,6 +69,8 @@ export class TileDetails extends React.Component<TileDetailsProps> {
             return this.soilAbsorptionInfo(gene.state);
           } else if (gene.isType(GenePhotosynthesis)) {
             return this.photosynthesisInfo(gene.state);
+          } else if (gene.isType(GeneFruit)) {
+            return this.fruitInfo(gene);
           } else {
             return null;
           }
@@ -90,12 +96,29 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       </div>
     );
   }
+
+  private fruitInfo(instance: GeneInstance<GeneFruit>) {
+    const { state, props } = instance;
+    return (
+      <div>
+        <div>
+          {nf(state.committedResources.water, 3)}/{props.neededResources / 2} water consumed.
+        </div>
+        <div>
+          {nf(state.committedResources.sugar, 3)}/{props.neededResources / 2} sugar consumed.
+        </div>
+      </div>
+    );
+  }
+
   private airInfo(tile: Tile) {
     if (tile instanceof Air) {
       return (
         <div className="info-air">
-          <div>☀️ {(tile.sunlight() * 100).toFixed(0)}%</div>
-          <div>Co2 {(tile.co2() * 100).toFixed(0)}%</div>
+          <div>☀️ {nf(tile.sunlight() * 100, 2)}%</div>
+          <div>
+            <GiDustCloud /> {nf((1 - tile.co2()) * 100, 2)}%
+          </div>
         </div>
       );
     }

@@ -369,7 +369,8 @@ Number of Programs: ${this.renderer.info.programs!.length}
     if (this.instructionsOpen) {
       return;
     }
-    this.canvas.focus();
+    // disable this for now so i can open interaction cell editor in genomeviewer
+    // this.canvas.focus();
     const moveAction = this.keysToMovement(this.keyMap);
     if (moveAction) {
       this.world.player.setAction(moveAction);

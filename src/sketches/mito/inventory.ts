@@ -73,8 +73,9 @@ export class Inventory {
     //      if we don't, cap water and sugar to the amount available
     // 2) other has enough space
     //      if it doesn't, scale down to the amount that is available
-    let water = Math.min(amountWater, this.water);
-    let sugar = Math.min(amountSugar, this.sugar);
+    // 3) if negative, check how much you can take from other
+    let water = amountWater > 0 ? Math.min(amountWater, this.water) : -Math.min(-amountWater, other.water);
+    let sugar = amountSugar > 0 ? Math.min(amountSugar, this.sugar) : -Math.min(-amountSugar, other.sugar);
 
     const spaceNeeded = fpref(water + sugar);
     const spaceAvailable = other.space();
