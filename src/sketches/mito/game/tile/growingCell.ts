@@ -1,5 +1,4 @@
 import { Vector2 } from "three";
-import { Inventory } from "../../inventory";
 import { World } from "../world";
 import { Cell } from "./cell";
 import Chromosome from "./chromosome";
@@ -13,16 +12,36 @@ export class GrowingCell extends Cell {
   static displayName = "Growing Cell";
   public timeRemaining: number;
   public timeToBuild: number;
-  public inventory = new Inventory(0, this);
   constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Tile) {
     super(pos, world, chromosomeGrowingCell);
-    this.timeRemaining = this.timeToBuild = (completedCell.constructor as any).timeToBuild || 0;
+    // this.timeRemaining = this.timeToBuild = (completedCell.constructor as any).timeToBuild;
+    this.timeRemaining = this.timeToBuild = 1;
+    this.energy = 0.01;
   }
+
   step(dt: number) {
     super.step(dt);
-    this.timeRemaining -= this.tempo * dt;
+
+    const neighbors = this.world.tileNeighbors(this.pos);
+    for (const [, n] of neighbors) {
+      if (n instanceof Cell && !(n instanceof GrowingCell)) {
+        const energyToTake = Math.min(dt * 0.1, 1 - this.energy);
+        this.energy += energyToTake;
+        n.energy -= energyToTake;
+        this.world.logEvent({
+          type: "cell-transfer-energy",
+          from: n,
+          to: this,
+          amount: energyToTake,
+        });
+      }
+    }
+
+    // this.timeRemaining -= this.tempo * dt;
     this.completedCell.pos.copy(this.pos);
-    if (this.timeRemaining <= 0) {
+    this.timeRemaining = 1 - this.energy;
+    // if (this.timeRemaining <= 0) {
+    if (this.energy >= 1) {
       this.world.maybeRemoveCellAt(this.pos);
       this.completedCell.energy = this.energy;
       this.world.setTileAt(this.pos, this.completedCell);

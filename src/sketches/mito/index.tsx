@@ -13,7 +13,7 @@ import { drums, hookUpAudio, strings } from "./audio";
 import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
 import { Cell, Tile } from "./game/tile";
-import { ACTION_KEYMAP, MOVEMENT_KEYS } from "./keymap";
+import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
@@ -143,6 +143,9 @@ export class Mito extends ISketch {
     this.keyMap.add(code);
     if (!event.repeat) {
       this.maybeToggleInstructions(code);
+      if (ACTION_INSTANT_KEYMAP[code]) {
+        this.world.player.setAction(ACTION_INSTANT_KEYMAP[code]);
+      }
     }
     this.actionBar.keyDown(event);
     this.eventEmitter.emit("keydown", event);
@@ -372,8 +375,8 @@ Number of Programs: ${this.renderer.info.programs!.length}
       this.world.player.setAction(moveAction);
     }
     for (const key of this.keyMap) {
-      if (ACTION_KEYMAP[key]) {
-        this.world.player.setAction(ACTION_KEYMAP[key]);
+      if (ACTION_CONTINUOUS_KEYMAP[key]) {
+        this.world.player.setAction(ACTION_CONTINUOUS_KEYMAP[key]);
       }
     }
     if (this.mouseDown) {

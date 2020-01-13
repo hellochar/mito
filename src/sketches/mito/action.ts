@@ -26,17 +26,12 @@ export interface ActionDeconstruct {
   force?: boolean;
 }
 
+/**
+ * Instantaneously drop some amount of water and sugar.
+ */
 export interface ActionDrop {
   type: "drop";
-
-  /**
-   * Rate of water drop per second.
-   */
   water: number;
-
-  /**
-   * Rate of sugar drop per second.
-   */
   sugar: number;
 }
 

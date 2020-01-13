@@ -29,7 +29,7 @@ import { GeneDirectionalPush } from "./tile/genes/GeneDirectionalPush";
 import { World } from "./world";
 
 const waterCost = 1;
-const sugarCost = 1;
+const sugarCost = 0;
 
 export class Player implements Steppable {
   public inventory = new Inventory(PLAYER_MAX_RESOURCES, this, PLAYER_STARTING_WATER, PLAYER_STARTING_SUGAR);
@@ -291,8 +291,17 @@ export class Player implements Steppable {
 
     let cell: Cell;
     if (action.cellType.timeToBuild) {
-      // immediately build if it's the same type (e.g. Transport on Transport)
+      // special - drop a sugar when you grow, to cover for the sugar
+      // this.attemptDrop(
+      //   {
+      //     type: "drop",
+      //     sugar: 1 / dt,
+      //     water: 0,
+      //   },
+      //   dt
+      // );
       cell = new GrowingCell(action.position, this.world, matureCell, this.currentTile());
+      // this.inventory.give(cell.inventory, 0, 1);
     } else {
       cell = matureCell;
     }
@@ -319,13 +328,11 @@ export class Player implements Steppable {
     return false;
   }
 
-  public attemptDrop(action: ActionDrop, dt: number) {
+  public attemptDrop(action: ActionDrop, _dt: number) {
     // drop as much as you can onto the current tile
     const currentTile = this.currentTile();
     if (hasInventory(currentTile)) {
-      const { water: waterRate, sugar: sugarRate } = action;
-      const water = waterRate * dt;
-      const sugar = sugarRate * dt;
+      const { water, sugar } = action;
       // first, pick up the opposite of what you can from the tile to try and make space
       currentTile.inventory.give(this.inventory, sugar, water);
 
