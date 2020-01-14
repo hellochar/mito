@@ -28,6 +28,6 @@ export const cellTypeRoot: CellType = {
   c: Root,
   interaction: {
     type: "take",
-    resources: "water",
+    resources: "water and sugar",
   },
 };

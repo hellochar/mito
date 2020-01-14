@@ -146,6 +146,9 @@ export class Mito extends ISketch {
       if (ACTION_INSTANT_KEYMAP[code]) {
         this.world.player.setAction(ACTION_INSTANT_KEYMAP[code]);
       }
+      if (code === "KeyH") {
+        params.hud = !params.hud;
+      }
     }
     this.actionBar.keyDown(event);
     this.eventEmitter.emit("keydown", event);
