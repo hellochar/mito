@@ -2,7 +2,7 @@ import { Vector2 } from "three";
 import Mito from ".";
 import { ActionBuild, ActionInteract } from "./action";
 import { isInteractable } from "./game/interactable";
-import { Cell, Fruit, Tile } from "./game/tile";
+import { Cell, Tile } from "./game/tile";
 import { CellArgs } from "./game/tile/cell";
 import { cellTypeFruit } from "./game/tile/fruit";
 import { cellTypeLeaf } from "./game/tile/leaf";
@@ -109,8 +109,8 @@ export class InteractBar extends ActionBar {
   }
 
   rightClick(tile: Tile): void {
-    if (tile instanceof Fruit) {
-      return; // disallow deleting fruit
+    if (tile instanceof Cell && tile.isReproductive) {
+      return; // disallow deleting reproductive cells
     }
     this.mito.world.player.setAction({
       type: "deconstruct",

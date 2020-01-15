@@ -5,7 +5,7 @@ import { reversed } from "math/easing";
 import Mito from "sketches/mito";
 import { Constructor } from "sketches/mito/constructor";
 import { Temperature } from "sketches/mito/game/temperature";
-import { Air, Cell, DeadCell, Fountain, Fruit, GrowingCell, Rock, Tile } from "sketches/mito/game/tile";
+import { Air, Cell, DeadCell, Fountain, GrowingCell, Rock, Tile } from "sketches/mito/game/tile";
 import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { cellTypeFruit } from "sketches/mito/game/tile/fruit";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
@@ -150,7 +150,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (this.target instanceof GrowingCell) {
       const s = this.target.energy;
       lerp2(this.scale, { x: s, y: s }, 0.5);
-    } else if (this.target instanceof Fruit) {
+    } else if (this.target instanceof Cell && this.target.isReproductive) {
+      // Do nothing; GeneRenderer sets scale for you
     } else {
       lerp2(this.scale, InstancedTileRenderer.ONE, 0.1);
     }

@@ -22,7 +22,7 @@ import {
   PLAYER_STARTING_WATER,
 } from "./constants";
 import { Steppable } from "./entity";
-import { Cell, FreezeEffect, Fruit, GrowingCell, Tile } from "./tile";
+import { Cell, FreezeEffect, GrowingCell, Tile } from "./tile";
 import { CellArgs } from "./tile/cell";
 import { cellTypeFruit } from "./tile/fruit";
 import { GeneDirectionalPush } from "./tile/genes/GeneDirectionalPush";
@@ -257,13 +257,12 @@ export class Player implements Steppable {
   // }
   public tryConstructingNewCell(position: Vector2, cellType: CellType, args?: CellArgs) {
     position = position.clone();
-    const targetTile = this.world.tileAt(position.x, position.y);
-    if (targetTile == null) {
+    if (!this.world.isValidPosition(position.x, position.y)) {
       // out of bounds/out of map
       return;
     }
-    // disallow building over a seed
-    if (targetTile instanceof Fruit) {
+    // disallow building over existing cells
+    if (this.world.cellAt(position) != null) {
       return;
     }
     if (this.getBuildError() == null) {
