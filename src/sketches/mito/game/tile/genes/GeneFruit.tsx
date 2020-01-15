@@ -23,6 +23,8 @@ export const GeneFruit = Gene.make<FruitState>(
     },
     static: {
       isReproductive: true,
+      // TODO fix this to be a "set to 0"
+      timeToBuild: -1,
     },
     description: ({ mpEarned, neededResources, secondsToMature }) => (
       <>

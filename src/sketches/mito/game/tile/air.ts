@@ -6,7 +6,7 @@ import { canPullResources } from "../canPullResources";
 import { World } from "../world";
 import { Tile } from "./tile";
 export class Air extends Tile {
-  static displayName = "Air";
+  displayName = "Air";
   static fallAmount = 30;
   static diffusionWater = 1.5;
   public sunlightCached: number = 1;

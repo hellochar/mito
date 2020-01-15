@@ -26,6 +26,7 @@ export abstract class CellEffect {
   }
 }
 export interface CellEffectConstructor extends Constructor<CellEffect> {
+  displayName: string;
   stacks?: boolean;
 }
 export class FreezeEffect extends CellEffect implements Interactable {

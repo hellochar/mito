@@ -1,6 +1,6 @@
 import { Constructor } from "sketches/mito/constructor";
+import { Cell } from "./cell";
 import Chromosome from "./chromosome";
-import { Tile } from "./tile";
 
 export interface CellInteraction {
   type: "give" | "take";
@@ -12,7 +12,7 @@ export class CellType {
     public name: string,
     public geneSlots: number,
     public chromosome: Chromosome,
-    public c: Constructor<Tile>,
+    public c: Constructor<Cell>,
     public interaction?: CellInteraction
   ) {}
 }

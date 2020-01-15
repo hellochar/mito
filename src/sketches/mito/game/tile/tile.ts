@@ -1,5 +1,4 @@
 import shuffle from "math/shuffle";
-import { Constructor } from "sketches/mito/constructor";
 import { Vector2 } from "three";
 import { map, randRound } from "../../../../math/index";
 import { HasInventory, Inventory } from "../../inventory";
@@ -9,7 +8,7 @@ import { Temperature, temperatureFor } from "../temperature";
 import { World } from "../world";
 
 export abstract class Tile implements Steppable, HasInventory {
-  static displayName = "Tile";
+  displayName = "Tile";
   static fallAmount = 0;
   public abstract get isObstacle(): boolean;
   public darkness = Infinity;
@@ -155,6 +154,6 @@ export abstract class Tile implements Steppable, HasInventory {
   }
 
   toString() {
-    return (this.constructor as Constructor<Tile>).displayName + "(" + this.pos.x + "," + this.pos.y + ")";
+    return this.displayName + "(" + this.pos.x + "," + this.pos.y + ")";
   }
 }

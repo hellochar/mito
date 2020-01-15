@@ -13,7 +13,6 @@ export const chromosomeTissue = new Chromosome(
 );
 
 export class Tissue extends Cell {
-  static displayName = "Tissue";
   constructor(pos: Vector2, world: World, args?: CellArgs) {
     super(pos, world, cellTypeTissue, args);
   }

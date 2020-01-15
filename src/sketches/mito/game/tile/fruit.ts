@@ -19,8 +19,6 @@ export const chromosomeFruit = new Chromosome(
   GeneAttractsWater.level(1)
 );
 export class Fruit extends Cell {
-  static displayName = "Fruit";
-  static timeToBuild = 0;
   constructor(pos: Vector2, world: World, args?: CellArgs) {
     super(pos, world, cellTypeFruit, args);
   }

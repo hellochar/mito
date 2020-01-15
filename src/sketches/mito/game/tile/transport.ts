@@ -14,7 +14,6 @@ export const chromosomeTransport = new Chromosome(
 );
 
 export class Transport extends Cell {
-  static displayName = "Transport";
   static buildDirection = new Vector2(0, -1);
   constructor(pos: Vector2, world: World, args?: CellArgs) {
     super(pos, world, cellTypeTransport, args);

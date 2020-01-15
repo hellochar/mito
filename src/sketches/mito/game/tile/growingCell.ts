@@ -10,7 +10,6 @@ import { Tile } from "./tile";
 const chromosomeGrowingCell = new Chromosome(GeneLiving.level(2), GeneObstacle.level(0));
 
 export class GrowingCell extends Cell {
-  static displayName = "Growing Cell";
   public timeRemaining: number;
   public timeToBuild: number;
   constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Tile) {

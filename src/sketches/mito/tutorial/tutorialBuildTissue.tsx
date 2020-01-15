@@ -1,6 +1,9 @@
 import * as React from "react";
 import { Action } from "../action";
-import { Air, Leaf, Root, Soil, Tissue } from "../game/tile";
+import { Air, Soil } from "../game/tile";
+import { cellTypeLeaf } from "../game/tile/leaf";
+import { cellTypeRoot } from "../game/tile/root";
+import { cellTypeTissue } from "../game/tile/tissue";
 import { findBuildCandidateTiles } from "../game/worldUtils";
 import TileHighlight from "./tileHighlight";
 import { Tutorial } from "./tutorial";
@@ -34,7 +37,7 @@ export class TutorialBuildTissue extends Tutorial {
   }
 
   onActionPerformed(action: Action) {
-    if (action.type === "build" && action.cellType === Tissue) {
+    if (action.type === "build" && action.cellType === cellTypeTissue) {
       this.setState({ counter: this.state.counter + 1 });
     }
   }
@@ -77,7 +80,7 @@ export class TutorialBuildRoot extends Tutorial {
   }
 
   onActionPerformed(action: Action) {
-    if (action.type === "build" && action.cellType === Root) {
+    if (action.type === "build" && action.cellType === cellTypeRoot) {
       this.setState({ counter: this.state.counter + 1 });
     }
   }
@@ -120,7 +123,7 @@ export class TutorialBuildLeaf extends Tutorial {
   }
 
   onActionPerformed(action: Action) {
-    if (action.type === "build" && action.cellType === Leaf) {
+    if (action.type === "build" && action.cellType === cellTypeLeaf) {
       this.setState({ counter: this.state.counter + 1 });
     }
   }

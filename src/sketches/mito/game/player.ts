@@ -13,7 +13,6 @@ import {
   ActionPickup,
 } from "../action";
 import { build, footsteps } from "../audio";
-import { Constructor } from "../constructor";
 import { hasInventory, Inventory } from "../inventory";
 import {
   PLAYER_BASE_SPEED,
@@ -25,7 +24,9 @@ import {
 import { Steppable } from "./entity";
 import { Cell, FreezeEffect, Fruit, GrowingCell, Tile } from "./tile";
 import { CellArgs } from "./tile/cell";
+import { cellTypeFruit } from "./tile/fruit";
 import { GeneDirectionalPush } from "./tile/genes/GeneDirectionalPush";
+import { CellType } from "./tile/genome";
 import { World } from "./world";
 
 const waterCost = 1;
@@ -67,7 +68,7 @@ export class Player implements Steppable {
         };
       }
     } else {
-      if (action.type === "build" && action.cellType === Fruit) {
+      if (action.type === "build" && action.cellType === cellTypeFruit) {
         this.action = {
           type: "long",
           duration: 4.5,
@@ -254,7 +255,7 @@ export class Player implements Steppable {
   //     inv.give(this.inventory, this.suckWater ? inv.water : 0, this.suckSugar ? inv.sugar : 0);
   //   }
   // }
-  public tryConstructingNewCell<T extends Cell>(position: Vector2, cellType: Constructor<T>, args?: CellArgs) {
+  public tryConstructingNewCell(position: Vector2, cellType: CellType, args?: CellArgs) {
     position = position.clone();
     const targetTile = this.world.tileAt(position.x, position.y);
     if (targetTile == null) {
@@ -267,7 +268,7 @@ export class Player implements Steppable {
     }
     if (this.getBuildError() == null) {
       this.inventory.add(-waterCost, -sugarCost);
-      const newTile = new cellType(position, this.world, args);
+      const newTile = new cellType.c(position, this.world, args);
       build.audio.currentTime = 0;
       build.gain.gain.cancelScheduledValues(0);
       build.gain.gain.value = 0.2;
@@ -290,7 +291,7 @@ export class Player implements Steppable {
     }
 
     let cell: Cell;
-    if (action.cellType.timeToBuild) {
+    if (action.cellType.chromosome.mergeStaticProperties().timeToBuild) {
       // special - drop a sugar when you grow, to cover for the sugar
       // this.attemptDrop(
       //   {

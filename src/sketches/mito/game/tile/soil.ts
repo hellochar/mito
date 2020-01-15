@@ -71,7 +71,7 @@ export abstract class Soil extends Tile {
 }
 
 export class Sand extends Soil {
-  static displayName = "Sand";
+  displayName = "Sand";
 
   get diffusionWater() {
     return 1 / (3 * this.depthDiffusionFactor);
@@ -89,7 +89,7 @@ export class Sand extends Soil {
 }
 
 export class Silt extends Soil {
-  static displayName = "Silt";
+  displayName = "Silt";
 
   get diffusionWater() {
     return 1 / (12 * this.depthDiffusionFactor);
@@ -107,7 +107,7 @@ export class Silt extends Soil {
 }
 
 export class Clay extends Soil {
-  static displayName = "Clay";
+  displayName = "Clay";
 
   get diffusionWater() {
     return 1 / (100 * this.depthDiffusionFactor);

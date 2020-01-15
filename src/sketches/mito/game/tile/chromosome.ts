@@ -11,6 +11,7 @@ const defaultProperties: GeneStaticProperties = {
   inventoryCapacity: 0,
   diffusionWater: 0,
   diffusionSugar: 0,
+  timeToBuild: 1,
   isDirectional: false,
 };
 
@@ -72,6 +73,7 @@ export type GeneStaticProperties = {
   inventoryCapacity: number;
   diffusionWater: number;
   diffusionSugar: number;
+  timeToBuild: number;
   [k: string]: number | boolean;
 };
 

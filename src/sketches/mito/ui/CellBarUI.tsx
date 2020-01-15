@@ -2,8 +2,9 @@ import classNames from "classnames";
 import * as React from "react";
 import { Vector2 } from "three";
 import { CellBar } from "../actionBar";
-import { Constructor } from "../constructor";
-import { Cell, Transport } from "../game/tile";
+import { Transport } from "../game/tile";
+import { CellType } from "../game/tile/genome";
+import { cellTypeTransport } from "../game/tile/transport";
 import { spritesheetLoaded } from "../spritesheet";
 import "./CellBarUI.scss";
 import { HotkeyButton } from "./HotkeyButton";
@@ -31,7 +32,7 @@ function CellBarUI({ bar, disabled }: CellBarProps) {
             isSelected={index === i}
             spritesheetLoaded={spritesheetLoaded}
           >
-            {cellType === Transport ? <TransportDirArrow dir={Transport.buildDirection} /> : null}
+            {cellType === cellTypeTransport ? <TransportDirArrow dir={Transport.buildDirection} /> : null}
             {/* {cellType === Fruit ? <Glow /> : null} */}
           </CellBarItem>
         ))}
@@ -50,7 +51,7 @@ const TransportDirArrow: React.FC<{ dir: Vector2 }> = ({ dir }) => {
 export interface CellBarItemProps {
   bar: CellBar;
   index: number;
-  type: Constructor<Cell>;
+  type: CellType;
   isSelected: boolean;
   spritesheetLoaded: boolean;
   hotkey: string;
@@ -63,8 +64,8 @@ const CellBarItem: React.FC<CellBarItemProps> = React.memo(
     }, [bar, index]);
     return (
       <div className={classNames("cell-bar-item", { selected: isSelected })}>
-        <IconCell onClick={onClick} cellType={type} spritesheetLoaded={spritesheetLoaded}>
-          {type.displayName}
+        <IconCell onClick={onClick} cellType={type.c} spritesheetLoaded={spritesheetLoaded}>
+          {type.name}
           {children}
         </IconCell>
         <HotkeyButton className="mito-hud-build-item" hotkey={hotkey} onClick={onClick} />

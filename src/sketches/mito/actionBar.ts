@@ -2,8 +2,13 @@ import { Vector2 } from "three";
 import Mito from ".";
 import { ActionBuild, ActionInteract } from "./action";
 import { isInteractable } from "./game/interactable";
-import { Cell, Fruit, Leaf, Root, Tile, Tissue, Transport } from "./game/tile";
+import { Cell, Fruit, Tile, Transport } from "./game/tile";
 import { CellArgs } from "./game/tile/cell";
+import { cellTypeFruit } from "./game/tile/fruit";
+import { cellTypeLeaf } from "./game/tile/leaf";
+import { cellTypeRoot } from "./game/tile/root";
+import { cellTypeTissue } from "./game/tile/tissue";
+import { cellTypeTransport } from "./game/tile/transport";
 
 export abstract class ActionBar {
   abstract leftClick(target: Tile): void;
@@ -12,7 +17,7 @@ export abstract class ActionBar {
 }
 
 export class CellBar extends ActionBar {
-  public bar = [Tissue, Leaf, Root, Transport, Fruit] as const;
+  public bar = [cellTypeTissue, cellTypeLeaf, cellTypeRoot, cellTypeTransport, cellTypeFruit] as const;
   private _index = 0;
 
   constructor(public mito: Mito) {
@@ -37,7 +42,7 @@ export class CellBar extends ActionBar {
 
   setIndex(i: number) {
     const lastIndex = this._index;
-    if (lastIndex === i && this.bar[i] === Transport) {
+    if (lastIndex === i && this.bar[i] === cellTypeTransport) {
       Transport.buildDirection
         .rotateAround(new Vector2(), -Math.PI / 4)
         .setLength(1)
@@ -50,7 +55,7 @@ export class CellBar extends ActionBar {
     const { world } = this.mito;
     if (world.player.canBuildAt(target)) {
       let args: CellArgs | undefined;
-      const cellType = world.genome.cellTypes.find((cType) => cType.c === this.selectedCell)!;
+      const cellType = world.genome.cellTypes.find((cType) => cType === this.selectedCell)!;
       if (cellType.chromosome.mergeStaticProperties().isDirectional) {
         args = {
           direction: Transport.buildDirection.clone(),

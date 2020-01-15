@@ -5,12 +5,12 @@ import { Vector2 } from "three";
 import { GameResult } from "..";
 import devlog from "../../../common/devlog";
 import { Species } from "../../../evolution/species";
-import { getTraits, traitMod, Traits } from "../../../evolution/traits";
+import { getTraits, Traits } from "../../../evolution/traits";
 import shuffle from "../../../math/shuffle";
 import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";
 import { params } from "../params";
-import { CELL_BUILD_TIME, PERCENT_DAYLIGHT, TIME_PER_DAY } from "./constants";
+import { PERCENT_DAYLIGHT, TIME_PER_DAY } from "./constants";
 import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
@@ -89,7 +89,6 @@ export class World {
     this.species = species;
     this.genome = new Genome([cellTypeTissue, cellTypeLeaf, cellTypeRoot, cellTypeTransport, cellTypeFruit]);
     this.traits = getTraits(this.species.genes);
-    Cell.timeToBuild = traitMod(this.traits.buildTime, CELL_BUILD_TIME, 1 / 2);
 
     const tileGenerator = typeof environment.fill === "string" ? TileGenerators[environment.fill] : environment.fill;
     this.gridEnvironment = gridRange(this.width, this.height, (x, y) => {

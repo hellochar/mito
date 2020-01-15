@@ -1,7 +1,7 @@
 import { Inventory } from "../../inventory";
 import { Tile } from "./tile";
 export class Rock extends Tile {
-  static displayName = "Rock";
+  displayName = "Rock";
   isObstacle = true;
   inventory = new Inventory(0, this);
   get darknessContrib() {

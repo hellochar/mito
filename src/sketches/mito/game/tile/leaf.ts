@@ -16,8 +16,6 @@ export const chromosomeLeaf = new Chromosome(
 );
 
 export class Leaf extends Cell {
-  static displayName = "Leaf";
-
   constructor(pos: Vector2, world: World, args?: CellArgs) {
     super(pos, world, cellTypeLeaf, args);
   }

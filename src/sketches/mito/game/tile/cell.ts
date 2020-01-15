@@ -3,7 +3,6 @@ import { Vector2 } from "three";
 import { traitMod } from "../../../../evolution/traits";
 import { DIRECTIONS } from "../../directions";
 import { params } from "../../params";
-import { CELL_BUILD_TIME } from "../constants";
 import { step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
@@ -21,8 +20,10 @@ export interface CellArgs {
 }
 
 export abstract class Cell extends Tile implements Interactable {
-  static displayName = "Cell";
-  static timeToBuild = CELL_BUILD_TIME;
+  get displayName() {
+    return this.type.name;
+  }
+  set displayName(n: string) {}
   public energy = 1;
   public darkness = 0;
   public nextTemperature: number;
@@ -49,6 +50,10 @@ export abstract class Cell extends Tile implements Interactable {
 
   get diffusionSugar() {
     return this.staticProperties.diffusionSugar;
+  }
+
+  get timeToBuild() {
+    return this.staticProperties.timeToBuild;
   }
 
   constructor(pos: Vector2, world: World, public type: CellType, public args?: CellArgs) {

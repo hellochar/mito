@@ -2,8 +2,8 @@
 import { nf } from "common/formatters";
 import * as React from "react";
 import { GiDustCloud } from "react-icons/gi";
-import { Constructor } from "../constructor";
-import { Air, Cell, CellEffect, Fountain, FreezeEffect, GrowingCell, Soil, Tile } from "../game/tile";
+import { Air, Cell, Fountain, FreezeEffect, GrowingCell, Soil, Tile } from "../game/tile";
+import { CellEffectConstructor } from "../game/tile/cellEffect";
 import { GeneInstance } from "../game/tile/chromosome";
 import { GeneSoilAbsorption, SoilAbsorptionState } from "../game/tile/genes";
 import { GeneFruit } from "../game/tile/genes/GeneFruit";
@@ -156,7 +156,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     return (
       <div className="info-tile">
         <div className="info-tile-row">
-          <div className="info-tile-name">{(tile.constructor as Constructor<Tile>).displayName}</div>
+          <div className="info-tile-name">{tile.displayName}</div>
           {energyInfo}
           <TemperatureInfo tile={tile} />
           <InventoryBar
@@ -177,7 +177,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     if (effects.length > 0) {
       const descriptors = effects
         .map((e) => {
-          const name = (e.constructor as Constructor<CellEffect>).displayName;
+          const name = (e.constructor as CellEffectConstructor).displayName;
           if (e instanceof FreezeEffect) {
             return `${(e.percentFrozen * 100).toFixed(0)}% ${name}`;
           } else {

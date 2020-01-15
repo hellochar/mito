@@ -2,7 +2,7 @@ import { Vector2 } from "three";
 import { World } from "../world";
 import { Silt } from "./soil";
 export class Fountain extends Silt {
-  static displayName = "Fountain";
+  displayName = "Fountain";
   isObstacle = true;
   public cooldown = 0;
   constructor(pos: Vector2, world: World, public secondsPerWater: number, public waterRemaining: number) {
