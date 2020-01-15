@@ -1,6 +1,5 @@
 import { Vector2 } from "three";
 import { Interactable } from "./game/interactable";
-import { Cell } from "./game/tile";
 import { CellArgs } from "./game/tile/cell";
 import { CellType } from "./game/tile/genome";
 
@@ -13,7 +12,7 @@ export interface ActionMove {
   dir: Vector2;
 }
 
-export interface ActionBuild<T extends Cell = any> {
+export interface ActionBuild {
   type: "build";
   cellType: CellType;
   args?: CellArgs;

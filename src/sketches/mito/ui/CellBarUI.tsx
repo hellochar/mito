@@ -2,9 +2,7 @@ import classNames from "classnames";
 import * as React from "react";
 import { Vector2 } from "three";
 import { CellBar } from "../actionBar";
-import { Transport } from "../game/tile";
 import { CellType } from "../game/tile/genome";
-import { cellTypeTransport } from "../game/tile/transport";
 import { spritesheetLoaded } from "../spritesheet";
 import "./CellBarUI.scss";
 import { HotkeyButton } from "./HotkeyButton";
@@ -32,7 +30,6 @@ function CellBarUI({ bar, disabled }: CellBarProps) {
             isSelected={index === i}
             spritesheetLoaded={spritesheetLoaded}
           >
-            {cellType === cellTypeTransport ? <TransportDirArrow dir={Transport.buildDirection} /> : null}
             {/* {cellType === Fruit ? <Glow /> : null} */}
           </CellBarItem>
         ))}
@@ -57,21 +54,32 @@ export interface CellBarItemProps {
   hotkey: string;
 }
 
-const CellBarItem: React.FC<CellBarItemProps> = React.memo(
-  ({ bar, index, type, hotkey, isSelected, spritesheetLoaded, children }) => {
-    const onClick = React.useCallback(() => {
-      bar.setIndex(index);
-    }, [bar, index]);
-    return (
-      <div className={classNames("cell-bar-item", { selected: isSelected })}>
-        <IconCell onClick={onClick} cellType={type.c} spritesheetLoaded={spritesheetLoaded}>
-          {type.name}
-          {children}
-        </IconCell>
-        <HotkeyButton className="mito-hud-build-item" hotkey={hotkey} onClick={onClick} />
-      </div>
-    );
+const CellBarItem: React.FC<CellBarItemProps> = ({
+  bar,
+  index,
+  type,
+  hotkey,
+  isSelected,
+  spritesheetLoaded,
+  children,
+}) => {
+  const onClick = React.useCallback(() => {
+    bar.setIndex(index);
+  }, [bar, index]);
+  const argsChildren: JSX.Element[] = [];
+  if (type.args && type.args.direction) {
+    argsChildren.push(<TransportDirArrow dir={type.args.direction} />);
   }
-);
+  return (
+    <div className={classNames("cell-bar-item", { selected: isSelected })}>
+      <IconCell onClick={onClick} cellType={type.c} spritesheetLoaded={spritesheetLoaded}>
+        {type.name}
+        {argsChildren}
+        {children}
+      </IconCell>
+      <HotkeyButton className="mito-hud-build-item" hotkey={hotkey} onClick={onClick} />
+    </div>
+  );
+};
 
 export default CellBarUI;

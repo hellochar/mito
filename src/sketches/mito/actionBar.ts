@@ -2,7 +2,7 @@ import { Vector2 } from "three";
 import Mito from ".";
 import { ActionBuild, ActionInteract } from "./action";
 import { isInteractable } from "./game/interactable";
-import { Cell, Fruit, Tile, Transport } from "./game/tile";
+import { Cell, Fruit, Tile } from "./game/tile";
 import { CellArgs } from "./game/tile/cell";
 import { cellTypeFruit } from "./game/tile/fruit";
 import { cellTypeLeaf } from "./game/tile/leaf";
@@ -42,8 +42,10 @@ export class CellBar extends ActionBar {
 
   setIndex(i: number) {
     const lastIndex = this._index;
-    if (lastIndex === i && this.bar[i] === cellTypeTransport) {
-      Transport.buildDirection
+    const cellType = this.bar[i];
+    const direction = cellType.args && cellType.args.direction;
+    if (lastIndex === i && direction != null) {
+      direction
         .rotateAround(new Vector2(), -Math.PI / 4)
         .setLength(1)
         .round();
@@ -55,14 +57,9 @@ export class CellBar extends ActionBar {
     const { world } = this.mito;
     if (world.player.canBuildAt(target)) {
       let args: CellArgs | undefined;
-      const cellType = world.genome.cellTypes.find((cType) => cType === this.selectedCell)!;
-      if (cellType.chromosome.mergeStaticProperties().isDirectional) {
-        args = {
-          direction: Transport.buildDirection.clone(),
-        };
-        // const highlightVector = this.getHighlightVector();
-        // const roundedHighlightVector = highlightVector.setLength(1).round();
-        // args.push(roundedHighlightVector);
+      const cellType = this.selectedCell;
+      if (cellType.args) {
+        args = { ...cellType.args };
       }
 
       const action: ActionBuild = {

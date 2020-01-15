@@ -14,7 +14,6 @@ export const chromosomeTransport = new Chromosome(
 );
 
 export class Transport extends Cell {
-  static buildDirection = new Vector2(0, -1);
   constructor(pos: Vector2, world: World, args?: CellArgs) {
     super(pos, world, cellTypeTransport, args);
   }
@@ -28,5 +27,8 @@ export const cellTypeTransport: CellType = {
   interaction: {
     type: "take",
     resources: "water and sugar",
+  },
+  args: {
+    direction: new Vector2(0, -1),
   },
 };

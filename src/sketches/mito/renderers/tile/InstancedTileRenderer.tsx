@@ -155,7 +155,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   updateScale() {
     if (this.target instanceof GrowingCell) {
-      const s = 1 - this.target.timeRemaining / this.target.timeToBuild;
+      const s = this.target.energy;
       lerp2(this.scale, { x: s, y: s }, 0.5);
     } else if (this.target instanceof Fruit) {
     } else {

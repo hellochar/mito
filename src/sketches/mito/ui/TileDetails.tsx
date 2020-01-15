@@ -193,11 +193,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
 
   private growingCellInfo(tile: Tile) {
     if (tile instanceof GrowingCell) {
-      return (
-        <div className="info-growing-cell">
-          {(100 - (tile.timeRemaining / tile.timeToBuild) * 100).toFixed(0)}% mature
-        </div>
-      );
+      return <div className="info-growing-cell">{nf((1 - tile.energy) * 100, 2)}% mature</div>;
     }
   }
 }
