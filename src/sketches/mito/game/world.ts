@@ -15,7 +15,7 @@ import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
-import { Air, Cell, DeadCell, Soil, Tile, Tissue } from "./tile";
+import { Air, Cell, DeadCell, Soil, Tile } from "./tile";
 import { cellTypeFruit } from "./tile/fruit";
 import Genome from "./tile/genome";
 import { cellTypeLeaf } from "./tile/leaf";
@@ -119,7 +119,7 @@ export class World {
           21
         )
       ).map((tile, n) => {
-        const t = new Tissue(tile.pos, this);
+        const t = new Cell(tile.pos, this, cellTypeTissue);
         this.setTileAt(tile.pos, t);
         return t;
       });

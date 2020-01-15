@@ -2,7 +2,7 @@ import { AStarFinder, DiagonalMovement, Grid } from "pathfinding";
 import { Vector2 } from "three";
 import { ActionMove } from "./action";
 import { World } from "./game";
-import { Cell, Tissue } from "./game/tile";
+import { Cell } from "./game/tile";
 import { MOVEMENTS } from "./keymap";
 
 export function findPositionsThroughTissue(world: World, target: Vector2, includeTargetIfNonTissue = false) {
@@ -20,17 +20,6 @@ export function findPositionsThroughTissue(world: World, target: Vector2, includ
     return path;
   }
   return path;
-}
-
-export function findPositionsThroughNonObstacles(world: World, target: Vector2) {
-  const grid = newGrid(world.width, world.height, (x, y, g) => {
-    const tile = world.tileAt(x, y)!;
-    if (tile instanceof Tissue || (!(tile instanceof Cell) && !tile.isObstacle)) {
-      g.setWalkableAt(x, y, true);
-    }
-  });
-
-  return findPositions(grid, world.player.pos, target);
 }
 
 export function pathFrom(positions: Array<[number, number]>) {

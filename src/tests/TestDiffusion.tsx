@@ -1,6 +1,7 @@
 import { Layout, PlotData } from "plotly.js";
 import React from "react";
-import { Tissue } from "sketches/mito/game/tile";
+import { Cell } from "sketches/mito/game/tile";
+import { cellTypeTissue } from "sketches/mito/game/tile/tissue";
 import { newBaseSpecies } from "../evolution/species";
 import { World } from "../sketches/mito/game";
 import { Environment } from "../sketches/mito/game/environment";
@@ -23,7 +24,7 @@ function testWorld(width: number, height: number) {
   });
   for (const t of world.allEnvironmentTiles()) {
     const p = t.pos;
-    world.setTileAt(p, new Tissue(p, world));
+    world.setTileAt(p, new Cell(p, world, cellTypeTissue));
   }
   world.cellAt(0, 0)!.inventory.set(100, 0);
   return world;
