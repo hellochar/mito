@@ -1,6 +1,4 @@
 import { Vector2 } from "three";
-import { World } from "../world";
-import { Cell, CellArgs } from "./cell";
 import Chromosome from "./chromosome";
 import { GeneEnergyTransfer, GeneInventory, GeneLiving } from "./genes";
 import { GeneDirectionalPush } from "./genes/GeneDirectionalPush";
@@ -12,12 +10,6 @@ export const chromosomeTransport = new Chromosome(
   GeneDirectionalPush.level(2),
   GeneEnergyTransfer.level(2)
 );
-
-export class Transport extends Cell {
-  constructor(pos: Vector2, world: World, args?: CellArgs) {
-    super(pos, world, cellTypeTransport, args);
-  }
-}
 
 export const cellTypeTransport: CellType = {
   name: "Transport",

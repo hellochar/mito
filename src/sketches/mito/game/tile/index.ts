@@ -7,7 +7,6 @@ import { GrowingCell } from "./growingCell";
 import { Rock } from "./rock";
 import { Soil } from "./soil";
 import { Tile } from "./tile";
-import { Transport } from "./transport";
 
 export { CellEffect, FreezeEffect } from "./cellEffect";
-export { Air, DeadCell, Fountain, Rock, Soil, Tile, Cell, Fruit, GrowingCell, Transport };
+export { Air, DeadCell, Fountain, Rock, Soil, Tile, Cell, Fruit, GrowingCell };
