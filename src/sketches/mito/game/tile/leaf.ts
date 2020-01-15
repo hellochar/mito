@@ -25,7 +25,6 @@ export const cellTypeLeaf: CellType = {
   name: "Leaf",
   chromosome: chromosomeLeaf,
   geneSlots: 10,
-  c: Leaf,
   interaction: {
     type: "give",
     resources: "water take sugar",

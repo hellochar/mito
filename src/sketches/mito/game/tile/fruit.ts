@@ -44,7 +44,6 @@ export const cellTypeFruit: CellType = {
   name: "Fruit",
   chromosome: chromosomeFruit,
   geneSlots: 10,
-  c: Fruit,
   interaction: {
     type: "give",
     resources: "water and sugar",

@@ -268,7 +268,7 @@ export class Player implements Steppable {
     }
     if (this.getBuildError() == null) {
       this.inventory.add(-waterCost, -sugarCost);
-      const newTile = new cellType.c(position, this.world, args);
+      const newTile = new Cell(position, this.world, cellType, args);
       build.audio.currentTime = 0;
       build.gain.gain.cancelScheduledValues(0);
       build.gain.gain.value = 0.2;

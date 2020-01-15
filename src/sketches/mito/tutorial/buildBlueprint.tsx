@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from "three";
 import { CellType } from "../game/tile/genome";
-import { materialInfoMapping } from "../renderers/tile/InstancedTileRenderer";
+import { getCellTypeMaterialInfo } from "../renderers/tile/InstancedTileRenderer";
 import { textureFromSpritesheet } from "../spritesheet";
 import { SceneObject } from "./sceneObject";
 
@@ -35,7 +35,7 @@ const BuildBlueprint: React.FC<TileHighlightProps> = ({ x, y, cellType, scene })
   }, [object.position.x, object.position.y, x, y]);
 
   React.useEffect(() => {
-    const materialInfo = materialInfoMapping.get(cellType.c)!;
+    const materialInfo = getCellTypeMaterialInfo(cellType);
     const { color, texturePosition } = materialInfo;
     const texture = textureFromSpritesheet(texturePosition.x, texturePosition.y);
     const mat = object.material as MeshBasicMaterial;

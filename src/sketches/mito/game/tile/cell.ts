@@ -19,7 +19,7 @@ export interface CellArgs {
   direction?: Vector2;
 }
 
-export abstract class Cell extends Tile implements Interactable {
+export class Cell extends Tile implements Interactable {
   get displayName() {
     return this.type.name;
   }

@@ -23,7 +23,6 @@ export const cellTypeTransport: CellType = {
   name: "Transport",
   chromosome: chromosomeTransport,
   geneSlots: 10,
-  c: Transport,
   interaction: {
     type: "take",
     resources: "water and sugar",

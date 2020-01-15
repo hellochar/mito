@@ -22,7 +22,6 @@ export const cellTypeTissue: CellType = {
   name: "Tissue",
   chromosome: chromosomeTissue,
   geneSlots: 10,
-  c: Tissue,
   interaction: {
     type: "take",
     resources: "water and sugar",

@@ -72,7 +72,7 @@ const CellBarItem: React.FC<CellBarItemProps> = ({
   }
   return (
     <div className={classNames("cell-bar-item", { selected: isSelected })}>
-      <IconCell onClick={onClick} cellType={type.c} spritesheetLoaded={spritesheetLoaded}>
+      <IconCell onClick={onClick} cellType={type} spritesheetLoaded={spritesheetLoaded}>
         {type.name}
         {argsChildren}
         {children}

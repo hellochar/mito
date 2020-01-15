@@ -1,14 +1,16 @@
 import React from "react";
-import { Constructor } from "../constructor";
-import { Tile } from "../game/tile";
-import { materialInfoMapping } from "../renderers/tile/InstancedTileRenderer";
+import { CellType } from "../game/tile/genome";
+import { getCellTypeMaterialInfo } from "../renderers/tile/InstancedTileRenderer";
 import { textureFromSpritesheet } from "../spritesheet";
 import "./IconCell.scss";
 
-const IconCell: React.FC<
-  { cellType: Constructor<Tile>; spritesheetLoaded: boolean } & React.HTMLProps<HTMLDivElement>
-> = ({ children, cellType, spritesheetLoaded, ...props }) => {
-  const material = materialInfoMapping.get(cellType)!;
+const IconCell: React.FC<{ cellType: CellType; spritesheetLoaded: boolean } & React.HTMLProps<HTMLDivElement>> = ({
+  children,
+  cellType,
+  spritesheetLoaded,
+  ...props
+}) => {
+  const material = getCellTypeMaterialInfo(cellType);
   const color = (material.color && material.color.getStyle()) || "transparent";
   const texture = textureFromSpritesheet(material.texturePosition.x, material.texturePosition.y, color);
   const style: React.CSSProperties = React.useMemo(() => {

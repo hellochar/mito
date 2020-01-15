@@ -45,7 +45,6 @@ export class GrowingCell extends Cell {
 }
 
 const cellTypeGrowingCell: CellType = {
-  c: GrowingCell,
   chromosome: chromosomeGrowingCell,
   geneSlots: 10,
   name: "Growing Cell",

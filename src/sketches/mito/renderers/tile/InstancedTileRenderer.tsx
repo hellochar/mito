@@ -5,26 +5,19 @@ import { reversed } from "math/easing";
 import Mito from "sketches/mito";
 import { Constructor } from "sketches/mito/constructor";
 import { Temperature } from "sketches/mito/game/temperature";
-import {
-  Air,
-  Cell,
-  DeadCell,
-  Fountain,
-  Fruit,
-  GrowingCell,
-  Leaf,
-  Rock,
-  Root,
-  Tile,
-  Tissue,
-  Transport,
-} from "sketches/mito/game/tile";
+import { Air, Cell, DeadCell, Fountain, Fruit, GrowingCell, Rock, Tile } from "sketches/mito/game/tile";
 import { GeneInstance } from "sketches/mito/game/tile/chromosome";
+import { cellTypeFruit } from "sketches/mito/game/tile/fruit";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
 import { GeneDirectionalPush } from "sketches/mito/game/tile/genes/GeneDirectionalPush";
 import { GeneFruit } from "sketches/mito/game/tile/genes/GeneFruit";
 import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";
+import { CellType } from "sketches/mito/game/tile/genome";
+import { cellTypeLeaf } from "sketches/mito/game/tile/leaf";
+import { cellTypeRoot } from "sketches/mito/game/tile/root";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
+import { cellTypeTissue } from "sketches/mito/game/tile/tissue";
+import { cellTypeTransport } from "sketches/mito/game/tile/transport";
 import { Color, Scene, Vector2, Vector3 } from "three";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";
@@ -245,7 +238,28 @@ interface MaterialInfo {
   texturePosition: Vector2;
 }
 
-export const materialInfoMapping = (() => {
+export const cellMaterialInfoMapping = (() => {
+  const materials = new Map<CellType, MaterialInfo>();
+  materials.set(cellTypeTissue, {
+    texturePosition: new Vector2(1, 1),
+    color: new Color(0x30ae25),
+  });
+  materials.set(cellTypeTransport, materials.get(cellTypeTissue)!);
+  materials.set(cellTypeLeaf, {
+    color: new Color("white"),
+    texturePosition: new Vector2(2, 1),
+  });
+  materials.set(cellTypeRoot, {
+    color: new Color("white"),
+    texturePosition: new Vector2(3, 1),
+  });
+  materials.set(cellTypeFruit, {
+    texturePosition: new Vector2(0, 2),
+  });
+  return materials;
+})();
+
+const materialInfoMapping = (() => {
   const materials = new Map<Constructor<Tile>, MaterialInfo>();
   materials.set(Air, {
     texturePosition: new Vector2(0, 3),
@@ -276,28 +290,18 @@ export const materialInfoMapping = (() => {
     texturePosition: new Vector2(0, 1),
     color: new Color("rgb(128, 128, 128)"),
   });
-  materials.set(Tissue, {
-    texturePosition: new Vector2(1, 1),
-    color: new Color(0x30ae25),
-  });
-  materials.set(Transport, materials.get(Tissue)!);
-  materials.set(Leaf, {
-    color: new Color("white"),
-    texturePosition: new Vector2(2, 1),
-  });
-  materials.set(Root, {
-    color: new Color("white"),
-    texturePosition: new Vector2(3, 1),
-  });
-  materials.set(Fruit, {
-    texturePosition: new Vector2(0, 2),
-  });
   return materials;
 })();
 
-function getMaterialInfo(tile: Tile): MaterialInfo {
+export function getCellTypeMaterialInfo(type: CellType): MaterialInfo {
+  return cellMaterialInfoMapping.get(type)!;
+}
+
+export function getMaterialInfo(tile: Tile): MaterialInfo {
   if (tile instanceof GrowingCell) {
     return getMaterialInfo(tile.completedCell);
+  } else if (tile instanceof Cell) {
+    return getCellTypeMaterialInfo(tile.type);
   } else {
     return materialInfoMapping.get(tile.constructor as Constructor<Tile>)!;
   }

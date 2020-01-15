@@ -1,6 +1,5 @@
-import { Constructor } from "sketches/mito/constructor";
 import { Vector2 } from "three";
-import { Cell, CellArgs } from "./cell";
+import { CellArgs } from "./cell";
 import Chromosome from "./chromosome";
 
 export interface CellInteraction {
@@ -14,7 +13,6 @@ export class CellType {
     public name: string,
     public geneSlots: number,
     public chromosome: Chromosome,
-    public c: Constructor<Cell>,
     public interaction?: CellInteraction
   ) {
     if (chromosome.mergeStaticProperties().isDirectional) {

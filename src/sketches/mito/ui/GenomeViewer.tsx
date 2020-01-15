@@ -72,7 +72,7 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
   return (
     <div className="cell-type">
       <div className="cell-header">
-        <IconCell cellType={cellType.c} spritesheetLoaded={spritesheetLoaded} />
+        <IconCell cellType={cellType} spritesheetLoaded={spritesheetLoaded} />
         <div>
           <h2>{name}</h2>
           <CellInteractionSelector
