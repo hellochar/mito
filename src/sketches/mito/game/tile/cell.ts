@@ -72,7 +72,7 @@ export abstract class Cell extends Tile implements Interactable {
     this.geneInstances = this.chromosome.newGeneInstances(this);
   }
 
-  get tempo() {
+  private get tempo() {
     if (this.temperatureFloat <= 0) {
       // 50% slower - 1 / 2;
       return 1 / 2;
@@ -88,6 +88,10 @@ export abstract class Cell extends Tile implements Interactable {
       // 50% faster
       return 1.5;
     }
+  }
+
+  public getMovespeedMultiplier() {
+    return this.tempo;
   }
 
   get darknessContrib() {
@@ -114,6 +118,7 @@ export abstract class Cell extends Tile implements Interactable {
   }
 
   interact(dt: number) {
+    dt = this.tempo * dt;
     let anyInteracted = false;
     for (const e of this.effects) {
       if (isInteractable(e)) {
@@ -165,14 +170,19 @@ export abstract class Cell extends Tile implements Interactable {
   }
 
   step(dt: number) {
+    // diffusion, darkness, gravity
     super.step(dt);
+
+    const tileNeighbors = this.world.tileNeighbors(this.pos);
+    this.stepDroop(tileNeighbors, dt);
+
+    // cell effects and genes scale according to tempo
+    dt = this.tempo * dt;
     for (const effect of this.effects) {
       effect.step(dt);
     }
     this.geneInstances.forEach((g) => step(g, dt));
-    const tileNeighbors = this.world.tileNeighbors(this.pos);
 
-    this.stepDroop(tileNeighbors, dt);
     // TODO scale freefalling by dt
     if (this.droopY > 0.5) {
       if (this.pos.y < this.world.height - 1) {

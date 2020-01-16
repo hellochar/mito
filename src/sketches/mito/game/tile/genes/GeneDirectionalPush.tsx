@@ -35,7 +35,7 @@ export const GeneDirectionalPush = Gene.make(
         state.didJustTransport = push(cell, targetTile, 1, 1);
       }
     }
-    state.cooldown -= cell.tempo * dt;
+    state.cooldown -= dt;
   }
 );
 export type GeneDirectionalPush = typeof GeneDirectionalPush;
