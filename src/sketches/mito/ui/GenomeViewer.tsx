@@ -141,7 +141,11 @@ export const CellInteractionSelector: React.FC<{
     <select className="interaction-select" onChange={handleSelect} value={selectValue}>
       <option value={undefined}>do nothing</option>
       {possibleInteractions.map((interaction, index) => {
-        return <option value={index}>{describeCellInteraction(interaction)}</option>;
+        return (
+          <option key={index} value={index}>
+            {describeCellInteraction(interaction)}
+          </option>
+        );
       })}
     </select>
   );
