@@ -20,7 +20,7 @@ export interface CellArgs {
   direction?: Vector2;
 }
 
-export abstract class Cell extends Tile implements Interactable {
+export class Cell extends Tile implements Interactable {
   static displayName = "Cell";
   static timeToBuild = CELL_BUILD_TIME;
   public energy = 1;

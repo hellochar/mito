@@ -80,3 +80,44 @@ export class FreezeEffect extends CellEffect implements Interactable {
     }
   }
 }
+
+export class CancerEffect extends CellEffect {
+  static displayName = "Cancerous";
+  static stacks = false;
+  public secondsPerDuplication = 5;
+  public timeToDuplicate = 5;
+
+  step(dt: number): void {
+    this.timeToDuplicate -= dt;
+    if (this.timeToDuplicate < 0) {
+      const world = this.cell.world;
+      const neighbors = world.tileNeighbors(this.cell.pos);
+      for (const [, tile] of neighbors) {
+        if (tile instanceof Cell && !tile.findEffectOfType(CancerEffect)) {
+          tile.addEffect(new CancerEffect());
+          break;
+        } else if (tile.world.player.canBuildAt(tile)) {
+          // const cell = new Cell(tile.pos, world, this.cell.type, this.cell.args);
+          const constructor = this.cell.constructor as Constructor<Cell>;
+          const completed = tile.world.player.attemptBuild(
+            {
+              type: "build",
+              cellType: constructor,
+              position: tile.pos,
+              args: this.cell.args,
+            },
+            dt
+          );
+          if (completed) {
+            break;
+          }
+          // const cell = new constructor(tile.pos, world, this.cell.type, this.cell.args);
+          // cell.addEffect(new CancerEffect());
+          // world.setTileAt(tile.pos, cell);
+          break;
+        }
+      }
+      this.timeToDuplicate += this.secondsPerDuplication;
+    }
+  }
+}

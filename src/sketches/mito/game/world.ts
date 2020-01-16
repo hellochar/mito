@@ -16,6 +16,7 @@ import { createGeneratorContext, Environment, GeneratorContext, TileGenerators }
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
 import { Air, Cell, DeadCell, Soil, Tile, Tissue } from "./tile";
+import { CancerEffect } from "./tile/cellEffect";
 import { cellTypeFruit } from "./tile/fruit";
 import Genome from "./tile/genome";
 import { cellTypeLeaf } from "./tile/leaf";
@@ -122,6 +123,9 @@ export class World {
       ).map((tile, n) => {
         const t = new Tissue(tile.pos, this);
         this.setTileAt(tile.pos, t);
+        if (Math.random() < 0.25) {
+          t.addEffect(new CancerEffect());
+        }
         return t;
       });
       const avgTissuePos = tissues.reduce((p, t) => p.add(t.pos), new Vector2()).divideScalar(tissues.length);
