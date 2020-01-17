@@ -1,5 +1,13 @@
 import { arrayRange } from "math/arrays";
-import { BufferGeometry, Float32BufferAttribute, LineBasicMaterial, LineSegments, Vector2, VertexColors } from "three";
+import {
+  BufferGeometry,
+  DynamicDrawUsage,
+  Float32BufferAttribute,
+  LineBasicMaterial,
+  LineSegments,
+  Vector2,
+  VertexColors,
+} from "three";
 
 const MAX_LIGHTRAYS = 1000;
 
@@ -15,10 +23,10 @@ export class LightRays {
   constructor() {
     this.geometry = new BufferGeometry();
     // each light ray is 2 points (start, end)
-    this.positions = new Float32BufferAttribute(arrayRange(3 * MAX_LIGHTRAYS * 2, 0), 3).setDynamic(true);
-    this.colors = new Float32BufferAttribute(arrayRange(3 * MAX_LIGHTRAYS * 2, 0), 3).setDynamic(true);
-    this.geometry.addAttribute("position", this.positions);
-    this.geometry.addAttribute("color", this.colors);
+    this.positions = new Float32BufferAttribute(arrayRange(3 * MAX_LIGHTRAYS * 2, 0), 3).setUsage(DynamicDrawUsage);
+    this.colors = new Float32BufferAttribute(arrayRange(3 * MAX_LIGHTRAYS * 2, 0), 3).setUsage(DynamicDrawUsage);
+    this.geometry.setAttribute("position", this.positions);
+    this.geometry.setAttribute("color", this.colors);
     this.lineSegments = new LineSegments(this.geometry, this.material);
     this.lineSegments.frustumCulled = false;
     this.lineSegments.renderOrder = 1;

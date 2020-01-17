@@ -53,7 +53,7 @@
     "serializr": "^1.5.3",
     "simplex-noise": "^2.4.0",
     "string.prototype.matchall": "^4.0.0",
-    "three": "^0.104.0",
+    "three": "^0.112.0",
     "tweenjs": "^1.0.2",
     "typescript": "^3.7.1-rc",
     "uuid": "^3.3.3"

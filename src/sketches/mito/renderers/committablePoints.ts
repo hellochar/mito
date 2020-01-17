@@ -1,4 +1,4 @@
-import { BufferAttribute, BufferGeometry, Color, Points, ShaderMaterial, Texture } from "three";
+import { BufferAttribute, BufferGeometry, Color, DynamicDrawUsage, Points, ShaderMaterial, Texture } from "three";
 import glsl from "./glsl";
 
 export class CommittablePoints extends Points {
@@ -10,10 +10,10 @@ export class CommittablePoints extends Points {
     const rotations = new Float32Array(size);
     const sizes = new Float32Array(size);
     const alphas = new Float32Array(size);
-    geometry.addAttribute("position", new BufferAttribute(positions, 3).setDynamic(true));
-    geometry.addAttribute("rotation", new BufferAttribute(rotations, 1).setDynamic(true));
-    geometry.addAttribute("size", new BufferAttribute(sizes, 1).setDynamic(true));
-    geometry.addAttribute("alpha", new BufferAttribute(alphas, 1).setDynamic(true));
+    geometry.setAttribute("position", new BufferAttribute(positions, 3).setUsage(DynamicDrawUsage));
+    geometry.setAttribute("rotation", new BufferAttribute(rotations, 1).setUsage(DynamicDrawUsage));
+    geometry.setAttribute("size", new BufferAttribute(sizes, 1).setUsage(DynamicDrawUsage));
+    geometry.setAttribute("alpha", new BufferAttribute(alphas, 1).setUsage(DynamicDrawUsage));
     return geometry;
   }
 

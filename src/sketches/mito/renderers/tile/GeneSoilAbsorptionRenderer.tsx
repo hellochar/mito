@@ -4,7 +4,11 @@ import { Audio, Color, Object3D, Vector2, Vector3 } from "three";
 import { GeneRenderer } from "./GeneRenderer";
 import makeLine from "./makeLine";
 export class GeneSoilAbsorptionRenderer extends GeneRenderer<GeneSoilAbsorption> {
-  private audio = new Audio(this.mito.audioListener).setBuffer(suckWaterBuffer);
+  private audio = (() => {
+    const audio = new Audio(this.mito.audioListener);
+    suckWaterBuffer.then((buffer) => audio.setBuffer(buffer));
+    return audio;
+  })();
   private lastAudioValueTracker = 0;
   private neighborLines = new Object3D();
 

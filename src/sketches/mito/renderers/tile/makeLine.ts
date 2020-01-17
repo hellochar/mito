@@ -2,7 +2,7 @@ import { BufferGeometry, Float32BufferAttribute, Line, LineBasicMaterial, Vector
 
 const lineGeometry = (() => {
   const g = new BufferGeometry();
-  g.addAttribute("position", new Float32BufferAttribute([0, 0, 0, 0, 1, 0], 3));
+  g.setAttribute("position", new Float32BufferAttribute([0, 0, 0, 0, 1, 0], 3));
   return g;
 })();
 

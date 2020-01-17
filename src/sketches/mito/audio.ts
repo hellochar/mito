@@ -1,15 +1,13 @@
+import blopSrc from "assets/audio/Blop-Mark_DiAngelo-79054334.mp3";
+import buildSoundSrc from "assets/audio/build.wav";
+import footstepsSrc from "assets/audio/footsteps.wav";
+import mitoBaseSrc from "assets/audio/mito-base.mp3";
+import mitoDrumsSrc from "assets/audio/mito-drums.mp3";
+import mitoStringsSrc from "assets/audio/mito-strings.mp3";
+import suckWaterSrc from "assets/audio/suckwater.wav";
 import * as THREE from "three";
-
 import devlog from "../../common/devlog";
 import { SketchAudioContext } from "../sketch";
-
-import mitoBaseSrc from "assets/audio/mito-base.mp3";
-import mitoStringsSrc from "assets/audio/mito-strings.mp3";
-import mitoDrumsSrc from "assets/audio/mito-drums.mp3";
-import footstepsSrc from "assets/audio/footsteps.wav";
-import buildSoundSrc from "assets/audio/build.wav";
-import blopSrc from "assets/audio/Blop-Mark_DiAngelo-79054334.mp3";
-import suckWaterSrc from "assets/audio/suckwater.wav";
 
 function sourceElement(src: string) {
   const type = src.substr(src.length - 3);
@@ -45,8 +43,26 @@ export let drums: Unit;
 export let footsteps: Unit;
 export let build: Unit;
 
-export let blopBuffer: THREE.AudioBuffer;
-export let suckWaterBuffer: THREE.AudioBuffer;
+const loader = new THREE.AudioLoader();
+function loadAudioPromise(src: string) {
+  return new Promise<AudioBuffer>((resolve, reject) => {
+    loader.load(
+      src,
+      (audioBuffer) => {
+        resolve(audioBuffer);
+      },
+      (xhr: ProgressEvent) => {
+        // devlog((xhr.loaded / xhr.total * 100) + '% loaded');
+      },
+      (err: any) => {
+        devlog("An error happened");
+        reject(err);
+      }
+    );
+  });
+}
+export let blopBuffer = loadAudioPromise(blopSrc);
+export let suckWaterBuffer = loadAudioPromise(suckWaterSrc);
 
 export function hookUpAudio(ctx: SketchAudioContext) {
   let numDone = 0;
@@ -80,31 +96,4 @@ export function hookUpAudio(ctx: SketchAudioContext) {
   build = makeNodeOfAudioAsset(ctx, buildSoundSrc);
   build.gain.gain.value = 0;
   build.gain.connect(ctx.gain);
-
-  const loader = new THREE.AudioLoader();
-
-  loader.load(
-    blopSrc,
-    (audioBuffer: THREE.AudioBuffer) => {
-      blopBuffer = audioBuffer;
-    },
-    (xhr: ProgressEvent) => {
-      // devlog((xhr.loaded / xhr.total * 100) + '% loaded');
-    },
-    (err: any) => {
-      devlog("An error happened");
-    }
-  );
-  loader.load(
-    suckWaterSrc,
-    (audioBuffer: THREE.AudioBuffer) => {
-      suckWaterBuffer = audioBuffer;
-    },
-    (xhr: ProgressEvent) => {
-      // devlog((xhr.loaded / xhr.total * 100) + '% loaded');
-    },
-    (err: any) => {
-      devlog("An error happened");
-    }
-  );
 }

@@ -4,7 +4,11 @@ import { Audio, Object3D, Vector2, Vector3 } from "three";
 import { GeneRenderer } from "./GeneRenderer";
 import makeLine from "./makeLine";
 export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis> {
-  private audio = new Audio(this.mito.audioListener).setBuffer(blopBuffer);
+  private audio = (() => {
+    const audio = new Audio(this.mito.audioListener);
+    blopBuffer.then((buffer) => audio.setBuffer(buffer));
+    return audio;
+  })();
   private lastAudioValueTracker = 0;
   private neighborLines = new Object3D();
 

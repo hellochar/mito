@@ -1,17 +1,7 @@
 import { World } from "sketches/mito/game";
 import { Cell, Tile } from "sketches/mito/game/tile";
 import { SPRITESHEET } from "sketches/mito/spritesheet";
-import {
-  Color,
-  DoubleSide,
-  InstancedBufferAttribute,
-  InstancedBufferGeometry,
-  Mesh,
-  PlaneBufferGeometry,
-  RawShaderMaterial,
-  Vector2,
-  Vector3,
-} from "three";
+import { Color, DoubleSide, DynamicDrawUsage, InstancedBufferAttribute, InstancedBufferGeometry, Mesh, PlaneBufferGeometry, RawShaderMaterial, Vector2, Vector3 } from "three";
 import glsl from "../glsl";
 
 const vertexShader = glsl`
@@ -164,14 +154,14 @@ class TileBatcher {
     this.mesh.frustumCulled = false;
     this.mesh.matrixAutoUpdate = false;
     this.mesh.updateMatrixWorld();
-    this.centers.setDynamic(true);
-    this.colors.setDynamic(true);
-    this.scales.setDynamic(true);
-    this.texturePositions.setDynamic(true);
-    this.geometry.addAttribute("instancedTileCenter", this.centers);
-    this.geometry.addAttribute("instancedTileColor", this.colors);
-    this.geometry.addAttribute("instancedTileScale", this.scales);
-    this.geometry.addAttribute("instancedTexturePosition", this.texturePositions);
+    this.centers.setUsage(DynamicDrawUsage);
+    this.colors.setUsage(DynamicDrawUsage);
+    this.scales.setUsage(DynamicDrawUsage);
+    this.texturePositions.setUsage(DynamicDrawUsage);
+    this.geometry.setAttribute("instancedTileCenter", this.centers);
+    this.geometry.setAttribute("instancedTileColor", this.colors);
+    this.geometry.setAttribute("instancedTileScale", this.scales);
+    this.geometry.setAttribute("instancedTexturePosition", this.texturePositions);
   }
 
   public updateUniforms() {

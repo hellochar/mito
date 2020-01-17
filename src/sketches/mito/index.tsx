@@ -86,7 +86,7 @@ export class Mito extends ISketch {
     // this.hackCamera.position.copy(this.camera.position);
     // this.hackCamera.lookAt(0, 0, 0);
     if (this.hackCamera != null) {
-      this.controls = new OrbitControls(this.hackCamera);
+      this.controls = new OrbitControls(this.hackCamera, this.canvas);
       this.scene.add(new THREE.AxesHelper(25));
     }
 
