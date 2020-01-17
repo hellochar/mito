@@ -2,6 +2,7 @@ import { useAppReducer } from "app";
 import classNames from "classnames";
 import generateSpeciesName from "common/generateSpeciesName";
 import React from "react";
+import Genome from "sketches/mito/game/tile/genome";
 import uuid from "uuid";
 import { Button } from "../common/Button";
 import Character from "../common/Character";
@@ -37,6 +38,7 @@ function MutationScreen({
   };
 
   const [newSpecies, setNewSpecies] = React.useState<Species>({
+    genome: new Genome(species.genome.cellTypes),
     id: uuid(),
     descendants: [],
     freeMutationPoints: 0,

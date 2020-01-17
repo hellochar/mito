@@ -1,7 +1,7 @@
 import { map } from "math";
 import Mito from "sketches/mito";
 import { TIME_PER_SEASON } from "sketches/mito/game/constants";
-import { GrowingCell, Tile } from "sketches/mito/game/tile";
+import { Tile } from "sketches/mito/game/tile";
 import { WorldRenderer } from "sketches/mito/renderers/WorldRenderer";
 // import { createRendererFor } from "sketches/mito/renderers/WorldRenderer";
 import { OrthographicCamera, Scene, Vector2, WebGLRenderTarget } from "three";
@@ -35,9 +35,10 @@ class VignetteCapturer {
     this.lastCaptureTime = this.mito.world.time;
 
     // Cells that form the vignette:
-    const picturesqueCells = Array.from(this.mito.world.allCells()).filter(
-      (t) => t.pos.y < t.world.height / 2 && !(t instanceof GrowingCell)
-    );
+    const picturesqueCells = Array.from(this.mito.world.allCells());
+    // .filter(
+    //   (t) => t.pos.y < t.world.height / 2 && !(t instanceof GrowingCell)
+    // );
 
     const [minBounds, maxBounds] = this.getBounds(picturesqueCells);
 

@@ -16,12 +16,8 @@ import { createGeneratorContext, Environment, GeneratorContext, TileGenerators }
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
 import { Air, Cell, DeadCell, Soil, Tile } from "./tile";
-import { cellTypeFruit } from "./tile/fruit";
 import Genome from "./tile/genome";
-import { cellTypeLeaf } from "./tile/leaf";
-import { cellTypeRoot } from "./tile/root";
-import { cellTypeTissue } from "./tile/tissue";
-import { cellTypeTransport } from "./tile/transport";
+import { standardGenome } from "./tile/standardGenome";
 import { TileEvent, TileEventType } from "./tileEvent";
 
 export type TileEventLog = {
@@ -87,7 +83,7 @@ export class World {
     this.height = options.height;
     this.generatorContext = createGeneratorContext(seed);
     this.species = species;
-    this.genome = new Genome([cellTypeTissue, cellTypeLeaf, cellTypeRoot, cellTypeTransport, cellTypeFruit]);
+    this.genome = species.genome || standardGenome;
     this.traits = getTraits(this.species.genes);
 
     const tileGenerator = typeof environment.fill === "string" ? TileGenerators[environment.fill] : environment.fill;
@@ -119,7 +115,7 @@ export class World {
           21
         )
       ).map((tile, n) => {
-        const t = new Cell(tile.pos, this, cellTypeTissue);
+        const t = new Cell(tile.pos, this, this.genome.cellTypes[0]);
         this.setTileAt(tile.pos, t);
         return t;
       });

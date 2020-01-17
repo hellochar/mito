@@ -4,11 +4,6 @@ import { ActionBuild, ActionInteract } from "./action";
 import { isInteractable } from "./game/interactable";
 import { Cell, Tile } from "./game/tile";
 import { CellArgs } from "./game/tile/cell";
-import { cellTypeFruit } from "./game/tile/fruit";
-import { cellTypeLeaf } from "./game/tile/leaf";
-import { cellTypeRoot } from "./game/tile/root";
-import { cellTypeTissue } from "./game/tile/tissue";
-import { cellTypeTransport } from "./game/tile/transport";
 
 export abstract class ActionBar {
   abstract leftClick(target: Tile): void;
@@ -17,7 +12,9 @@ export abstract class ActionBar {
 }
 
 export class CellBar extends ActionBar {
-  public bar = [cellTypeTissue, cellTypeLeaf, cellTypeRoot, cellTypeTransport, cellTypeFruit] as const;
+  public get cellTypes() {
+    return this.mito.world.genome.cellTypes;
+  }
   private _index = 0;
 
   constructor(public mito: Mito) {
@@ -25,7 +22,7 @@ export class CellBar extends ActionBar {
   }
 
   get selectedCell() {
-    return this.bar[this._index];
+    return this.cellTypes[this._index];
   }
 
   public scroll(delta: number) {
@@ -42,7 +39,7 @@ export class CellBar extends ActionBar {
 
   setIndex(i: number) {
     const lastIndex = this._index;
-    const cellType = this.bar[i];
+    const cellType = this.cellTypes[i];
     const direction = cellType.args && cellType.args.direction;
     if (lastIndex === i && direction != null) {
       direction
@@ -50,7 +47,7 @@ export class CellBar extends ActionBar {
         .setLength(1)
         .round();
     }
-    this._index = ((i % this.bar.length) + this.bar.length) % this.bar.length;
+    this._index = ((i % this.cellTypes.length) + this.cellTypes.length) % this.cellTypes.length;
   }
 
   leftClick(target: Tile) {

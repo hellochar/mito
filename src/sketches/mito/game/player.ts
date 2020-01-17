@@ -24,7 +24,6 @@ import {
 import { Steppable } from "./entity";
 import { Cell, FreezeEffect, GrowingCell, Tile } from "./tile";
 import { CellArgs } from "./tile/cell";
-import { cellTypeFruit } from "./tile/fruit";
 import { GeneDirectionalPush } from "./tile/genes/GeneDirectionalPush";
 import { CellType } from "./tile/genome";
 import { World } from "./world";
@@ -68,7 +67,7 @@ export class Player implements Steppable {
         };
       }
     } else {
-      if (action.type === "build" && action.cellType === cellTypeFruit) {
+      if (action.type === "build" && action.cellType.chromosome.mergeStaticProperties().isReproductive) {
         this.action = {
           type: "long",
           duration: 4.5,

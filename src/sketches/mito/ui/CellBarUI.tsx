@@ -20,7 +20,7 @@ function CellBarUI({ bar, disabled }: CellBarProps) {
   return (
     <div className={classNames("cell-bar", { disabled })}>
       <div className="cell-bar-items">
-        {bar.bar.map((cellType, i) => (
+        {bar.cellTypes.map((cellType, i) => (
           <CellBarItem
             key={i}
             bar={bar}

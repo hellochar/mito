@@ -1,8 +1,11 @@
 import { createSimpleSchema, identifier, list, object, primitive, reference } from "serializr";
+import Genome from "sketches/mito/game/tile/genome";
+import { standardGenome } from "sketches/mito/game/tile/standardGenome";
 import uuid from "uuid";
 import { Gene } from "./gene";
 
 export interface Species {
+  genome: Genome;
   id: string;
   name: string;
   genes: Gene[];
@@ -28,6 +31,7 @@ SpeciesSchema.props.parent = reference(SpeciesSchema);
 export function newBaseSpecies(name = "plantum originus"): Species {
   return {
     id: uuid(),
+    genome: standardGenome,
     name,
     // genes: [mutateRandomNewGene(), mutateRandomNewGene(), mutateRandomNewGene()],
     genes: [],

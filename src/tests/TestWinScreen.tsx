@@ -1,6 +1,6 @@
 import React from "react";
-import { cellTypeFruit } from "sketches/mito/game/tile/fruit";
 import { GeneFruit } from "sketches/mito/game/tile/genes/GeneFruit";
+import { standardGenome } from "sketches/mito/game/tile/standardGenome";
 import { Vector2 } from "three";
 import { newBaseSpecies } from "../evolution/species";
 import { GameResult } from "../sketches/mito";
@@ -10,6 +10,7 @@ import { Cell } from "../sketches/mito/game/tile";
 import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
 
 export function mockFruit(world: World, percent: number, timeMatured?: number) {
+  const cellTypeFruit = standardGenome.cellTypes[4];
   const cell = new Cell(new Vector2(0, 0), world, cellTypeFruit);
   const fruit = cell.findGene(GeneFruit)!;
   fruit.state.committedResources.add(

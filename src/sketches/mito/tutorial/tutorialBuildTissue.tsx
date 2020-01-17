@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Action } from "../action";
 import { Air, Soil } from "../game/tile";
-import { cellTypeLeaf } from "../game/tile/leaf";
-import { cellTypeRoot } from "../game/tile/root";
-import { cellTypeTissue } from "../game/tile/tissue";
+import { standardGenome } from "../game/tile/standardGenome";
 import { findBuildCandidateTiles } from "../game/worldUtils";
 import TileHighlight from "./tileHighlight";
 import { Tutorial } from "./tutorial";
+
+const [cellTypeTissue, cellTypeLeaf, cellTypeRoot] = standardGenome.cellTypes;
 
 export class TutorialBuildTissue extends Tutorial {
   state = {

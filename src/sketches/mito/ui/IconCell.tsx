@@ -1,6 +1,5 @@
 import React from "react";
 import { CellType } from "../game/tile/genome";
-import { getCellTypeMaterialInfo } from "../renderers/tile/InstancedTileRenderer";
 import { textureFromSpritesheet } from "../spritesheet";
 import "./IconCell.scss";
 
@@ -10,7 +9,7 @@ const IconCell: React.FC<{ cellType: CellType; spritesheetLoaded: boolean } & Re
   spritesheetLoaded,
   ...props
 }) => {
-  const material = getCellTypeMaterialInfo(cellType);
+  const { material } = cellType;
   const color = (material.color && material.color.getStyle()) || "transparent";
   const texture = textureFromSpritesheet(material.texturePosition.x, material.texturePosition.y, color);
   const style: React.CSSProperties = React.useMemo(() => {

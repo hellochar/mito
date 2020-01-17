@@ -48,4 +48,5 @@ const cellTypeGrowingCell: CellType = {
   chromosome: chromosomeGrowingCell,
   geneSlots: 10,
   name: "Growing Cell",
+  material: undefined!,
 };

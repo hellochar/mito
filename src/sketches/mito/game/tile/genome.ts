@@ -1,4 +1,5 @@
 import { Vector2 } from "three";
+import { MaterialInfo } from "../materialInfo";
 import { CellArgs } from "./cell";
 import Chromosome from "./chromosome";
 
@@ -13,6 +14,7 @@ export class CellType {
     public name: string,
     public geneSlots: number,
     public chromosome: Chromosome,
+    public material: MaterialInfo,
     public interaction?: CellInteraction
   ) {
     if (chromosome.mergeStaticProperties().isDirectional) {
