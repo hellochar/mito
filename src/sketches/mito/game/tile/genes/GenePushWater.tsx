@@ -34,7 +34,7 @@ export const GenePushWater = Gene.make(
       }
       state.cooldown += secondsPerPull;
     }
-    state.cooldown -= cell.tempo * dt;
+    state.cooldown -= dt;
   }
 );
 export type GenePushWater = typeof GenePushWater;

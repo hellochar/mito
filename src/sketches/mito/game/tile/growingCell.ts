@@ -39,6 +39,9 @@ export class GrowingCell extends Cell {
     if (this.energy >= 1) {
       this.world.maybeRemoveCellAt(this.pos);
       this.completedCell.energy = this.energy;
+      for (const effect of this.effects) {
+        this.completedCell.addEffect(effect);
+      }
       this.world.setTileAt(this.pos, this.completedCell);
     }
   }

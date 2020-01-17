@@ -31,7 +31,7 @@ export const GeneSoilAbsorption = Gene.make<SoilAbsorptionState>(
       state.totalSucked += absorbWater(state.activeNeighbors, cell);
       state.cooldown += secondsPerAbsorb;
     }
-    state.cooldown -= cell.tempo * dt;
+    state.cooldown -= dt;
   }
 );
 export type GeneSoilAbsorption = typeof GeneSoilAbsorption;

@@ -21,7 +21,7 @@ export const GeneMetabolism = Gene.make(
   },
   {},
   (dt, { cell, props: { energyPerSugar } }) => {
-    let maxEnergyToEat = getMaxEnergyToEat(cell, cell.tempo * dt);
+    let maxEnergyToEat = getMaxEnergyToEat(cell, dt);
     // eat from self
     if (maxEnergyToEat > 0) {
       // if this number goes up, we become less energy efficient

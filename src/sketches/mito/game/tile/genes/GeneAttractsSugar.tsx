@@ -33,7 +33,7 @@ export const GeneAttractsSugar = Gene.make(
       }
       state.cooldown += secondsPerPull;
     }
-    state.cooldown -= cell.tempo * dt;
+    state.cooldown -= dt;
   }
 );
 export type GeneAttractsSugar = typeof GeneAttractsSugar;

@@ -16,7 +16,7 @@ export const GeneLiving = Gene.make(
   },
   {},
   (dt, { cell, props: { secondsPerUpkeep } }) => {
-    cell.energy -= (1 / secondsPerUpkeep) * cell.tempo * dt;
+    cell.energy -= (1 / secondsPerUpkeep) * dt;
   }
 );
 export type GeneLiving = typeof GeneLiving;

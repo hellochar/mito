@@ -54,7 +54,7 @@ export const GeneFruit = Gene.make<FruitState>(
     } = instance;
     const { committedResources, isMature } = state;
     if (!isMature) {
-      commitResources(dt * cell.tempo, cell, committedResources, neededResources, secondsToMature);
+      commitResources(dt, cell, committedResources, neededResources, secondsToMature);
       const isNowMature = fruitGetPercentMatured(instance) === 1;
       if (isNowMature) {
         state.isMature = isNowMature;

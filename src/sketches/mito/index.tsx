@@ -152,7 +152,9 @@ export class Mito extends ISketch {
     }
     this.actionBar.keyDown(event);
     this.eventEmitter.emit("keydown", event);
-    const isOpeningDevtoolsOnChrome = event.code === "KeyI" && event.shiftKey && event.ctrlKey;
+    const isOpeningDevtoolsOnChrome =
+      (event.code === "KeyI" && event.shiftKey && event.ctrlKey) ||
+      (event.code === "KeyI" && event.altKey && event.metaKey);
     if (!isOpeningDevtoolsOnChrome) {
       event.preventDefault();
     }

@@ -108,7 +108,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     this.instance.commitTexturePosition(this.materialInfo.texturePosition);
     this.instance.commitColor(this.color);
     this.instance.commitScale(this.scale);
-    this.instance.commitTileType(this.target instanceof Air ? 1 : 0);
   }
 
   update() {
