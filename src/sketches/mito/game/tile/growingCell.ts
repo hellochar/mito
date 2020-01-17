@@ -21,7 +21,7 @@ export class GrowingCell extends Cell {
     const neighbors = this.world.tileNeighbors(this.pos);
     for (const [, n] of neighbors) {
       if (n instanceof Cell && !(n instanceof GrowingCell)) {
-        const energyToTake = Math.min(dt * 0.1, 1 - this.energy);
+        const energyToTake = Math.min(dt * 0.2, 1 - this.energy);
         this.energy += energyToTake;
         n.energy -= energyToTake;
         this.world.logEvent({

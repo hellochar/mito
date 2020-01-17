@@ -427,16 +427,17 @@ Number of Programs: ${this.renderer.info.programs!.length}
       this.world.player.posFloat.x + mouseNorm.x / 2,
       this.world.player.posFloat.y - mouseNorm.y / 2
     );
-    const nearbyFruits = Array.from(this.world.mpEarners.keys()).filter(
-      (f) => f.pos.distanceTo(cameraTarget) < 12 / this.camera.zoom
-    );
-    if (nearbyFruits.length > 0) {
-      const nearbyFruitsCenter = nearbyFruits
-        .map((f) => f.pos)
-        .reduce((v, p) => v.add(p), new Vector2())
-        .divideScalar(nearbyFruits.length);
-      lerp2(cameraTarget, nearbyFruitsCenter, 0.25);
-    }
+
+    // const nearbyFruits = Array.from(this.world.mpEarners.keys()).filter(
+    //   (f) => f.pos.distanceTo(cameraTarget) < 12 / this.camera.zoom
+    // );
+    // if (nearbyFruits.length > 0) {
+    //   const nearbyFruitsCenter = nearbyFruits
+    //     .map((f) => f.pos)
+    //     .reduce((v, p) => v.add(p), new Vector2())
+    //     .divideScalar(nearbyFruits.length);
+    //   lerp2(cameraTarget, nearbyFruitsCenter, 0.25);
+    // }
 
     return {
       center: cameraTarget,

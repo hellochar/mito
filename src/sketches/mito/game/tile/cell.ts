@@ -3,6 +3,7 @@ import { Vector2 } from "three";
 import { traitMod } from "../../../../evolution/traits";
 import { DIRECTIONS } from "../../directions";
 import { params } from "../../params";
+import { PLAYER_INTERACT_EXCHANGE_SPEED } from "../constants";
 import { step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
@@ -152,8 +153,11 @@ export class Cell extends Tile implements Interactable {
             return [1, -1];
         }
       })();
-      const exchangeSpeed = 5;
-      const { water, sugar } = from.give(to, exchangeSpeed * waterToGive * dt, exchangeSpeed * sugarToGive * dt);
+      const { water, sugar } = from.give(
+        to,
+        PLAYER_INTERACT_EXCHANGE_SPEED * waterToGive * dt,
+        PLAYER_INTERACT_EXCHANGE_SPEED * sugarToGive * dt
+      );
 
       if (water > 0 || sugar > 0) {
         anyInteracted = true;
