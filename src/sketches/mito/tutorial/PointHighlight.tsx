@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as THREE from "three";
-
 import lazy from "../../../common/lazy";
 import { SceneObject } from "./sceneObject";
 

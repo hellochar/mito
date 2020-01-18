@@ -1,15 +1,17 @@
 import { easeSinInOut } from "d3-ease";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { clamp, lerp2, map } from "../../../math";
-import { ActionBuild, ActionLong } from "../action";
+import { Action, ActionBuild, ActionLong } from "../action";
 import { Player } from "../game";
 import { Mito } from "../index";
 import { textureFromSpritesheet } from "../spritesheet";
+import NeuronMesh from "./neuronMesh";
 import { Renderer } from "./Renderer";
 import { also, Animation, AnimationController, animPause, chain } from "./tile/Animation";
 
 export class PlayerRenderer extends Renderer<Player> {
   public mesh: Mesh;
+  public neuronMesh = new NeuronMesh(8);
   protected animation = new AnimationController();
   constructor(target: Player, scene: Scene, mito: Mito) {
     super(target, scene, mito);
@@ -18,7 +20,9 @@ export class PlayerRenderer extends Renderer<Player> {
     lerp2(this.mesh.position, this.target.pos, 1);
     this.mesh.position.z = 2;
     this.scene.add(this.mesh);
+    this.mesh.add(this.neuronMesh);
     this.target.on("start-long-action", this.handleStartLongAction);
+    this.target.on("action", this.handleAction);
   }
 
   handleStartLongAction = (action: ActionLong) => {
@@ -27,11 +31,29 @@ export class PlayerRenderer extends Renderer<Player> {
     }
   };
 
+  handleAction = (action: Action) => {
+    if (action.type === "interact") {
+      this.neuronMesh.handleInteracted();
+    }
+  };
+
   update() {
     const pos = this.target.droopPosFloat().clone();
+    this.mesh.position.set(pos.x, pos.y, 2);
+
+    const dt = 1 / 60;
+    const isInteract = this.mito.isInteract();
+    const neuronMeshTarget = isInteract
+      ? this.mito
+          .getHighlightedTile()!
+          .pos.clone()
+          .sub(pos)
+      : ZERO;
+    this.neuronMesh.update(isInteract ? dt * 10 : dt * 5, neuronMeshTarget);
+    // this.neuronMesh.visible = this.mito.getHighlightedTile() instanceof Cell;
+
     // pos.x += Math.cos(Ticker.now / 1000) * 0.04;
     // pos.y += Math.sin(Ticker.now / 400) * 0.08;
-    this.mesh.position.set(pos.x, pos.y, 2);
     // lerp2(this.mesh.position, pos, 0.5);
 
     this.animation.update();
@@ -144,3 +166,5 @@ function newMesh() {
   m.renderOrder = 9;
   return m;
 }
+
+const ZERO = new Vector2();

@@ -134,7 +134,7 @@ export class Player implements Steppable {
     }
     const actionSuccessful = this.attemptAction(this.action, dt);
     this.maybeMoveWithTransports(dt);
-    if (actionSuccessful) {
+    if (actionSuccessful && this.action.type !== "none") {
       this.events.emit("action", this.action);
     }
     if (this.action.type === "long") {

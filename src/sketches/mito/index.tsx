@@ -83,9 +83,10 @@ export class Mito extends ISketch {
     this.camera.add(this.audioListener);
 
     // this.hackCamera = new PerspectiveCamera(60, this.canvas.height / this.canvas.width);
-    // this.hackCamera.position.copy(this.camera.position);
-    // this.hackCamera.lookAt(0, 0, 0);
+
     if (this.hackCamera != null) {
+      // this.hackCamera.position.copy(this.camera.position);
+      // this.hackCamera.lookAt(0, 0, 0);
       this.controls = new OrbitControls(this.hackCamera, this.canvas);
       this.scene.add(new THREE.AxesHelper(25));
     }
@@ -305,7 +306,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     const cursorWorld = new Vector3(cursorCameraNorm.x, cursorCameraNorm.y, 0).unproject(this.camera);
 
     const offset = new Vector2(cursorWorld.x, cursorWorld.y).sub(this.world.player.posFloat);
-    offset.clampLength(0, 0.75);
+    offset.clampLength(0, 0.9);
     return offset;
   }
 
@@ -324,7 +325,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     // }
   }
 
-  private getHighlightedTile(clientX = this.mouse.x, clientY = this.mouse.y) {
+  public getHighlightedTile(clientX = this.mouse.x, clientY = this.mouse.y) {
     const p = this.getHighlightPosition(clientX, clientY);
     p.round();
 
@@ -509,6 +510,11 @@ Number of Programs: ${this.renderer.info.programs!.length}
       return;
     }
     this.actionBar.leftClick(target);
+  }
+
+  public isInteract() {
+    const tile = this.getHighlightedTile();
+    return tile != null && this.actionBar.barFor(tile) === this.actionBar.interactBar && tile instanceof Cell;
   }
 }
 
