@@ -12,7 +12,6 @@ import {
   ActionMultiple,
   ActionPickup,
 } from "../action";
-import { footsteps } from "../audio";
 import { hasInventory, Inventory } from "../inventory";
 import {
   PLAYER_BASE_SPEED,
@@ -231,9 +230,6 @@ export class Player implements Steppable {
       //     t.nextTemperature -= 0.2;
       //   }
       // }
-      footsteps.gain.gain.cancelScheduledValues(0);
-      footsteps.gain.gain.value = 0.5;
-      footsteps.gain.gain.linearRampToValueAtTime(0, footsteps.gain.context.currentTime + 0.05);
       // do the move
       this.posFloat.copy(nextPos);
       // this._pos = this.posFloat.clone().round();

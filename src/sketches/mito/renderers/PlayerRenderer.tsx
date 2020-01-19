@@ -1,9 +1,10 @@
 import { easeSinInOut } from "d3-ease";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
-import { clamp, lerp2, map } from "../../../math";
+import { clamp, lerp2, map, randFloat } from "../../../math";
 import { Action, ActionBuild, ActionLong } from "../action";
-import { build, deconstruct } from "../audio";
+import { build, deconstruct, dropSugar, dropWater, footsteps, sticky } from "../audio";
 import { Player } from "../game";
+import { Tile } from "../game/tile";
 import { Mito } from "../index";
 import { textureFromSpritesheet } from "../spritesheet";
 import NeuronMesh from "./neuronMesh";
@@ -33,16 +34,30 @@ export class PlayerRenderer extends Renderer<Player> {
   };
 
   handleAction = (action: Action) => {
+    console.log(action);
     if (action.type === "interact") {
       this.neuronMesh.handleInteracted();
     } else if (action.type === "build") {
       const id = build.play();
-      console.log(id);
+      build.rate(randFloat(0.9, 1.1), id);
     } else if (action.type === "deconstruct") {
       const id = deconstruct.play();
-      console.log(id);
+      deconstruct.rate(randFloat(0.9, 1.1), id);
+    } else if (action.type === "move") {
+      footsteps.fade(0.1, 0, 50);
+      footsteps.rate(randFloat(0.8, 1.5));
+    } else if (action.type === "drop") {
+      if (action.sugar > 0) {
+        dropSugar.play();
+      }
+      if (action.water > 0) {
+        const id = dropWater.play();
+        dropWater.fade(0.2, 0, 400, id);
+      }
     }
   };
+
+  private prevHighlight?: Tile;
 
   update() {
     const pos = this.target.droopPosFloat().clone();
@@ -50,13 +65,15 @@ export class PlayerRenderer extends Renderer<Player> {
 
     const dt = 1 / 60;
     const isInteract = this.mito.isInteract();
-    const neuronMeshTarget = isInteract
-      ? this.mito
-          .getHighlightedTile()!
-          .pos.clone()
-          .sub(pos)
-      : ZERO;
+    const highlight = this.mito.getHighlightedTile();
+    const neuronMeshTarget = isInteract ? highlight!.pos.clone().sub(pos) : ZERO;
+    if (this.prevHighlight !== highlight) {
+      const id = sticky.play();
+      sticky.rate(randFloat(0.9, 1.1), id);
+      sticky.volume(randFloat(0.8, 1), id);
+    }
     this.neuronMesh.update(isInteract ? dt * 10 : dt * 5, neuronMeshTarget);
+    this.prevHighlight = highlight;
     // this.neuronMesh.visible = this.mito.getHighlightedTile() instanceof Cell;
 
     // pos.x += Math.cos(Ticker.now / 1000) * 0.04;

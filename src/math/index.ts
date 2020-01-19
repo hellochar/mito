@@ -1,3 +1,5 @@
+export * from "./random";
+
 export function lerp(a: number, b: number, x: number) {
   return a + (b - a) * x;
 }

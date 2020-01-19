@@ -22,7 +22,7 @@ export interface HUDState {
 export class HUD extends React.Component<HUDProps, HUDState> {
   state: HUDState = {
     traitsPanelOpen: true,
-    genomeViewerOpen: true,
+    genomeViewerOpen: false,
   };
 
   get mito() {

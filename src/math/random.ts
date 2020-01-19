@@ -11,12 +11,20 @@ export function randomRectPerimeter(min: THREE.Vector2, max: THREE.Vector2): THR
   let y: number;
   if (Math.random() * (width + height) < width) {
     // we've chosen the top or bottom line
-    x = THREE.Math.randFloat(min.x, max.x);
+    x = randFloat(min.x, max.x);
     y = Math.random() < 0.5 ? min.y : max.y;
   } else {
     // we've chosen the left or right line
     x = Math.random() < 0.5 ? min.x : max.x;
-    y = THREE.Math.randFloat(min.y, max.y);
+    y = randFloat(min.y, max.y);
   }
   return new THREE.Vector2(x, y);
+}
+
+export function randFloat(min: number, max: number) {
+  return Math.random() * (max - min) + min;
+}
+
+export function randInt(inclusiveMin: number, inclusiveMax: number) {
+  return Math.floor(randFloat(inclusiveMin, inclusiveMax + 1));
 }

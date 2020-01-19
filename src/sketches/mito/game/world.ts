@@ -1,6 +1,5 @@
-import { randRound } from "math";
+import { randInt, randRound } from "math";
 import { gridRange } from "math/arrays";
-import * as THREE from "three";
 import { Vector2 } from "three";
 import { GameResult } from "..";
 import devlog from "../../../common/devlog";
@@ -385,7 +384,7 @@ export class World {
       let numWater = this.environment.climate.waterPerSecond * dt;
       while (numWater > 0) {
         const dropletSize = Math.min(numWater, 1);
-        const x = THREE.Math.randInt(0, this.width - 1);
+        const x = randInt(0, this.width - 1);
         const t = this.tileAt(x, 0);
         if (t instanceof Air) {
           const w = randRound(dropletSize);
