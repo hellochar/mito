@@ -36,7 +36,13 @@ interface SketchSuccessComponentProps {
   sketch: ISketch;
   eventsOnBody?: boolean;
 }
-class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentProps, { frameCount: number }> {
+
+interface SketchSuccessComponentState {
+  frameCount: number;
+  volumeEnabled: boolean;
+}
+
+class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentProps, SketchSuccessComponentState> {
   private frameId?: number;
   private lastTimestamp = 0;
   private stop = false;
@@ -45,11 +51,29 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
     super(props);
     this.state = {
       frameCount: props.sketch.frameCount,
+      volumeEnabled: JSON.parse(window.localStorage.getItem("sketch-volumeEnabled") || "true"),
     };
+  }
+
+  public shouldPlayAudio() {
+    return this.state.volumeEnabled && document.visibilityState === "visible" && document.hasFocus();
+  }
+
+  public syncAudioContext() {
+    const { audioContext } = this.props.sketch;
+    if (audioContext != null) {
+      // this.userVolume.gain.value = this.state.volumeEnabled ? 1 : 0;
+      if (this.shouldPlayAudio() && audioContext.state === "suspended") {
+        audioContext.resume();
+      } else if (!this.shouldPlayAudio() && audioContext.state === "running") {
+        audioContext.suspend();
+      }
+    }
   }
 
   componentDidMount() {
     window.addEventListener("resize", this.handleWindowResize);
+    document.addEventListener("visibilitychange", this.handleVisibilityChange);
     this.handleWindowResize();
 
     // canvas setup
@@ -93,9 +117,25 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
             return el;
           }
         })}
+        {this.renderVolumeButton()}
       </div>
     );
   }
+
+  private renderVolumeButton() {
+    const { volumeEnabled } = this.state;
+    return (
+      <button className="user-volume" onClick={this.handleVolumeButtonClick}>
+        {volumeEnabled ? <FaVolumeUp /> : <FaVolumeOff />}
+      </button>
+    );
+  }
+
+  private handleVolumeButtonClick = () => {
+    const volumeEnabled = !this.state.volumeEnabled;
+    this.setState({ volumeEnabled });
+    window.localStorage.setItem("sketch-volumeEnabled", JSON.stringify(volumeEnabled));
+  };
 
   componentWillUnmount() {
     this.stop = true;
@@ -108,6 +148,7 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
     }
     this.props.sketch.renderer.dispose();
     window.removeEventListener("resize", this.handleWindowResize);
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange);
 
     const canvas = this.props.sketch.canvas;
     (Object.keys(UI_EVENTS) as Array<keyof typeof UI_EVENTS>).forEach((eventName) => {
@@ -129,6 +170,7 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
     this.lastTimestamp = timestamp;
     this.props.sketch.frameCount++;
     this.props.sketch.timeElapsed = timestamp;
+    this.syncAudioContext();
     try {
       this.props.sketch.animate(millisElapsed);
     } catch (e) {
@@ -155,6 +197,10 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
     }
   };
 
+  private handleVisibilityChange = () => {
+    this.syncAudioContext();
+  };
+
   private updateRendererCanvasToMatchParent(renderer: THREE.WebGLRenderer) {
     const parent = renderer.domElement.parentElement;
     if (parent != null) {
@@ -165,13 +211,11 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
 
 export interface ISketchComponentState {
   status: SketchStatus;
-  volumeEnabled: boolean;
 }
 
 export class SketchComponent extends React.PureComponent<ISketchComponentProps, ISketchComponentState> {
   public state: ISketchComponentState = {
     status: { type: "loading" },
-    volumeEnabled: JSON.parse(window.localStorage.getItem("sketch-volumeEnabled") || "true"),
   };
 
   // private renderer?: THREE.WebGLRenderer;
@@ -192,7 +236,6 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
         this.userVolume.connect(audioContext.destination);
         const audioContextGain = (audioContext.gain = audioContext.createGain());
         audioContextGain.connect(this.userVolume);
-        document.addEventListener("visibilitychange", this.handleVisibilityChange);
 
         const renderer = new THREE.WebGLRenderer({
           alpha: true,
@@ -213,7 +256,6 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
       if (this.state.status.type === "success") {
         this.state.status.sketch.canvas.remove();
       }
-      document.removeEventListener("visibilitychange", this.handleVisibilityChange);
       if (this.audioContext != null) {
         this.audioContext.close();
       }
@@ -222,21 +264,11 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
   };
 
   public render() {
-    if (this.userVolume != null && this.audioContext != null) {
-      // this.userVolume.gain.value = this.state.volumeEnabled ? 1 : 0;
-      if (this.state.volumeEnabled && this.audioContext.state === "suspended") {
-        this.audioContext.resume();
-      } else if (!this.state.volumeEnabled && this.audioContext.state === "running") {
-        this.audioContext.suspend();
-      }
-    }
-
     const { sketchClass, otherArgs, eventsOnBody, errorElement, ...containerProps } = this.props;
     const className = classnames("sketch-component", this.state.status.type);
     return (
       <div {...containerProps} id={this.props.sketchClass.id} className={className} ref={this.handleContainerRef}>
         {this.renderSketchOrStatus()}
-        {this.renderVolumeButton()}
       </div>
     );
   }
@@ -268,29 +300,4 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
       </p>
     );
   }
-
-  private renderVolumeButton() {
-    const { volumeEnabled } = this.state;
-    return (
-      <button className="user-volume" onClick={this.handleVolumeButtonClick}>
-        {volumeEnabled ? <FaVolumeUp /> : <FaVolumeOff />}
-      </button>
-    );
-  }
-
-  private handleVolumeButtonClick = () => {
-    const volumeEnabled = !this.state.volumeEnabled;
-    this.setState({ volumeEnabled });
-    window.localStorage.setItem("sketch-volumeEnabled", JSON.stringify(volumeEnabled));
-  };
-
-  private handleVisibilityChange = () => {
-    if (this.audioContext != null) {
-      if (document.hidden) {
-        this.audioContext.suspend();
-      } else if (this.state.volumeEnabled) {
-        this.audioContext.resume();
-      }
-    }
-  };
 }
