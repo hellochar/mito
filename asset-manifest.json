@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "./static/css/main.595c673f.chunk.css",
-    "main.js": "./static/js/main.86b0f528.chunk.js",
-    "main.js.map": "./static/js/main.86b0f528.chunk.js.map",
+    "main.css": "./static/css/main.2b1d7ae2.chunk.css",
+    "main.js": "./static/js/main.9285be64.chunk.js",
+    "main.js.map": "./static/js/main.9285be64.chunk.js.map",
     "runtime~main.js": "./static/js/runtime~main.d653cc00.js",
     "runtime~main.js.map": "./static/js/runtime~main.d653cc00.js.map",
     "static/css/2.d58fcd6a.chunk.css": "./static/css/2.d58fcd6a.chunk.css",
-    "static/js/2.1725ebe9.chunk.js": "./static/js/2.1725ebe9.chunk.js",
-    "static/js/2.1725ebe9.chunk.js.map": "./static/js/2.1725ebe9.chunk.js.map",
+    "static/js/2.9f8acc45.chunk.js": "./static/js/2.9f8acc45.chunk.js",
+    "static/js/2.9f8acc45.chunk.js.map": "./static/js/2.9f8acc45.chunk.js.map",
     "index.html": "./index.html",
-    "precache-manifest.1ca143d66b24e877bc92442be98dfc6c.js": "./precache-manifest.1ca143d66b24e877bc92442be98dfc6c.js",
+    "precache-manifest.737320536ae6f70275e2d8c4a495b9c2.js": "./precache-manifest.737320536ae6f70275e2d8c4a495b9c2.js",
     "service-worker.js": "./service-worker.js",
     "static/css/2.d58fcd6a.chunk.css.map": "./static/css/2.d58fcd6a.chunk.css.map",
-    "static/css/main.595c673f.chunk.css.map": "./static/css/main.595c673f.chunk.css.map",
+    "static/css/main.2b1d7ae2.chunk.css.map": "./static/css/main.2b1d7ae2.chunk.css.map",
     "static/media/Blop-Mark_DiAngelo-79054334.mp3": "./static/media/Blop-Mark_DiAngelo-79054334.627c0e8b.mp3",
     "static/media/build.wav": "./static/media/build.a2067d20.wav",
     "static/media/footsteps.wav": "./static/media/footsteps.636605b0.wav",
@@ -20,7 +20,7 @@
     "static/media/mito-base.mp3": "./static/media/mito-base.28ee2cbb.mp3",
     "static/media/mito-drums.mp3": "./static/media/mito-drums.1c82b4f4.mp3",
     "static/media/mito-strings.mp3": "./static/media/mito-strings.9f30639c.mp3",
-    "static/media/roguelikeSheet_transparent.png": "./static/media/roguelikeSheet_transparent.3c15bcea.png",
+    "static/media/mitodeath.mp3": "./static/media/mitodeath.207c4872.mp3",
     "static/media/suckwater.wav": "./static/media/suckwater.b0fe81fa.wav"
   }
 }
