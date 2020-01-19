@@ -2,6 +2,7 @@ import { easeSinInOut } from "d3-ease";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { clamp, lerp2, map } from "../../../math";
 import { Action, ActionBuild, ActionLong } from "../action";
+import { build } from "../audio";
 import { Player } from "../game";
 import { Mito } from "../index";
 import { textureFromSpritesheet } from "../spritesheet";
@@ -34,6 +35,9 @@ export class PlayerRenderer extends Renderer<Player> {
   handleAction = (action: Action) => {
     if (action.type === "interact") {
       this.neuronMesh.handleInteracted();
+    }
+    if (action.type === "build") {
+      build.play();
     }
   };
 

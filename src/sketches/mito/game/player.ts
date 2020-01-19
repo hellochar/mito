@@ -12,7 +12,7 @@ import {
   ActionMultiple,
   ActionPickup,
 } from "../action";
-import { build, footsteps } from "../audio";
+import { footsteps } from "../audio";
 import { hasInventory, Inventory } from "../inventory";
 import {
   PLAYER_BASE_SPEED,
@@ -267,10 +267,6 @@ export class Player implements Steppable {
     if (this.getBuildError() == null) {
       this.inventory.add(-waterCost, -sugarCost);
       const newTile = new Cell(position, this.world, cellType, args);
-      build.audio.currentTime = 0;
-      build.gain.gain.cancelScheduledValues(0);
-      build.gain.gain.value = 0.2;
-      build.gain.gain.exponentialRampToValueAtTime(0.0001, build.gain.context.currentTime + 0.5);
       return newTile;
     } else {
       return undefined;
