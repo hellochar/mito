@@ -48,10 +48,6 @@ export interface ActionPickup {
   sugar: number;
 }
 
-export interface ActionNone {
-  type: "none";
-}
-
 export interface ActionMultiple {
   type: "multiple";
   actions: Action[];
@@ -76,7 +72,6 @@ export type Action =
   | ActionDeconstruct
   | ActionDrop
   | ActionLong<any>
-  | ActionNone
   | ActionMultiple
   | ActionPickup
   | ActionInteract;

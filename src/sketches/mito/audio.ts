@@ -1,5 +1,6 @@
 import blopSrc from "assets/audio/Blop-Mark_DiAngelo-79054334.mp3";
 import buildSoundSrc from "assets/audio/build.mp3";
+import deconstructSoundSrc from "assets/audio/deconstruct.mp3";
 import footstepsSrc from "assets/audio/footsteps.wav";
 import mitoBaseSrc from "assets/audio/mito-base.mp3";
 import mitoDrumsSrc from "assets/audio/mito-drums.mp3";
@@ -43,8 +44,12 @@ export let strings: AudioUnit;
 export let drums: AudioUnit;
 
 export let footsteps: AudioUnit;
-export let build = new Howl({
+export const build = new Howl({
   src: [buildSoundSrc],
+});
+
+export const deconstruct = new Howl({
+  src: [deconstructSoundSrc],
 });
 
 const loader = new THREE.AudioLoader();

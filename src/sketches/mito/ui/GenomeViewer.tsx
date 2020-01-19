@@ -123,7 +123,7 @@ export const CellInteractionSelector: React.FC<{
   const handleSelect = React.useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
       const indexOrUndefined = event.target.value;
-      if (indexOrUndefined === "none") {
+      if (indexOrUndefined == null) {
         setInteraction(undefined);
         // cellType.interaction = undefined;
       } else {

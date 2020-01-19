@@ -129,20 +129,16 @@ export class Player implements Steppable {
   }
 
   public step(dt: number) {
-    if (this.action === undefined) {
-      this.action = { type: "none" };
-    }
-    const actionSuccessful = this.attemptAction(this.action, dt);
-    this.maybeMoveWithTransports(dt);
-    if (actionSuccessful && this.action.type !== "none") {
-      this.events.emit("action", this.action);
-    }
-    if (this.action.type === "long") {
-      if (actionSuccessful) {
+    // this.maybeMoveWithTransports(dt);
+    if (this.action != null) {
+      const successful = this.attemptAction(this.action, dt);
+      if (this.action.type === "long") {
+        if (successful) {
+          this.action = undefined;
+        }
+      } else {
         this.action = undefined;
       }
-    } else {
-      this.action = undefined;
     }
   }
 
@@ -162,10 +158,15 @@ export class Player implements Steppable {
   }
 
   public attemptAction(action: Action, dt: number): boolean {
+    const successful = this._attemptAction(action, dt);
+    if (successful) {
+      this.events.emit("action", action);
+    }
+    return successful;
+  }
+
+  private _attemptAction(action: Action, dt: number) {
     switch (action.type) {
-      case "none":
-        // literally do nothing
-        return true;
       case "still":
         return this.attemptStill(dt);
       case "move":
