@@ -4,10 +4,10 @@ import * as React from "react";
 import { GiDustCloud } from "react-icons/gi";
 import { Air, Cell, Fountain, FreezeEffect, GrowingCell, Soil, Tile } from "../game/tile";
 import { CellEffectConstructor } from "../game/tile/cellEffect";
-import { GeneInstance } from "../game/tile/chromosome";
+import { Gene, GeneInstance } from "../game/tile/chromosome";
 import { GeneSoilAbsorption, SoilAbsorptionState } from "../game/tile/genes";
-import { GeneFruit } from "../game/tile/genes/GeneFruit";
 import { GenePhotosynthesis, PhotosynthesisState } from "../game/tile/genes/GenePhotosynthesis";
+import { GeneFruit, GeneSeed, ReproducerState } from "../game/tile/genes/GeneReproducer";
 import { describeCellInteraction } from "../game/tile/genome";
 import { InventoryBar } from "./InventoryBar";
 import TemperatureInfo from "./TemperatureInfo";
@@ -74,8 +74,8 @@ export class TileDetails extends React.Component<TileDetailsProps> {
             return this.soilAbsorptionInfo(gene.state);
           } else if (gene.isType(GenePhotosynthesis)) {
             return this.photosynthesisInfo(gene.state);
-          } else if (gene.isType(GeneFruit)) {
-            return this.fruitInfo(gene);
+          } else if (gene.isType(GeneFruit) || gene.isType(GeneSeed)) {
+            return this.reproducerInfo(gene);
           } else {
             return null;
           }
@@ -102,7 +102,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     );
   }
 
-  private fruitInfo(instance: GeneInstance<GeneFruit>) {
+  private reproducerInfo(instance: GeneInstance<Gene<ReproducerState, any>>) {
     const { state, props } = instance;
     return (
       <div>

@@ -38,7 +38,7 @@ export const LocalForageStateProvider: React.FC<{ loadingComponent: JSX.Element 
 export function newInitialAppState(): AppState {
   const overWorld = OverWorld.generateRectangle(100, 50);
   const rootSpecies = newBaseSpecies("plantum originus");
-  const activeLevel = overWorld.getStartTile();
+  const startHex = overWorld.getStartHex();
   // rootSpecies.freeMutationPoints = 25;
   // const s3 = newBaseSpecies("s3");
   // s3.descendants = [newBaseSpecies("ya"), newBaseSpecies("no"), newBaseSpecies("whoa")];
@@ -50,7 +50,7 @@ export function newInitialAppState(): AppState {
     rootSpecies,
     activePopulationAttempt: {
       settlingSpecies: rootSpecies,
-      targetHex: activeLevel,
+      targetHex: startHex,
     },
     epoch: 0,
   };

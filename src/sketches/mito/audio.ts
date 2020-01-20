@@ -25,7 +25,7 @@ export let drums: AudioUnit;
 
 export const mitoDeath = new Howl({
   src: mitoDeathMp3,
-  autoplay: true,
+  autoplay: false,
   loop: true,
   volume: 1,
 });

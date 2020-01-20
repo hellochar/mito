@@ -1,16 +1,17 @@
 import { nf } from "common/formatters";
 import { map } from "math";
 import React from "react";
-import { fruitGetPercentMatured, GeneFruit } from "sketches/mito/game/tile/genes/GeneFruit";
-import "./GeneFruitRenderer.scss";
+import { Gene } from "sketches/mito/game/tile/chromosome";
+import { reproducerGetPercentMatured, ReproducerState } from "sketches/mito/game/tile/genes/GeneReproducer";
 import { GeneRenderer } from "./GeneRenderer";
+import "./GeneReproducerRenderer.scss";
 
-export class GeneFruitRenderer extends GeneRenderer<GeneFruit> {
-  resourcesNeededElement = this.mito.addWorldDOMElement(
+export class GeneReproducerRenderer extends GeneRenderer<Gene<ReproducerState, any>> {
+  percentMatureElement = this.mito.addWorldDOMElement(
     () => this.target.cell,
     () => {
-      const matured = fruitGetPercentMatured(this.target);
-      return <div className="fruit-indicator">{nf(matured * 100, 2)}%</div>;
+      const matured = reproducerGetPercentMatured(this.target);
+      return <div className="reproducer-percent-mature">{nf(matured * 100, 2)}%</div>;
     }
   );
 
@@ -21,7 +22,7 @@ export class GeneFruitRenderer extends GeneRenderer<GeneFruit> {
   }
 
   updateScale() {
-    const scale = map(fruitGetPercentMatured(this.target), 0, 1, 0.2, 1);
+    const scale = map(reproducerGetPercentMatured(this.target), 0, 1, 0.2, 1);
     this.tr.scale.set(scale, scale, 1);
   }
 
@@ -46,6 +47,6 @@ export class GeneFruitRenderer extends GeneRenderer<GeneFruit> {
   // }
 
   destroy() {
-    this.mito.removeWorldDOMElement(this.resourcesNeededElement);
+    this.mito.removeWorldDOMElement(this.percentMatureElement);
   }
 }

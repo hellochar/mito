@@ -63,6 +63,10 @@ export default class Chromosome {
         .reduce((a, b) => a + b, 0) * -1
     );
   }
+
+  geneSlotsNet(): number {
+    return this.geneSlotsAdded() - this.geneSlotsUsed();
+  }
 }
 
 export type GeneStaticProperties = {

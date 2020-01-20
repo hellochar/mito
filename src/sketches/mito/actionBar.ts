@@ -38,16 +38,18 @@ export class CellBar extends ActionBar {
   }
 
   setIndex(i: number) {
-    const lastIndex = this._index;
-    const cellType = this.cellTypes[i];
-    const direction = cellType.args && cellType.args.direction;
-    if (lastIndex === i && direction != null) {
-      direction
-        .rotateAround(new Vector2(), -Math.PI / 4)
-        .setLength(1)
-        .round();
+    if (i < this.cellTypes.length && i >= 0) {
+      const lastIndex = this._index;
+      const cellType = this.cellTypes[i];
+      const direction = cellType.args && cellType.args.direction;
+      if (lastIndex === i && direction != null) {
+        direction
+          .rotateAround(new Vector2(), -Math.PI / 4)
+          .setLength(1)
+          .round();
+      }
+      this._index = i;
     }
-    this._index = ((i % this.cellTypes.length) + this.cellTypes.length) % this.cellTypes.length;
   }
 
   leftClick(target: Tile) {

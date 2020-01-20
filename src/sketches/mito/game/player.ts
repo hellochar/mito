@@ -307,8 +307,8 @@ export class Player implements Steppable {
       const cell = this.world.maybeRemoveCellAt(action.position);
       if (cell != null) {
         // refund the resources back
-        // const refund = cell.energy / CELL_MAX_ENERGY;
-        // this.inventory.add(refund, refund);
+        const refund = cell.energy;
+        this.inventory.add(refund * waterCost, refund * sugarCost);
 
         // maybeRemoveCellAt has already tried redistributing inventory to neighbors,
         // but if it couldn't do that, as a last ditch, give resources directly to

@@ -1,4 +1,3 @@
-import mitoDeathMp3 from "assets/audio/mitodeath.mp3";
 import fruitSrc from "assets/images/fruit.png";
 import classNames from "classnames";
 import MP from "common/MP";
@@ -6,10 +5,11 @@ import { map } from "math";
 import * as React from "react";
 import { GameResult } from "..";
 import Character from "../../../common/Character";
+import { mitoDeath } from "../audio";
 import { seasonDisplay, seasonFromTime } from "../game/Season";
 import { Cell } from "../game/tile";
 import { GeneInstance } from "../game/tile/chromosome";
-import { fruitGetPercentMatured, GeneFruit } from "../game/tile/genes/GeneFruit";
+import { GeneFruit, reproducerGetPercentMatured } from "../game/tile/genes/GeneReproducer";
 import "./GameResultsScreen.scss";
 import { Glow } from "./Glow";
 
@@ -19,7 +19,7 @@ interface GameResultsScreenProps {
 }
 
 function FruitResult({ fruit, mpEarned }: { fruit: GeneInstance<GeneFruit>; mpEarned: number }) {
-  const scale = map(fruitGetPercentMatured(fruit), 0, 1, 0.2, 1);
+  const scale = map(reproducerGetPercentMatured(fruit), 0, 1, 0.2, 1);
   const style = React.useMemo(() => {
     return {
       transform: `scale(${scale})`,
@@ -39,7 +39,9 @@ function FruitResult({ fruit, mpEarned }: { fruit: GeneInstance<GeneFruit>; mpEa
           &nbsp;at {seasonDisplay(seasonFromTime(fruit.state.timeMatured))}, Mutation Points earned: 1
         </>
       ) : (
-        <span className="matured-info in-progress">{(fruitGetPercentMatured(fruit) * 100).toFixed(0)}% maturity</span>
+        <span className="matured-info in-progress">
+          {(reproducerGetPercentMatured(fruit) * 100).toFixed(0)}% maturity
+        </span>
       )}
       , started at {seasonDisplay(seasonFromTime(fruit.cell.timeMade))}.
     </div>

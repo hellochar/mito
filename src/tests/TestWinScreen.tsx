@@ -1,5 +1,5 @@
 import React from "react";
-import { GeneFruit } from "sketches/mito/game/tile/genes/GeneFruit";
+import { GeneFruit } from "sketches/mito/game/tile/genes/GeneReproducer";
 import { standardGenome } from "sketches/mito/game/tile/standardGenome";
 import { Vector2 } from "three";
 import { newBaseSpecies } from "../evolution/species";

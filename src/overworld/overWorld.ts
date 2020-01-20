@@ -163,7 +163,7 @@ export class OverWorld {
     return unpopulatedNeighbors;
   }
 
-  public getStartTile() {
+  public getStartHex() {
     return this.startTile;
   }
 

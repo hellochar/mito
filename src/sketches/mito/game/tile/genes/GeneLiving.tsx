@@ -4,13 +4,13 @@ import { Gene } from "../chromosome";
 export const GeneLiving = Gene.make(
   {
     name: "Living",
-    levelCosts: [-5, -2, 0, 2, 4],
+    levelCosts: [-6, -8, -10, -12, -15],
     levelProps: {
-      secondsPerUpkeep: [120, 240, 480, 600, 720],
+      secondsPerUpkeep: [720, 600, 480, 240, 120],
     },
     description: ({ secondsPerUpkeep }) => (
       <>
-        Uses 100% of its energy every <GN value={secondsPerUpkeep} /> seconds.
+        Needs 1 sugar every <GN value={secondsPerUpkeep} /> seconds.
       </>
     ),
   },

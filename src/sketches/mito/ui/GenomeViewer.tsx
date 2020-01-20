@@ -3,7 +3,8 @@ import DynamicNumber from "common/DynamicNumber";
 import { nf } from "common/formatters";
 import { arrayRange } from "math/arrays";
 import * as React from "react";
-import { FaGripLines } from "react-icons/fa";
+import { FaArrowsAltV, FaGripLines } from "react-icons/fa";
+import { TiThMenu } from "react-icons/ti";
 import { GeneStaticProperties, RealizedGene } from "../game/tile/chromosome";
 import Genome, { CellInteraction, CellType, describeCellInteraction } from "../game/tile/genome";
 import { spritesheetLoaded } from "../spritesheet";
@@ -15,18 +16,34 @@ interface DragInfo {
   cellType: CellType;
 }
 
-interface DragState {
+interface GenomeViewerState {
   dragged?: DragInfo;
+  view: "small" | "expanded";
 }
 
-type DragStateTupleType = [DragState, React.Dispatch<React.SetStateAction<DragState>>];
-const DraggedContext = React.createContext<DragStateTupleType>(null!);
+type GenomeViewerStateTupleType = [GenomeViewerState, React.Dispatch<React.SetStateAction<GenomeViewerState>>];
+const DraggedContext = React.createContext<GenomeViewerStateTupleType>(null!);
 
 const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
-  const tuple = React.useState<DragState>({});
+  const tuple = React.useState<GenomeViewerState>({ view: "small" });
+  const [state, setState] = tuple;
+  const handleViewSmall = React.useCallback(() => {
+    setState((s) => ({ ...s, view: "small" }));
+  }, [setState]);
+  const handleViewExpanded = React.useCallback(() => {
+    setState((s) => ({ ...s, view: "expanded" }));
+  }, [setState]);
+
   return (
     <DraggedContext.Provider value={tuple}>
-      <div className={classNames("genome-viewer", { dragging: tuple[0].dragged != null })}>
+      <div className={classNames("genome-viewer", { dragging: state.dragged != null })}>
+        <div className="view-switcher">
+          <TiThMenu onClick={handleViewSmall} className={classNames("", { active: state.view === "small" })} />
+          <FaArrowsAltV
+            onClick={handleViewExpanded}
+            className={classNames("", { active: state.view === "expanded" })}
+          />
+        </div>
         <div className="cell-types">
           {genome.cellTypes.map((c) => (
             <CellTypeViewer key={c.name} cellType={c} />
@@ -39,18 +56,18 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
 
 const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
   const { chromosome, geneSlots, name } = cellType;
-  const [dragState, setDragState] = React.useContext(DraggedContext);
+  const [state, setState] = React.useContext(DraggedContext);
   const handleDrop = React.useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
-      if (dragState.dragged != null) {
-        const { gene, cellType: leavingCellType } = dragState.dragged;
+      if (state.dragged != null) {
+        const { gene, cellType: leavingCellType } = state.dragged;
         leavingCellType.chromosome.genes = leavingCellType.chromosome.genes.filter((g) => g !== gene);
         cellType.chromosome.genes.push(gene);
-        setDragState({});
+        setState((s) => ({ ...s, dragged: undefined }));
       }
     },
-    [cellType.chromosome.genes, dragState.dragged, setDragState]
+    [cellType.chromosome.genes, state.dragged, setState]
   );
   const handleDragOver = React.useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -83,11 +100,11 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
           {/* <StaticPropertiesViewer {...chromosome.mergeStaticProperties()} /> */}
         </div>
       </div>
-      <div>
+      <div className="gene-slots">
+        Gene Slots Available:{" "}
         <span className="slots-used">
-          <DynamicNumber value={chromosome.geneSlotsUsed()} />/{totalGeneSlotsEl}
-        </span>{" "}
-        gene slots used
+          <DynamicNumber value={chromosome.geneSlotsNet()} />
+        </span>
       </div>
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
         {chromosome.genes.map((g, i) => (
@@ -176,38 +193,32 @@ export const StaticPropertiesViewer: React.FC<GeneStaticProperties> = React.memo
 );
 
 const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cellType, gene }) => {
-  const [, setDragState] = React.useContext(DraggedContext);
+  const [state, setState] = React.useContext(DraggedContext);
   const { gene: gd } = gene;
   const handleDragStart = React.useCallback(
     (event: React.DragEvent) => {
       event.dataTransfer.setData("mito/gene", "data");
-      setDragState({
+      setState((s) => ({
+        ...s,
         dragged: {
           cellType,
           gene,
         },
-      });
+      }));
     },
-    [cellType, gene, setDragState]
+    [cellType, gene, setState]
   );
   const cost = gene.getCost();
   const draggable = !(gene.gene.blueprint.name === "Living" || gene.gene.blueprint.name === "Inventory");
   return (
     // <LookAtMouse zScale={8} displayBlock>
     <div
-      className={classNames("gene", gd.blueprint.name.replace(" ", ""), { draggable })}
+      className={classNames("gene", state.view, gd.blueprint.name.replace(" ", ""), { draggable })}
       draggable={draggable}
       onDragStart={handleDragStart}
     >
       <div className="gene-header">
-        <span
-          className={classNames("gene-cost", {
-            negative: cost < 0,
-          })}
-        >
-          {cost < 0 ? "+" : null}
-          <DynamicNumber value={Math.abs(cost)} speed={0.5} />
-        </span>
+        <GeneCost cost={cost} />
         <h4>
           {gd.blueprint.name}
           {/* <span style={{ opacity: 0.5 }}>{gene.level + 1}</span> */}
@@ -237,5 +248,19 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
     // </LookAtMouse>
   );
 };
+
+function GeneCost({ cost, className, ...props }: { cost: number } & React.HTMLAttributes<HTMLSpanElement>) {
+  return (
+    <span
+      {...props}
+      className={classNames("gene-cost", className, {
+        negative: cost < 0,
+      })}
+    >
+      {cost < 0 ? "+" : null}
+      <DynamicNumber value={Math.abs(cost)} speed={0.5} />
+    </span>
+  );
+}
 
 export default GenomeViewer;

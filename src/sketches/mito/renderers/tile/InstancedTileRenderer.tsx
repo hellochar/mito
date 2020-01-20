@@ -9,8 +9,8 @@ import { Air, Cell, DeadCell, Fountain, GrowingCell, Rock, Tile } from "sketches
 import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
 import { GeneDirectionalPush } from "sketches/mito/game/tile/genes/GeneDirectionalPush";
-import { GeneFruit } from "sketches/mito/game/tile/genes/GeneFruit";
 import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";
+import { GeneFruit, GeneSeed } from "sketches/mito/game/tile/genes/GeneReproducer";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
 import { Color, Scene, Vector2, Vector3 } from "three";
 import { MaterialInfo } from "../../game/materialInfo";
@@ -19,9 +19,9 @@ import { Renderer } from "../Renderer";
 import { Animation, AnimationController } from "./Animation";
 import { CellEffectsRenderer } from "./CellEffectsRenderer";
 import { GeneDirectionalPushRenderer } from "./GeneDirectionalPushRenderer";
-import { GeneFruitRenderer } from "./GeneFruitRenderer";
 import { GenePhotosynthesisRenderer } from "./GenePhotosynthesisRenderer";
 import { GeneRenderer } from "./GeneRenderer";
+import { GeneReproducerRenderer } from "./GeneReproducerRenderer";
 import { GeneSoilAbsorptionRenderer } from "./GeneSoilAbsorptionRenderer";
 import TileBatcher, { BatchInstance } from "./tileBatcher";
 
@@ -84,8 +84,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       return new GenePhotosynthesisRenderer(inst, this);
     } else if (inst.isType(GeneDirectionalPush)) {
       return new GeneDirectionalPushRenderer(inst, this);
-    } else if (inst.isType(GeneFruit)) {
-      return new GeneFruitRenderer(inst, this);
+    } else if (inst.isType(GeneFruit) || inst.isType(GeneSeed)) {
+      return new GeneReproducerRenderer(inst, this);
     } else {
       return;
     }
