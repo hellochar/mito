@@ -1,4 +1,4 @@
-import { suckWaterBuffer } from "sketches/mito/audio";
+import { distScalar, suckWaterBuffer } from "sketches/mito/audio";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
 import { Audio, Color, Object3D, Vector2, Vector3 } from "three";
 import { GeneRenderer } from "./GeneRenderer";
@@ -17,8 +17,7 @@ export class GeneSoilAbsorptionRenderer extends GeneRenderer<GeneSoilAbsorption>
     if (newAudioValueTracker !== this.lastAudioValueTracker) {
       // const baseVolume = this.target.waterTransferAmount / (2 + this.target.waterTransferAmount);
       const baseVolume = 1;
-      const dist = this.target.cell.pos.distanceToSquared(this.mito.world.player.pos);
-      const volume = Math.min(1, 1 / (1 + dist / 25)) * baseVolume;
+      const volume = distScalar(this.target.cell, this.mito.world.player) * baseVolume;
       this.audio.setVolume(volume);
       if (this.audio.source != null) {
         this.audio.stop();

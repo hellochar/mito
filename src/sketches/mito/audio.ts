@@ -2,6 +2,7 @@ import blopSrc from "assets/audio/Blop-Mark_DiAngelo-79054334.mp3";
 import buildSoundSrc from "assets/audio/build.mp3";
 import deconstructSoundSrc from "assets/audio/deconstruct.mp3";
 import dropWaterSrc from "assets/audio/drop_water.mp3";
+import eatingSoundSrc from "assets/audio/eating.mp3";
 import footstepsSrc from "assets/audio/footsteps.wav";
 import impactSoftMedium003Src from "assets/audio/impactSoft_medium_003.mp3";
 import interactSoundSrc from "assets/audio/interact.mp3";
@@ -14,6 +15,8 @@ import { Howl } from "howler";
 import * as THREE from "three";
 import devlog from "../../common/devlog";
 import { SketchAudioContext } from "../sketch";
+import { Player } from "./game";
+import { Tile } from "./game/tile";
 
 function sourceElement(src: string) {
   const type = src.substr(src.length - 3);
@@ -102,8 +105,10 @@ function loadAudioPromise(src: string) {
     );
   });
 }
-export let blopBuffer = loadAudioPromise(blopSrc);
-export let suckWaterBuffer = loadAudioPromise(suckWaterSrc);
+export const blopBuffer = loadAudioPromise(blopSrc);
+export const suckWaterBuffer = loadAudioPromise(suckWaterSrc);
+
+export const eatBuffer = loadAudioPromise(eatingSoundSrc);
 
 export function hookUpAudio(ctx: SketchAudioContext) {
   let numDone = 0;
@@ -120,7 +125,8 @@ export function hookUpAudio(ctx: SketchAudioContext) {
   }
   mito = makeUnitFromAudioAsset(ctx, mitoBaseSrc);
   mito.audio.oncanplaythrough = oneMoreLoaded;
-  mito.gain.gain.value = 0.5;
+  mito.gain.gain.value = 0;
+  // mito.gain.gain.value = 0.5;
 
   strings = makeUnitFromAudioAsset(ctx, mitoStringsSrc);
   strings.audio.oncanplaythrough = oneMoreLoaded;
@@ -129,4 +135,10 @@ export function hookUpAudio(ctx: SketchAudioContext) {
   drums = makeUnitFromAudioAsset(ctx, mitoDrumsSrc);
   drums.audio.oncanplaythrough = oneMoreLoaded;
   drums.gain.gain.value = 0.0;
+}
+
+export function distScalar(source: Tile, player: Player) {
+  const dist = source.pos.distanceToSquared(player.pos);
+  const scalar = Math.min(1, 1 / (1 + dist / 25));
+  return scalar;
 }

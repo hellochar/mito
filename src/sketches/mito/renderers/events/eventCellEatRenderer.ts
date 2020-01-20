@@ -1,6 +1,7 @@
+import { distScalar, eatBuffer } from "sketches/mito/audio";
 import { EventCellEat } from "sketches/mito/game/tileEvent";
 import { textureFromSpritesheet } from "sketches/mito/spritesheet";
-import { Color } from "three";
+import { Audio, Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { InstancedTileRenderer } from "../tile/InstancedTileRenderer";
 import { WorldRenderer } from "../WorldRenderer";
@@ -30,8 +31,26 @@ export default class EventCellEatRenderer extends EventRendererFFPoints<EventCel
     super("cell-eat", target, EventCellEatRenderer.makePoints());
   }
 
+  private audio = (() => {
+    const audio = new Audio(this.mito.audioListener);
+    audio.loop = true;
+    audio.setVolume(0);
+    eatBuffer.then((buffer) => {
+      audio.setBuffer(buffer);
+      audio.play();
+    });
+    return audio;
+  })();
+
   handle(event: EventCellEat) {
     const { who } = event;
+    const baseVolume = 0.75;
+    const volume = distScalar(who, this.mito.world.player) * baseVolume;
+    if (volume > this.audio.gain.gain.value) {
+      this.audio.gain.gain.setValueAtTime(volume, 0);
+      this.audio.gain.gain.cancelScheduledValues(this.audio.context.currentTime + 1);
+      this.audio.gain.gain.setTargetAtTime(0, this.audio.context.currentTime + 1, 0.1);
+    }
     const tileRenderer = this.worldRenderer.renderers.get(who) as InstancedTileRenderer | null;
     const activeSugar = tileRenderer && tileRenderer.inventoryRenderer.getActiveSugar();
     const dX = (activeSugar && activeSugar.x) || 0;

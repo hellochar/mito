@@ -1,4 +1,4 @@
-import { blopBuffer } from "sketches/mito/audio";
+import { blopBuffer, distScalar } from "sketches/mito/audio";
 import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";
 import { Audio, Object3D, Vector2, Vector3 } from "three";
 import { GeneRenderer } from "./GeneRenderer";
@@ -16,9 +16,8 @@ export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis>
     // audio
     const newAudioValueTracker = this.target.state.totalSugarProduced;
     if (newAudioValueTracker > this.lastAudioValueTracker) {
-      const dist = this.target.cell.pos.distanceToSquared(this.mito.world.player.pos);
-      const volume =
-        Math.min(1, 1 / (1 + dist / 25)) * this.target.state.sugarConverted * this.target.state.sugarConverted;
+      const baseVolume = this.target.state.sugarConverted * this.target.state.sugarConverted;
+      const volume = distScalar(this.target.cell, this.mito.world.player) * baseVolume;
       this.audio.setVolume(volume);
       // this.audio.setRefDistance(2);
       // play blop sound
