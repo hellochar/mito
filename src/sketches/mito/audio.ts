@@ -9,6 +9,7 @@ import interactSoundSrc from "assets/audio/interact.mp3";
 import mitoBaseSrc from "assets/audio/mito-base.mp3";
 import mitoDrumsSrc from "assets/audio/mito-drums.mp3";
 import mitoStringsSrc from "assets/audio/mito-strings.mp3";
+import mitoDeathMp3 from "assets/audio/mitodeath.mp3";
 import stickySoundSrc from "assets/audio/sticky.mp3";
 import suckWaterSrc from "assets/audio/suckwater.wav";
 import { Howl } from "howler";
@@ -18,37 +19,16 @@ import { SketchAudioContext } from "../sketch";
 import { Player } from "./game";
 import { Tile } from "./game/tile";
 
-function sourceElement(src: string) {
-  const type = src.substr(src.length - 3);
-  const source = document.createElement("source");
-  source.src = src;
-  source.type = `audio/${type}`;
-  return source;
-}
-
-function makeUnitFromAudioAsset(ctx: SketchAudioContext, ...srcs: string[]): AudioUnit {
-  const audio = document.createElement("audio");
-  audio.autoplay = true;
-  audio.loop = true;
-  for (const src of srcs) {
-    audio.appendChild(sourceElement(src));
-  }
-  // audio.appendChild(sourceElement(assetName, "mp3"));
-  // audio.appendChild(sourceElement(assetName, "wav"));
-  const source = ctx.createMediaElementSource(audio);
-  const gain = ctx.createGain();
-  source.connect(gain);
-  return { audio, gain };
-}
-
-interface AudioUnit {
-  gain: GainNode;
-  audio: HTMLAudioElement;
-}
-
 export let mito: AudioUnit;
 export let strings: AudioUnit;
 export let drums: AudioUnit;
+
+export const mitoDeath = new Howl({
+  src: mitoDeathMp3,
+  autoplay: true,
+  loop: true,
+  volume: 1,
+});
 
 export const footsteps = new Howl({
   src: [footstepsSrc],
@@ -107,7 +87,6 @@ function loadAudioPromise(src: string) {
 }
 export const blopBuffer = loadAudioPromise(blopSrc);
 export const suckWaterBuffer = loadAudioPromise(suckWaterSrc);
-
 export const eatBuffer = loadAudioPromise(eatingSoundSrc);
 
 export function hookUpAudio(ctx: SketchAudioContext) {
@@ -135,6 +114,34 @@ export function hookUpAudio(ctx: SketchAudioContext) {
   drums = makeUnitFromAudioAsset(ctx, mitoDrumsSrc);
   drums.audio.oncanplaythrough = oneMoreLoaded;
   drums.gain.gain.value = 0.0;
+}
+
+function sourceElement(src: string) {
+  const type = src.substr(src.length - 3);
+  const source = document.createElement("source");
+  source.src = src;
+  source.type = `audio/${type}`;
+  return source;
+}
+
+function makeUnitFromAudioAsset(ctx: SketchAudioContext, ...srcs: string[]): AudioUnit {
+  const audio = document.createElement("audio");
+  audio.autoplay = true;
+  audio.loop = true;
+  for (const src of srcs) {
+    audio.appendChild(sourceElement(src));
+  }
+  // audio.appendChild(sourceElement(assetName, "mp3"));
+  // audio.appendChild(sourceElement(assetName, "wav"));
+  const source = ctx.createMediaElementSource(audio);
+  const gain = ctx.createGain();
+  source.connect(gain);
+  return { audio, gain };
+}
+
+interface AudioUnit {
+  gain: GainNode;
+  audio: HTMLAudioElement;
 }
 
 export function distScalar(source: Tile, player: Player) {

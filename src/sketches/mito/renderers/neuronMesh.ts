@@ -12,8 +12,8 @@ import {
   Vector2,
 } from "three";
 
-const playerBrown = 0x8f673f;
-const playerTeal = 0x5eb780;
+export const playerBrown = 0x8f673f;
+export const playerTeal = 0x5eb780;
 
 const baseMesh = (() => {
   const geometry = new CircleBufferGeometry(0.07, 20);
@@ -112,7 +112,7 @@ class NeuronMesh extends Object3D {
     // node 0 is always tied to 0, 0
     // node n is tied directly at target
     // intermediate nodes move towards their targets
-    const first = this.nodes[0];
+    // const first = this.nodes[0];
     const last = this.nodes[this.nodes.length - 1];
     lerp2(last.pos, target, 0.5);
     let force = new Vector2();

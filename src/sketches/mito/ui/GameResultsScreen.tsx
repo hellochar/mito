@@ -88,9 +88,14 @@ function GameWonScreen({ results }: GameResultsScreenProps) {
 }
 
 function GameLostScreen({ results }: GameResultsScreenProps) {
+  React.useEffect(() => {
+    mitoDeath.play();
+    return () => {
+      mitoDeath.stop();
+    };
+  }, []);
   return (
     <>
-      <audio src={mitoDeathMp3} autoPlay loop />
       <div className="character-container">
         <Character className="sad" size="large" />
       </div>
