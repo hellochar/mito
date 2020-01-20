@@ -28,7 +28,7 @@ import { CellType } from "./tile/genome";
 import { World } from "./world";
 
 const waterCost = 1;
-const sugarCost = 0;
+const sugarCost = 1;
 
 export class Player implements Steppable {
   public inventory = new Inventory(PLAYER_MAX_RESOURCES, this, PLAYER_STARTING_WATER, PLAYER_STARTING_SUGAR);

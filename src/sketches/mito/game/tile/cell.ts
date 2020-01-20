@@ -78,7 +78,7 @@ export class Cell extends Tile implements Interactable {
     this.geneInstances = this.chromosome.newGeneInstances(this);
   }
 
-  private get tempo() {
+  protected get tempo() {
     if (this.temperatureFloat <= 0) {
       // 50% slower - 1 / 2;
       return 1 / 2;
