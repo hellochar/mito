@@ -1,5 +1,6 @@
 import classnames from "classnames";
 import Ticker from "global/ticker";
+import { Howler } from "howler";
 import * as React from "react";
 import { FaVolumeOff, FaVolumeUp } from "react-icons/fa";
 import * as THREE from "three";
@@ -227,13 +228,14 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
       try {
         // create dependencies, setup sketch, and move to success state
         // we are responsible for live-updating the global user volume.
-        const AudioContextConstructor: typeof AudioContext =
-          (window as any).AudioContext || (window as any).webkitAudioContext;
-        const audioContext = (this.audioContext = new AudioContextConstructor() as SketchAudioContext);
+        // const AudioContextConstructor: typeof AudioContext =
+        //   (window as any).AudioContext || (window as any).webkitAudioContext;
+        // const audioContext = (this.audioContext = new AudioContextConstructor() as SketchAudioContext);
+        const audioContext = (this.audioContext = Howler.ctx as SketchAudioContext);
         (THREE.AudioContext as any).setContext(audioContext);
         this.userVolume = audioContext.createGain();
         this.userVolume.gain.setValueAtTime(0.8, 0);
-        this.userVolume.connect(audioContext.destination);
+        this.userVolume.connect(Howler.masterGain);
         const audioContextGain = (audioContext.gain = audioContext.createGain());
         audioContextGain.connect(this.userVolume);
 

@@ -63,7 +63,7 @@ export const interactSound = new Howl({
 
 export const build = new Howl({
   src: [buildSoundSrc],
-  volume: 0.08,
+  volume: 0.05,
 });
 
 export const deconstruct = new Howl({
@@ -77,7 +77,7 @@ export const sticky = new Howl({
 
 export const dropSugar = new Howl({
   src: [impactSoftMedium003Src],
-  volume: 0.5,
+  volume: 1,
 });
 
 export const dropWater = new Howl({
