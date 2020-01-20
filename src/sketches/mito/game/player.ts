@@ -12,7 +12,7 @@ import {
   ActionMultiple,
   ActionPickup,
 } from "../action";
-import { hasInventory, Inventory } from "../inventory";
+import { Inventory } from "../inventory";
 import {
   PLAYER_BASE_SPEED,
   PLAYER_MAX_RESOURCES,
@@ -323,25 +323,19 @@ export class Player implements Steppable {
   public attemptDrop(action: ActionDrop, _dt: number) {
     // drop as much as you can onto the current tile
     const currentTile = this.currentTile();
-    if (hasInventory(currentTile)) {
-      const { water, sugar } = action;
-      // first, pick up the opposite of what you can from the tile to try and make space
-      currentTile.inventory.give(this.inventory, sugar, water);
+    const { water: waterToDrop, sugar: sugarToDrop } = action;
+    // first, pick up the opposite of what you can from the tile to try and make space
+    currentTile.inventory.give(this.inventory, sugarToDrop, waterToDrop);
 
-      // give as much as you can
-      this.inventory.give(currentTile.inventory, water, sugar);
-      return true;
-    } else {
-      return false;
-    }
+    // give as much as you can
+    const { water, sugar } = this.inventory.give(currentTile.inventory, waterToDrop, sugarToDrop);
+    return water > 0 || sugar > 0;
   }
 
   public attemptPickup(action: ActionPickup, dt: number) {
     const cell = this.currentTile();
-    if (hasInventory(cell)) {
-      const inv = cell.inventory;
-      inv.give(this.inventory, action.water * dt, action.sugar * dt);
-    }
+    const inv = cell.inventory;
+    inv.give(this.inventory, action.water * dt, action.sugar * dt);
     return true;
   }
 
@@ -354,7 +348,7 @@ export class Player implements Steppable {
   }
 
   public attemptInteract(action: ActionInteract, dt: number) {
-    return action.interactable.interact(dt);
+    return action.interactable.interact(this, dt);
   }
 
   public attemptLong(action: ActionLong, dt: number) {

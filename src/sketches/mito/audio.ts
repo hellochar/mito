@@ -4,6 +4,7 @@ import deconstructSoundSrc from "assets/audio/deconstruct.mp3";
 import dropWaterSrc from "assets/audio/drop_water.mp3";
 import footstepsSrc from "assets/audio/footsteps.wav";
 import impactSoftMedium003Src from "assets/audio/impactSoft_medium_003.mp3";
+import interactSoundSrc from "assets/audio/interact.mp3";
 import mitoBaseSrc from "assets/audio/mito-base.mp3";
 import mitoDrumsSrc from "assets/audio/mito-drums.mp3";
 import mitoStringsSrc from "assets/audio/mito-strings.mp3";
@@ -53,6 +54,13 @@ export const footsteps = new Howl({
   volume: 0,
 });
 
+export const interactSound = new Howl({
+  src: [interactSoundSrc],
+  autoplay: true,
+  loop: true,
+  volume: 0,
+});
+
 export const build = new Howl({
   src: [buildSoundSrc],
   volume: 0.08,
@@ -69,7 +77,7 @@ export const sticky = new Howl({
 
 export const dropSugar = new Howl({
   src: [impactSoftMedium003Src],
-  volume: 0.25,
+  volume: 0.5,
 });
 
 export const dropWater = new Howl({

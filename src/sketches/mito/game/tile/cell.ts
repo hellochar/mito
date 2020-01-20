@@ -4,7 +4,7 @@ import { traitMod } from "../../../../evolution/traits";
 import { DIRECTIONS } from "../../directions";
 import { params } from "../../params";
 import { PLAYER_INTERACT_EXCHANGE_SPEED } from "../constants";
-import { step } from "../entity";
+import { Entity, step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
 import { World } from "../world";
@@ -123,12 +123,12 @@ export class Cell extends Tile implements Interactable {
     return this.effects.find((e) => e.constructor === type);
   }
 
-  interact(dt: number) {
+  interact(source: Entity, dt: number) {
     dt = this.tempo * dt;
     let anyInteracted = false;
     for (const e of this.effects) {
       if (isInteractable(e)) {
-        const interacted = e.interact(dt);
+        const interacted = e.interact(source, dt);
         anyInteracted = anyInteracted || interacted;
       }
     }
@@ -136,9 +136,7 @@ export class Cell extends Tile implements Interactable {
     const { interaction } = this.type;
     if (interaction != null) {
       const [from, to] =
-        interaction.type === "give"
-          ? [this.world.player.inventory, this.inventory]
-          : [this.inventory, this.world.player.inventory];
+        interaction.type === "give" ? [source.inventory, this.inventory] : [this.inventory, source.inventory];
       const [waterToGive, sugarToGive] = (() => {
         switch (interaction.resources) {
           case "water":

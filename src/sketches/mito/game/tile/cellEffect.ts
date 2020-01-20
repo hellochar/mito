@@ -1,6 +1,6 @@
 import { Constructor } from "../../constructor";
 import { TIME_PER_DAY } from "../constants";
-import { StopStep } from "../entity";
+import { Entity, StopStep } from "../entity";
 import { Interactable } from "../interactable";
 import { Temperature } from "../temperature";
 import { Cell } from "./cell";
@@ -38,7 +38,7 @@ export class FreezeEffect extends CellEffect implements Interactable {
   get timeUntilDeath() {
     return this.secondsToDie - this.age;
   }
-  interact(dt: number) {
+  interact(source: Entity, dt: number) {
     if (this.chunkCooldown <= 0) {
       this.chunkCooldown += 0.5;
       this.percentFrozen -= (15 / this.secondsToDie) * 0.5;

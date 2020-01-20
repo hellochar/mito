@@ -2,7 +2,7 @@ import { easeSinInOut } from "d3-ease";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { clamp, lerp2, map, randFloat } from "../../../math";
 import { Action, ActionBuild, ActionLong } from "../action";
-import { build, deconstruct, dropSugar, dropWater, footsteps, sticky } from "../audio";
+import { build, deconstruct, dropSugar, dropWater, footsteps, interactSound, sticky } from "../audio";
 import { Player } from "../game";
 import { Tile } from "../game/tile";
 import { Mito } from "../index";
@@ -37,6 +37,12 @@ export class PlayerRenderer extends Renderer<Player> {
     console.log(action);
     if (action.type === "interact") {
       this.neuronMesh.handleInteracted();
+      interactSound.fade(0.1, 0.0, 50);
+      interactSound.rate(randFloat(0.8, 1.5));
+      // if (!interactSound.playing()) {
+      //   interactSound.play();
+      //   interactSound.rate(randFloat(0.5, 1.5));
+      // }
     } else if (action.type === "build") {
       const id = build.play();
       build.rate(randFloat(0.9, 1.1), id);
