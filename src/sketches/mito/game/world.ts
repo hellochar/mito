@@ -1,6 +1,6 @@
 import { randInt, randRound } from "math";
 import { gridRange } from "math/arrays";
-import { Vector2 } from "three";
+import { Geometry, Mesh, Object3D, Vector2 } from "three";
 import { GameResult } from "..";
 import devlog from "../../../common/devlog";
 import { Species } from "../../../evolution/species";
@@ -66,6 +66,7 @@ export class World {
   public readonly traits: Traits;
   public readonly generatorContext: GeneratorContext;
   genome: Genome;
+  private soilMesh: Mesh;
 
   get season(): Season {
     return seasonFromTime(this.time);
@@ -136,6 +137,7 @@ export class World {
     });
 
     this.computeSunlight();
+    this.soilMesh = this.computeSoilMesh();
   }
 
   public tileAt(v: Vector2): Tile | null;
@@ -551,6 +553,28 @@ export class World {
         }
       },
     };
+  }
+
+  /**
+   * Soil doesn't move, so we can make one large static mesh for it
+   */
+  private computeSoilMesh() {
+    const soils = Array.from(this.allEnvironmentTiles()).filter((t) => t instanceof Soil);
+    const geom = new Geometry();
+    for (const s of soils) {
+      geom.mergeMesh(s.getMesh());
+    }
+    geom.mergeVertices();
+    const mat = soils[0].getMesh().material;
+    return new Mesh(geom, mat);
+  }
+
+  getIntersectObjects(): Object3D[] {
+    const meshes = Array.from(this.allCells())
+      .filter((t) => !(t instanceof Air))
+      .map((t) => t.getMesh());
+    meshes.push(this.soilMesh);
+    return meshes;
   }
 
   public allEnvironmentTiles() {

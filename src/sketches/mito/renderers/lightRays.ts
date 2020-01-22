@@ -17,8 +17,6 @@ export class LightRays {
   public geometry: BufferGeometry;
   public material = new LineBasicMaterial({ vertexColors: VertexColors });
   public lineSegments: LineSegments;
-  // private worldRectMin = new Vector2(-0.5, -0.5);
-  // private worldRectMax = new Vector2(this.world.width - 0.5, this.world.height - 0.5);
 
   constructor() {
     this.geometry = new BufferGeometry();
@@ -78,65 +76,6 @@ export class LightRays {
   public addRay(start: Vector2, end: Vector2, extraLife: number) {
     this.rays.add(new LightRay(start, end, extraLife));
   }
-
-  // private addRays(extraLife: number) {
-  //   const isBrightEnough = this.world.sunAmount > 0.1;
-  //   if (!isBrightEnough) {
-  //     return;
-  //   }
-
-  //   // add a .01 buffer to prevent self-intersecting
-  //   const worldBox = new Box3(
-  //     new Vector3(this.worldRectMin.x - 0.01, this.worldRectMin.y - 0.01, -1),
-  //     new Vector3(this.worldRectMax.x + 0.01, this.worldRectMax.y + 0.01, 1)
-  //   );
-  //   for (let i = 0; i < 10; i++) {
-  //     const start = randomRectPerimeter(this.worldRectMin, this.worldRectMax);
-
-  //     const angle = this.world.sunAngle;
-  //     // const length = 50;
-  //     const unitOffsetX = Math.cos(angle);
-  //     const unitOffsetY = Math.sin(angle);
-
-  //     // const end = start.clone();
-  //     // end.x += unitOffsetX * length;
-  //     // end.y += unitOffsetY * length;
-
-  //     const rray = new Ray(new Vector3(start.x, start.y, 0), new Vector3(unitOffsetX, unitOffsetY, 0));
-  //     // const rayCaster = new Raycaster();
-  //     // rayCaster.intersectObjects()
-  //     // const end = this.intersectWorldPerimeter(rray);
-  //     const end = rray.intersectBox(worldBox, this.t);
-  //     if (end != null) {
-  //       const ray = new LightRay(start, new Vector2(this.t.x, this.t.y), extraLife);
-  //       this.rays.add(ray);
-  //     }
-  //   }
-  // }
-
-  // planeTop = new Plane(new Vector3(0, -1, 0), this.worldRectMin.y - 0.1);
-  // planeLeft = new Plane(new Vector3(-1, 0, 0), this.worldRectMin.x - 0.1);
-  // planeBottom = new Plane(new Vector3(0, -1, 0), this.worldRectMax.y + 0.1);
-  // planeRight = new Plane(new Vector3(-1, 0, 0), this.worldRectMax.x + 0.1);
-  // private t: Vector3 = new Vector3();
-  // private intersectWorldPerimeter(ray: Ray): Vector2 | undefined {
-  //   let intersected =
-  //     (ray.intersectPlane(this.planeTop, this.t) ||
-  //       ray.intersectPlane(this.planeLeft, this.t) ||
-  //       ray.intersectPlane(this.planeBottom, this.t) ||
-  //       ray.intersectPlane(this.planeRight, this.t)) != null;
-  //   if (intersected) {
-  //     return new Vector2(this.t.x, this.t.y);
-  //   } else {
-  //     return;
-  //   }
-  // }
-
-  // inWorldBounds(v: Vector2) {
-  //   return (
-  //     v.x >= this.worldRectMin.x && v.x < this.worldRectMax.x && v.y >= this.worldRectMin.y && v.y < this.worldRectMax.y
-  //   );
-  // }
 }
 
 const RAY_LIFETIME = 0.2; // seconds

@@ -37,7 +37,7 @@ export class PlayerRenderer extends Renderer<Player> {
     console.log(action);
     if (action.type === "interact") {
       this.neuronMesh.handleInteracted();
-      interactSound.fade(0.2, 0.0, 50);
+      interactSound.fade(1.0, 0.0, 200);
       interactSound.rate(randFloat(0.8, 1.5));
       // if (!interactSound.playing()) {
       //   interactSound.play();

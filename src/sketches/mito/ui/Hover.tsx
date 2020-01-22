@@ -3,7 +3,6 @@ import Mito from "..";
 import { Tile } from "../game/tile";
 import BuildBlueprint from "../tutorial/buildBlueprint";
 import PointHighlight from "../tutorial/PointHighlight";
-import TileHighlight from "../tutorial/tileHighlight";
 
 interface HoverProps {
   mito: Mito;
@@ -47,7 +46,7 @@ export class Hover extends React.Component<HoverProps> {
     }
     return (
       <>
-        <TileHighlight x={tile.pos.x} y={tile.pos.y} scene={this.scene} />
+        {/* <TileHighlight x={tile.pos.x} y={tile.pos.y} scene={this.scene} /> */}
         {buildElement}
       </>
     );

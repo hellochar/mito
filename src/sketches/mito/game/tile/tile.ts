@@ -1,5 +1,5 @@
 import shuffle from "math/shuffle";
-import { Vector2 } from "three";
+import { BoxGeometry, DoubleSide, Mesh, MeshBasicMaterial, Vector2 } from "three";
 import { map, randRound } from "../../../../math/index";
 import { HasInventory, Inventory } from "../../inventory";
 import { canPullResources } from "../canPullResources";
@@ -15,6 +15,7 @@ export abstract class Tile implements Steppable, HasInventory {
   public temperatureFloat: number;
   public dtSinceLastStepped = 0;
   public abstract inventory: Inventory;
+  private mesh?: Mesh;
   get temperature(): Temperature {
     return temperatureFor(this.temperatureFloat);
   }
@@ -49,10 +50,13 @@ export abstract class Tile implements Steppable, HasInventory {
     this.timeMade = world.time;
     this.temperatureFloat = this.world.getCurrentTemperature();
   }
+
   abstract shouldStep(dt: number): boolean;
+
   public lightAmount() {
     return Math.sqrt(Math.min(Math.max(map(1 - this.darkness, 0, 1, 0, 1), 0), 1));
   }
+
   /**
    * Redistribute this tile's inventory to nearby tiles if possible, usually
    * in preparation for removing this tile.
@@ -80,6 +84,7 @@ export abstract class Tile implements Steppable, HasInventory {
       }
     }
   }
+
   // test tiles diffusing water around on same-type tiles
   public step(dt: number) {
     const neighbors = this.world.tileNeighbors(this.pos);
@@ -88,9 +93,11 @@ export abstract class Tile implements Steppable, HasInventory {
     this.stepTemperature(dt);
     this.stepGravity(dt);
   }
+
   stepTemperature(_dt: number) {
     this.temperatureFloat = this.world.getCurrentTemperature();
   }
+
   stepDarkness(neighbors: Map<Vector2, Tile>) {
     let minDarkness = this.darkness;
     for (const [, t] of neighbors) {
@@ -99,6 +106,7 @@ export abstract class Tile implements Steppable, HasInventory {
     }
     this.darkness = minDarkness;
   }
+
   stepDiffusion(neighbors: Map<Vector2, Tile>, dt: number) {
     for (const tile of neighbors.values()) {
       if (!canPullResources(this, tile)) {
@@ -117,6 +125,7 @@ export abstract class Tile implements Steppable, HasInventory {
       }
     }
   }
+
   diffuseWater(giver: Tile, dt: number, diffusionRate = this.diffusionWater) {
     // Diffusion equation by finite difference: the purpose of this equation is to eventually
     // equalize the amount of water between me and giver. The two questions are how long
@@ -129,6 +138,7 @@ export abstract class Tile implements Steppable, HasInventory {
       giver.inventory.give(this.inventory, randRound(diffusionAmount), 0);
     }
   }
+
   diffuseSugar(giver: Tile, dt: number) {
     const difference = giver.inventory.sugar - this.inventory.sugar;
     if (difference > 1) {
@@ -137,6 +147,7 @@ export abstract class Tile implements Steppable, HasInventory {
       giver.inventory.give(this.inventory, 0, randRound(diffusionAmount));
     }
   }
+
   /**
    * Give to your lower neighbor.
    */
@@ -156,4 +167,19 @@ export abstract class Tile implements Steppable, HasInventory {
   toString() {
     return this.displayName + "(" + this.pos.x + "," + this.pos.y + ")";
   }
+
+  public getMesh() {
+    if (this.mesh == null) {
+      const m = new Mesh(geom, mat);
+      m.position.set(this.pos.x, this.pos.y, 0);
+      m.updateMatrix();
+      m.updateMatrixWorld(true);
+      this.mesh = m;
+    }
+    return this.mesh;
+  }
 }
+
+// const geom = new BoxBufferGeometry(1, 1, 1);
+const geom = new BoxGeometry(1, 1, 1);
+const mat = new MeshBasicMaterial({ side: DoubleSide });
