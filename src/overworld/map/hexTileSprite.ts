@@ -80,9 +80,6 @@ export default class HexTileSprite {
 
       // "active" pulse
       if (this.tile.info.flora != null) {
-        if (this.tile.info.flora.actionPoints > 0) {
-          this.drawActivePulse(c, scale, px, py);
-        }
         this.drawVignettes(c, this.tile.info.flora.species, px, py, scale);
       }
     } else {

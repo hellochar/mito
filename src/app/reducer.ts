@@ -65,12 +65,6 @@ function handleStartPopulationAttempt(state: AppState, action: AAStartPopulation
       console.error("sourceHex isn't null but the flora is null");
       return state;
     }
-    if (sourceHex.info.flora.actionPoints < 1) {
-      console.error("tried population attempt with a source hex that has no action point");
-      return state;
-    }
-    // remove the action point
-    sourceHex.info.flora.actionPoints = 0;
   }
 
   return {
@@ -104,7 +98,6 @@ function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAtt
   targetHex.info.flora = {
     species: settlingSpecies,
     mutationPointsPerEpoch: results.mutationPointsPerEpoch,
-    actionPoints: 0,
   };
   settlingSpecies.totalMutationPoints = state.overWorld.getMaxGenePool(settlingSpecies);
   if (oldSpecies) {
@@ -132,8 +125,6 @@ export interface AANextEpoch {
 
 function handleNextEpoch(state: AppState, action: AANextEpoch): AppState {
   // +1 epoch:
-  // reset action points of all habited tiles to 1
-  state.overWorld.resetActionPoints();
   // reset all species pools to max
   for (const species of lineage(state.rootSpecies)) {
     species.freeMutationPoints = species.totalMutationPoints;

@@ -9,21 +9,16 @@ import { HexTile } from "./hexTile";
 export function EpochUI({ onNextEpoch, onFocusHex }: EpochUIProps) {
   const [{ epoch, overWorld }] = useAppReducer();
   const [transitioning, setTransitioning] = useState(false);
-  const unusedHexes = overWorld.unusedHexes();
-  const isReadyToAdvance = unusedHexes.length === 0;
   const handleNextEpoch = () => {
     setTransitioning(true);
     setTimeout(() => setTransitioning(false), 5000);
     onNextEpoch();
   };
   return (
-    <div className={classNames("epoch-display", { "ready-to-advance": isReadyToAdvance, transitioning })}>
+    <div className={classNames("epoch-display", { "ready-to-advance": false, transitioning })}>
       <span className="number">
         <DynamicNumber sigFigs={6} value={epoch * 1e6} speed={0.08} /> Years
       </span>
-      {unusedHexes.length > 0 ? (
-        <div onClick={() => onFocusHex(unusedHexes[0])}>{unusedHexes.length} hexes unused</div>
-      ) : null}
       <button className="button-next-epoch" onClick={handleNextEpoch} disabled={transitioning}>
         <GiSandsOfTime className="icon" />
       </button>

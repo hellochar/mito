@@ -13,7 +13,6 @@ export interface LevelInfo {
   flora?: {
     species: Species;
     mutationPointsPerEpoch: number;
-    actionPoints: number;
   };
 }
 

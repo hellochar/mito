@@ -134,7 +134,7 @@ export class OverWorld {
    */
   public possibleMigrationSources(target: HexTile) {
     const populatedActiveNeighbors = this.hexNeighbors(target).filter((hex) => {
-      return hex.info.flora != null && hex.info.flora.actionPoints > 0;
+      return hex.info.flora != null;
     });
     if (target.info.flora == null) {
       // if the target is unpopulated, allow any neighbor to migrate into it
@@ -148,10 +148,6 @@ export class OverWorld {
   public possibleMigrationTargets(source: HexTile) {
     if (source.info.flora == null) {
       console.error("can't migrate from a null flora source");
-      return [];
-    }
-    // can't migrate if you're out of points
-    if (source.info.flora.actionPoints < 1) {
       return [];
     }
     const unpopulatedNeighbors = this.hexNeighbors(source).filter((hex) => {
@@ -175,24 +171,6 @@ export class OverWorld {
     for (const tile of this.storage) {
       yield tile;
     }
-  }
-
-  resetActionPoints() {
-    for (const tile of this.storage) {
-      if (tile.info.flora) {
-        tile.info.flora.actionPoints = 1;
-      }
-    }
-  }
-
-  unusedHexes() {
-    const hexes = [];
-    for (const tile of this.storage) {
-      if (tile.info.flora && tile.info.flora.actionPoints > 0) {
-        hexes.push(tile);
-      }
-    }
-    return hexes;
   }
 
   getMaxGenePool(species: Species) {

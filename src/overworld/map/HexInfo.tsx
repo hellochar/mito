@@ -19,13 +19,8 @@ function HexInfo({ playSpecies, tile, onClickPlay }: HexInfo) {
     height === -1 ? null : (
       <div className="play-selector">
         <span>{playSpecies.name}</span>
-        <Button
-          color="green"
-          className="play-button"
-          onClick={onClickPlay}
-          disabled={tile.info.flora && tile.info.flora.actionPoints < 1}
-        >
-          Migrate
+        <Button color="green" className="play-button" onClick={onClickPlay}>
+          Play Level
         </Button>
       </div>
     );
@@ -39,7 +34,6 @@ function HexInfo({ playSpecies, tile, onClickPlay }: HexInfo) {
         <p>
           <MP amount={flora.mutationPointsPerEpoch} /> per epoch
         </p>
-        <p>Action Points: {flora.actionPoints}</p>
       </div>
     ) : tile.isHabitable ? (
       <h1>Uninhabited</h1>
