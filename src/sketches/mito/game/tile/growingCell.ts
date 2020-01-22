@@ -1,3 +1,5 @@
+import { randFloat } from "math";
+import { buildComplete } from "sketches/mito/audio";
 import { Vector2 } from "three";
 import { World } from "../world";
 import { Cell } from "./cell";
@@ -26,6 +28,8 @@ export class GrowingCell extends Cell {
         this.completedCell.addEffect(effect);
       }
       this.world.setTileAt(this.pos, this.completedCell);
+      const id = buildComplete.play();
+      buildComplete.rate(id, randFloat(0.5, 1));
     }
   }
 }

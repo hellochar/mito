@@ -45,7 +45,7 @@ export class PlayerRenderer extends Renderer<Player> {
       // }
     } else if (action.type === "build") {
       const id = build.play();
-      build.rate(randFloat(0.9, 1.1), id);
+      build.rate(randFloat(0.5, 1.0), id);
     } else if (action.type === "deconstruct") {
       const id = deconstruct.play();
       deconstruct.rate(randFloat(0.9, 1.1), id);

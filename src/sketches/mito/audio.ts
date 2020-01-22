@@ -1,5 +1,6 @@
 import blopSrc from "assets/audio/Blop-Mark_DiAngelo-79054334.mp3";
 import buildSoundSrc from "assets/audio/build.mp3";
+import buildCompleteSrc from "assets/audio/build_complete.mp3";
 import deconstructSoundSrc from "assets/audio/deconstruct.mp3";
 import dropWaterSrc from "assets/audio/drop_water.mp3";
 import eatingSoundSrc from "assets/audio/eating.mp3";
@@ -46,7 +47,12 @@ export const interactSound = new Howl({
 
 export const build = new Howl({
   src: [buildSoundSrc],
-  volume: 0.05,
+  volume: 0.1,
+});
+
+export const buildComplete = new Howl({
+  src: [buildCompleteSrc],
+  volume: 0.5,
 });
 
 export const deconstruct = new Howl({
@@ -104,8 +110,7 @@ export function hookUpAudio(ctx: SketchAudioContext) {
   }
   mito = makeUnitFromAudioAsset(ctx, mitoBaseSrc);
   mito.audio.oncanplaythrough = oneMoreLoaded;
-  mito.gain.gain.value = 0;
-  // mito.gain.gain.value = 0.5;
+  mito.gain.gain.value = 0.5;
 
   strings = makeUnitFromAudioAsset(ctx, mitoStringsSrc);
   strings.audio.oncanplaythrough = oneMoreLoaded;

@@ -5,11 +5,11 @@ import * as React from "react";
 import * as THREE from "three";
 import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { lerp, lerp2 } from "../../math/index";
+import { lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { ActionMove } from "./action";
 import { AltHeldBar } from "./actionBar";
-import { hookUpAudio } from "./audio";
+import { drums, hookUpAudio, strings } from "./audio";
 import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
 import { Cell, Tile } from "./game/tile";
@@ -215,11 +215,11 @@ export class Mito extends ISketch {
   }
 
   public updateAmbientAudio() {
-    // const yPos = this.world.player.pos.y;
-    // const drumVolume = map(yPos, this.world.height / 2, this.world.height, 0, 0.5);
-    // const stringsVolume = map(yPos, this.world.height / 2, 0, 0, 0.5);
-    // drums.gain.gain.value = Math.max(0, drumVolume);
-    // strings.gain.gain.value = Math.max(0, stringsVolume);
+    const yPos = this.world.player.pos.y;
+    const drumVolume = map(yPos, this.world.height / 2, this.world.height, 0, 0.5);
+    const stringsVolume = map(yPos, this.world.height / 2, 0, 0, 0.5);
+    drums.gain.gain.value = Math.max(0, drumVolume);
+    strings.gain.gain.value = Math.max(0, stringsVolume);
   }
 
   maybeToggleInstructions(code: string) {
