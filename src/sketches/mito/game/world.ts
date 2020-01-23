@@ -110,9 +110,9 @@ export class World {
       const tissues = Array.from(
         this.bfsIterator(
           start,
+          21,
           (t) => !t.isObstacle && t.pos.distanceTo(start) < 3.5,
-          (t) => t.pos.distanceTo(start),
-          21
+          (t) => t.pos.distanceTo(start)
         )
       ).map((tile, n) => {
         const t = new Cell(tile.pos, this, this.genome.cellTypes[0]);
@@ -474,7 +474,7 @@ export class World {
       .filter((t) => t instanceof Air)
       .map((t) => t.pos);
 
-    for (const tile of this.bfsIterator(airPositions, () => true, () => 1, this.width * this.height)) {
+    for (const tile of this.bfsIterator(airPositions, this.width * this.height)) {
       if (tile instanceof Soil) {
         let minNeighborDepth = tile.depth;
         for (const [, neighbor] of this.tileNeighbors(tile.pos)) {
@@ -612,9 +612,9 @@ export class World {
    */
   public bfsIterator(
     start: Vector2 | Vector2[],
-    filter: (tile: Tile) => boolean,
-    heuristic: (tile: Tile) => number,
-    limit: number
+    limit: number,
+    filter?: (tile: Tile) => boolean,
+    heuristic?: (tile: Tile) => number
   ) {
     const self = this;
     const frontier = (Array.isArray(start) ? start : [start]).map((v) => this.tileAt(v)!);
@@ -630,11 +630,18 @@ export class World {
           yield tile;
           const neighbors = self.tileNeighbors(tile.pos);
           for (const [offset, n] of neighbors) {
-            if (offset.manhattanLength() === 1 && filter(n) && frontier.indexOf(n) === -1 && !processed.has(n)) {
+            if (
+              offset.manhattanLength() === 1 &&
+              (filter == null || filter(n)) &&
+              frontier.indexOf(n) === -1 &&
+              !processed.has(n)
+            ) {
               frontier.push(n);
             }
           }
+          if (heuristic) {
           frontier.sort((a, b) => heuristic(a) - heuristic(b));
+        }
         }
       },
     };

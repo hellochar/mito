@@ -106,6 +106,14 @@ export class Player implements Steppable {
     return this.world.tileAt(this.pos)!;
   }
 
+  public findNearestWalkableCell() {
+    for (const tile of this.world.bfsIterator(this.pos, this.world.width * this.world.height)) {
+      if (this.isWalkable(tile)) {
+        return tile;
+      }
+    }
+  }
+
   getBuildError(): "water" | "sugar" | "water and sugar" | undefined {
     const needWater = this.inventory.water < waterCost;
     const needSugar = this.inventory.sugar < sugarCost;
@@ -129,6 +137,12 @@ export class Player implements Steppable {
 
   public step(dt: number) {
     // this.maybeMoveWithTransports(dt);
+    if (!this.isWalkable(this.currentTile())) {
+      const nearestWalkableCell = this.findNearestWalkableCell();
+      if (nearestWalkableCell != null) {
+        this.posFloat.copy(nearestWalkableCell.pos);
+      }
+    }
     if (this.action != null) {
       const successful = this.attemptAction(this.action, dt);
       if (this.action.type === "long") {
@@ -188,12 +202,7 @@ export class Player implements Steppable {
   }
 
   public isWalkable(pos: Tile | Vector2) {
-    if (pos instanceof Tile) {
-      pos = pos.pos;
-    }
-    const x = Math.round(pos.x);
-    const y = Math.round(pos.y);
-    const tile = this.world.tileAt(x, y);
+    const tile = pos instanceof Vector2 ? this.world.tileAt(Math.round(pos.x), Math.round(pos.y)) : pos;
     if (!(tile instanceof Cell) || tile.isObstacle) {
       // can't move!
       return false;
@@ -303,7 +312,7 @@ export class Player implements Steppable {
   }
 
   public attemptDeconstruct(action: ActionDeconstruct, _dt: number): boolean {
-    if (!action.position.equals(this.pos) || action.force) {
+    if (!action.position.equals(this.pos) || action.force || true) {
       const cell = this.world.maybeRemoveCellAt(action.position);
       if (cell != null) {
         // refund the resources back
