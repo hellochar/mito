@@ -1,7 +1,7 @@
 import { parse, stringify } from "query-string";
 
 const PARAMS_DEFAULT = {
-  droop: 0.9,
+  droop: 0.13,
   sunlightReintroduction: 0.15,
   sunlightDiffusion: 0.0,
   hud: true,
