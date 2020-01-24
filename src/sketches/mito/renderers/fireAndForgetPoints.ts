@@ -15,7 +15,6 @@ export class FireAndForgetPoints<S = any> extends CommittablePoints {
   private state: Set<PointState<S>> = new Set();
   constructor(public lifeFn: (s: PointState<S>, dt: number) => undefined | false, params: CommittablePointsParameters) {
     super(10000, params);
-    this.frustumCulled = false;
   }
 
   fire(s: PointState<S>) {

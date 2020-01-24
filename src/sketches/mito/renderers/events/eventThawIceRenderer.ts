@@ -9,7 +9,6 @@ import { EventRendererFFPoints } from "./eventRendererFFPoints";
 export default class EventThawIceRenderer extends EventRendererFFPoints<EventThawIce> {
   static makePoints() {
     const duration = 0.6;
-    // fruitSparkle.renderOrder = 10;
     return new FireAndForgetPoints(
       (s, dt) => {
         if (s.time > duration) {
