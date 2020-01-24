@@ -180,8 +180,6 @@ export class Player implements Steppable {
 
   private _attemptAction(action: Action, dt: number) {
     switch (action.type) {
-      case "still":
-        return this.attemptStill(dt);
       case "move":
         return this.attemptMove(action, dt);
       case "build":

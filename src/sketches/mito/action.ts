@@ -3,10 +3,6 @@ import { Interactable } from "./game/interactable";
 import { CellArgs } from "./game/tile/cell";
 import { CellType } from "./game/tile/genome";
 
-export interface ActionStill {
-  type: "still";
-}
-
 export interface ActionMove {
   type: "move";
   dir: Vector2;
@@ -66,7 +62,6 @@ export interface ActionLong<T extends Action = Action> {
 }
 
 export type Action =
-  | ActionStill
   | ActionMove
   | ActionBuild
   | ActionDeconstruct
