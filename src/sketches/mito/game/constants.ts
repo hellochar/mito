@@ -8,12 +8,12 @@
 /**
  * How many tiles per second the Player moves.
  */
-export const PLAYER_BASE_SPEED = 3.2;
-export const PLAYER_MAX_RESOURCES = 50;
-export const PLAYER_STARTING_WATER = 25;
-export const PLAYER_STARTING_SUGAR = 25;
+export const PLAYER_BASE_SPEED = 4.2;
+export const PLAYER_MAX_RESOURCES = 100;
+export const PLAYER_STARTING_WATER = 50;
+export const PLAYER_STARTING_SUGAR = 50;
 
-export const PLAYER_INTERACT_EXCHANGE_SPEED = 10;
+export const PLAYER_INTERACT_EXCHANGE_SPEED = 30;
 /**
  * How fast the Player moves from standing on Transport.
  */
@@ -40,7 +40,7 @@ export const PERCENT_DAYLIGHT = 0.9; // 45 second days, 5 second nights
 /**
  * How many seconds it takes to build a Cell.
  */
-export const CELL_BUILD_TIME = 1;
+export const CELL_BUILD_TIME = 0.2;
 
 /**
  * In a two Cell system with one Water, this water will diffuse, on average, after this many seconds.
