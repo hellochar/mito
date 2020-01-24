@@ -1,5 +1,5 @@
 import shuffle from "math/shuffle";
-import { BoxGeometry, DoubleSide, Mesh, MeshBasicMaterial, Vector2 } from "three";
+import { BoxGeometry, DoubleSide, Intersection, Mesh, MeshBasicMaterial, Vector2 } from "three";
 import { map, randRound } from "../../../../math/index";
 import { HasInventory, Inventory } from "../../inventory";
 import { canPullResources } from "../canPullResources";
@@ -15,6 +15,7 @@ export abstract class Tile implements Steppable, HasInventory {
   public temperatureFloat: number;
   public dtSinceLastStepped = 0;
   public abstract inventory: Inventory;
+  public lightIntersection?: Intersection;
   private mesh?: Mesh;
   get temperature(): Temperature {
     return temperatureFor(this.temperatureFloat);
@@ -174,6 +175,7 @@ export abstract class Tile implements Steppable, HasInventory {
       m.position.set(this.pos.x, this.pos.y, 0);
       m.updateMatrix();
       m.updateMatrixWorld(true);
+      m.userData = this;
       this.mesh = m;
     }
     return this.mesh;

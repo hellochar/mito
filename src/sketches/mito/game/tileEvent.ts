@@ -1,3 +1,4 @@
+import { Vector2 } from "three";
 import { Air, Cell, Tile } from "./tile";
 export type TileEvent =
   | EventCellTransferEnergy
@@ -43,6 +44,7 @@ export interface EventCollectSunlight {
   type: "collect-sunlight";
   leaf: Cell;
   air: Air;
+  point?: Vector2;
   numSunlight: number;
 }
 

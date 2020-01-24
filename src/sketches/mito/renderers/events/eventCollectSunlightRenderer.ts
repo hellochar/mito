@@ -1,3 +1,4 @@
+import { randFloat } from "math";
 import { polyEarlyUpDown } from "math/easing";
 import { EventCollectSunlight } from "sketches/mito/game/tileEvent";
 import { textureFromSpritesheet } from "sketches/mito/spritesheet";
@@ -35,15 +36,17 @@ export default class EventCollectSunlightRenderer extends EventRenderer<EventCol
   }
 
   handle(event: EventCollectSunlight) {
-    let { numSunlight, leaf } = event;
+    let { numSunlight, leaf, point } = event;
     while (numSunlight > 0) {
       // if numSunlight is 0.5, only show half the sunlight events
       if (numSunlight < 1 && numSunlight < Math.random()) {
         return;
       }
+      const x = point == null ? leaf.pos.x + (Math.random() - 0.5) : point.x + randFloat(-0.1, 0.1);
+      const y = point == null ? leaf.pos.y + (Math.random() - 0.5) : point.y + randFloat(-0.1, 0.1);
       this.ffPoints.fire({
-        x: leaf.pos.x + (Math.random() - 0.5),
-        y: leaf.pos.y + (Math.random() - 0.5),
+        x,
+        y,
         z: 10,
         size: 1,
         alpha: 1,

@@ -1,7 +1,7 @@
-import { randomRectPerimeter } from "math";
 import { Box3, Object3D, Plane, PlaneHelper, Ray, Raycaster, Vector2, Vector3 } from "three";
 import { LightRays } from "../renderers/lightRays";
 import { WorldRenderer } from "../renderers/WorldRenderer";
+import { Tile } from "./tile";
 import { World } from "./world";
 
 export class LightEmitter {
@@ -26,18 +26,45 @@ export class LightEmitter {
   public update(dt: number) {
     this.lightRays.update(dt);
 
-    const isBrightEnough = this.world.sunAmount > 0.1;
+    const angle = this.world.sunAngle;
+    const isBrightEnough = angle < Math.PI;
     if (!isBrightEnough) {
       return;
     }
 
     // const intersectObjects: Object3D[] = this.renderer.scene.children; //world.getIntersectObjects();
     const intersectObjects: Object3D[] = this.world.getIntersectObjects();
-    for (let i = 0; i < 10; i++) {
-      const start = randomRectPerimeter(this.worldRectMin, this.worldRectMax);
-      const angle = this.world.sunAngle;
+    // for (let i = 0; i < 10; i++) {
+    //   const start = randomRectPerimeter(this.worldRectMin, this.worldRectMax);
+    //   this.shootLightRay(dt, start, angle, intersectObjects);
+    // }
 
-      this.shootLightRay(dt, start, angle, intersectObjects);
+    const boundingRadius = Math.sqrt(this.world.width ** 2 + this.world.height ** 2);
+    const center = this.worldBox.getCenter(new Vector3());
+    const distBetweenRays = 5;
+    const anglePerpendicular = angle + Math.PI / 2;
+    const target = new Vector3();
+    const dStart = -boundingRadius + ((this.world.time * 0.1) % 2) * distBetweenRays;
+    for (let d = dStart; d <= boundingRadius; d += distBetweenRays) {
+      const x = center.x + d * Math.cos(anglePerpendicular);
+      const y = center.y + d * Math.sin(anglePerpendicular);
+      this.findLightRayRectStart(x, y, angle, target, dt, intersectObjects);
+      // this.findLightRayRectStart(x, y, angle - Math.PI, target, dt, intersectObjects);
+    }
+  }
+
+  private findLightRayRectStart(
+    x: number,
+    y: number,
+    angle: number,
+    target: Vector3,
+    dt: number,
+    intersectObjects: Object3D[]
+  ) {
+    const ray = new Ray(new Vector3(x, y), new Vector3(-Math.cos(angle), -Math.sin(angle)));
+    const intersected = ray.intersectBox(this.worldBox, target) != null;
+    if (intersected) {
+      this.shootLightRay(dt, new Vector2(target.x, target.y), angle, intersectObjects);
     }
   }
 
@@ -50,9 +77,13 @@ export class LightEmitter {
     const intersections = rayCaster.intersectObjects(intersectObjects);
     if (intersections.length > 0) {
       // console.log(intersections);
-      const i0 = intersections[0];
-      const end = i0.point;
-      this.lightRays.addRay(start, new Vector2(end.x, end.y), dt);
+      const intersection = intersections[0];
+      const { point, object } = intersection;
+      const ray = this.lightRays.addRay(start, new Vector2(point.x, point.y), dt);
+      if (object.userData instanceof Tile) {
+        object.userData.lightIntersection = intersection;
+        ray.hit = object.userData;
+      }
     } else {
       // const end = this.intersectWorldPerimeter(rray);
       const end = rray.intersectBox(this.worldBox, this.t);

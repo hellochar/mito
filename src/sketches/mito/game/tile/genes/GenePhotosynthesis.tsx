@@ -79,9 +79,8 @@ function maybePhotosynthesize(
   //      on conversion, we use up all the available water and get the corresponding amount of sugar
   const bestEfficiencyWater = 1 / conversionRate;
   const waterToConvert = Math.min(cell.inventory.water, bestEfficiencyWater);
-  const chancePerSecond = reactionChancePerSecond * sunlight; // * (waterToConvert / bestEfficiencyWater);
-  state.averageChancePerSecond += chancePerSecond;
 
+  const ambientChancePerSecond = reactionChancePerSecond * sunlight;
   // this.sunlightCollected += chance * dt;
   cell.world.logEvent({
     type: "collect-sunlight",
@@ -90,8 +89,27 @@ function maybePhotosynthesize(
     // the renderer creates one dot per sunlight unit.
     // 0.025 normalizes chancePerSecond (which is 0.025 for photosynthesis 3),
     // * 20 means photosynthesis 3 gets 20 dots per second (this is the new player experience)
-    numSunlight: (chancePerSecond / 0.025) * dt * 20,
+    numSunlight: (ambientChancePerSecond / 0.025) * dt * 20,
   });
+
+  let intersectionChancePerSecond = 0;
+  if (cell.lightIntersection != null) {
+    intersectionChancePerSecond = reactionChancePerSecond * sunlight * 5;
+    const p = cell.lightIntersection.point;
+    cell.world.logEvent({
+      type: "collect-sunlight",
+      leaf: cell,
+      air,
+      // the renderer creates one dot per sunlight unit.
+      // 0.025 normalizes chancePerSecond (which is 0.025 for photosynthesis 3),
+      // * 20 means photosynthesis 3 gets 20 dots per second (this is the new player experience)
+      numSunlight: (intersectionChancePerSecond / 0.025) * dt * 20,
+      point: new Vector2(p.x, p.y),
+    });
+  }
+
+  let chancePerSecond = ambientChancePerSecond + intersectionChancePerSecond; // * (waterToConvert / bestEfficiencyWater);
+  state.averageChancePerSecond += chancePerSecond;
 
   if (Math.random() < chancePerSecond * dt && waterToConvert > 0) {
     const sugarConverted = waterToConvert * conversionRate;

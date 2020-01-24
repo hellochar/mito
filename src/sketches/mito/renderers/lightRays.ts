@@ -8,6 +8,7 @@ import {
   Vector2,
   VertexColors,
 } from "three";
+import { Tile } from "../game/tile";
 
 const MAX_LIGHTRAYS = 1000;
 
@@ -65,6 +66,9 @@ export class LightRays {
       ray.update(dt, this);
       if (ray.isDead()) {
         died.push(ray);
+        if (ray.hit) {
+          ray.hit.lightIntersection = undefined;
+        }
       }
     }
     for (const r of died) {
@@ -74,13 +78,17 @@ export class LightRays {
   }
 
   public addRay(start: Vector2, end: Vector2, extraLife: number) {
-    this.rays.add(new LightRay(start, end, extraLife));
+    const ray = new LightRay(start, end, extraLife);
+    this.rays.add(ray);
+    return ray;
   }
 }
 
-const RAY_LIFETIME = 0.2; // seconds
+const RAY_LIFETIME = 0.1; // seconds
 class LightRay {
   public timeRemaining: number;
+  public hit?: Tile;
+
   constructor(public start: Vector2, public end: Vector2, extraTime: number) {
     this.timeRemaining = RAY_LIFETIME + extraTime;
   }
