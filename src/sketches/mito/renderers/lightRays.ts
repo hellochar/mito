@@ -67,7 +67,9 @@ export class LightRays {
       if (ray.isDead()) {
         died.push(ray);
         if (ray.hit) {
-          ray.hit.lightIntersection = undefined;
+          // TODO figure this out
+          // ray.occluderManager.setIntersection(ray.hit, undefined);
+          // ray.hit.lightIntersection = undefined;
         }
       }
     }

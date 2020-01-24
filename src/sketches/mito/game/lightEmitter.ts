@@ -1,10 +1,26 @@
-import { Box3, Object3D, Plane, PlaneHelper, Ray, Raycaster, Vector2, Vector3 } from "three";
+import {
+  Box3,
+  BoxGeometry,
+  DoubleSide,
+  Geometry,
+  Intersection,
+  Mesh,
+  MeshBasicMaterial,
+  Object3D,
+  Plane,
+  PlaneHelper,
+  Ray,
+  Raycaster,
+  Vector2,
+  Vector3,
+} from "three";
 import { LightRays } from "../renderers/lightRays";
 import { WorldRenderer } from "../renderers/WorldRenderer";
-import { Tile } from "./tile";
+import { Air, Soil, Tile } from "./tile";
 import { World } from "./world";
 
 export class LightEmitter {
+  public readonly world: World = this.renderer.target;
   private worldRectMin = new Vector2(-0.5, -0.5);
   private worldRectMax = new Vector2(this.world.width - 0.5, this.world.height - 0.5);
   // add a .01 buffer to prevent self-intersecting
@@ -13,7 +29,11 @@ export class LightEmitter {
     new Vector3(this.worldRectMax.x + 0.01, this.worldRectMax.y + 0.01, 1)
   );
   public lightRays = new LightRays();
-  constructor(public world: World, public renderer: WorldRenderer) {
+
+  public occluderManager = new LightOccluderManager(this.world);
+
+  // TODO don't make this based on the Renderer
+  constructor(public renderer: WorldRenderer) {
     const scene = renderer.scene;
     scene.add(this.lightRays.lineSegments);
 
@@ -32,8 +52,7 @@ export class LightEmitter {
       return;
     }
 
-    // const intersectObjects: Object3D[] = this.renderer.scene.children; //world.getIntersectObjects();
-    const intersectObjects: Object3D[] = this.world.getIntersectObjects();
+    const occluders: Object3D[] = this.occluderManager.getOccluders();
     // for (let i = 0; i < 10; i++) {
     //   const start = randomRectPerimeter(this.worldRectMin, this.worldRectMax);
     //   this.shootLightRay(dt, start, angle, intersectObjects);
@@ -48,7 +67,7 @@ export class LightEmitter {
     for (let d = dStart; d <= boundingRadius; d += distBetweenRays) {
       const x = center.x + d * Math.cos(anglePerpendicular);
       const y = center.y + d * Math.sin(anglePerpendicular);
-      this.findLightRayRectStart(x, y, angle, target, dt, intersectObjects);
+      this.findLightRayRectStart(x, y, angle, target, dt, occluders);
       // this.findLightRayRectStart(x, y, angle - Math.PI, target, dt, intersectObjects);
     }
   }
@@ -81,7 +100,9 @@ export class LightEmitter {
       const { point, object } = intersection;
       const ray = this.lightRays.addRay(start, new Vector2(point.x, point.y), dt);
       if (object.userData instanceof Tile) {
-        object.userData.lightIntersection = intersection;
+        this.occluderManager.setIntersection(object.userData, intersection);
+
+        // TODO figure this out properly
         ray.hit = object.userData;
       }
     } else {
@@ -117,3 +138,60 @@ export class LightEmitter {
     );
   }
 }
+
+class LightOccluderManager {
+  // TODO weakmap? or some sort of eviction policy?
+  private meshCache: Map<Tile, Mesh> = new Map();
+
+  public soilMesh = this.computeSoilMesh();
+
+  constructor(public world: World) {}
+
+  public computeSoilMesh() {
+    const soils = Array.from(this.world.allEnvironmentTiles()).filter((t) => t instanceof Soil);
+    const geom = new Geometry();
+    for (const s of soils) {
+      geom.mergeMesh(this.getMesh(s));
+    }
+    geom.mergeVertices();
+    const mat = this.getMesh(soils[0]).material;
+    return new Mesh(geom, mat);
+  }
+
+  /**
+   * Soil doesn't move, so we can make one large static mesh for it
+   */
+  public getOccluders(): Object3D[] {
+    // TODO add DeadCell
+    const meshes = Array.from(this.world.allCells())
+      .filter((t) => !(t instanceof Air))
+      .map((t) => this.getMesh(t));
+    meshes.push(this.soilMesh);
+    return meshes;
+  }
+
+  public getMesh(tile: Tile) {
+    if (!this.meshCache.has(tile)) {
+      const m = new Mesh(geom, mat);
+      m.position.set(tile.pos.x, tile.pos.y, 0);
+      m.updateMatrix();
+      m.updateMatrixWorld(true);
+      m.userData = this;
+      this.meshCache.set(tile, m);
+    }
+    return this.meshCache.get(tile)!;
+  }
+
+  private intersections: Map<Tile, Intersection> = new Map();
+  setIntersection(tile: Tile, intersection: Intersection) {
+    this.intersections.set(tile, intersection);
+  }
+
+  getIntersection(tile: Tile) {
+    return this.intersections.get(tile);
+  }
+}
+
+// const geom = new BoxBufferGeometry(1, 1, 1);
+const geom = new BoxGeometry(1, 1, 1);
+const mat = new MeshBasicMaterial({ side: DoubleSide });

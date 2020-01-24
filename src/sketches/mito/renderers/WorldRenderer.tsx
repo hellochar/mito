@@ -29,7 +29,7 @@ export class WorldRenderer extends Renderer<World> {
       scene.add(InventoryRenderer.SugarParticles());
       this.eventLogRenderer = new EventLogRenderer(this);
     }
-    this.lightEmitter = new LightEmitter(this.target, this);
+    this.lightEmitter = new LightEmitter(this);
   }
 
   public getOrCreateRenderer(entity: Entity) {

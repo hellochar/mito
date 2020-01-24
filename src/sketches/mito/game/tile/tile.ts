@@ -1,5 +1,5 @@
 import shuffle from "math/shuffle";
-import { BoxGeometry, DoubleSide, Intersection, Mesh, MeshBasicMaterial, Vector2 } from "three";
+import { Vector2 } from "three";
 import { map, randRound } from "../../../../math/index";
 import { HasInventory, Inventory } from "../../inventory";
 import { canPullResources } from "../canPullResources";
@@ -15,8 +15,7 @@ export abstract class Tile implements Steppable, HasInventory {
   public temperatureFloat: number;
   public dtSinceLastStepped = 0;
   public abstract inventory: Inventory;
-  public lightIntersection?: Intersection;
-  private mesh?: Mesh;
+  // public lightIntersection?: Intersection;
   get temperature(): Temperature {
     return temperatureFor(this.temperatureFloat);
   }
@@ -168,20 +167,4 @@ export abstract class Tile implements Steppable, HasInventory {
   toString() {
     return this.displayName + "(" + this.pos.x + "," + this.pos.y + ")";
   }
-
-  public getMesh() {
-    if (this.mesh == null) {
-      const m = new Mesh(geom, mat);
-      m.position.set(this.pos.x, this.pos.y, 0);
-      m.updateMatrix();
-      m.updateMatrixWorld(true);
-      m.userData = this;
-      this.mesh = m;
-    }
-    return this.mesh;
-  }
 }
-
-// const geom = new BoxBufferGeometry(1, 1, 1);
-const geom = new BoxGeometry(1, 1, 1);
-const mat = new MeshBasicMaterial({ side: DoubleSide });
