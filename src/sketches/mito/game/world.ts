@@ -14,7 +14,7 @@ import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
-import { Air, Cell, DeadCell, Soil, Tile } from "./tile";
+import { Air, Cell, Soil, Tile } from "./tile";
 import Genome from "./tile/genome";
 import { standardGenome } from "./tile/standardGenome";
 import { TileEvent, TileEventType } from "./tileEvent";
@@ -431,7 +431,7 @@ export class World {
 
     // TODO allow sunlight to go full 45-to-90 degrees
     const sunAngle = this.sunAngle;
-    const directionalBias = Math.sin(sunAngle + Math.PI / 2);
+    const directionalBias = Math.sin(sunAngle - Math.PI / 2);
     const sunAmount = this.sunAmount;
     for (let y = 0; y <= this.height; y++) {
       for (let x = 0; x < this.width; x++) {
@@ -496,9 +496,15 @@ export class World {
   }
 
   public maybeGetGameResult(): GameResult | null {
-    const isStandingOnDeadCell = this.tileAt(this.player.pos.x, this.player.pos.y) instanceof DeadCell;
+    let anyCellsAlive = false;
+    for (const cell of this.allCells()) {
+      anyCellsAlive = true;
+      break;
+    }
+    // const isStandingOnDeadCell = this.tileAt(this.player.pos.x, this.player.pos.y) instanceof DeadCell;
     // const isTimePastOneYear = this.time >= TIME_PER_YEAR;
-    const shouldGameEnd = isStandingOnDeadCell;
+    // const shouldGameEnd = isStandingOnDeadCell;
+    const shouldGameEnd = !anyCellsAlive;
     if (!shouldGameEnd) {
       return null;
     }
@@ -640,8 +646,8 @@ export class World {
             }
           }
           if (heuristic) {
-          frontier.sort((a, b) => heuristic(a) - heuristic(b));
-        }
+            frontier.sort((a, b) => heuristic(a) - heuristic(b));
+          }
         }
       },
     };

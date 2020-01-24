@@ -12,16 +12,18 @@ import { Tile } from "./tile";
 const chromosomeGrowingCell = new Chromosome(GeneLiving.level(2), GeneObstacle.level(0));
 
 export class GrowingCell extends Cell {
-  public timeRemaining: number;
+  public percentMatured = 0;
+  public timeToMaturity: number;
   constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Tile) {
     super(pos, world, cellTypeGrowingCell);
-    this.timeRemaining = completedCell.type.chromosome.mergeStaticProperties().timeToBuild;
+    this.timeToMaturity = completedCell.type.chromosome.mergeStaticProperties().timeToBuild;
   }
+
   step(dt: number) {
     super.step(dt);
-    this.timeRemaining -= this.tempo * dt;
+    this.percentMatured += (this.tempo * dt) / this.timeToMaturity;
     this.completedCell.pos.copy(this.pos);
-    if (this.timeRemaining <= 0) {
+    if (this.percentMatured >= 1) {
       this.world.maybeRemoveCellAt(this.pos);
       this.completedCell.energy = this.energy;
       for (const effect of this.effects) {
