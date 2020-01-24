@@ -55,7 +55,7 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
 };
 
 const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
-  const { chromosome, geneSlots, name } = cellType;
+  const { chromosome, name } = cellType;
   const [state, setState] = React.useContext(DraggedContext);
   const handleDrop = React.useCallback(
     (event: React.DragEvent) => {
@@ -73,13 +73,15 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
-  const additionalGeneSlots = chromosome.geneSlotsAdded();
-  const totalGeneSlotsEl = (
-    <>
-      {geneSlots}
-      {additionalGeneSlots > 0 ? `+${additionalGeneSlots}` : null}
-    </>
-  );
+
+  // const additionalGeneSlots = chromosome.geneSlotsAdded();
+  // const totalGeneSlotsEl = (
+  //   <>
+  //     {geneSlots}
+  //     {additionalGeneSlots > 0 ? `+${additionalGeneSlots}` : null}
+  //   </>
+  // );
+
   const handleSetInteraction = React.useCallback(
     (i: CellInteraction | undefined) => {
       cellType.interaction = i;

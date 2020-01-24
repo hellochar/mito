@@ -19,6 +19,59 @@ import { WorldRenderer } from "../renderers/WorldRenderer";
 import { Air, Soil, Tile } from "./tile";
 import { World } from "./world";
 
+class LightOccluderManager {
+  // TODO weakmap? or some sort of eviction policy?
+  private meshCache: Map<Tile, Mesh> = new Map();
+
+  public soilMesh = this.computeSoilMesh();
+
+  constructor(public world: World) {}
+
+  public computeSoilMesh() {
+    const soils = Array.from(this.world.allEnvironmentTiles()).filter((t) => t instanceof Soil);
+    const geom = new Geometry();
+    for (const s of soils) {
+      geom.mergeMesh(this.getMesh(s));
+    }
+    geom.mergeVertices();
+    const mat = this.getMesh(soils[0]).material;
+    return new Mesh(geom, mat);
+  }
+
+  /**
+   * Soil doesn't move, so we can make one large static mesh for it
+   */
+  public getOccluders(): Object3D[] {
+    // TODO add DeadCell
+    const meshes = Array.from(this.world.allCells())
+      .filter((t) => !(t instanceof Air))
+      .map((t) => this.getMesh(t));
+    meshes.push(this.soilMesh);
+    return meshes;
+  }
+
+  public getMesh(tile: Tile) {
+    if (!this.meshCache.has(tile)) {
+      const m = new Mesh(geom, mat);
+      m.position.set(tile.pos.x, tile.pos.y, 0);
+      m.updateMatrix();
+      m.updateMatrixWorld(true);
+      m.userData = this;
+      this.meshCache.set(tile, m);
+    }
+    return this.meshCache.get(tile)!;
+  }
+
+  private intersections: Map<Tile, Intersection> = new Map();
+  setIntersection(tile: Tile, intersection: Intersection) {
+    this.intersections.set(tile, intersection);
+  }
+
+  getIntersection(tile: Tile) {
+    return this.intersections.get(tile);
+  }
+}
+
 export class LightEmitter {
   public readonly world: World = this.renderer.target;
   private worldRectMin = new Vector2(-0.5, -0.5);
@@ -136,59 +189,6 @@ export class LightEmitter {
     return (
       v.x >= this.worldRectMin.x && v.x < this.worldRectMax.x && v.y >= this.worldRectMin.y && v.y < this.worldRectMax.y
     );
-  }
-}
-
-class LightOccluderManager {
-  // TODO weakmap? or some sort of eviction policy?
-  private meshCache: Map<Tile, Mesh> = new Map();
-
-  public soilMesh = this.computeSoilMesh();
-
-  constructor(public world: World) {}
-
-  public computeSoilMesh() {
-    const soils = Array.from(this.world.allEnvironmentTiles()).filter((t) => t instanceof Soil);
-    const geom = new Geometry();
-    for (const s of soils) {
-      geom.mergeMesh(this.getMesh(s));
-    }
-    geom.mergeVertices();
-    const mat = this.getMesh(soils[0]).material;
-    return new Mesh(geom, mat);
-  }
-
-  /**
-   * Soil doesn't move, so we can make one large static mesh for it
-   */
-  public getOccluders(): Object3D[] {
-    // TODO add DeadCell
-    const meshes = Array.from(this.world.allCells())
-      .filter((t) => !(t instanceof Air))
-      .map((t) => this.getMesh(t));
-    meshes.push(this.soilMesh);
-    return meshes;
-  }
-
-  public getMesh(tile: Tile) {
-    if (!this.meshCache.has(tile)) {
-      const m = new Mesh(geom, mat);
-      m.position.set(tile.pos.x, tile.pos.y, 0);
-      m.updateMatrix();
-      m.updateMatrixWorld(true);
-      m.userData = this;
-      this.meshCache.set(tile, m);
-    }
-    return this.meshCache.get(tile)!;
-  }
-
-  private intersections: Map<Tile, Intersection> = new Map();
-  setIntersection(tile: Tile, intersection: Intersection) {
-    this.intersections.set(tile, intersection);
-  }
-
-  getIntersection(tile: Tile) {
-    return this.intersections.get(tile);
   }
 }
 

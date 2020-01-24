@@ -495,6 +495,7 @@ export class World {
 
   public maybeGetGameResult(): GameResult | null {
     let anyCellsAlive = false;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const cell of this.allCells()) {
       anyCellsAlive = true;
       break;

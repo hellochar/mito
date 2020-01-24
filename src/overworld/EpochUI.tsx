@@ -7,7 +7,7 @@ import "./EpochUI.scss";
 import { HexTile } from "./hexTile";
 
 export function EpochUI({ onNextEpoch, onFocusHex }: EpochUIProps) {
-  const [{ epoch, overWorld }] = useAppReducer();
+  const [{ epoch }] = useAppReducer();
   const [transitioning, setTransitioning] = useState(false);
   const handleNextEpoch = () => {
     setTransitioning(true);
