@@ -12,6 +12,7 @@ import { AltHeldBar } from "./actionBar";
 import { drums, hookUpAudio, strings } from "./audio";
 import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
+import { GameResult, maybeGetGameResult } from "./game/gameResult";
 import { Cell, Tile } from "./game/tile";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
@@ -22,16 +23,6 @@ import { Hover, HUD, TileDetails } from "./ui";
 import Debug from "./ui/Debug";
 import { Instructions } from "./ui/Instructions";
 import { WorldDOMElement } from "./WorldDOMElement";
-
-export interface GameResult {
-  status: "won" | "lost";
-  mpEarners: Map<Cell, number>;
-  /**
-   * Computed - sum of mpEarners.
-   */
-  mutationPointsPerEpoch: number;
-  world: World;
-}
 
 export interface CameraState {
   center: THREE.Vector2;
@@ -289,7 +280,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
       this.tutorialRef.setState({ time: this.world.time });
     }
 
-    const gameResult = this.world.maybeGetGameResult();
+    const gameResult = maybeGetGameResult(this.world);
     if (gameResult != null) {
       this.onWinLoss(gameResult);
     }

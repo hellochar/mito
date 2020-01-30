@@ -1,7 +1,7 @@
 import { lineage, Species } from "evolution/species";
 import { HexTile } from "overworld/hexTile";
 import React, { useContext } from "react";
-import { GameResult } from "sketches/mito";
+import { GameResult } from "sketches/mito/game/gameResult";
 import { AppState, PopulationAttempt } from "./state";
 
 type AppReducerContextType = [AppState, React.Dispatch<AppActions>];

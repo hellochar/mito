@@ -1,7 +1,6 @@
 import { randInt, randRound } from "math";
 import { gridRange } from "math/arrays";
 import { Vector2 } from "three";
-import { GameResult } from "..";
 import devlog from "../../../common/devlog";
 import { Species } from "../../../evolution/species";
 import { getTraits, Traits } from "../../../evolution/traits";
@@ -410,10 +409,6 @@ export class World {
     }
   }
 
-  get dayOrNight() {
-    return this.sunAngle % (Math.PI * 2) < Math.PI ? "day" : "night";
-  }
-
   get sunAmount() {
     return (Math.atan(Math.sin(this.sunAngle) * 12) / (Math.PI / 2)) * 0.5 + 0.5;
   }
@@ -491,37 +486,6 @@ export class World {
     for (const t of this.allCells()) {
       t.temperatureFloat = t.nextTemperature;
     }
-  }
-
-  public maybeGetGameResult(): GameResult | null {
-    let anyCellsAlive = false;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    for (const cell of this.allCells()) {
-      anyCellsAlive = true;
-      break;
-    }
-    // const isStandingOnDeadCell = this.tileAt(this.player.pos.x, this.player.pos.y) instanceof DeadCell;
-    // const isTimePastOneYear = this.time >= TIME_PER_YEAR;
-    // const shouldGameEnd = isStandingOnDeadCell;
-    const shouldGameEnd = !anyCellsAlive;
-    if (!shouldGameEnd) {
-      return null;
-    }
-
-    // make a decision
-    return this.getDecidedGameResult();
-  }
-
-  public getDecidedGameResult(): GameResult {
-    const matureEarners = Array.from(this.mpEarners.entries()).filter(([f, mpEarned]) => mpEarned > 0);
-    const shouldWin = matureEarners.length > 0;
-
-    return {
-      mpEarners: this.mpEarners,
-      mutationPointsPerEpoch: matureEarners.map(([, mp]) => mp).reduce((a, b) => a + b, 0),
-      status: shouldWin ? "won" : "lost",
-      world: this,
-    };
   }
 
   earnMP(cell: Cell, mpEarned: number) {
@@ -629,10 +593,6 @@ export class World {
       },
     };
   }
-}
-
-export function formatTime(t: number) {
-  return new Date(1000 * t).toISOString().substr(14, 5);
 }
 
 const DIRECTION_VALUES_RAND = [

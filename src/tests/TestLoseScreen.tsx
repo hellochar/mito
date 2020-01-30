@@ -1,7 +1,7 @@
 import React from "react";
 import { TIME_PER_DAY } from "sketches/mito/game/constants";
+import { GameResult } from "sketches/mito/game/gameResult";
 import { newBaseSpecies } from "../evolution/species";
-import { GameResult } from "../sketches/mito";
 import { World } from "../sketches/mito/game";
 import { Temperate } from "../sketches/mito/game/environment";
 import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";

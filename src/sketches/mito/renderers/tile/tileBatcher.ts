@@ -1,7 +1,18 @@
 import { World } from "sketches/mito/game";
 import { Cell, Tile } from "sketches/mito/game/tile";
 import { SPRITESHEET } from "sketches/mito/spritesheet";
-import { Color, DoubleSide, DynamicDrawUsage, InstancedBufferAttribute, InstancedBufferGeometry, Mesh, PlaneBufferGeometry, RawShaderMaterial, Vector2, Vector3 } from "three";
+import {
+  Color,
+  DoubleSide,
+  DynamicDrawUsage,
+  InstancedBufferAttribute,
+  InstancedBufferGeometry,
+  Mesh,
+  PlaneBufferGeometry,
+  RawShaderMaterial,
+  Vector2,
+  Vector3,
+} from "three";
 import glsl from "../glsl";
 
 const vertexShader = glsl`
@@ -20,10 +31,6 @@ precision mediump float;
 // Comes from WebGLProgram
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
-
-// global world info
-uniform float sunAngle;
-uniform float sunAmount;
 
 // Comes from threejs Geometry
 attribute vec3 position;
@@ -62,10 +69,6 @@ const fragmentShader = glsl`
 //   'varying' variables from the vertex shader, interpolated along the triangle
 //   'uniform' variables
 precision mediump float;
-
-// global world info
-uniform float sunAngle;
-uniform float sunAmount;
 
 // these should match the corresponding section in the vertexShader exactly
 varying vec3 vTileCenter;
@@ -108,8 +111,6 @@ void main() {
 const TileShaderMaterial = new RawShaderMaterial({
   uniforms: {
     spriteSheet: { value: SPRITESHEET() },
-    sunAngle: { value: 0 },
-    sunAmount: { value: 1 },
   },
   transparent: true,
   vertexShader,
@@ -162,12 +163,6 @@ class TileBatcher {
     this.geometry.setAttribute("instancedTileColor", this.colors);
     this.geometry.setAttribute("instancedTileScale", this.scales);
     this.geometry.setAttribute("instancedTexturePosition", this.texturePositions);
-  }
-
-  public updateUniforms() {
-    TileShaderMaterial.uniforms.sunAngle.value = this.world.sunAngle;
-    TileShaderMaterial.uniforms.sunAmount.value = this.world.sunAmount;
-    // TileShaderMaterial.needsUpdate = true;
   }
 
   private instances = new Map<string, BatchInstance>();

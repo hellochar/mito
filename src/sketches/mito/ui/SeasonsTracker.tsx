@@ -1,5 +1,5 @@
 import * as React from "react";
-import { formatTime, Season, SEASON_NAMES } from "../game";
+import { Season, SEASON_NAMES } from "../game";
 import "./SeasonsTracker.scss";
 
 export default function SeasonsTracker({ time, season }: { time: number; season: Season }) {
@@ -16,4 +16,8 @@ export default function SeasonsTracker({ time, season }: { time: number; season:
       <div className="time">{formatTime(time)}</div>
     </div>
   );
+}
+
+function formatTime(t: number) {
+  return new Date(1000 * t).toISOString().substr(14, 5);
 }

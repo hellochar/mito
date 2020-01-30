@@ -1,8 +1,8 @@
 import { createSimpleSchema, object, reference } from "serializr";
+import { GameResult } from "sketches/mito/game/gameResult";
 import { Species, SpeciesSchema } from "../evolution/species";
 import { HexTile } from "../overworld/hexTile";
 import { OverWorld } from "../overworld/overWorld";
-import { GameResult } from "../sketches/mito";
 
 /**
  * For now, we mutate classes and manually call dummy placeholder

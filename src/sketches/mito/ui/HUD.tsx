@@ -3,6 +3,7 @@ import { Button } from "common/Button";
 import { isInteresting } from "evolution/traits";
 import * as React from "react";
 import TraitDisplay from "../../../evolution/TraitDisplay";
+import { getDecidedGameResult } from "../game/gameResult";
 import Mito from "../index";
 import CellBarUI from "./CellBarUI";
 import GenomeViewer from "./GenomeViewer";
@@ -86,7 +87,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   }
 
   maybeRenderCollectButton() {
-    const result = this.world.getDecidedGameResult();
+    const result = getDecidedGameResult(this.world);
     if (result.status === "won") {
       return (
         <div className="hud-right-of-time">
