@@ -10,31 +10,12 @@ import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
 import { Season, seasonFromTime } from "./Season";
+import { StepStats } from "./stepStats";
 import { Air, Cell, Soil, Tile } from "./tile";
 import Genome from "./tile/genome";
 import { standardGenome } from "./tile/standardGenome";
-import { TileEvent, TileEventType } from "./tileEvent";
+import { TileEvent } from "./tileEvent";
 import { WeatherController } from "./weatherController";
-
-export type TileEventLog = {
-  [K in TileEventType]: TileEvent[];
-};
-
-export class StepStats {
-  public events: TileEventLog = {
-    "cell-eat": [],
-    "cell-transfer-energy": [],
-    evaporation: [],
-    photosynthesis: [],
-    thaw: [],
-    "collect-sunlight": [],
-    "grow-fruit": [],
-  };
-  constructor(public dt: number, public frame: number, public deleted: Entity[] = [], public added: Entity[] = []) {}
-  logEvent(event: TileEvent) {
-    this.events[event.type].push(event);
-  }
-}
 
 export interface WorldOptions {
   width: number;
