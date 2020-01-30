@@ -48,7 +48,7 @@ export abstract class Tile implements Steppable, HasInventory {
       throw new Error("null world!");
     }
     this.timeMade = world.time;
-    this.temperatureFloat = this.world.getCurrentTemperature();
+    this.temperatureFloat = this.world.weather.getCurrentTemperature();
   }
 
   abstract shouldStep(dt: number): boolean;
@@ -95,7 +95,7 @@ export abstract class Tile implements Steppable, HasInventory {
   }
 
   stepTemperature(_dt: number) {
-    this.temperatureFloat = this.world.getCurrentTemperature();
+    this.temperatureFloat = this.world.weather.getCurrentTemperature();
   }
 
   stepDarkness(neighbors: Map<Vector2, Tile>) {

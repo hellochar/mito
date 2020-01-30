@@ -99,7 +99,7 @@ export class LightEmitter {
   public update(dt: number) {
     this.lightRays.update(dt);
 
-    const angle = this.world.sunAngle;
+    const angle = this.world.weather.sunAngle;
     const isBrightEnough = angle < Math.PI;
     if (!isBrightEnough) {
       return;

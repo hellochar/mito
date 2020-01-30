@@ -1,4 +1,3 @@
-import { randInt, randRound } from "math";
 import { gridRange } from "math/arrays";
 import { Vector2 } from "three";
 import devlog from "../../../common/devlog";
@@ -7,8 +6,6 @@ import { getTraits, Traits } from "../../../evolution/traits";
 import shuffle from "../../../math/shuffle";
 import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";
-import { params } from "../params";
-import { PERCENT_DAYLIGHT, TIME_PER_DAY } from "./constants";
 import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
@@ -17,6 +14,7 @@ import { Air, Cell, Soil, Tile } from "./tile";
 import Genome from "./tile/genome";
 import { standardGenome } from "./tile/standardGenome";
 import { TileEvent, TileEventType } from "./tileEvent";
+import { WeatherController } from "./weatherController";
 
 export type TileEventLog = {
   [K in TileEventType]: TileEvent[];
@@ -64,6 +62,7 @@ export class World {
   public readonly species: Species;
   public readonly traits: Traits;
   public readonly generatorContext: GeneratorContext;
+  public weather: WeatherController;
   genome: Genome;
 
   get season(): Season {
@@ -83,6 +82,7 @@ export class World {
     this.species = species;
     this.genome = species.genome || standardGenome;
     this.traits = getTraits(this.species.genes);
+    this.weather = new WeatherController(this);
 
     const tileGenerator = typeof environment.fill === "string" ? TileGenerators[environment.fill] : environment.fill;
     this.gridEnvironment = gridRange(this.width, this.height, (x, y) => {
@@ -133,8 +133,7 @@ export class World {
       const tileCell = this.gridCells[x][y];
       tileCell && tileCell.step(0);
     });
-
-    this.computeSunlight();
+    this.weather.step(0);
   }
 
   public tileAt(v: Vector2): Tile | null;
@@ -341,7 +340,7 @@ export class World {
     //     this.cachedRenderableEntities = entities;
     // })();
   }
-  // iterate through all the actions
+
   private stepStats: StepStats = new StepStats(0, this.frame);
   public step(dt: number): StepStats {
     const entities = this.entities();
@@ -352,9 +351,7 @@ export class World {
         step(entity, dt);
       }
     });
-    this.updateTemperatures();
-    this.computeSunlight();
-    this.stepWeather(dt);
+    this.weather.step(dt);
     this.frame++;
     this.time += dt;
     this.fillCachedEntities();
@@ -373,94 +370,6 @@ export class World {
   numRainWater = 0;
   numEvaporatedAir = 0;
   numEvaporatedSoil = 0;
-  public stepWeather(dt: number) {
-    // offset first rain event by a few seconds
-    const isRaining =
-      (this.time + this.environment.climate.timeBetweenRainfall - 6) % this.environment.climate.timeBetweenRainfall <
-      this.environment.climate.rainDuration;
-    if (isRaining) {
-      // add multiple random droplets
-      let numWater = this.environment.climate.waterPerSecond * dt;
-      while (numWater > 0) {
-        const dropletSize = Math.min(numWater, 1);
-        const x = randInt(0, this.width - 1);
-        const t = this.tileAt(x, 0);
-        if (t instanceof Air) {
-          const w = randRound(dropletSize);
-          t.inventory.add(w, 0);
-          this.numRainWater += w;
-        }
-        numWater -= 1;
-      }
-    }
-  }
-
-  /**
-   * 0 to 2pi, where
-   * 0 to pi: daytime (time of day - 0 to PERCENT_DAYLIGHT)
-   * pi to 2pi: nighttime (PERCENT_DAYLIGHT to 1)
-   */
-  get sunAngle() {
-    const timeOfDay = (this.time / TIME_PER_DAY) % 1;
-    if (timeOfDay < PERCENT_DAYLIGHT) {
-      return (timeOfDay / PERCENT_DAYLIGHT) * Math.PI;
-    } else {
-      return Math.PI * (1 + (timeOfDay - PERCENT_DAYLIGHT) / (1 - PERCENT_DAYLIGHT));
-    }
-  }
-
-  get sunAmount() {
-    return (Math.atan(Math.sin(this.sunAngle) * 12) / (Math.PI / 2)) * 0.5 + 0.5;
-  }
-
-  getCurrentTemperature() {
-    const { season } = this.season;
-    return this.environment.temperaturePerSeason[season];
-  }
-
-  public computeSunlight() {
-    // step downards from the top; neighbors don't affect the calculation so
-    // we don't have buffering problems
-
-    // TODO allow sunlight to go full 45-to-90 degrees
-    const sunAngle = this.sunAngle;
-    const directionalBias = Math.sin(sunAngle - Math.PI / 2);
-    const sunAmount = this.sunAmount;
-    for (let y = 0; y <= this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        const t = this.environmentTileAt(x, y);
-        if (t instanceof Air) {
-          let sunlight = 0;
-          if (y === 0) {
-            sunlight = 1;
-          } else {
-            const tileUp = this.tileAt(x, y - 1);
-            const tileRight = this.tileAt(x + 1, y - 1);
-            const tileLeft = this.tileAt(x - 1, y - 1);
-            const upSunlight = tileUp instanceof Air ? tileUp.sunlightCached / sunAmount : tileUp == null ? 1 : 0;
-            const rightSunlight =
-              tileRight instanceof Air ? tileRight.sunlightCached / sunAmount : tileRight == null ? 1 : 0;
-            const leftSunlight =
-              tileLeft instanceof Air ? tileLeft.sunlightCached / sunAmount : tileLeft == null ? 1 : 0;
-            if (directionalBias > 0) {
-              // positive light travels to the right
-              sunlight = rightSunlight * directionalBias + upSunlight * (1 - directionalBias);
-            } else {
-              sunlight = leftSunlight * -directionalBias + upSunlight * (1 - -directionalBias);
-            }
-            sunlight =
-              sunlight * (1 - params.sunlightDiffusion) +
-              ((upSunlight + rightSunlight + leftSunlight) / 3) * params.sunlightDiffusion;
-          }
-          // have at least a bit
-          sunlight = params.sunlightReintroduction + sunlight * (1 - params.sunlightReintroduction);
-
-          sunlight *= sunAmount;
-          t.sunlightCached = sunlight;
-        }
-      }
-    }
-  }
 
   public computeSoilDepths() {
     const airPositions = Array.from(this.allEnvironmentTiles())
@@ -479,12 +388,6 @@ export class World {
         }
         tile.depth = minNeighborDepth + 1;
       }
-    }
-  }
-
-  public updateTemperatures() {
-    for (const t of this.allCells()) {
-      t.temperatureFloat = t.nextTemperature;
     }
   }
 
