@@ -79,7 +79,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
           {/* <SwitchableBarUI bar={this.mito.actionBar} /> */}
           <CellBarUI
             bar={this.mito.actionBar.buildBar}
-            disabled={this.mito.world.player.getBuildError() || (this.mito.isAltHeld() ? true : undefined)}
+            disabled={this.mito.world.player.getBuildError() || (this.mito.controls.isAltHeld() ? true : undefined)}
           />
         </div>
       </>

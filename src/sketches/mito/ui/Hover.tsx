@@ -32,7 +32,7 @@ export class Hover extends React.Component<HoverProps> {
     if (tile == null) {
       return;
     }
-    const showBuildBlueprint = this.props.mito.world.player.canBuildAt(tile) && !this.props.mito.isAltHeld();
+    const showBuildBlueprint = this.props.mito.world.player.canBuildAt(tile) && !this.props.mito.controls.isAltHeld();
     const buildElement = showBuildBlueprint ? (
       <BuildBlueprint
         x={tile.pos.x}

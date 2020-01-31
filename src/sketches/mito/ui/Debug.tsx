@@ -38,7 +38,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
         <div>Evaporated Air: {mito.world.numEvaporatedAir}</div>
         <div>Evaporated Soil: {mito.world.numEvaporatedSoil}</div>
       </div>
-      <div style={{ background: "white" }}>{Array.from(mito.keyMap.values()).join(", ")}</div>
+      <div style={{ background: "white" }}>{Array.from(mito.controls.keyMap.values()).join(", ")}</div>
     </div>
   );
 };

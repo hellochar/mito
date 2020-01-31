@@ -70,7 +70,7 @@ export class PlayerRenderer extends Renderer<Player> {
     this.mesh.position.set(pos.x, pos.y, 2);
 
     const dt = 1 / 60;
-    const isInteract = this.mito.isInteract();
+    const isInteract = this.mito.controls.isInteract();
     const highlight = this.mito.getHighlightedTile();
     const neuronMeshTarget = isInteract ? highlight!.pos.clone().sub(pos) : ZERO;
     if (this.prevHighlight !== highlight) {

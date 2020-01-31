@@ -172,7 +172,7 @@ export class AltHeldBar extends ActionBar {
   }
 
   barFor(target: Tile) {
-    if (target instanceof Cell || this.mito.isAltHeld()) {
+    if (target instanceof Cell || this.mito.controls.isAltHeld()) {
       return this.interactBar;
     } else {
       return this.buildBar;

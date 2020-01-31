@@ -7,19 +7,18 @@ import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRe
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
-import { ActionMove } from "./action";
 import { AltHeldBar } from "./actionBar";
 import { drums, hookUpAudio, strings } from "./audio";
+import { ControlScheme } from "./ControlScheme";
 import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
 import { GameResult, maybeGetGameResult } from "./game/gameResult";
-import { Cell, Tile } from "./game/tile";
-import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
+import { Tile } from "./game/tile";
 import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
-import { Hover, HUD, TileDetails } from "./ui";
+import { Hover, HUD } from "./ui";
 import Debug from "./ui/Debug";
 import { Instructions } from "./ui/Instructions";
 import { WorldDOMElement } from "./WorldDOMElement";
@@ -41,20 +40,20 @@ export class Mito extends ISketch {
   public mouseDown = false;
   public mouseButton = -1;
   public instructionsOpen = false;
-  private firstActionTakenYet = false;
+  public firstActionTakenYet = false;
   public readonly audioListener = new THREE.AudioListener();
-  readonly keyMap = new Set<string>();
   public highlightedTile?: Tile;
   public readonly worldRenderer: WorldRenderer;
   private vignetteCapturer = new VignetteCapturer(this);
   private vignettes: HTMLCanvasElement[] = [];
 
   private hackCamera?: PerspectiveCamera;
-  private controls?: OrbitControls;
+  private orbitControls?: OrbitControls;
 
   private suggestedCamera?: CameraState;
   private userZoom: number;
   eventEmitter: EventEmitter = new EventEmitter();
+  public controls: ControlScheme;
 
   constructor(
     renderer: WebGLRenderer,
@@ -78,7 +77,7 @@ export class Mito extends ISketch {
     if (this.hackCamera != null) {
       // this.hackCamera.position.copy(this.camera.position);
       // this.hackCamera.lookAt(0, 0, 0);
-      this.controls = new OrbitControls(this.hackCamera, this.canvas);
+      this.orbitControls = new OrbitControls(this.hackCamera, this.canvas);
       this.scene.add(new THREE.AxesHelper(25));
     }
 
@@ -90,6 +89,7 @@ export class Mito extends ISketch {
 
     // this.actionBar = new SwitchableBar(new CellBar(this), new InteractBar(this));
     this.actionBar = new AltHeldBar(this);
+    this.controls = new ControlScheme(this);
   }
 
   public events = {
@@ -128,56 +128,18 @@ export class Mito extends ISketch {
       // }
     },
   };
-  private altElement?: WorldDOMElement;
-  private handleKeyDown = (event: KeyboardEvent) => {
-    this.firstActionTakenYet = true;
-    const code = event.code;
-    this.keyMap.add(code);
-    if (!event.repeat) {
-      this.maybeToggleInstructions(code);
-      if (ACTION_INSTANT_KEYMAP[code]) {
-        this.world.player.setAction(ACTION_INSTANT_KEYMAP[code]);
-      }
-      if (code === "KeyH") {
-        params.hud = !params.hud;
-      }
-    }
-    this.actionBar.keyDown(event);
-    this.eventEmitter.emit("keydown", event);
-    const isOpeningDevtoolsOnChrome =
-      (event.code === "KeyI" && event.shiftKey && event.ctrlKey) ||
-      (event.code === "KeyI" && event.altKey && event.metaKey);
-    if (!isOpeningDevtoolsOnChrome) {
-      event.preventDefault();
-    }
-  };
-
-  private handleKeyUp = (event: KeyboardEvent) => {
-    this.keyMap.delete(event.code);
-    this.eventEmitter.emit("keyup", event);
-  };
-
-  private handleBlur = () => {
-    this.keyMap.clear();
-  };
-
   private handleBeforeUnload = () => {
     return true;
   };
 
   private attachWindowEvents() {
-    window.addEventListener("blur", this.handleBlur);
-    window.addEventListener("keydown", this.handleKeyDown);
-    window.addEventListener("keyup", this.handleKeyUp);
     window.onbeforeunload = this.handleBeforeUnload;
     (window as any).mito = this;
     (window as any).THREE = THREE;
   }
 
   destroy() {
-    window.removeEventListener("blur", this.handleBlur);
-    window.removeEventListener("keydown", this.handleKeyDown);
-    window.removeEventListener("keyup", this.handleKeyUp);
+    this.controls.destroy();
     window.onbeforeunload = null;
   }
 
@@ -348,43 +310,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   public animate(millisElapsed: number) {
-    if (this.isAltHeld() && this.altElement == null) {
-      this.altElement = this.addWorldDOMElement(
-        () => this.getHighlightedTile()!,
-        () => {
-          return (
-            <div className="tile-details-container">
-              <TileDetails tile={this.getHighlightedTile()} />
-            </div>
-          );
-        }
-      );
-    } else if (!this.isAltHeld() && this.altElement != null) {
-      this.removeWorldDOMElement(this.altElement);
-      this.altElement = undefined;
-    }
-    if (this.instructionsOpen) {
-      return;
-    }
-    // disable this for now so i can open interaction cell editor in genomeviewer
-    // this.canvas.focus();
-    const moveAction = this.keysToMovement(this.keyMap);
-    if (moveAction) {
-      this.world.player.setAction(moveAction);
-    }
-    for (const key of this.keyMap) {
-      if (ACTION_CONTINUOUS_KEYMAP[key]) {
-        this.world.player.setAction(ACTION_CONTINUOUS_KEYMAP[key]);
-      }
-    }
-    if (this.mouseDown) {
-      // left
-      if (this.mouseButton === 0) {
-        this.handleLeftClick();
-      } else if (this.mouseButton === 2) {
-        this.handleRightClick();
-      }
-    }
+    this.controls.animate(millisElapsed);
 
     // cap out at 1/3rd of a second in one frame (about 10 frames)
     const dt = Math.min(millisElapsed / 1000, 1 / 3);
@@ -450,29 +376,6 @@ Number of Programs: ${this.renderer.info.programs!.length}
     this.suggestedCamera = suggestedCamera;
   }
 
-  public isAltHeld() {
-    return (
-      this.keyMap.has("AltLeft") || this.keyMap.has("AltRight") || this.keyMap.has("") || this.keyMap.has("AltRight")
-    );
-  }
-
-  public keysToMovement(keys: Set<string>): ActionMove | null {
-    const dir = new Vector2();
-    for (const key of keys) {
-      if (MOVEMENT_KEYS[key]) {
-        dir.add(MOVEMENT_KEYS[key].dir);
-      }
-    }
-    if (dir.x === 0 && dir.y === 0) {
-      return null;
-    } else {
-      return {
-        type: "move",
-        dir,
-      };
-    }
-  }
-
   public resize(w: number, h: number) {
     const aspect = h / w;
     // at zoom 1, we see 12 pixels up and 12 pixels down
@@ -485,28 +388,8 @@ Number of Programs: ${this.renderer.info.programs!.length}
     // this.camera.lookAt(new Vector3(0, 0, 0));
     this.camera.updateProjectionMatrix();
   }
-
-  public handleRightClick() {
-    const tile = this.getHighlightedTile();
-    if (tile == null) {
-      return;
-    }
-    this.actionBar.rightClick(tile);
-  }
-
-  public handleLeftClick() {
-    this.firstActionTakenYet = true;
-    const target = this.getHighlightedTile();
-    if (target == null) {
-      return;
-    }
-    this.actionBar.leftClick(target);
-  }
-
-  public isInteract() {
-    const tile = this.getHighlightedTile();
-    return tile != null && this.actionBar.barFor(tile) === this.actionBar.interactBar && tile instanceof Cell;
-  }
 }
 
 export default Mito;
+
+
