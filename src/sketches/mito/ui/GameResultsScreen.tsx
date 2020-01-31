@@ -6,7 +6,7 @@ import * as React from "react";
 import Character from "../../../common/Character";
 import { mitoDeath } from "../audio";
 import { GameResult } from "../game/gameResult";
-import { seasonDisplay, seasonFromTime } from "../game/Season";
+import { seasonDisplay, seasonFromTime } from "../game/season";
 import { Cell } from "../game/tile";
 import { GeneInstance } from "../game/tile/chromosome";
 import { GeneFruit, reproducerGetPercentMatured } from "../game/tile/genes/GeneReproducer";

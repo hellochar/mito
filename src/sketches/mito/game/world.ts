@@ -9,7 +9,7 @@ import { hasInventory } from "../inventory";
 import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
 import { Player } from "./player";
-import { Season, seasonFromTime } from "./Season";
+import { Season, seasonFromTime } from "./season";
 import { StepStats } from "./stepStats";
 import { Air, Cell, Soil, Tile } from "./tile";
 import Genome from "./tile/genome";
