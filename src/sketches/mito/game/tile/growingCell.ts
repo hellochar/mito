@@ -7,14 +7,13 @@ import Chromosome from "./chromosome";
 import { GeneLiving } from "./genes";
 import { GeneObstacle } from "./genes/GeneObstacle";
 import { CellType } from "./genome";
-import { Tile } from "./tile";
 
 const chromosomeGrowingCell = new Chromosome(GeneLiving.level(2), GeneObstacle.level(0));
 
 export class GrowingCell extends Cell {
   public percentMatured = 0;
   public timeToMaturity: number;
-  constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Tile) {
+  constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Vector2) {
     super(pos, world, cellTypeGrowingCell);
     this.timeToMaturity = completedCell.type.chromosome.mergeStaticProperties().timeToBuild;
   }

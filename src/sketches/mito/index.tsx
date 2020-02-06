@@ -9,7 +9,7 @@ import { lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { AltHeldBar } from "./actionBar";
 import { drums, hookUpAudio, strings } from "./audio";
-import { ControlScheme } from "./ControlScheme";
+import { ControlScheme, PlayerSeedControlScheme } from "./ControlScheme";
 import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
 import { GameResult, maybeGetGameResult } from "./game/gameResult";
@@ -40,7 +40,6 @@ export class Mito extends ISketch {
   public mouseDown = false;
   public mouseButton = -1;
   public instructionsOpen = false;
-  public firstActionTakenYet = false;
   public readonly audioListener = new THREE.AudioListener();
   public highlightedTile?: Tile;
   public readonly worldRenderer: WorldRenderer;
@@ -89,7 +88,8 @@ export class Mito extends ISketch {
 
     // this.actionBar = new SwitchableBar(new CellBar(this), new InteractBar(this));
     this.actionBar = new AltHeldBar(this);
-    this.controls = new ControlScheme(this);
+    // this.controls = new ControlScheme(this);
+    this.controls = new PlayerSeedControlScheme(this);
   }
 
   public events = {
@@ -147,19 +147,16 @@ export class Mito extends ISketch {
     if (!params.hud) {
       return null;
     }
-    const worldDomElementComponents: JSX.Element[] = [];
+    const worldDomElementComponents: React.ReactNode[] = [];
     for (const e of this.worldDomElements) {
       worldDomElementComponents.push(e.render());
     }
+    const showPlayerHUD = this.world.playerSeed == null;
     return (
       <>
-        <HUD mito={this} />
         {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
-        {/* <ParamsGUI /> */}
-        <Hover mito={this} />
-        {/* <div className="hud-top-left">
-          <TileDetails tile={this.highlightedTile} />
-        </div> */}
+        <HUD mito={this} show={showPlayerHUD} />
+        {showPlayerHUD ? <Hover mito={this} /> : null}
         <div className="world-dom-components">{worldDomElementComponents}</div>
         {params.debug ? <Debug mito={this} /> : null}
         {this.instructionsOpen ? <Instructions play={() => (this.instructionsOpen = false)} /> : null}
@@ -225,7 +222,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   public worldStep(dt: number) {
-    if (!this.firstActionTakenYet || this.instructionsOpen) {
+    if (this.instructionsOpen) {
       return;
     }
 
@@ -391,5 +388,3 @@ Number of Programs: ${this.renderer.info.programs!.length}
 }
 
 export default Mito;
-
-

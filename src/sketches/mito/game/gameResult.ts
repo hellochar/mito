@@ -12,7 +12,7 @@ export interface GameResult {
 }
 
 export function maybeGetGameResult(world: World): GameResult | null {
-  let anyCellsAlive = false;
+  let anyCellsAlive = false || world.playerSeed != null;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   for (const cell of world.allCells()) {
     anyCellsAlive = true;

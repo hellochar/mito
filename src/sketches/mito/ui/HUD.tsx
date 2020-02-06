@@ -5,6 +5,7 @@ import * as React from "react";
 import TraitDisplay from "../../../evolution/TraitDisplay";
 import { getDecidedGameResult } from "../game/gameResult";
 import Mito from "../index";
+import Input from "../input";
 import CellBarUI from "./CellBarUI";
 import GenomeViewer from "./GenomeViewer";
 import "./HUD.scss";
@@ -13,6 +14,7 @@ import SeasonsTracker from "./SeasonsTracker";
 
 export interface HUDProps {
   mito: Mito;
+  show: boolean;
 }
 
 export interface HUDState {
@@ -63,11 +65,13 @@ export class HUD extends React.Component<HUDProps, HUDState> {
     const isMaxedEl = <div className={`mito-inventory-maxed${isMaxed ? " is-maxed" : ""}`}>maxed</div>;
     return (
       <>
-        <SeasonsTracker time={this.world.time} season={this.world.season} />
+        <div className="hud-top-center">
+          <SeasonsTracker time={this.world.time} season={this.world.season} />
+        </div>
         {this.maybeRenderTraits()}
         {this.maybeRenderGenomeViewer()}
         {this.maybeRenderCollectButton()}
-        <div className={classnames("hud-bottom", { hidden: false })}>
+        <div className={classnames("hud-bottom", { hidden: !this.props.show })}>
           {isMaxedEl}
           <InventoryBar
             water={this.inventory.water}
@@ -79,7 +83,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
           {/* <SwitchableBarUI bar={this.mito.actionBar} /> */}
           <CellBarUI
             bar={this.mito.actionBar.buildBar}
-            disabled={this.mito.world.player.getBuildError() || (this.mito.controls.isAltHeld() ? true : undefined)}
+            disabled={this.mito.world.player.getBuildError() || (Input.isAltHeld() ? true : undefined)}
           />
         </div>
       </>

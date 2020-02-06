@@ -5,9 +5,16 @@ import { Tile } from "./game/tile";
 import { Mito } from "./index";
 export class WorldDOMElement {
   uuid = uuid();
-  constructor(public mito: Mito, public positionFn: () => Vector2 | Tile, public renderFn: () => React.ReactNode) {}
+  constructor(
+    public mito: Mito,
+    public positionFn: () => Vector2 | Tile | null,
+    public renderFn: () => React.ReactNode
+  ) {}
   render() {
     const posOrTile = this.positionFn();
+    if (posOrTile == null) {
+      return null;
+    }
     let style: React.CSSProperties;
     if (posOrTile instanceof Vector2) {
       const pos = posOrTile;

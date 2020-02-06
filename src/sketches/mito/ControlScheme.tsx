@@ -3,31 +3,28 @@ import { Vector2 } from "three";
 import { ActionMove } from "./action";
 import { Cell } from "./game/tile";
 import { Mito } from "./index";
+import Input from "./input";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
 import { TileDetails } from "./ui";
 import { WorldDOMElement } from "./WorldDOMElement";
 
 export class ControlScheme {
-  readonly keyMap = new Set<string>();
-
   private altElement?: WorldDOMElement;
 
   public constructor(public mito: Mito) {
-    window.addEventListener("blur", this.handleBlur);
     window.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("keyup", this.handleKeyUp);
   }
 
   destroy() {
-    window.removeEventListener("blur", this.handleBlur);
     window.removeEventListener("keydown", this.handleKeyDown);
     window.removeEventListener("keyup", this.handleKeyUp);
   }
 
   animate(_ms: number) {
     const { mito } = this;
-    if (this.isAltHeld() && this.altElement == null) {
+    if (Input.isAltHeld() && this.altElement == null) {
       this.altElement = mito.addWorldDOMElement(
         () => mito.getHighlightedTile()!,
         () => {
@@ -38,7 +35,7 @@ export class ControlScheme {
           );
         }
       );
-    } else if (!this.isAltHeld() && this.altElement != null) {
+    } else if (!Input.isAltHeld() && this.altElement != null) {
       mito.removeWorldDOMElement(this.altElement);
       this.altElement = undefined;
     }
@@ -47,11 +44,11 @@ export class ControlScheme {
     }
     // disable this for now so i can open interaction cell editor in genomeviewer
     // this.canvas.focus();
-    const moveAction = this.keysToMovement(this.keyMap);
+    const moveAction = this.keysToMovement(Input.keyMap);
     if (moveAction) {
       mito.world.player.setAction(moveAction);
     }
-    for (const key of this.keyMap) {
+    for (const key of Input.keyMap) {
       if (ACTION_CONTINUOUS_KEYMAP[key]) {
         mito.world.player.setAction(ACTION_CONTINUOUS_KEYMAP[key]);
       }
@@ -66,11 +63,9 @@ export class ControlScheme {
     }
   }
 
-  private handleKeyDown = (event: KeyboardEvent) => {
+  handleKeyDown = (event: KeyboardEvent) => {
     const { mito } = this;
-    mito.firstActionTakenYet = true;
     const code = event.code;
-    this.keyMap.add(code);
     if (!event.repeat) {
       mito.maybeToggleInstructions(code);
       if (ACTION_INSTANT_KEYMAP[code]) {
@@ -82,21 +77,10 @@ export class ControlScheme {
     }
     mito.actionBar.keyDown(event);
     mito.eventEmitter.emit("keydown", event);
-    const isOpeningDevtoolsOnChrome =
-      (event.code === "KeyI" && event.shiftKey && event.ctrlKey) ||
-      (event.code === "KeyI" && event.altKey && event.metaKey);
-    if (!isOpeningDevtoolsOnChrome) {
-      event.preventDefault();
-    }
   };
 
-  private handleKeyUp = (event: KeyboardEvent) => {
-    this.keyMap.delete(event.code);
+  handleKeyUp = (event: KeyboardEvent) => {
     this.mito.eventEmitter.emit("keyup", event);
-  };
-
-  private handleBlur = () => {
-    this.keyMap.clear();
   };
 
   public keysToMovement(keys: Set<string>): ActionMove | null {
@@ -127,7 +111,6 @@ export class ControlScheme {
 
   public handleLeftClick() {
     const { mito } = this;
-    mito.firstActionTakenYet = true;
     const target = mito.getHighlightedTile();
     if (target == null) {
       return;
@@ -140,10 +123,55 @@ export class ControlScheme {
     const tile = mito.getHighlightedTile();
     return tile != null && mito.actionBar.barFor(tile) === mito.actionBar.interactBar && tile instanceof Cell;
   }
+}
 
-  public isAltHeld() {
-    return (
-      this.keyMap.has("AltLeft") || this.keyMap.has("AltRight") || this.keyMap.has("") || this.keyMap.has("AltRight")
-    );
+export class PlayerSeedControlScheme extends ControlScheme {
+  constructor(mito: Mito) {
+    super(mito);
+    window.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("keyup", this.handleKeyUp);
+  }
+
+  destroy() {
+    window.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener("keyup", this.handleKeyUp);
+  }
+
+  handleKeyDown = () => {
+    this.popOut();
+  };
+
+  handleKeyUp = () => {};
+
+  animate(_ms: number): void {
+    const { mito } = this;
+    if (mito.mouseDown) {
+      // left
+      if (mito.mouseButton === 0) {
+        this.handleLeftClick();
+      } else if (mito.mouseButton === 2) {
+        this.handleRightClick();
+      }
+    }
+  }
+
+  public popOut() {
+    if (this.mito.world.playerSeed) {
+      this.mito.world.playerSeed!.popOut();
+      this.mito.controls = new ControlScheme(this.mito);
+    }
+  }
+
+  public keysToMovement(keys: Set<string>): ActionMove | null {
+    return null;
+  }
+  public handleRightClick() {
+    this.popOut();
+  }
+  public handleLeftClick(): void {
+    this.popOut();
+  }
+  public isInteract(): boolean {
+    return false;
   }
 }

@@ -22,6 +22,18 @@
   z-index: 2;
 }
 
+.hud-top-center {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: transform 2s;
+
+  &.hidden {
+    transform: translateX(-50%) translateY(-170%);
+  }
+}
+
 .hud-right {
   position: absolute;
   right: 10px;

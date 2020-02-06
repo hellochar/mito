@@ -1,3 +1,4 @@
+import { sleep } from "common/promise";
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
 import { traitMod } from "../../../evolution/traits";
@@ -21,7 +22,7 @@ import {
   PLAYER_STARTING_WATER,
 } from "./constants";
 import { Steppable } from "./entity";
-import { Cell, FreezeEffect, GrowingCell, Tile } from "./tile";
+import { Air, Cell, FreezeEffect, GrowingCell, Tile } from "./tile";
 import { CellArgs } from "./tile/cell";
 import { GeneDirectionalPush } from "./tile/genes/GeneDirectionalPush";
 import { CellType } from "./tile/genome";
@@ -299,7 +300,7 @@ export class Player implements Steppable {
       //   },
       //   dt
       // );
-      cell = new GrowingCell(action.position, this.world, matureCell, this.currentTile());
+      cell = new GrowingCell(action.position, this.world, matureCell, this.currentTile().pos);
       // this.inventory.give(cell.inventory, 0, 1);
     } else {
       cell = matureCell;
@@ -369,5 +370,58 @@ export class Player implements Steppable {
     } else {
       return false;
     }
+  }
+}
+
+export class PlayerSeed implements Steppable {
+  public readonly inventory = new Inventory(0, this);
+  public dtSinceLastStepped = 0;
+  private poppedOut = false;
+
+  public constructor(public posFloat: Vector2, public world: World, public player: Player) {}
+
+  shouldStep(): boolean {
+    return true;
+  }
+
+  get pos() {
+    return this.posFloat.clone().round();
+  }
+
+  step(dt: number): void {
+    const pos = this.pos;
+    const tileBelow = this.world.tileAt(pos.x, pos.y + 1);
+    if (tileBelow instanceof Air) {
+      // can keep going
+      const velY = Math.min(20 * dt, 1);
+      this.posFloat.y += velY;
+    } else {
+    }
+    this.player.posFloat.copy(this.posFloat);
+    if (this.poppedOut) {
+      this.world.removePlayerSeed();
+    }
+  }
+
+  popOut() {
+    const start = this.pos;
+    const c = new Cell(start, this.world, this.world.genome.cellTypes[0]);
+    const growingCell = new GrowingCell(start, this.world, c, start);
+    this.world.setTileAt(start, growingCell);
+    Array.from(
+      this.world.bfsIterator(
+        start,
+        30,
+        (t) => !t.isObstacle && t.pos.distanceTo(start) < 2.5,
+        (t) => t.pos.distanceTo(start)
+      )
+    ).forEach((tile, i) => {
+      sleep(300).then(() => {
+        const cell = new Cell(tile.pos, this.world, this.world.genome.cellTypes[0]);
+        // const growingCell = new GrowingCell(tile.pos, this.world, cell, start);
+        this.world.setTileAt(tile.pos, cell);
+      });
+    });
+    this.poppedOut = true;
   }
 }

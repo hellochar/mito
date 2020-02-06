@@ -1,7 +1,7 @@
-import { Player } from "./player";
+import { Player, PlayerSeed } from "./player";
 import { Tile } from "./tile";
 
-export type Entity = Tile | Player;
+export type Entity = Tile | Player | PlayerSeed;
 
 export interface Steppable {
   dtSinceLastStepped: number;

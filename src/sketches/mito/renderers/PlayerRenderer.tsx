@@ -1,3 +1,4 @@
+import { sleep } from "common/promise";
 import { easeSinInOut } from "d3-ease";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { clamp, lerp2, map, randFloat } from "../../../math";
@@ -21,8 +22,13 @@ export class PlayerRenderer extends Renderer<Player> {
     this.mesh.name = "Player Mesh";
     lerp2(this.mesh.position, this.target.pos, 1);
     this.mesh.position.z = 2;
-    this.scene.add(this.mesh);
     this.mesh.add(this.neuronMesh);
+
+    // wait a bit so the player doesn't pop out behind the seed
+    sleep(300).then(() => {
+      this.scene.add(this.mesh);
+    });
+
     this.target.on("start-long-action", this.handleStartLongAction);
     this.target.on("action", this.handleAction);
   }

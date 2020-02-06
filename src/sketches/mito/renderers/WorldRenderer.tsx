@@ -1,11 +1,12 @@
 import { createSelector } from "reselect";
 import { Scene } from "three";
 import Mito from "..";
-import { Entity, Player, StepStats, World } from "../game";
+import { Entity, Player, PlayerSeed, StepStats, World } from "../game";
 import { Tile } from "../game/tile";
 import { EventLogRenderer } from "./events/eventLogRenderer";
 import { InventoryRenderer } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";
+import { PlayerSeedRenderer } from "./PlayerSeedRenderer";
 import { Renderer } from "./Renderer";
 import { InstancedTileRenderer } from "./tile/InstancedTileRenderer";
 import TileBatcher from "./tile/tileBatcher";
@@ -45,10 +46,13 @@ export class WorldRenderer extends Renderer<World> {
   public createRendererFor<E extends Entity>(object: E): Renderer<Entity> {
     if (object instanceof Player) {
       return new PlayerRenderer(object, this.scene, this.mito);
+    } else if (object instanceof PlayerSeed) {
+      return new PlayerSeedRenderer(object, this.scene, this.mito);
     } else if (object instanceof Tile) {
       return new InstancedTileRenderer(object, this.scene, this.mito, this.tileBatcher);
     } else {
-      throw new Error(`Couldn't find renderer for ${object}`);
+      console.error(`Couldn't find renderer for`, object);
+      return null!;
     }
   }
 

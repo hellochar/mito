@@ -4,6 +4,7 @@ import { ActionBuild, ActionInteract } from "./action";
 import { isInteractable } from "./game/interactable";
 import { Cell, Tile } from "./game/tile";
 import { CellArgs } from "./game/tile/cell";
+import Input from "./input";
 
 export abstract class ActionBar {
   abstract leftClick(target: Tile): void;
@@ -172,7 +173,7 @@ export class AltHeldBar extends ActionBar {
   }
 
   barFor(target: Tile) {
-    if (target instanceof Cell || this.mito.controls.isAltHeld()) {
+    if (target instanceof Cell || Input.isAltHeld()) {
       return this.interactBar;
     } else {
       return this.buildBar;

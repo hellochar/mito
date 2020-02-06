@@ -1,10 +1,6 @@
 @import "../../../variables";
 
 .seasons-tracker {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
   pointer-events: none;
 
   .season-display {

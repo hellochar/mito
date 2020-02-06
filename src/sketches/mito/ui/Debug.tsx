@@ -1,6 +1,7 @@
 import { Button } from "common/Button";
 import * as React from "react";
 import Mito from "..";
+import Input from "../input";
 import PlantStats from "./PlantStats";
 
 const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
@@ -38,7 +39,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
         <div>Evaporated Air: {mito.world.numEvaporatedAir}</div>
         <div>Evaporated Soil: {mito.world.numEvaporatedSoil}</div>
       </div>
-      <div style={{ background: "white" }}>{Array.from(mito.controls.keyMap.values()).join(", ")}</div>
+      <div style={{ background: "white" }}>{Array.from(Input.keyMap.values()).join(", ")}</div>
     </div>
   );
 };

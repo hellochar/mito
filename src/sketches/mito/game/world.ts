@@ -8,7 +8,7 @@ import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";
 import { Entity, isSteppable, step } from "./entity";
 import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
-import { Player } from "./player";
+import { Player, PlayerSeed } from "./player";
 import { Season, seasonFromTime } from "./season";
 import { StepStats } from "./stepStats";
 import { Air, Cell, Soil, Tile } from "./tile";
@@ -20,13 +20,11 @@ import { WeatherController } from "./weatherController";
 export interface WorldOptions {
   width: number;
   height: number;
-  growInitialTissue: boolean;
 }
 
 const optionsDefault: WorldOptions = {
   width: 50,
   height: 100,
-  growInitialTissue: true,
 };
 
 export class World {
@@ -35,6 +33,7 @@ export class World {
   public readonly width: number;
   public readonly height: number;
   public readonly player: Player;
+  public playerSeed?: PlayerSeed;
   private readonly gridEnvironment: Tile[][];
   private readonly gridCells: Array<Array<Cell | null>>;
   private readonly neighborCache: Array<Array<Map<Vector2, Tile>>>;
@@ -78,31 +77,15 @@ export class World {
     this.computeSoilDepths();
 
     // always drop player on the Soil Air interface
-    if (options.growInitialTissue) {
-      const start = new Vector2(Math.floor(this.width / 2), Math.floor(this.height / 2));
-      const firstNonAir = this.gridEnvironment[start.x].find((t) => !(t instanceof Air));
-      if (firstNonAir != null) {
-        // if we hit a rock, go onto the Air right above it
-        start.y = firstNonAir.isObstacle ? firstNonAir.pos.y - 1 : firstNonAir.pos.y;
-      }
-
-      const tissues = Array.from(
-        this.bfsIterator(
-          start,
-          21,
-          (t) => !t.isObstacle && t.pos.distanceTo(start) < 3.5,
-          (t) => t.pos.distanceTo(start)
-        )
-      ).map((tile, n) => {
-        const t = new Cell(tile.pos, this, this.genome.cellTypes[0]);
-        this.setTileAt(tile.pos, t);
-        return t;
-      });
-      const avgTissuePos = tissues.reduce((p, t) => p.add(t.pos), new Vector2()).divideScalar(tissues.length);
-      this.player = new Player(avgTissuePos, this);
-    } else {
-      this.player = new Player(new Vector2(0, 0), this);
+    const start = new Vector2(Math.floor(this.width / 2), Math.floor(this.height / 2));
+    const firstNonAir = this.gridEnvironment[start.x].find((t) => !(t instanceof Air));
+    if (firstNonAir != null) {
+      // if we hit a rock, go onto the Air right above it
+      start.y = firstNonAir.isObstacle ? firstNonAir.pos.y - 1 : firstNonAir.pos.y;
     }
+
+    this.player = new Player(start, this);
+    this.playerSeed = new PlayerSeed(start, this, this.player);
 
     this.fillCachedEntities();
 
@@ -115,6 +98,11 @@ export class World {
       tileCell && tileCell.step(0);
     });
     this.weather.step(0);
+  }
+
+  public removePlayerSeed() {
+    this.stepStats.deleted.push(this.playerSeed!);
+    delete this.playerSeed;
   }
 
   public tileAt(v: Vector2): Tile | null;
@@ -303,7 +291,11 @@ export class World {
     // add player at the end - this is important since Player is currently the only thing
     // that modifies tiles. You can get into situations where tiles that should be dead
     // are still left-over in the entities cache.
-    newEntities.push(this.player);
+    if (this.playerSeed) {
+      newEntities.push(this.playerSeed);
+    } else {
+      newEntities.push(this.player);
+    }
     this.cachedEntities = newEntities;
 
     // update renderable entities

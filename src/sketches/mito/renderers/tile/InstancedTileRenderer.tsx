@@ -94,7 +94,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   commit() {
     if (this.target instanceof GrowingCell) {
       const { start, pos } = this.target;
-      const p = start.pos.clone().lerp(pos, 0.5);
+      const p = start.clone().lerp(pos, 0.5);
       const t1Pos = pos;
       const t = this.scale.x;
       lerp2(p, t1Pos, t);

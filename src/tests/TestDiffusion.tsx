@@ -20,7 +20,6 @@ function testWorld(width: number, height: number) {
   const world = new World(allSoilEnvironment, 0, newBaseSpecies(), {
     width,
     height,
-    growInitialTissue: false,
   });
   const cellTypeTissue = standardGenome.cellTypes[0];
   for (const t of world.allEnvironmentTiles()) {
