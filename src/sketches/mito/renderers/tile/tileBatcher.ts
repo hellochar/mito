@@ -43,12 +43,14 @@ attribute vec3 instancedTileCenter;
 attribute vec3 instancedTileScale;
 attribute vec3 instancedTileColor;
 attribute vec2 instancedTexturePosition;
+attribute float instancedAlpha;
 
 // things we pass onto fragment
 varying vec3 vTileCenter;
 varying vec3 vColor;
 varying vec2 vUv;
 varying vec2 vTexturePosition;
+varying float vAlpha;
 
 // based on https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_instancing_billboards.html
 void main() {
@@ -56,6 +58,7 @@ void main() {
   vColor = instancedTileColor;
   vUv = uv;
   vTexturePosition = instancedTexturePosition;
+  vAlpha = instancedAlpha;
 
   vec4 mvPosition = modelViewMatrix * vec4(instancedTileCenter, 1.);
   mvPosition.xyz += position * instancedTileScale;
@@ -75,6 +78,7 @@ varying vec3 vTileCenter;
 varying vec3 vColor;
 varying vec2 vUv;
 varying vec2 vTexturePosition;
+varying float vAlpha;
 
 const vec2 spritesheetSize = vec2(256., 256.);
 uniform sampler2D spriteSheet;
@@ -104,7 +108,7 @@ vec2 getCorrectUv(vec2 uv, vec2 texturePosition, vec2 textureSize) {
 void main() {
   vec2 correctUv = getCorrectUv(vUv, vTexturePosition, spritesheetSize);
   vec4 textureColor = texture2D(spriteSheet, correctUv);
-  gl_FragColor = vec4(textureColor.rgb * vColor, textureColor.a);
+  gl_FragColor = vec4(textureColor.rgb * vColor, textureColor.a * vAlpha);
 }
 `;
 
@@ -150,6 +154,8 @@ class TileBatcher {
 
   texturePositions = new InstancedBufferAttribute(new Float32Array(2 * this.maxTiles), 2, false, 1);
 
+  alphas = new InstancedBufferAttribute(new Float32Array(this.maxTiles).fill(1), 1, false, 1);
+
   public readonly mesh: Mesh;
 
   constructor(public world: World) {
@@ -163,10 +169,12 @@ class TileBatcher {
     this.colors.setUsage(DynamicDrawUsage);
     this.scales.setUsage(DynamicDrawUsage);
     this.texturePositions.setUsage(DynamicDrawUsage);
+    this.alphas.setUsage(DynamicDrawUsage);
     this.geometry.setAttribute("instancedTileCenter", this.centers);
     this.geometry.setAttribute("instancedTileColor", this.colors);
     this.geometry.setAttribute("instancedTileScale", this.scales);
     this.geometry.setAttribute("instancedTexturePosition", this.texturePositions);
+    this.geometry.setAttribute("instancedAlpha", this.alphas);
   }
 
   private instances = new Map<string, BatchInstance>();
@@ -195,6 +203,7 @@ class TileBatcher {
     this.colors.needsUpdate = true;
     this.scales.needsUpdate = true;
     this.texturePositions.needsUpdate = true;
+    this.alphas.needsUpdate = true;
   }
 }
 
@@ -246,6 +255,10 @@ export class BatchInstance {
 
   commitTexturePosition(pos: Vector2) {
     this.batcher.texturePositions.setXY(this.index, pos.x, pos.y);
+  }
+
+  commitAlpha(alpha: number) {
+    this.batcher.alphas.setX(this.index, alpha);
   }
 
   destroy() {

@@ -112,6 +112,10 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     this.instance.commitTexturePosition(this.materialInfo.texturePosition);
     this.instance.commitColor(this.color);
+    // const dist = this.target.pos.distanceTo(this.mito.world.player.pos);
+    // const timeAlive = this.target.age;
+    // const alpha = clamp(easeCubicIn(timeAlive * 3 - dist), 0, 1);
+    // this.instance.commitAlpha(alpha);
     this.instance.commitScale(this.scale);
   }
 
