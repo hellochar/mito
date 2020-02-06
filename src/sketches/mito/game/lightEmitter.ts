@@ -63,6 +63,7 @@ class LightOccluderManager {
   }
 
   private intersections: Map<Tile, Intersection> = new Map();
+
   setIntersection(tile: Tile, intersection: Intersection) {
     this.intersections.set(tile, intersection);
   }
@@ -74,13 +75,17 @@ class LightOccluderManager {
 
 export class LightEmitter {
   public readonly world: World = this.renderer.target;
+
   private worldRectMin = new Vector2(-0.5, -0.5);
+
   private worldRectMax = new Vector2(this.world.width - 0.5, this.world.height - 0.5);
+
   // add a .01 buffer to prevent self-intersecting
   private worldBox = new Box3(
     new Vector3(this.worldRectMin.x - 0.01, this.worldRectMin.y - 0.01, -1),
     new Vector3(this.worldRectMax.x + 0.01, this.worldRectMax.y + 0.01, 1)
   );
+
   public lightRays = new LightRays();
 
   public occluderManager = new LightOccluderManager(this.world);
@@ -168,10 +173,15 @@ export class LightEmitter {
   }
 
   planeTop = new Plane(new Vector3(0, -1, 0), this.worldRectMin.y - 0.1);
+
   planeLeft = new Plane(new Vector3(-1, 0, 0), this.worldRectMin.x - 0.1);
+
   planeBottom = new Plane(new Vector3(0, -1, 0), this.worldRectMax.y + 0.1);
+
   planeRight = new Plane(new Vector3(-1, 0, 0), this.worldRectMax.x + 0.1);
+
   private t: Vector3 = new Vector3();
+
   private intersectWorldPerimeter(ray: Ray): Vector2 | undefined {
     let intersected =
       (ray.intersectPlane(this.planeTop, this.t) ||

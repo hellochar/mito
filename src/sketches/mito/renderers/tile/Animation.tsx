@@ -4,12 +4,16 @@ export type Animation = (t: number, dt: number) => boolean;
 
 export class AnimationController {
   public animation?: Animation;
+
   timeStarted?: number;
+
   timeLastUpdated?: number;
+
   set(a: Animation) {
     this.animation = a;
     this.timeLastUpdated = this.timeStarted = Ticker.now / 1000;
   }
+
   update() {
     if (this.animation != null && this.timeStarted != null && this.timeLastUpdated != null) {
       const now = Ticker.now / 1000;

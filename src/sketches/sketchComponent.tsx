@@ -45,7 +45,9 @@ interface SketchSuccessComponentState {
 
 class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentProps, SketchSuccessComponentState> {
   private frameId?: number;
+
   private lastTimestamp = 0;
+
   private stop = false;
 
   constructor(props: SketchSuccessComponentProps) {
@@ -221,6 +223,7 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
 
   // private renderer?: THREE.WebGLRenderer;
   private audioContext?: SketchAudioContext;
+
   private userVolume?: GainNode;
 
   private handleContainerRef = (ref: HTMLDivElement | null) => {

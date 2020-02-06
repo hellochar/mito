@@ -1,13 +1,16 @@
 export const Input = new (class Input {
   readonly keyMap = new Set<string>();
+
   constructor() {
     window.addEventListener("blur", this.handleBlur);
     window.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("keyup", this.handleKeyUp);
   }
+
   private handleBlur = () => {
     this.keyMap.clear();
   };
+
   private handleKeyDown = (event: KeyboardEvent) => {
     this.keyMap.add(event.code);
     const isOpeningDevtoolsOnChrome =
@@ -17,9 +20,11 @@ export const Input = new (class Input {
       event.preventDefault();
     }
   };
+
   private handleKeyUp = (event: KeyboardEvent) => {
     this.keyMap.delete(event.code);
   };
+
   public isAltHeld() {
     return (
       // TODO add mac cmd key

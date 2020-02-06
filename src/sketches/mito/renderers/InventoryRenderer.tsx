@@ -54,9 +54,13 @@ export class InventoryRenderer extends Renderer<Inventory> {
   }
 
   public animationOffset = 0;
+
   public waters: Vector2[] = [];
+
   public sugars: Vector2[] = [];
+
   private activeSugar?: Vector2;
+
   private stableWater?: Vector2;
 
   constructor(target: Inventory, scene: Scene, mito: Mito) {

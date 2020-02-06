@@ -22,11 +22,14 @@ export interface Trial {
 
 export class Experiment {
   trials: Trial[] = [];
+
   constructor(public visitors: Visitors) {}
+
   recordDataFor(tiles: Tile[]) {
     const trial = visit(tiles, this.visitors);
     this.trials.push(trial);
   }
+
   visitorNames() {
     return Object.keys(this.visitors);
   }

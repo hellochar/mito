@@ -9,22 +9,32 @@ import { World } from "../world";
 
 export abstract class Tile implements Steppable, HasInventory {
   displayName = "Tile";
+
   static fallAmount = 0;
+
   public abstract get isObstacle(): boolean;
+
   public darkness = Infinity;
+
   public temperatureFloat: number;
+
   public dtSinceLastStepped = 0;
+
   public abstract inventory: Inventory;
+
   // public lightIntersection?: Intersection;
   get temperature(): Temperature {
     return temperatureFor(this.temperatureFloat);
   }
+
   get diffusionWater(): number {
     return (this.constructor as any).diffusionWater;
   }
+
   get diffusionSugar(): number {
     return (this.constructor as any).diffusionSugar;
   }
+
   get fallAmount(): number {
     return (this.constructor as any).fallAmount;
   }
@@ -38,10 +48,13 @@ export abstract class Tile implements Steppable, HasInventory {
   }
 
   public readonly timeMade: number;
+
   public pos: Vector2;
+
   public get age() {
     return this.world.time - this.timeMade;
   }
+
   public constructor(pos: Vector2, public readonly world: World) {
     this.pos = pos.clone();
     if (world == null) {

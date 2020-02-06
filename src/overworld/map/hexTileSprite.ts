@@ -25,6 +25,7 @@ export interface DrawingContext {
 
 export default class HexTileSprite {
   private vignettePositions?: Vector2[];
+
   private isHovered = false;
 
   constructor(public tile: HexTile, public context: DrawingContext) {}

@@ -18,8 +18,10 @@ export class HexTile {
     // wind: "low",
     visible: false,
   };
+
   @serializable
   public i: number;
+
   @serializable
   public j: number;
 

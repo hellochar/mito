@@ -12,7 +12,9 @@ const chromosomeGrowingCell = new Chromosome(GeneLiving.level(2), GeneObstacle.l
 
 export class GrowingCell extends Cell {
   public percentMatured = 0;
+
   public timeToMaturity: number;
+
   constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Vector2) {
     super(pos, world, cellTypeGrowingCell);
     this.timeToMaturity = completedCell.type.chromosome.mergeStaticProperties().timeToBuild;

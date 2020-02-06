@@ -53,7 +53,9 @@ class NeuronMesh extends Object3D {
   // return line;
 
   public nodes: Node[] = [];
+
   public meshes: Mesh[] = [];
+
   public line: Line;
 
   constructor(numNodes: number) {
@@ -105,7 +107,9 @@ class NeuronMesh extends Object3D {
   }
 
   private pullForceScalar = 10;
+
   private towardsTargetForce = 5;
+
   private dragForceScalar = -3;
 
   update(dt: number, target: Vector2) {

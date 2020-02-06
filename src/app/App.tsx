@@ -16,6 +16,7 @@ interface AppComponentState {
 
 class AppComponent extends React.PureComponent<{}, AppComponentState> {
   static contextType = AppReducerContext;
+
   context!: React.ContextType<typeof AppReducerContext>;
 
   constructor(props: {}, context: any) {

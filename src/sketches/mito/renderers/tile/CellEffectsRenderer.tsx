@@ -69,6 +69,7 @@ class FreezeEffectRenderer extends Renderer<FreezeEffect> {
   })();
 
   private mesh: Mesh;
+
   constructor(target: FreezeEffect, scene: Scene, mito: Mito) {
     super(target, scene, mito);
     this.mesh = FreezeEffectRenderer.newMesh();
@@ -107,6 +108,7 @@ class CancerEffectRenderer extends Renderer<CancerEffect> {
   })();
 
   private mesh: Mesh;
+
   constructor(target: CancerEffect, scene: Scene, mito: Mito) {
     super(target, scene, mito);
     this.mesh = CancerEffectRenderer.newMesh();

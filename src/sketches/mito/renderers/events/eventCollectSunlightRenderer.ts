@@ -10,6 +10,7 @@ import { EventRenderer } from "./eventRenderer";
 export default class EventCollectSunlightRenderer extends EventRenderer<EventCollectSunlight> {
   // private lightRays: LightRays;
   private ffPoints: FireAndForgetPoints;
+
   constructor(target: WorldRenderer) {
     super("collect-sunlight", target);
     // this.lightRays = new LightRays();

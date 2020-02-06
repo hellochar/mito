@@ -7,6 +7,7 @@ import { HexTile } from "./hexTile";
 export class OverWorld {
   @serializable(object(HexStore))
   storage: HexStore;
+
   @serializable(reference(HexTile))
   startTile: HexTile;
 

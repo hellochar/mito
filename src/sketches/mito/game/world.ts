@@ -29,20 +29,33 @@ const optionsDefault: WorldOptions = {
 
 export class World {
   public time: number = 0;
+
   public frame: number = 0;
+
   public readonly width: number;
+
   public readonly height: number;
+
   public readonly player: Player;
+
   public playerSeed?: PlayerSeed;
+
   private readonly gridEnvironment: Tile[][];
+
   private readonly gridCells: Array<Array<Cell | null>>;
+
   private readonly neighborCache: Array<Array<Map<Vector2, Tile>>>;
+
   public readonly mpEarners = new Map<Cell, number>();
 
   public readonly species: Species;
+
   public readonly traits: Traits;
+
   public readonly generatorContext: GeneratorContext;
+
   public weather: WeatherController;
+
   genome: Genome;
 
   get season(): Season {
@@ -106,7 +119,9 @@ export class World {
   }
 
   public tileAt(v: Vector2): Tile | null;
+
   public tileAt(x: number, y: number): Tile | null;
+
   public tileAt(xOrVec2: number | Vector2, y?: number): Tile | null {
     let x: number;
     if (xOrVec2 instanceof Vector2) {
@@ -129,7 +144,9 @@ export class World {
   }
 
   public cellAt(v: Vector2): Cell | null;
+
   public cellAt(x: number, y: number): Cell | null;
+
   public cellAt(x: number | Vector2, y?: number): Cell | null {
     if (x instanceof Vector2) {
       y = x.y;
@@ -196,6 +213,7 @@ export class World {
     this.stepStats.added.push(tile);
     this.handleTileUpdated(position);
   }
+
   public maybeRemoveCellAt(position: Vector2): Cell | null {
     const cell = this.cellAt(position.x, position.y);
     if (cell) {
@@ -206,6 +224,7 @@ export class World {
     this.handleTileUpdated(position);
     return cell;
   }
+
   public isValidPosition(x: number, y: number) {
     if (x >= this.width || x < 0 || y >= this.height || y < 0) {
       return false;
@@ -245,6 +264,7 @@ export class World {
   // }
 
   private cachedEntities?: Entity[];
+
   public entities() {
     if (this.cachedEntities == null) {
       throw new Error("accessed entities before filling");
@@ -263,6 +283,7 @@ export class World {
     }
     this.fillCachedEntities();
   }
+
   private fillCachedEntities() {
     const newEntities: Entity[] = [];
     // we do this super hacky thing for performance where we only run every other entity in
@@ -315,6 +336,7 @@ export class World {
   }
 
   private stepStats: StepStats = new StepStats(0, this.frame);
+
   public step(dt: number): StepStats {
     const entities = this.entities();
     this.stepStats = new StepStats(dt, this.frame);
@@ -341,7 +363,9 @@ export class World {
   }
 
   numRainWater = 0;
+
   numEvaporatedAir = 0;
+
   numEvaporatedSoil = 0;
 
   public computeSoilDepths() {

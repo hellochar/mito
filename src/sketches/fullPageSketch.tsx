@@ -16,6 +16,7 @@ export class FullPageSketch extends React.PureComponent<ISketchRouteProps, {}> {
       </div>
     );
   }
+
   private handleDivRef = (div: HTMLDivElement | null) => {
     if (div != null) {
       // this.requestFullscreen(div);

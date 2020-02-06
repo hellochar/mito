@@ -30,6 +30,7 @@ export interface PointHighlightProps {
 
 class PointHighlight extends React.PureComponent<PointHighlightProps, {}> {
   private object = POINT_HIGHLIGHT().clone();
+
   render() {
     this.object.position.x = this.props.x;
     this.object.position.y = this.props.y;

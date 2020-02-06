@@ -10,6 +10,7 @@ export default class TutorialMovement extends Tutorial {
   state = {
     counter: 0,
   };
+
   render() {
     const keyHints: JSX.Element[] = [];
     for (const [key] of MOVEMENT_KEY_MESHES) {
@@ -46,6 +47,7 @@ interface TutorialMovementKeyHintProps {
 
 class TutorialMovementKeyHint extends React.PureComponent<TutorialMovementKeyHintProps, {}> {
   private mesh: THREE.Mesh;
+
   constructor(props: TutorialMovementKeyHintProps) {
     super(props);
     this.mesh = MOVEMENT_KEY_MESHES.get(this.props.keyChar)!.clone();

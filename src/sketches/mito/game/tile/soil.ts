@@ -13,6 +13,7 @@ export abstract class Soil extends Tile {
    * How far away is this soil from the nearest Air?
    */
   public depth = 1000;
+
   isObstacle = false;
 
   get depthDiffusionFactor() {
@@ -25,10 +26,12 @@ export abstract class Soil extends Tile {
     // test this out
     return dt > 0.2;
   }
+
   step(dt: number) {
     super.step(dt);
     this.stepEvaporation(dt);
   }
+
   stepEvaporation(dt: number) {
     const { secondsToEvaporate } = this.world.environment;
     const water = this.inventory.water;

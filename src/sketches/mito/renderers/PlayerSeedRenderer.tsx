@@ -12,7 +12,9 @@ import { Animation, AnimationController, chain } from "./tile/Animation";
 
 export class PlayerSeedRenderer extends Renderer<PlayerSeed> {
   public mesh: Mesh;
+
   protected animation = new AnimationController();
+
   constructor(target: PlayerSeed, scene: Scene, mito: Mito) {
     super(target, scene, mito);
     const reproducerCellType = target.world.genome.cellTypes.find(

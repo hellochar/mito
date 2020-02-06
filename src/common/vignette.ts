@@ -15,13 +15,16 @@ import { OrthographicCamera, Scene, Vector2, WebGLRenderTarget } from "three";
  */
 class VignetteCapturer {
   static renderTarget = new WebGLRenderTarget(1024, 1024);
+
   static rtBuffer = new Uint8Array(VignetteCapturer.renderTarget.width * VignetteCapturer.renderTarget.height * 4);
+
   static rtCanvas = (() => {
     const c = document.createElement("canvas");
     c.width = VignetteCapturer.renderTarget.width;
     c.height = VignetteCapturer.renderTarget.height;
     return c;
   })();
+
   private lastCaptureTime: number = 0;
 
   public constructor(public readonly mito: Mito, public pxPerTile = 4, public captureInterval = TIME_PER_SEASON / 27) {}

@@ -3,7 +3,9 @@ import glsl from "./glsl";
 
 export class CommittablePoints extends Points {
   public geometry: BufferGeometry;
+
   public material: ResourcePointsMaterial;
+
   static newGeometry(size: number) {
     const geometry = new BufferGeometry();
     const positions = new Float32Array(size * 3);
@@ -23,10 +25,13 @@ export class CommittablePoints extends Points {
     this.material = new ResourcePointsMaterial(params);
     this.frustumCulled = false;
   }
+
   private index = 0;
+
   startFrame() {
     this.index = 0;
   }
+
   commit(x: number, y: number, z: number, size: number, alpha: number, r?: number) {
     this.geometry.attributes.position.setXYZ(this.index, x, y, z);
     this.geometry.attributes.size.setX(this.index, size);
@@ -36,6 +41,7 @@ export class CommittablePoints extends Points {
     }
     this.index++;
   }
+
   endFrame() {
     const positions = this.geometry.attributes.position as BufferAttribute;
     positions.needsUpdate = true;

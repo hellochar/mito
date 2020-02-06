@@ -141,9 +141,13 @@ class TileBatcher {
   geometry!: InstancedBufferGeometry;
 
   public maxTiles = this.world.height * this.world.width * 2;
+
   centers = new InstancedBufferAttribute(new Float32Array(3 * this.maxTiles), 3, false, 1);
+
   colors = new InstancedBufferAttribute(new Float32Array(3 * this.maxTiles), 3, false, 1);
+
   scales = new InstancedBufferAttribute(new Float32Array(3 * this.maxTiles), 3, false, 1);
+
   texturePositions = new InstancedBufferAttribute(new Float32Array(2 * this.maxTiles), 2, false, 1);
 
   public readonly mesh: Mesh;
@@ -198,9 +202,13 @@ const BLACK = new Color(0, 0, 0);
 const ZERO = new Vector3(0, 0, 0);
 export class BatchInstance {
   public readonly batcher: TileBatcher;
+
   public readonly index: number;
+
   private static numInUse = 0;
+
   private inUse = false;
+
   constructor(batcher: TileBatcher, index: number) {
     this.batcher = batcher;
     this.index = index;

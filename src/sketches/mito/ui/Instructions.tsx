@@ -109,6 +109,7 @@ export class Instructions extends React.PureComponent<InstructionsProps, {}> {
       </div>
     );
   }
+
   renderCredit() {
     return (
       <>

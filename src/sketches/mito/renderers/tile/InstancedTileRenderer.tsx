@@ -37,12 +37,17 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   private static readonly ONE = Object.freeze(new Vector2(1, 1));
 
   public inventoryRenderer: InventoryRenderer;
+
   private originalColor: Color;
+
   private cellEffectsRenderer?: CellEffectsRenderer;
+
   private geneRenderer?: GeneRenderer;
+
   animation = new AnimationController();
 
   scale = new Vector3(1, 1, 1);
+
   private color = new Color();
 
   private instance: BatchInstance;
@@ -175,7 +180,9 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   private temperatureColor: Color = InstancedTileRenderer.TEMPERATURE_COLORS[Temperature.Mild];
+
   private currentLerp = 0;
+
   lerpColorTemperature(color: Color) {
     const { temperature } = this.target;
     let tColor = InstancedTileRenderer.TEMPERATURE_COLORS[temperature];

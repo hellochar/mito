@@ -9,7 +9,9 @@ export class GeneSoilAbsorptionRenderer extends GeneRenderer<GeneSoilAbsorption>
     suckWaterBuffer.then((buffer) => audio.setBuffer(buffer));
     return audio;
   })();
+
   private lastAudioValueTracker = 0;
+
   private neighborLines = new Object3D();
 
   update() {

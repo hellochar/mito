@@ -6,6 +6,7 @@ import { GeneRenderer } from "./GeneRenderer";
 
 export class GeneDirectionalPushRenderer extends GeneRenderer<GeneDirectionalPush> {
   private arrow!: Object3D;
+
   private origin!: Vector2;
 
   private lastDir?: Vector2;

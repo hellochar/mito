@@ -6,20 +6,26 @@ import { Temperature } from "../temperature";
 import { Cell } from "./cell";
 export abstract class CellEffect {
   private timeMade!: number;
+
   public cell!: Cell;
+
   get age() {
     return this.cell.world.time - this.timeMade;
   }
+
   attachTo(cell: Cell) {
     this.cell = cell;
     this.timeMade = this.cell.world.time;
     this.onAttached();
   }
+
   onAttached() {}
+
   /**
    * Return whether to step the next behavior in the chain
    */
   abstract step(dt: number): void;
+
   remove() {
     const index = this.cell.effects.indexOf(this);
     this.cell.effects.splice(index, 1);
@@ -31,13 +37,19 @@ export interface CellEffectConstructor extends Constructor<CellEffect> {
 }
 export class FreezeEffect extends CellEffect implements Interactable {
   static displayName = "Frozen";
+
   static stacks = false;
+
   public readonly secondsToDie = TIME_PER_DAY;
+
   public percentFrozen = 0.25;
+
   chunkCooldown = 0;
+
   get timeUntilDeath() {
     return this.secondsToDie - this.age;
   }
+
   interact(source: Entity, dt: number) {
     if (this.chunkCooldown <= 0) {
       this.chunkCooldown += 0.5;
@@ -70,9 +82,11 @@ export class FreezeEffect extends CellEffect implements Interactable {
     this.cell.energy -= dt / this.secondsToDie;
     throw new StopStep();
   }
+
   onAttached() {
     this.cell.energy -= 0.2;
   }
+
   onFrozenChanged() {
     if (this.percentFrozen > 1) {
       this.cell.die();
@@ -84,8 +98,11 @@ export class FreezeEffect extends CellEffect implements Interactable {
 
 export class CancerEffect extends CellEffect {
   static displayName = "Cancerous";
+
   static stacks = false;
+
   public secondsPerDuplication = 5;
+
   public timeToDuplicate = 5;
 
   step(dt: number): void {

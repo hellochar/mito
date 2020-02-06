@@ -14,9 +14,13 @@ const MAX_LIGHTRAYS = 1000;
 
 export class LightRays {
   public positions: Float32BufferAttribute;
+
   public colors: Float32BufferAttribute;
+
   public geometry: BufferGeometry;
+
   public material = new LineBasicMaterial({ vertexColors: VertexColors });
+
   public lineSegments: LineSegments;
 
   constructor() {
@@ -32,6 +36,7 @@ export class LightRays {
   }
 
   private index = 0;
+
   private startFrame() {
     this.index = 0;
   }
@@ -89,6 +94,7 @@ export class LightRays {
 const RAY_LIFETIME = 0.1; // seconds
 class LightRay {
   public timeRemaining: number;
+
   public hit?: Tile;
 
   constructor(public start: Vector2, public end: Vector2, extraTime: number) {

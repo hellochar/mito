@@ -64,6 +64,7 @@
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "lint": "eslint --fix \"src/**/*.{ts,tsx}\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "pretter": "prettier --write \"src/**/*.{ts,tsx,scss}\""

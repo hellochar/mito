@@ -18,6 +18,7 @@ const defaultProperties: GeneStaticProperties = {
 
 export default class Chromosome {
   public genes: RealizedGene[];
+
   constructor(...genes: RealizedGene[]) {
     this.genes = genes;
   }
@@ -156,10 +157,13 @@ type GeneState<G extends Gene> = G extends Gene<infer S, any> ? S : never;
 type GenePropNames<G extends Gene> = G extends Gene<any, infer K> ? K : never;
 export class GeneInstance<G extends Gene, S = GeneState<G>, K extends string = GenePropNames<G>> implements Steppable {
   public dtSinceLastStepped = 0;
+
   public state: S;
+
   public get blueprint() {
     return this.gene.blueprint;
   }
+
   constructor(public gene: G, public props: RealizedProps<K>, public cell: Cell) {
     this.state = gene.initialStateFn(gene, props, cell);
   }

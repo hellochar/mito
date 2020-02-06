@@ -14,8 +14,11 @@ import { also, Animation, AnimationController, animPause, chain } from "./tile/A
 
 export class PlayerRenderer extends Renderer<Player> {
   public mesh: Mesh;
+
   public neuronMesh = new NeuronMesh(8);
+
   protected animation = new AnimationController();
+
   constructor(target: Player, scene: Scene, mito: Mito) {
     super(target, scene, mito);
     this.mesh = newMesh();

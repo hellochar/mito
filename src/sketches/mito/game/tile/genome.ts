@@ -10,6 +10,7 @@ export interface CellInteraction {
 
 export class CellType {
   public args?: CellArgs;
+
   constructor(
     public name: string,
     public geneSlots: number,

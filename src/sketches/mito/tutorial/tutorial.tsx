@@ -16,6 +16,8 @@ export abstract class Tutorial<P = {}, S = {}> extends React.PureComponent<P & T
       this.props.onFulfilled();
     }
   }
+
   abstract onActionPerformed(action: Action): void;
+
   abstract isFulfilled(): boolean;
 }

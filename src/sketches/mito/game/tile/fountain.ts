@@ -3,8 +3,11 @@ import { World } from "../world";
 import { Silt } from "./soil";
 export class Fountain extends Silt {
   displayName = "Fountain";
+
   isObstacle = true;
+
   public cooldown = 0;
+
   constructor(pos: Vector2, world: World, public secondsPerWater: number, public waterRemaining: number) {
     super(pos, world);
   }

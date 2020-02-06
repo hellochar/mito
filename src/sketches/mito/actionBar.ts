@@ -8,7 +8,9 @@ import Input from "./input";
 
 export abstract class ActionBar {
   abstract leftClick(target: Tile): void;
+
   abstract rightClick(target: Tile): void;
+
   abstract keyDown(event: KeyboardEvent): void;
 }
 
@@ -16,6 +18,7 @@ export class CellBar extends ActionBar {
   public get cellTypes() {
     return this.mito.world.genome.cellTypes;
   }
+
   private _index = 0;
 
   constructor(public mito: Mito) {
@@ -129,6 +132,7 @@ export class InteractBar extends ActionBar {
 
 export class SwitchableBar extends ActionBar {
   public current: CellBar | InteractBar;
+
   constructor(public buildBar: CellBar, public interactBar: InteractBar) {
     super();
     this.current = buildBar;
@@ -149,9 +153,11 @@ export class SwitchableBar extends ActionBar {
   leftClick(target: Tile) {
     this.current.leftClick(target);
   }
+
   rightClick(target: Tile): void {
     this.current.rightClick(target);
   }
+
   keyDown(event: KeyboardEvent) {
     if (this.buildBar.shouldCapture(event)) {
       this.current = this.buildBar;
@@ -167,7 +173,9 @@ export class SwitchableBar extends ActionBar {
 
 export class AltHeldBar extends ActionBar {
   public buildBar = new CellBar(this.mito);
+
   public interactBar = new InteractBar(this.mito);
+
   constructor(public mito: Mito) {
     super();
   }
@@ -183,9 +191,11 @@ export class AltHeldBar extends ActionBar {
   leftClick(target: Tile) {
     this.barFor(target).leftClick(target);
   }
+
   rightClick(target: Tile) {
     this.barFor(target).rightClick(target);
   }
+
   keyDown(event: KeyboardEvent) {
     this.buildBar.keyDown(event);
   }

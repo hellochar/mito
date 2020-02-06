@@ -9,7 +9,9 @@ export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis>
     blopBuffer.then((buffer) => audio.setBuffer(buffer));
     return audio;
   })();
+
   private lastAudioValueTracker = 0;
+
   private neighborLines = new Object3D();
 
   update() {

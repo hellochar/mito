@@ -12,6 +12,7 @@ export class TutorialBuildTissue extends Tutorial {
   state = {
     counter: 0,
   };
+
   render() {
     const buildCandidateHighlights: JSX.Element[] = [];
     for (const candidate of findBuildCandidateTiles(this.props.mito.world)) {
@@ -51,10 +52,12 @@ export class TutorialBuildRoot extends Tutorial {
   state = {
     counter: 0,
   };
+
   constructor(props: any) {
     super(props);
     // BUILD_HOTKEYS.r = Root;
   }
+
   render() {
     const buildCandidateHighlights: JSX.Element[] = [];
     for (const candidate of findBuildCandidateTiles(this.props.mito.world, (t) => t instanceof Soil)) {
@@ -94,10 +97,12 @@ export class TutorialBuildLeaf extends Tutorial {
   state = {
     counter: 0,
   };
+
   constructor(props: any) {
     super(props);
     // BUILD_HOTKEYS.f = Leaf;
   }
+
   render() {
     const buildCandidateHighlights: JSX.Element[] = [];
     for (const candidate of findBuildCandidateTiles(this.props.mito.world, (t) => t instanceof Air)) {

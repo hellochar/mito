@@ -39,6 +39,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       </div>
     );
   }
+
   private interactInfo(tile: Tile) {
     if (tile instanceof Cell) {
       const leftClickEl =
@@ -92,6 +93,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       </div>
     );
   }
+
   private photosynthesisInfo(state: PhotosynthesisState) {
     return (
       <div className="info-leaf">

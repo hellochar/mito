@@ -30,28 +30,46 @@ export interface CameraState {
 
 export class Mito extends ISketch {
   static id = "mito";
+
   public readonly world: World;
+
   // public readonly actionBar: SwitchableBar;
   public readonly actionBar: AltHeldBar;
+
   public readonly scene = new Scene();
+
   private readonly camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);
+
   public tutorialRef: NewPlayerTutorial | null = null;
+
   public readonly mouse = new THREE.Vector2();
+
   public mouseDown = false;
+
   public mouseButton = -1;
+
   public instructionsOpen = false;
+
   public readonly audioListener = new THREE.AudioListener();
+
   public highlightedTile?: Tile;
+
   public readonly worldRenderer: WorldRenderer;
+
   private vignetteCapturer = new VignetteCapturer(this);
+
   private vignettes: HTMLCanvasElement[] = [];
 
   private hackCamera?: PerspectiveCamera;
+
   private orbitControls?: OrbitControls;
 
   private suggestedCamera?: CameraState;
+
   private userZoom: number;
+
   eventEmitter: EventEmitter = new EventEmitter();
+
   public controls: ControlScheme;
 
   constructor(
@@ -128,6 +146,7 @@ export class Mito extends ISketch {
       // }
     },
   };
+
   private handleBeforeUnload = () => {
     return true;
   };
@@ -296,6 +315,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   private worldDomElements = new Set<WorldDOMElement>();
+
   addWorldDOMElement(positionFn: () => THREE.Vector2 | Tile, renderFn: () => React.ReactNode): WorldDOMElement {
     const e = new WorldDOMElement(this, positionFn, renderFn);
     this.worldDomElements.add(e);

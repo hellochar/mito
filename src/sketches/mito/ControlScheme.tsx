@@ -165,12 +165,15 @@ export class PlayerSeedControlScheme extends ControlScheme {
   public keysToMovement(keys: Set<string>): ActionMove | null {
     return null;
   }
+
   public handleRightClick() {
     this.popOut();
   }
+
   public handleLeftClick(): void {
     this.popOut();
   }
+
   public isInteract(): boolean {
     return false;
   }

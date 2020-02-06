@@ -33,9 +33,13 @@ const sugarCost = 1;
 
 export class Player implements Steppable {
   public inventory = new Inventory(PLAYER_MAX_RESOURCES, this, PLAYER_STARTING_WATER, PLAYER_STARTING_SUGAR);
+
   private action?: Action;
+
   private events = new EventEmitter();
+
   public baseSpeed: number;
+
   public dtSinceLastStepped = 0;
 
   public get speed() {
@@ -131,7 +135,9 @@ export class Player implements Steppable {
   }
 
   public on(event: "action", cb: (action: Action) => void): void;
+
   public on(event: "start-long-action", cb: (action: ActionLong) => void): void;
+
   public on(event: string, cb: (...args: any[]) => void) {
     this.events.on(event, cb);
   }
@@ -247,10 +253,12 @@ export class Player implements Steppable {
       return false;
     }
   }
+
   public attemptStill(_dt: number) {
     // this.autopickup();
     return true;
   }
+
   // private autopickup() {
   //   // autopickup resources in the position as possible
   //   const cell = this.currentTile();
@@ -375,7 +383,9 @@ export class Player implements Steppable {
 
 export class PlayerSeed implements Steppable {
   public readonly inventory = new Inventory(0, this);
+
   public dtSinceLastStepped = 0;
+
   private poppedOut = false;
 
   public constructor(public posFloat: Vector2, public world: World, public player: Player) {}

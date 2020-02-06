@@ -319,10 +319,13 @@ const G3 = 1 / 6;
 export class Noise {
   // To remove the need for index wrapping, double the permutation table length
   public perm = new Array(512);
+
   public gradP = new Array(512);
 
   public octaveNum = 6;
+
   public octaveFalloff = 0.5;
+
   // rotate by 1 radians (~57 deg), scale by 2
   public octaveMatrix2 = [Math.cos(1) * 2, -Math.sin(1) * 2, Math.sin(1) * 2, Math.cos(1) * 2];
 

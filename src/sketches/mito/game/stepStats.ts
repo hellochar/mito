@@ -10,7 +10,9 @@ export class StepStats {
     "collect-sunlight": [],
     "grow-fruit": [],
   };
+
   constructor(public dt: number, public frame: number, public deleted: Entity[] = [], public added: Entity[] = []) {}
+
   logEvent(event: TileEvent) {
     this.events[event.type].push(event);
   }

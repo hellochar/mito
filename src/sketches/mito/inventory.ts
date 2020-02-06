@@ -99,10 +99,12 @@ export class Inventory {
   }
 
   private events?: EventEmitter;
+
   public on(name: "give" | "get" | "add", fn: (...args: any[]) => void) {
     this.events = this.events || new EventEmitter();
     this.events.on(name, fn);
   }
+
   public off(name: "give" | "get" | "add", fn: (...args: any[]) => any) {
     this.events = this.events || new EventEmitter();
     this.events.off(name, fn);

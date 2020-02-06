@@ -13,7 +13,9 @@ import TileBatcher from "./tile/tileBatcher";
 
 export class WorldRenderer extends Renderer<World> {
   public renderers = new Map<Entity, Renderer<Entity>>();
+
   public readonly tileBatcher: TileBatcher;
+
   // private lightEmitter: LightEmitter;
   public eventLogRenderer?: EventLogRenderer;
 

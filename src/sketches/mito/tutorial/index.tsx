@@ -32,7 +32,9 @@ export class NewPlayerTutorial extends React.PureComponent<NewPlayerTutorialProp
       }
     });
   };
+
   public tutorialRef: Tutorial | null = null;
+
   handleCurrentTutorialRef = (ref: Tutorial) => {
     this.tutorialRef = ref;
   };
