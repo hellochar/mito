@@ -51,6 +51,33 @@
   margin-left: 5px;
 }
 
+.hud-germinate {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 5px;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  padding: 20px;
+  animation: 0.2s popIn 4s ease-in-out both;
+
+  @keyframes popIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  p {
+    font-size: 1em;
+    margin: 0 0 10px;
+  }
+}
+
 .hud-bottom {
   position: absolute;
   bottom: 0;

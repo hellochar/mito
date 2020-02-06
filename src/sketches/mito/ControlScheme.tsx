@@ -137,8 +137,10 @@ export class PlayerSeedControlScheme extends ControlScheme {
     window.removeEventListener("keyup", this.handleKeyUp);
   }
 
-  handleKeyDown = () => {
-    this.popOut();
+  handleKeyDown = (event: KeyboardEvent) => {
+    if (event.code === "Space") {
+      this.popOut();
+    }
   };
 
   handleKeyUp = () => {};
@@ -167,11 +169,11 @@ export class PlayerSeedControlScheme extends ControlScheme {
   }
 
   public handleRightClick() {
-    this.popOut();
+    // this.popOut();
   }
 
   public handleLeftClick(): void {
-    this.popOut();
+    // this.popOut();
   }
 
   public isInteract(): boolean {

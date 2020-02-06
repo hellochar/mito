@@ -2,7 +2,7 @@ import { easeQuadOut } from "d3-ease";
 import Ticker from "global/ticker";
 import { polyUpDown } from "math/easing";
 import { DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
-import { lerp, lerp2, map } from "../../../math";
+import { lerp, map } from "../../../math";
 import { PlayerSeed } from "../game";
 import { MaterialInfo } from "../game/materialInfo";
 import { Mito } from "../index";
@@ -23,8 +23,7 @@ export class PlayerSeedRenderer extends Renderer<PlayerSeed> {
     const material = reproducerCellType.material;
     this.mesh = newMesh(material);
     this.mesh.name = "Player Seed Mesh";
-    lerp2(this.mesh.position, this.target.pos, 1);
-    this.scene.add(this.mesh);
+    this.mito.scenePlayerSeed.add(this.mesh);
     this.animation.set(this.wiggleAnimationForever());
   }
 

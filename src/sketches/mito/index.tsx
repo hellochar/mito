@@ -1,11 +1,14 @@
 import { PopulationAttempt } from "app";
 import VignetteCapturer from "common/vignette";
+import { easeSinIn } from "d3-ease";
 import { EventEmitter } from "events";
 import * as React from "react";
 import * as THREE from "three";
 import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { lerp, lerp2, map } from "../../math/index";
+import * as Nodes from "three/examples/jsm/nodes/Nodes";
+import configure from "../../common/configure";
+import { clamp, lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { AltHeldBar } from "./actionBar";
 import { drums, hookUpAudio, strings } from "./audio";
@@ -14,6 +17,7 @@ import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
 import { GameResult, maybeGetGameResult } from "./game/gameResult";
 import { Tile } from "./game/tile";
+import { OvalNode } from "./OvalNode";
 import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
@@ -36,7 +40,11 @@ export class Mito extends ISketch {
   // public readonly actionBar: SwitchableBar;
   public readonly actionBar: AltHeldBar;
 
-  public readonly scene = new Scene();
+  public readonly scene = configure(new Scene(), (s) => {
+    s.background = new THREE.Color("black");
+  });
+
+  public readonly scenePlayerSeed = new Scene();
 
   private readonly camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);
 
@@ -72,6 +80,12 @@ export class Mito extends ISketch {
 
   public controls: ControlScheme;
 
+  public nodeFrame = new Nodes.NodeFrame(0);
+
+  public nodePost: Nodes.NodePostProcessing;
+
+  public ovalOutTime: Nodes.FloatNode;
+
   constructor(
     renderer: WebGLRenderer,
     context: SketchAudioContext,
@@ -79,6 +93,16 @@ export class Mito extends ISketch {
     public onWinLoss: (result: GameResult) => void
   ) {
     super(renderer, context);
+    this.renderer.autoClear = false;
+    this.nodePost = new Nodes.NodePostProcessing(renderer);
+    this.ovalOutTime = new Nodes.FloatNode(0);
+    const noiseNode = new Nodes.MathNode(
+      new Nodes.ScreenNode(),
+      new OvalNode(this.ovalOutTime),
+      this.ovalOutTime,
+      Nodes.MathNode.MIN
+    );
+    this.nodePost.output = noiseNode as any;
     const { info } = attempt.targetHex;
     this.world = new World(environmentFromLevelInfo(info), info.seed, attempt.settlingSpecies);
 
@@ -174,7 +198,7 @@ export class Mito extends ISketch {
     return (
       <>
         {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
-        <HUD mito={this} show={showPlayerHUD} />
+        <HUD mito={this} />
         {showPlayerHUD ? <Hover mito={this} /> : null}
         <div className="world-dom-components">{worldDomElementComponents}</div>
         {params.debug ? <Debug mito={this} /> : null}
@@ -326,11 +350,11 @@ Number of Programs: ${this.renderer.info.programs!.length}
     this.worldDomElements.delete(worldDomElement);
   }
 
-  public animate(millisElapsed: number) {
-    this.controls.animate(millisElapsed);
+  public animate(millisDelta: number) {
+    this.controls.animate(millisDelta);
 
     // cap out at 1/3rd of a second in one frame (about 10 frames)
-    const dt = Math.min(millisElapsed / 1000, 1 / 3);
+    const dt = Math.min(millisDelta / 1000, 1 / 3);
     this.worldStep(dt);
     this.worldRenderer.update();
 
@@ -347,7 +371,16 @@ Number of Programs: ${this.renderer.info.programs!.length}
     if (this.hackCamera != null) {
       this.renderer.render(this.scene, this.hackCamera);
     } else {
-      this.renderer.render(this.scene, this.camera);
+      this.ovalOutTime.value = easeSinIn(clamp((this.world.time - 2) / 2, 0, 1));
+      this.nodeFrame.update(millisDelta / 1000);
+
+      // render everything as per norm
+      this.renderer.clear();
+      this.nodePost.render(this.scene, this.camera, this.nodeFrame);
+
+      // render the player seed on top, after PostProcessing, so it's always there
+      this.renderer.clearDepth();
+      this.renderer.render(this.scenePlayerSeed, this.camera);
     }
     // if (params.debug && this.frameCount % 100 === 0) {
     // this.perfDebug();
@@ -356,7 +389,8 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   defaultCameraState(): CameraState {
-    const mouseNorm = this.getCameraNormCoordinates(this.mouse.x, this.mouse.y);
+    const mouseNorm =
+      this.world.playerSeed == null ? this.getCameraNormCoordinates(this.mouse.x, this.mouse.y) : new Vector2();
 
     const cameraTarget = new THREE.Vector2(
       this.world.player.posFloat.x + mouseNorm.x / 2,
@@ -393,6 +427,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     // this.camera.position.z = 1;
     // this.camera.lookAt(new Vector3(0, 0, 0));
     this.camera.updateProjectionMatrix();
+    this.nodePost.setSize(w, h);
   }
 }
 
