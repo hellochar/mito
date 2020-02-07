@@ -158,7 +158,7 @@ export class PlayerSeedControlScheme extends ControlScheme {
   }
 
   public popOut() {
-    if (this.mito.world.playerSeed) {
+    if (this.mito.world.playerSeed && this.mito.world.time > 3) {
       this.mito.world.playerSeed!.popOut();
       this.mito.controls = new ControlScheme(this.mito);
     }
@@ -173,6 +173,10 @@ export class PlayerSeedControlScheme extends ControlScheme {
   }
 
   public handleLeftClick(): void {
+    const clickedPos = this.mito.getHighlightPosition().round();
+    if (this.mito.world.playerSeed!.pos.distanceTo(clickedPos) < 0.5) {
+      this.popOut();
+    }
     // this.popOut();
   }
 

@@ -17,7 +17,7 @@ import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
 import { GameResult, maybeGetGameResult } from "./game/gameResult";
 import { Tile } from "./game/tile";
-import { OvalNode } from "./OvalNode";
+import { OvalNode } from "./ovalNode";
 import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
@@ -371,7 +371,7 @@ Number of Programs: ${this.renderer.info.programs!.length}
     if (this.hackCamera != null) {
       this.renderer.render(this.scene, this.hackCamera);
     } else {
-      this.ovalOutTime.value = easeSinIn(clamp((this.world.time - 2) / 2, 0, 1));
+      this.ovalOutTime.value = easeSinIn(clamp((this.world.time - 3.5) / 1.5, 0, 1));
       this.nodeFrame.update(millisDelta / 1000);
 
       // render everything as per norm
@@ -389,18 +389,24 @@ Number of Programs: ${this.renderer.info.programs!.length}
   }
 
   defaultCameraState(): CameraState {
-    const mouseNorm =
-      this.world.playerSeed == null ? this.getCameraNormCoordinates(this.mouse.x, this.mouse.y) : new Vector2();
+    if (this.world.playerSeed == null) {
+      const mouseNorm = this.getCameraNormCoordinates(this.mouse.x, this.mouse.y);
 
-    const cameraTarget = new THREE.Vector2(
-      this.world.player.posFloat.x + mouseNorm.x / 2,
-      this.world.player.posFloat.y - mouseNorm.y / 2
-    );
+      const cameraTarget = new THREE.Vector2(
+        this.world.player.posFloat.x + mouseNorm.x / 2,
+        this.world.player.posFloat.y - mouseNorm.y / 2
+      );
 
-    return {
-      center: cameraTarget,
-      zoom: this.userZoom,
-    };
+      return {
+        center: cameraTarget,
+        zoom: this.userZoom,
+      };
+    } else {
+      return {
+        center: this.world.playerSeed.pos,
+        zoom: this.userZoom,
+      };
+    }
   }
 
   updateCamera(targetState: CameraState) {

@@ -1,4 +1,4 @@
-import { easeQuadOut } from "d3-ease";
+import { easeBounceOut, easeQuadOut } from "d3-ease";
 import Ticker from "global/ticker";
 import { polyUpDown } from "math/easing";
 import { DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
@@ -8,7 +8,7 @@ import { MaterialInfo } from "../game/materialInfo";
 import { Mito } from "../index";
 import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
-import { Animation, AnimationController, chain } from "./tile/Animation";
+import { also, Animation, AnimationController, animPause, chain } from "./tile/Animation";
 
 export class PlayerSeedRenderer extends Renderer<PlayerSeed> {
   public mesh: Mesh;
@@ -24,7 +24,8 @@ export class PlayerSeedRenderer extends Renderer<PlayerSeed> {
     this.mesh = newMesh(material);
     this.mesh.name = "Player Seed Mesh";
     this.mito.scenePlayerSeed.add(this.mesh);
-    this.animation.set(this.wiggleAnimationForever());
+    this.animation.set(chain(this.fallInAnimation(), animPause(2), this.wiggleAnimationForever()));
+    // this.animation.set(this.wiggleAnimationForever());
   }
 
   update() {
@@ -68,6 +69,21 @@ export class PlayerSeedRenderer extends Renderer<PlayerSeed> {
       return tNorm > 1;
     };
     return chain(growBig, stayBig, fadeOut);
+  }
+
+  public fallInAnimation(): Animation {
+    const startY = 12;
+    const startPosition: Animation = (t) => {
+      this.mesh.position.y -= startY;
+      return false;
+    };
+    const duration = 2;
+    const anim: Animation = (t) => {
+      const tNorm = t / duration;
+      this.mesh.position.y -= lerp(startY, 0, easeBounceOut(tNorm));
+      return tNorm > 1;
+    };
+    return chain(also(animPause(0.5), startPosition), anim);
   }
 
   public wiggleAnimationForever(): Animation {

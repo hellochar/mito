@@ -30,20 +30,26 @@ export class AnimationController {
   }
 }
 
+/**
+ * Sequence animations after each other.
+ */
 export function chain(...animations: Animation[]): Animation {
-  let index = 0;
+  let numEnded = 0;
   let lastStarted = 0;
   return (t, dt) => {
-    const currAnimation = animations[index];
+    const currAnimation = animations[numEnded];
     const ended = currAnimation(t - lastStarted, dt);
     if (ended) {
-      index++;
+      numEnded++;
       lastStarted = t;
     }
-    return index >= animations.length;
+    return numEnded >= animations.length;
   };
 }
 
+/**
+ * Do both animations at once; end when first one ends.
+ */
 export function also(firstAnim: Animation, secondAnim: Animation): Animation {
   let secondEnded = false;
   return (t, dt) => {

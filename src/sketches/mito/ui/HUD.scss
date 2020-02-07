@@ -27,7 +27,7 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  transition: transform 2s;
+  transition: transform 2s 2s;
 
   &.hidden {
     transform: translateX(-50%) translateY(-170%);
@@ -55,12 +55,12 @@
   position: absolute;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 5px;
-  bottom: 25%;
+  bottom: 20%;
   left: 50%;
   transform: translateX(-50%);
   cursor: pointer;
   padding: 20px;
-  animation: 0.2s popIn 4s ease-in-out both;
+  animation: 0.2s popIn 5s ease-in-out both;
 
   @keyframes popIn {
     from {
@@ -86,7 +86,7 @@
   display: flex;
   flex-direction: column;
   opacity: 0.95;
-  transition: transform 2s;
+  transition: transform 2s 2s;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
   pointer-events: none;
