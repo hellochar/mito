@@ -49,14 +49,14 @@
     "react-modal": "^3.10.1",
     "react-popover": "^0.5.10",
     "react-router-dom": "^5.1.1",
-    "react-scripts": "3.0.1",
+    "react-scripts": "^3.3.0",
     "reselect": "^4.0.0",
     "serializr": "^1.5.3",
     "simplex-noise": "^2.4.0",
     "string.prototype.matchall": "^4.0.0",
     "three": "^0.112.0",
     "tweenjs": "^1.0.2",
-    "typescript": "^3.7.1-rc",
+    "typescript": "3.7.5",
     "uuid": "^3.3.3"
   },
   "scripts": {
