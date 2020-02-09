@@ -7,6 +7,7 @@ import eatingSoundSrc from "assets/audio/eating.mp3";
 import footstepsSrc from "assets/audio/footsteps.wav";
 import impactSoftMedium003Src from "assets/audio/impactSoft_medium_003.mp3";
 import interactSoundSrc from "assets/audio/interact.mp3";
+import introBounceSrc from "assets/audio/intro-bounce.mp3";
 import mitoBaseSrc from "assets/audio/mito-base.mp3";
 import mitoDrumsSrc from "assets/audio/mito-drums.mp3";
 import mitoStringsSrc from "assets/audio/mito-strings.mp3";
@@ -43,6 +44,11 @@ export const interactSound = new Howl({
   autoplay: true,
   loop: true,
   volume: 0,
+});
+
+export const introBounce = new Howl({
+  src: introBounceSrc,
+  volume: 0.5,
 });
 
 export const build = new Howl({

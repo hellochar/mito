@@ -3,6 +3,7 @@ import Ticker from "global/ticker";
 import { polyUpDown } from "math/easing";
 import { DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
 import { lerp, map } from "../../../math";
+import { introBounce } from "../audio";
 import { PlayerSeed } from "../game";
 import { MaterialInfo } from "../game/materialInfo";
 import { Mito } from "../index";
@@ -83,7 +84,13 @@ export class PlayerSeedRenderer extends Renderer<PlayerSeed> {
       this.mesh.position.y -= lerp(startY, 0, easeBounceOut(tNorm));
       return tNorm > 1;
     };
-    return chain(also(animPause(0.5), startPosition), anim);
+    return chain(
+      also(animPause(1), startPosition),
+      also(anim, () => {
+        introBounce.play();
+        return true;
+      })
+    );
   }
 
   public wiggleAnimationForever(): Animation {
