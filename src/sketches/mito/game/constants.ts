@@ -40,7 +40,7 @@ export const PERCENT_DAYLIGHT = 0.9; // 45 second days, 5 second nights
 /**
  * How many seconds it takes to build a Cell.
  */
-export const CELL_BUILD_TIME = 0.2;
+export const CELL_BUILD_TIME = 1.0;
 
 /**
  * In a two Cell system with one Water, this water will diffuse, on average, after this many seconds.

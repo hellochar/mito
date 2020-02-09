@@ -15,6 +15,8 @@ export class GrowingCell extends Cell {
 
   public timeToMaturity: number;
 
+  silent?: boolean;
+
   constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Vector2) {
     super(pos, world, cellTypeGrowingCell);
     this.timeToMaturity = completedCell.type.chromosome.mergeStaticProperties().timeToBuild;
@@ -31,8 +33,10 @@ export class GrowingCell extends Cell {
         this.completedCell.addEffect(effect);
       }
       this.world.setTileAt(this.pos, this.completedCell);
-      const id = buildComplete.play();
-      buildComplete.rate(id, randFloat(0.5, 1));
+      if (!this.silent) {
+        const id = buildComplete.play();
+        buildComplete.rate(id, randFloat(0.5, 1));
+      }
     }
   }
 }

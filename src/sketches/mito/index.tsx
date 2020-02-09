@@ -11,7 +11,7 @@ import configure from "../../common/configure";
 import { clamp, lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { AltHeldBar } from "./actionBar";
-import { drums, hookUpAudio, strings } from "./audio";
+import { drums, hookUpAudio, strings, whoosh } from "./audio";
 import { ControlScheme, PlayerSeedControlScheme } from "./ControlScheme";
 import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
@@ -371,7 +371,12 @@ Number of Programs: ${this.renderer.info.programs!.length}
     if (this.hackCamera != null) {
       this.renderer.render(this.scene, this.hackCamera);
     } else {
-      this.ovalOutTime.value = easeSinIn(clamp((this.world.time - 3.5) / 1.5, 0, 1));
+      const ovalOutStart = 3.5;
+      // did trigger this frame?
+      if (this.world.time - dt < ovalOutStart && this.world.time > ovalOutStart) {
+        whoosh.play();
+      }
+      this.ovalOutTime.value = easeSinIn(clamp((this.world.time - ovalOutStart) / 1.5, 0, 1));
       this.nodeFrame.update(millisDelta / 1000);
 
       // render everything as per norm

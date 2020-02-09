@@ -5,6 +5,7 @@ import deconstructSoundSrc from "assets/audio/deconstruct.mp3";
 import dropWaterSrc from "assets/audio/drop_water.mp3";
 import eatingSoundSrc from "assets/audio/eating.mp3";
 import footstepsSrc from "assets/audio/footsteps.wav";
+import fruitPoofSrc from "assets/audio/fruit-poof.mp3";
 import impactSoftMedium003Src from "assets/audio/impactSoft_medium_003.mp3";
 import interactSoundSrc from "assets/audio/interact.mp3";
 import introBounceSrc from "assets/audio/intro-bounce.mp3";
@@ -14,6 +15,7 @@ import mitoStringsSrc from "assets/audio/mito-strings.mp3";
 import mitoDeathMp3 from "assets/audio/mitodeath.mp3";
 import stickySoundSrc from "assets/audio/sticky.mp3";
 import suckWaterSrc from "assets/audio/suckwater.wav";
+import whooshSrc from "assets/audio/whoosh.mp3";
 import { Howl } from "howler";
 import * as THREE from "three";
 import devlog from "../../common/devlog";
@@ -48,6 +50,16 @@ export const interactSound = new Howl({
 
 export const introBounce = new Howl({
   src: introBounceSrc,
+  volume: 0.5,
+});
+
+export const whoosh = new Howl({
+  src: whooshSrc,
+  volume: 0.5,
+});
+
+export const fruitPoof = new Howl({
+  src: fruitPoofSrc,
   volume: 0.5,
 });
 

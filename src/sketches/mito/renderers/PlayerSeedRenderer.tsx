@@ -3,7 +3,7 @@ import Ticker from "global/ticker";
 import { polyUpDown } from "math/easing";
 import { DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
 import { lerp, map } from "../../../math";
-import { introBounce } from "../audio";
+import { fruitPoof, introBounce } from "../audio";
 import { PlayerSeed } from "../game";
 import { MaterialInfo } from "../game/materialInfo";
 import { Mito } from "../index";
@@ -69,7 +69,14 @@ export class PlayerSeedRenderer extends Renderer<PlayerSeed> {
       (this.mesh.material as MeshBasicMaterial).opacity = lerp(1, 0, tNorm);
       return tNorm > 1;
     };
-    return chain(growBig, stayBig, fadeOut);
+    return chain(
+      also(growBig, () => {
+        fruitPoof.play();
+        return true;
+      }),
+      stayBig,
+      fadeOut
+    );
   }
 
   public fallInAnimation(): Animation {

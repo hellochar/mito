@@ -417,6 +417,7 @@ export class PlayerSeed implements Steppable {
     const start = this.pos;
     const c = new Cell(start, this.world, this.world.genome.cellTypes[0]);
     const growingCell = new GrowingCell(start, this.world, c, start);
+    growingCell.silent = true;
     this.world.setTileAt(start, growingCell);
     Array.from(
       this.world.bfsIterator(
