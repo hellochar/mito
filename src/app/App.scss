@@ -5,33 +5,21 @@
 }
 
 .fade-to-black {
-  @include react-transition-group-in(2s) {
+  &-enter {
+    filter: brightness(0);
+  }
+
+  &-enter-active {
+    filter: brightness(1);
+    transition: filter 2s;
+  }
+
+  &-exit {
     filter: brightness(1);
   }
 
-  @include react-transition-group-out(2s) {
+  &-exit-active {
     filter: brightness(0);
+    transition: filter 2s;
   }
 }
-
-// .fade-to-black-enter {
-//   // opacity: 0;
-//   filter: brightness(0);
-// }
-
-// .fade-to-black-enter-active {
-//   // opacity: 1;
-//   filter: brightness(1);
-//   transition: all 2s;
-// }
-
-// .fade-to-black-exit {
-//   // opacity: 1;
-//   filter: brightness(1);
-// }
-
-// .fade-to-black-exit-active {
-//   // opacity: 0;
-//   filter: brightness(0);
-//   transition: all 2s;
-// }

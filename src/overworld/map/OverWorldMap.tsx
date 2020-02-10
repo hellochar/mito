@@ -81,7 +81,9 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     this.canvas = ref;
     if (ref != null) {
       Ticker.addAnimation(() => {
-        this.setState({ frame: this.state.frame + 1 });
+        if (this.canvas != null) {
+          this.setState({ frame: this.state.frame + 1 });
+        }
         return this.canvas == null;
       });
       this.handleResize();
@@ -96,7 +98,6 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
       });
     } else {
       const coords = getClickedHexCoords(this.canvas!, this.state.cameraState, e);
-      console.log(coords, this.state.cameraState);
       const [{ overWorld }] = this.context;
       const clicked = overWorld.hexAt(coords.i, coords.j);
       // simplest check - we clicked on a tile we can see

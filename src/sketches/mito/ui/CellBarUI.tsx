@@ -68,7 +68,7 @@ const CellBarItem: React.FC<CellBarItemProps> = ({
   }, [bar, index]);
   const argsChildren: JSX.Element[] = [];
   if (type.args && type.args.direction) {
-    argsChildren.push(<TransportDirArrow dir={type.args.direction} />);
+    argsChildren.push(<TransportDirArrow key={argsChildren.length} dir={type.args.direction} />);
   }
   return (
     <div className={classNames("cell-bar-item", { selected: isSelected })}>

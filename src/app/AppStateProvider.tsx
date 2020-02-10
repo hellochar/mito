@@ -27,11 +27,12 @@ export function autoTransitionEndDispatchMiddleware(dispatch: React.Dispatch<App
 
 export function AppStateProvider({ children, appState }: AppStateProviderProps) {
   const reducerWithMiddleware = React.useMemo(() => saveOnActionMiddleware(reducer), []);
-  const [state, dispatch] = React.useReducer(reducerWithMiddleware, appState);
-  const reducerTuple = React.useMemo(
-    () => [state, autoTransitionEndDispatchMiddleware(dispatch)] as [AppState, React.Dispatch<AppActions>],
-    [state]
-  );
+  const [state, dispatchRaw] = React.useReducer(reducerWithMiddleware, appState);
+  const dispatch = React.useMemo(() => autoTransitionEndDispatchMiddleware(dispatchRaw), []);
+  const reducerTuple = React.useMemo(() => [state, dispatch] as [AppState, React.Dispatch<AppActions>], [
+    state,
+    dispatch,
+  ]);
   return <AppReducerContext.Provider value={reducerTuple}>{children}</AppReducerContext.Provider>;
 }
 
