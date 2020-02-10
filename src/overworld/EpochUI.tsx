@@ -1,6 +1,6 @@
-import { useAppReducer } from "app";
 import classNames from "classnames";
 import DynamicNumber from "common/DynamicNumber";
+import { useAppReducer } from "game/app";
 import React, { useState } from "react";
 import { GiSandsOfTime } from "react-icons/gi";
 import "./EpochUI.scss";

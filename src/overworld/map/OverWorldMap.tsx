@@ -1,4 +1,4 @@
-import { AppActions, AppReducerContext, PopulationAttempt } from "app";
+import { AppActions, AppReducerContext, PopulationAttempt } from "game/app";
 import Ticker from "global/ticker";
 import { lerp } from "math";
 import React from "react";

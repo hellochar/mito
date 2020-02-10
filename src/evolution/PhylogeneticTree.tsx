@@ -1,4 +1,4 @@
-import { useAppReducer } from "app";
+import { useAppReducer } from "game/app";
 import React from "react";
 import "./PhylogeneticTree.scss";
 import { Species } from "./species";

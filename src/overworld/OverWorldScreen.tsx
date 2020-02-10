@@ -1,9 +1,9 @@
-import { useAppReducer } from "app";
-import { resetGame, save } from "app/saveLoad";
 import classNames from "classnames";
 import { Button } from "common/Button";
 import PhylogeneticTree from "evolution/PhylogeneticTree";
 import { Species } from "evolution/species";
+import { useAppReducer } from "game/app";
+import { resetGame, save } from "game/app/saveLoad";
 import React, { useCallback, useEffect, useState } from "react";
 import { GiFamilyTree } from "react-icons/gi";
 import { EpochUI } from "./EpochUI";

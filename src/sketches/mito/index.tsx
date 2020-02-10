@@ -1,7 +1,7 @@
-import { PopulationAttempt } from "app";
 import VignetteCapturer from "common/vignette";
 import { easeSinIn } from "d3-ease";
 import { EventEmitter } from "events";
+import { PopulationAttempt } from "game/app";
 import * as React from "react";
 import * as THREE from "three";
 import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";

@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import TestDiffusion from "tests/TestDiffusion";
 import { TestLoseScreen } from "tests/TestLoseScreen";
 import { TestWinScreen } from "tests/TestWinScreen";
-import App from "./app/App";
+import App from "./game/app/App";
 import "./index.scss";
 import TestStats from "./tests/TestStats";
 
