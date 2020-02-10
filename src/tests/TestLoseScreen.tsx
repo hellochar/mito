@@ -1,7 +1,7 @@
 import React from "react";
 import { TIME_PER_DAY } from "sketches/mito/game/constants";
 import { GameResult } from "sketches/mito/game/gameResult";
-import { newBaseSpecies } from "../evolution/species";
+import { newBaseSpecies } from "../core/species";
 import { World } from "../sketches/mito/game";
 import { Temperate } from "../sketches/mito/game/environment";
 import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
@@ -16,7 +16,11 @@ export function TestLoseScreen() {
   world.time = TIME_PER_DAY * 19;
   const f3 = mockFruit(world, 0.01459);
   const mockResults: GameResult = {
-    mpEarners: new Map([[f1, 0], [f2, 0], [f3, 0]]),
+    mpEarners: new Map([
+      [f1, 0],
+      [f2, 0],
+      [f3, 0],
+    ]),
     status: "lost",
     mutationPointsPerEpoch: 0,
     world,

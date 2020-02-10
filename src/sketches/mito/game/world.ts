@@ -1,7 +1,7 @@
 import { gridRange } from "math/arrays";
 import { Vector2 } from "three";
 import devlog from "../../../common/devlog";
-import { Species } from "../../../evolution/species";
+import { Species } from "../../../core/species";
 import shuffle from "../../../math/shuffle";
 import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";

@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { Button } from "common/Button";
+import { Species } from "core/species";
 import PhylogeneticTree from "evolution/PhylogeneticTree";
-import { Species } from "evolution/species";
 import { useAppReducer } from "game/app";
 import { resetGame, save } from "game/app/saveLoad";
 import React, { useCallback, useEffect, useState } from "react";

@@ -1,7 +1,7 @@
 import { useAppReducer } from "game/app";
 import React from "react";
+import { Species } from "../core/species";
 import "./PhylogeneticTree.scss";
-import { Species } from "./species";
 import SpeciesNode from "./SpeciesNode";
 
 interface PhylogeneticTreeProps {

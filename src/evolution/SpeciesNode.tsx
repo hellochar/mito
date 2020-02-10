@@ -3,7 +3,7 @@ import React from "react";
 import Popover from "react-popover";
 import Character from "../common/Character";
 import MP from "../common/MP";
-import { Species } from "./species";
+import { Species } from "../core/species";
 import "./SpeciesNode.scss";
 import SpeciesPopoverDetails from "./SpeciesPopoverDetails";
 

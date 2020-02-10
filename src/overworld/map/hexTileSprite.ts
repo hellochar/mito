@@ -1,8 +1,8 @@
 import testVignetteUrl from "assets/images/test-vignette.png";
 import { sleep } from "common/promise";
+import { Species } from "core/species";
 import { easeExpIn } from "d3-ease";
 import { scaleLinear } from "d3-scale";
-import { Species } from "evolution/species";
 import { PopulationAttempt } from "game/app";
 import Ticker from "global/ticker";
 import { clamp, map, sawTooth } from "math";

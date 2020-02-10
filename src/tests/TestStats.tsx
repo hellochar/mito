@@ -1,6 +1,6 @@
 import { Layout, PlotData } from "plotly.js";
 import React from "react";
-import { newBaseSpecies } from "../evolution/species";
+import { newBaseSpecies } from "../core/species";
 import { World } from "../sketches/mito/game";
 import { Desert, Environment, Rocky, Temperate } from "../sketches/mito/game/environment";
 import { Air, Fountain, Rock, Soil } from "../sketches/mito/game/tile";

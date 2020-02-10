@@ -1,4 +1,4 @@
-import { Species } from "evolution/species";
+import { Species } from "core/species";
 import { object, reference, serializable } from "serializr";
 import SimplexNoise from "simplex-noise";
 import { HexStore } from "./hexStore";

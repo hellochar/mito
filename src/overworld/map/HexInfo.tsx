@@ -1,4 +1,4 @@
-import { Species } from "evolution/species";
+import { Species } from "core/species";
 import React from "react";
 import { Button } from "../../common/Button";
 import Expand from "../../common/Expand";

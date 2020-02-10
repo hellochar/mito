@@ -3,7 +3,7 @@ import { GameResult } from "sketches/mito/game/gameResult";
 import { GeneFruit } from "sketches/mito/game/tile/genes/GeneReproducer";
 import { standardGenome } from "sketches/mito/game/tile/standardGenome";
 import { Vector2 } from "three";
-import { newBaseSpecies } from "../evolution/species";
+import { newBaseSpecies } from "../core/species";
 import { World } from "../sketches/mito/game";
 import { Temperate } from "../sketches/mito/game/environment";
 import { Cell } from "../sketches/mito/game/tile";
@@ -29,7 +29,11 @@ export function TestWinScreen() {
   const f3 = mockFruit(world, 1, 900);
   const mockResults: GameResult = {
     status: "won",
-    mpEarners: new Map([[f1, 3], [f2, 0], [f3, 3]]),
+    mpEarners: new Map([
+      [f1, 3],
+      [f2, 0],
+      [f3, 3],
+    ]),
     mutationPointsPerEpoch: 6,
     world,
   };

@@ -1,6 +1,6 @@
 import { createSimpleSchema, object, reference } from "serializr";
 import { GameResult } from "sketches/mito/game/gameResult";
-import { Species, SpeciesSchema } from "../../evolution/species";
+import { Species, SpeciesSchema } from "../../core/species";
 import { HexTile } from "../../overworld/hexTile";
 import { OverWorld } from "../../overworld/overWorld";
 import { AppActions } from "./reducer";
