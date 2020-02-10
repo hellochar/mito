@@ -2,7 +2,6 @@ import { gridRange } from "math/arrays";
 import { Vector2 } from "three";
 import devlog from "../../../common/devlog";
 import { Species } from "../../../evolution/species";
-import { getTraits, Traits } from "../../../evolution/traits";
 import shuffle from "../../../math/shuffle";
 import { DIRECTION_VALUES } from "../directions";
 import { hasInventory } from "../inventory";
@@ -50,8 +49,6 @@ export class World {
 
   public readonly species: Species;
 
-  public readonly traits: Traits;
-
   public readonly generatorContext: GeneratorContext;
 
   public weather: WeatherController;
@@ -74,7 +71,6 @@ export class World {
     this.generatorContext = createGeneratorContext(seed);
     this.species = species;
     this.genome = species.genome || standardGenome;
-    this.traits = getTraits(this.species.genes);
     this.weather = new WeatherController(this);
 
     const tileGenerator = typeof environment.fill === "string" ? TileGenerators[environment.fill] : environment.fill;

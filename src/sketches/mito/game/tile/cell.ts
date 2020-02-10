@@ -1,9 +1,7 @@
 import { Inventory } from "sketches/mito/inventory";
 import { Vector2 } from "three";
-import { traitMod } from "../../../../evolution/traits";
 import { DIRECTIONS } from "../../directions";
-import { params } from "../../params";
-import { PLAYER_INTERACT_EXCHANGE_SPEED } from "../constants";
+import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../constants";
 import { Entity, step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
@@ -223,16 +221,13 @@ export class Cell extends Tile implements Interactable {
     this.nextTemperature = nextTemperature(this, neighbors, dt);
     // if we're cold, try to naturally heat ourselves
     if (this.temperatureFloat <= 32) {
-      const chanceToFreeze =
-        traitMod(this.world.traits.coldTolerant, this.temperature === Temperature.Cold ? 0.03 : 0.3, 1 / 1.5) * dt;
+      const chanceToFreeze = (this.temperature === Temperature.Cold ? 0.03 : 0.3) * dt;
       if (Math.random() < chanceToFreeze) {
         this.addEffect(new FreezeEffect());
       }
     } else if (this.temperatureFloat >= 64) {
       const waterToLose = Math.min(this.inventory.water, 1);
-      const chanceEvaporate =
-        waterToLose *
-        traitMod(this.world.traits.heatTolerant, this.temperature === Temperature.Hot ? 0.003 : 0.3, 1 / 1.5);
+      const chanceEvaporate = waterToLose * (this.temperature === Temperature.Hot ? 0.003 : 0.3);
       if (Math.random() < chanceEvaporate * dt) {
         this.inventory.add(-waterToLose, 0);
         this.world.logEvent({
@@ -252,7 +247,7 @@ export class Cell extends Tile implements Interactable {
     const above = tileNeighbors.get(DIRECTIONS.n)!;
     const aboveLeft = tileNeighbors.get(DIRECTIONS.nw)!;
     const aboveRight = tileNeighbors.get(DIRECTIONS.ne)!;
-    const droopAmount = traitMod(this.world.traits.structuralStability, params.droop, 1 / 1.5) * dt;
+    const droopAmount = CELL_DROOP;
     this.droopY += droopAmount;
     if (this.energy < 0.5) {
       this.droopY += droopAmount;

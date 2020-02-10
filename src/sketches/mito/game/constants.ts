@@ -42,6 +42,8 @@ export const PERCENT_DAYLIGHT = 0.9; // 45 second days, 5 second nights
  */
 export const CELL_BUILD_TIME = 1.0;
 
+export const CELL_DROOP = 0.13;
+
 /**
  * In a two Cell system with one Water, this water will diffuse, on average, after this many seconds.
  * Divide this by 8 to get an idea of how "fast" a single water will move on a fully filled out Tissue plane.

@@ -1,22 +1,16 @@
 import React from "react";
-
-import { Species } from "./species";
-import { GeneDisplayProps } from "./GeneDisplay";
 import { Button } from "../common/Button";
-import GenesToTraits from "./GenesToTraits";
-
+import { Species } from "./species";
 import "./SpeciesPopoverDetails.scss";
 
 export interface SpeciesPopoverDetailsProps {
   species: Species;
   onMutate: (species: Species) => void;
-  onClick: GeneDisplayProps["onClick"];
 }
 
-function SpeciesPopoverDetails({ species, onClick, onMutate }: SpeciesPopoverDetailsProps) {
+function SpeciesPopoverDetails({ species, onMutate }: SpeciesPopoverDetailsProps) {
   return (
     <div className="species-details">
-      <GenesToTraits genes={species.genes} onClick={onClick} />
       {species.freeMutationPoints > 0 ? (
         <div className="suggestion">{species.freeMutationPoints} Mutation Points available. Use them!</div>
       ) : null}

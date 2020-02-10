@@ -30,7 +30,7 @@ function SpeciesNode({ species, onMutate }: SpeciesNodeProps) {
     ) : null;
   const popoverBody = (
     <div className="species-detail-popover">
-      <SpeciesPopoverDetails species={species} onMutate={handleOnMutate} onClick={() => {}} />
+      <SpeciesPopoverDetails species={species} onMutate={handleOnMutate} />
     </div>
   );
   return (

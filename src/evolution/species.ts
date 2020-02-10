@@ -2,13 +2,11 @@ import { createSimpleSchema, identifier, list, object, primitive, reference } fr
 import Genome from "sketches/mito/game/tile/genome";
 import { tutorialGenome } from "sketches/mito/game/tile/tutorialGenome";
 import uuid from "uuid";
-import { Gene } from "./gene";
 
 export interface Species {
   genome: Genome;
   id: string;
   name: string;
-  genes: Gene[];
   // cells: Cell[];
   freeMutationPoints: number;
   totalMutationPoints: number;
@@ -34,7 +32,6 @@ export function newBaseSpecies(name = "plantum originus"): Species {
     genome: tutorialGenome,
     name,
     // genes: [mutateRandomNewGene(), mutateRandomNewGene(), mutateRandomNewGene()],
-    genes: [],
     freeMutationPoints: 0,
     totalMutationPoints: 0,
     descendants: [],
@@ -48,8 +45,4 @@ export function lineage(species: Species): Species[] {
     arr.push(...lineage(s));
   }
   return arr;
-}
-
-export interface Cell {
-  genes: Gene[];
 }

@@ -1,7 +1,6 @@
 import { sleep } from "common/promise";
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
-import { traitMod } from "../../../evolution/traits";
 import {
   Action,
   ActionBuild,
@@ -52,7 +51,7 @@ export class Player implements Steppable {
   }
 
   public constructor(public posFloat: Vector2, public world: World) {
-    this.baseSpeed = traitMod(world.traits.walkSpeed, PLAYER_BASE_SPEED, 1.5);
+    this.baseSpeed = PLAYER_BASE_SPEED;
   }
 
   shouldStep() {

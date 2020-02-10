@@ -55,7 +55,7 @@ export const introBounce = new Howl({
 
 export const whoosh = new Howl({
   src: whooshSrc,
-  volume: 0.5,
+  volume: 0.2,
 });
 
 export const fruitPoof = new Howl({
