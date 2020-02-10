@@ -32,6 +32,10 @@ export function reducer(state: AppState, action: AppActions): AppState {
       return handleGetGameResult(state, action);
     case "AAGameResultDone":
       return handleGameResultDone(state, action);
+    case "AATransitionStart":
+      return handleTransitionStart(state, action);
+    case "AATransitionEnd":
+      return handleTransitionEnd(state, action);
   }
 }
 
@@ -41,7 +45,9 @@ export type AppActions =
   | AAPopulationAttemptSuccess
   | AANextEpoch
   | AAGetGameResult
-  | AAGameResultDone;
+  | AAGameResultDone
+  | AATransitionStart
+  | AATransitionEnd;
 
 export interface AAUpdateSpecies {
   type: "AAUpdateSpecies";
@@ -141,9 +147,9 @@ export interface AAGetGameResult {
 }
 
 function handleGetGameResult(state: AppState, action: AAGetGameResult): AppState {
-  if (state.activePopulationAttempt == null) {
-    throw new Error("activePopulationAttempt shouldn't be null during handleWinLoss");
-  }
+  // if (state.activePopulationAttempt == null) {
+  //   throw new Error("activePopulationAttempt shouldn't be null during handleWinLoss");
+  // }
   if (action.result.status === "won") {
     state = handlePopulationAttemptSuccess(state, {
       type: "AAPopulationAttemptSuccess",
@@ -167,4 +173,26 @@ function handleGameResultDone(state: AppState, action: AAGameResultDone): AppSta
     activePopulationAttempt: undefined,
     activeGameResult: undefined,
   };
+}
+
+export interface AATransitionStart {
+  type: "AATransitionStart";
+  transition: AppActions;
+}
+
+function handleTransitionStart(state: AppState, action: AATransitionStart): AppState {
+  return {
+    ...state,
+    transition: action.transition,
+  };
+}
+
+export interface AATransitionEnd {
+  type: "AATransitionEnd";
+}
+
+function handleTransitionEnd(state: AppState, action: AATransitionEnd): AppState {
+  const { transition, ...stateWithoutTransition } = state;
+  const newState = reducer(stateWithoutTransition, transition!);
+  return newState;
 }

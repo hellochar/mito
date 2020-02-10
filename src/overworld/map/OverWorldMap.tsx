@@ -1,5 +1,6 @@
-import { AppReducerContext, PopulationAttempt } from "app";
+import { AppActions, AppReducerContext, PopulationAttempt } from "app";
 import Ticker from "global/ticker";
+import { lerp } from "math";
 import React from "react";
 import { Vector2 } from "three";
 import { getCameraPositionCenteredOn, getClickedHexCoords, pixelPosition } from "../hexMath";
@@ -27,6 +28,8 @@ export interface CameraState {
   dX: number;
   dY: number;
 }
+
+// function zoomCenteredOn(state: CameraState);
 
 interface OverWorldMapState {
   cameraState: CameraState;
@@ -93,6 +96,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
       });
     } else {
       const coords = getClickedHexCoords(this.canvas!, this.state.cameraState, e);
+      console.log(coords, this.state.cameraState);
       const [{ overWorld }] = this.context;
       const clicked = overWorld.hexAt(coords.i, coords.j);
       // simplest check - we clicked on a tile we can see
@@ -136,24 +140,34 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
 
   private handleClickPlay = () => {
     const [, dispatch] = this.context;
-    if (this.state.populationAttempt != null) {
+    const appAction = this.getAppAction();
+    if (appAction) {
       dispatch({
+        type: "AATransitionStart",
+        transition: appAction,
+      });
+    }
+  };
+
+  private getAppAction(): AppActions | undefined {
+    if (this.state.populationAttempt != null) {
+      return {
         type: "AAStartPopulationAttempt",
         populationAttempt: this.state.populationAttempt,
-      });
+      };
     } else if (this.state.highlightedHex != null) {
       // re-populate the same tile
       const sourceHex = this.state.highlightedHex;
-      dispatch({
+      return {
         type: "AAStartPopulationAttempt",
         populationAttempt: {
           sourceHex,
           targetHex: sourceHex,
           settlingSpecies: sourceHex.info.flora!.species,
         },
-      });
+      };
     }
-  };
+  }
 
   private handleKeyDown = (e: KeyboardEvent) => {
     if (!e.repeat) {
@@ -194,6 +208,24 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   };
 
   private updateCamera = () => {
+    const [state] = this.context;
+    const { transition } = state;
+    if (transition != null) {
+      if (transition.type === "AAStartPopulationAttempt") {
+        // zoom in
+        const { targetHex } = transition.populationAttempt;
+        const { scale, dX, dY } = this.state.cameraState;
+        const nextScale = scale * 1.02;
+        const [targetDX, targetDY] = getCameraPositionCenteredOn(targetHex, scale);
+        this.setState({
+          cameraState: {
+            dX: lerp(dX, targetDX, 0.2),
+            dY: lerp(dY, targetDY, 0.2),
+            scale: nextScale,
+          },
+        });
+      }
+    }
     const panSpeed = 20;
     let offset = new Vector2();
     for (const key in this.state.pressedKeys) {

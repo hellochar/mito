@@ -148,3 +148,24 @@ $sepia5: #c99765 !default;
 @mixin text-outline($size: 1px, $color: $black) {
   text-shadow: -$size -$size 0 $color, $size -$size 0 $color, -$size $size 0 $color, $size $size 0 $color;
 }
+
+@mixin react-transition-group-in($duration) {
+  &-enter-active {
+    @content;
+    transition: all $duration;
+  }
+  &-exit {
+    @content;
+  }
+}
+
+@mixin react-transition-group-out($duration) {
+  &-enter {
+    @content;
+  }
+
+  &-exit-active {
+    @content;
+    transition: all $duration;
+  }
+}

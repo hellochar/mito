@@ -30,6 +30,7 @@
   transition: transform 2s 2s;
 
   &.hidden {
+    visibility: hidden;
     transform: translateX(-50%) translateY(-170%);
   }
 }

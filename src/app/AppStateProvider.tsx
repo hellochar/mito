@@ -1,7 +1,8 @@
+import { sleep } from "common/promise";
 import { newBaseSpecies } from "evolution/species";
 import { OverWorld } from "overworld/overWorld";
 import React, { useEffect } from "react";
-import { AppReducerContext, reducer } from "./reducer";
+import { AppActions, AppReducerContext, reducer } from "./reducer";
 import { load, saveOnActionMiddleware } from "./saveLoad";
 import { AppState } from "./state";
 
@@ -10,9 +11,27 @@ export interface AppStateProviderProps {
   appState: AppState;
 }
 
+// when a TransitionStart action happens, automatically trigger a TransitionEnd
+// after millis
+export function autoTransitionEndDispatchMiddleware(dispatch: React.Dispatch<AppActions>, millis = 2000) {
+  const newDispatch: React.Dispatch<AppActions> = (action: AppActions) => {
+    dispatch(action);
+    if (action.type === "AATransitionStart") {
+      sleep(millis).then(() => {
+        dispatch({ type: "AATransitionEnd" });
+      });
+    }
+  };
+  return newDispatch;
+}
+
 export function AppStateProvider({ children, appState }: AppStateProviderProps) {
   const reducerWithMiddleware = React.useMemo(() => saveOnActionMiddleware(reducer), []);
-  const reducerTuple = React.useReducer(reducerWithMiddleware, appState);
+  const [state, dispatch] = React.useReducer(reducerWithMiddleware, appState);
+  const reducerTuple = React.useMemo(
+    () => [state, autoTransitionEndDispatchMiddleware(dispatch)] as [AppState, React.Dispatch<AppActions>],
+    [state]
+  );
   return <AppReducerContext.Provider value={reducerTuple}>{children}</AppReducerContext.Provider>;
 }
 

@@ -1,17 +1,24 @@
+import { Button } from "common/Button";
+import { sleep } from "common/promise";
 import { MousePositionContext } from "common/useMousePosition";
 import OverWorldScreen from "overworld/OverWorldScreen";
 import React from "react";
+import { CSSTransition } from "react-transition-group";
 import { createSelector } from "reselect";
 import { GameResult } from "sketches/mito/game/gameResult";
+import { params } from "sketches/mito/params";
+import { TestLoseScreen } from "tests/TestLoseScreen";
 import { FullPageSketch } from "../sketches/fullPageSketch";
 import Mito from "../sketches/mito";
 import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
+import "./App.scss";
 import { LocalForageStateProvider } from "./AppStateProvider";
 import { AppReducerContext } from "./reducer";
 import { AppState } from "./state";
 
 interface AppComponentState {
   mousePosition: { x: number; y: number };
+  showTestLoseScreen?: boolean;
 }
 
 class AppComponent extends React.PureComponent<{}, AppComponentState> {
@@ -67,16 +74,53 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
           {this.maybeRenderOverWorld()}
           {this.maybeRenderInGame()}
           {this.maybeRenderGameResult()}
+          {this.maybeRenderDebug()}
         </div>
       </MousePositionContext.Provider>
     );
   }
 
+  maybeRenderDebug() {
+    if (params.debug) {
+      return (
+        <>
+          <div style={{ position: "absolute", bottom: 0, left: 0, background: "white" }}>
+            <Button
+              onClick={() => {
+                this.setState({
+                  showTestLoseScreen: true,
+                });
+                sleep(3000).then(() => {
+                  this.setState({
+                    showTestLoseScreen: false,
+                  });
+                });
+              }}
+            >
+              Get Game Result
+            </Button>
+          </div>
+          <CSSTransition in={this.state.showTestLoseScreen} timeout={2000} unmountOnExit classNames="fadeIn">
+            <TestLoseScreen />
+          </CSSTransition>
+        </>
+      );
+    }
+  }
+
   maybeRenderOverWorld() {
     const [state] = this.context;
-    if (state.activePopulationAttempt == null) {
-      return <OverWorldScreen onNextEpoch={this.handleNextEpoch} />;
-    }
+    return (
+      <CSSTransition
+        in={state.activePopulationAttempt == null && state.transition == null}
+        timeout={2000}
+        mountOnEnter
+        unmountOnExit
+        classNames="fade-to-black"
+      >
+        <OverWorldScreen onNextEpoch={this.handleNextEpoch} />
+      </CSSTransition>
+    );
   }
 
   private otherArgsSelector = createSelector(

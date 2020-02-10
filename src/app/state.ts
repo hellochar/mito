@@ -3,6 +3,7 @@ import { GameResult } from "sketches/mito/game/gameResult";
 import { Species, SpeciesSchema } from "../evolution/species";
 import { HexTile } from "../overworld/hexTile";
 import { OverWorld } from "../overworld/overWorld";
+import { AppActions } from "./reducer";
 
 /**
  * For now, we mutate classes and manually call dummy placeholder
@@ -25,6 +26,7 @@ export interface AppState {
   rootSpecies: Species;
   // species: Record<string, Species>;
   epoch: number;
+  transition?: AppActions;
 }
 
 export interface PopulationAttempt {
