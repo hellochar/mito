@@ -1,12 +1,12 @@
 import { Inventory } from "core/inventory";
 import { Vector2 } from "three";
 import { DIRECTIONS } from "../../sketches/mito/directions";
-import { Rock } from "../../sketches/mito/game/tile/rock";
-import { Soil } from "../../sketches/mito/game/tile/soil";
 import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../constants";
 import { Entity, step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
+import { Rock } from "../tile/rock";
+import { Soil } from "../tile/soil";
 import { Tile } from "../tile/tile";
 import { World } from "../world/world";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";

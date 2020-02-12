@@ -1,12 +1,12 @@
 import { arrayProxy } from "common/arrayProxy";
 import { GeneInstance } from "core/cell/chromosome";
 import { Temperature } from "core/temperature";
+import { Clay, Sand, Silt } from "core/tile/soil";
 import { easeCubic } from "d3-ease";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
 import Mito from "sketches/mito";
 import { Air, Cell, DeadCell, Fountain, GrowingCell, Rock, Tile } from "sketches/mito/game/tile";
-import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
 import { GeneSoilAbsorption } from "std/genes";
 import { GeneDirectionalPush } from "std/genes/GeneDirectionalPush";
 import { GenePhotosynthesis } from "std/genes/GenePhotosynthesis";

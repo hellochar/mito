@@ -1,5 +1,5 @@
-import { Inventory } from "../../../../core/inventory";
-import { Tile } from "../../../../core/tile/tile";
+import { Inventory } from "../inventory";
+import { Tile } from "./tile";
 export class Rock extends Tile {
   displayName = "Rock";
 

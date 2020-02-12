@@ -3,7 +3,7 @@ import GN from "sketches/mito/ui/GN";
 import { Vector2 } from "three";
 import { Cell } from "../../core/cell/cell";
 import { Gene } from "../../core/cell/chromosome";
-import { Soil } from "../../sketches/mito/game/tile/soil";
+import { Soil } from "../../core/tile/soil";
 
 export interface SoilAbsorptionState {
   cooldown: number;
