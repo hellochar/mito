@@ -8,6 +8,7 @@ import {
   PLAYER_STARTING_SUGAR,
   PLAYER_STARTING_WATER,
 } from "../../../core/constants";
+import { Steppable } from "../../../core/entity";
 import { Inventory } from "../../../core/inventory";
 import { World } from "../../../core/world/world";
 import {
@@ -21,7 +22,6 @@ import {
   ActionMultiple,
   ActionPickup,
 } from "../action";
-import { Steppable } from "./entity";
 import { Air, Cell, FreezeEffect, GrowingCell, Tile } from "./tile";
 import { CellArgs } from "./tile/cell";
 import { GeneDirectionalPush } from "./tile/genes/GeneDirectionalPush";

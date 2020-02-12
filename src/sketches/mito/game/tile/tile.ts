@@ -1,10 +1,10 @@
 import shuffle from "math/shuffle";
 import { Vector2 } from "three";
+import { Steppable } from "../../../../core/entity";
 import { HasInventory, Inventory } from "../../../../core/inventory";
 import { World } from "../../../../core/world/world";
 import { map, randRound } from "../../../../math/index";
 import { canPullResources } from "../canPullResources";
-import { Steppable } from "../entity";
 import { Temperature, temperatureFor } from "../temperature";
 
 export abstract class Tile implements Steppable, HasInventory {

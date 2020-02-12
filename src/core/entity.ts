@@ -1,5 +1,5 @@
-import { Player, PlayerSeed } from "./player";
-import { Tile } from "./tile";
+import { Player, PlayerSeed } from "../sketches/mito/game/player";
+import { Tile } from "../sketches/mito/game/tile";
 
 export type Entity = Tile | Player | PlayerSeed;
 

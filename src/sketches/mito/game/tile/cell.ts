@@ -1,9 +1,9 @@
 import { Inventory } from "core/inventory";
 import { Vector2 } from "three";
 import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../../../../core/constants";
+import { Entity, step } from "../../../../core/entity";
 import { World } from "../../../../core/world/world";
 import { DIRECTIONS } from "../../directions";
-import { Entity, step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";

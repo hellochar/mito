@@ -1,5 +1,5 @@
-import { Entity } from "../../sketches/mito/game/entity";
 import { TileEvent, TileEventType } from "../../sketches/mito/game/tileEvent";
+import { Entity } from "../entity";
 export class StepStats {
   public events: TileEventLog = {
     "cell-eat": [],
