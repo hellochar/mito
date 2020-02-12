@@ -1,4 +1,4 @@
-import { Inventory } from "../../inventory";
+import { Inventory } from "../../../../core/inventory";
 import { Tile } from "./tile";
 export class Rock extends Tile {
   displayName = "Rock";

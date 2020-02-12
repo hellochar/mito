@@ -16,7 +16,7 @@ import { Air, Cell, Soil, Tile } from "../../sketches/mito/game/tile";
 import Genome from "../../sketches/mito/game/tile/genome";
 import { standardGenome } from "../../sketches/mito/game/tile/standardGenome";
 import { TileEvent } from "../../sketches/mito/game/tileEvent";
-import { hasInventory } from "../../sketches/mito/inventory";
+import { hasInventory } from "../inventory";
 import { Species } from "../species";
 import { StepStats } from "./stepStats";
 import { WeatherController } from "./weatherController";

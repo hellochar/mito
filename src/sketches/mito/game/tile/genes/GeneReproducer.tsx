@@ -1,7 +1,7 @@
 import MP from "common/MP";
+import { Inventory } from "core/inventory";
 import { clamp } from "math";
 import React from "react";
-import { Inventory } from "sketches/mito/inventory";
 import { TIME_PER_MONTH } from "../../../../../core/constants";
 import { Cell } from "../cell";
 import { Gene, GeneInstance } from "../chromosome";

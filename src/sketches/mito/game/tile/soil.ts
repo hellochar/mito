@@ -1,4 +1,4 @@
-import { Inventory } from "sketches/mito/inventory";
+import { Inventory } from "core/inventory";
 import { clamp, map, randRound } from "../../../../math/index";
 import { canPullResources } from "../canPullResources";
 import { Tile } from "./tile";

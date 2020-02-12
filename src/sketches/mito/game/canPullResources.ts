@@ -1,4 +1,4 @@
-import { HasInventory } from "../inventory";
+import { HasInventory } from "../../../core/inventory";
 import { Air, Cell, Soil } from "./tile";
 
 export function canPullResources(receiver: HasInventory, giver: HasInventory): boolean {

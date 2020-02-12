@@ -1,4 +1,4 @@
-import { Inventory } from "sketches/mito/inventory";
+import { Inventory } from "core/inventory";
 import { Vector2 } from "three";
 import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../../../../core/constants";
 import { World } from "../../../../core/world/world";

@@ -1,8 +1,8 @@
 import shuffle from "math/shuffle";
 import { Vector2 } from "three";
+import { HasInventory, Inventory } from "../../../../core/inventory";
 import { World } from "../../../../core/world/world";
 import { map, randRound } from "../../../../math/index";
-import { HasInventory, Inventory } from "../../inventory";
 import { canPullResources } from "../canPullResources";
 import { Steppable } from "../entity";
 import { Temperature, temperatureFor } from "../temperature";
