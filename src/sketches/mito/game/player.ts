@@ -1,6 +1,13 @@
 import { sleep } from "common/promise";
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
+import {
+  PLAYER_BASE_SPEED,
+  PLAYER_MAX_RESOURCES,
+  PLAYER_MOVED_BY_TRANSPORT_SPEED,
+  PLAYER_STARTING_SUGAR,
+  PLAYER_STARTING_WATER,
+} from "../../../core/constants";
 import { World } from "../../../core/world/world";
 import {
   Action,
@@ -14,13 +21,6 @@ import {
   ActionPickup,
 } from "../action";
 import { Inventory } from "../inventory";
-import {
-  PLAYER_BASE_SPEED,
-  PLAYER_MAX_RESOURCES,
-  PLAYER_MOVED_BY_TRANSPORT_SPEED,
-  PLAYER_STARTING_SUGAR,
-  PLAYER_STARTING_WATER,
-} from "./constants";
 import { Steppable } from "./entity";
 import { Air, Cell, FreezeEffect, GrowingCell, Tile } from "./tile";
 import { CellArgs } from "./tile/cell";

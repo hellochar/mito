@@ -1,5 +1,5 @@
+import { TIME_PER_DAY } from "../../../../core/constants";
 import { Constructor } from "../../constructor";
-import { TIME_PER_DAY } from "../constants";
 import { Entity, StopStep } from "../entity";
 import { Interactable } from "../interactable";
 import { Temperature } from "../temperature";

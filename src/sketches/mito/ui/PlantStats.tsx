@@ -1,7 +1,7 @@
 import { nf } from "common/formatters";
 import React, { memo, useRef } from "react";
+import { TIME_PER_SEASON } from "../../../core/constants";
 import { World } from "../game";
-import { TIME_PER_SEASON } from "../game/constants";
 import { GenePhotosynthesis, GeneSoilAbsorption } from "../game/tile/genes";
 import { ResourceIcon } from "./ResourceIcon";
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { LEAF_REACTION_TIME, PLAYER_MAX_RESOURCES, TISSUE_INVENTORY_CAPACITY } from "../game/constants";
+import { LEAF_REACTION_TIME, PLAYER_MAX_RESOURCES, TISSUE_INVENTORY_CAPACITY } from "../../../core/constants";
 
 interface InstructionsProps {
   play: () => void;

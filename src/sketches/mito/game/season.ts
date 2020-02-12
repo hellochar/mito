@@ -1,4 +1,4 @@
-import { TIME_PER_DAY, TIME_PER_MONTH, TIME_PER_SEASON, TIME_PER_YEAR } from "./constants";
+import { TIME_PER_DAY, TIME_PER_MONTH, TIME_PER_SEASON, TIME_PER_YEAR } from "../../../core/constants";
 export interface Season {
   year: number;
   season: 0 | 1 | 2 | 3;

@@ -2,7 +2,7 @@ import mapRecord from "common/mapRecord";
 import plantNames from "common/plantNames";
 import { clamp, sampleArray } from "math";
 import { Cell } from ".";
-import { CELL_BUILD_TIME } from "../constants";
+import { CELL_BUILD_TIME } from "../../../../core/constants";
 import { Steppable } from "../entity";
 
 const defaultProperties: GeneStaticProperties = {

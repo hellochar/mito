@@ -1,5 +1,5 @@
+import { TIME_PER_DAY } from "core/constants";
 import React from "react";
-import { TIME_PER_DAY } from "sketches/mito/game/constants";
 import { GameResult } from "sketches/mito/game/gameResult";
 import { newBaseSpecies } from "../core/species";
 import { World } from "../sketches/mito/game";
