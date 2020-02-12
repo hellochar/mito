@@ -11,12 +11,12 @@ import {
   TileGenerators,
 } from "../../sketches/mito/game/environment";
 import { Player, PlayerSeed } from "../../sketches/mito/game/player";
-import { Season, seasonFromTime } from "../../sketches/mito/game/season";
 import { Air, Cell, Soil, Tile } from "../../sketches/mito/game/tile";
 import Genome from "../../sketches/mito/game/tile/genome";
 import { standardGenome } from "../../sketches/mito/game/tile/standardGenome";
 import { TileEvent } from "../../sketches/mito/game/tileEvent";
 import { hasInventory } from "../inventory";
+import { Season, seasonFromTime } from "../season";
 import { Species } from "../species";
 import { StepStats } from "./stepStats";
 import { WeatherController } from "./weatherController";
