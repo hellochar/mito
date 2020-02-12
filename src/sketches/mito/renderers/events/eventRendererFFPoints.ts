@@ -1,4 +1,4 @@
-import { TileEvent } from "sketches/mito/game/tileEvent";
+import { TileEvent } from "core/tile/tileEvent";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { WorldRenderer } from "../WorldRenderer";
 import { EventRenderer } from "./eventRenderer";

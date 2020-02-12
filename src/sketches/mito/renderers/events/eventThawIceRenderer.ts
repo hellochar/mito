@@ -1,6 +1,6 @@
+import { EventThawIce } from "core/tile/tileEvent";
 import { easeSinOut } from "d3-ease";
 import { map } from "math";
-import { EventThawIce } from "sketches/mito/game/tileEvent";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { FREEZE_BLUE } from "../tile/CellEffectsRenderer";
 import { WorldRenderer } from "../WorldRenderer";

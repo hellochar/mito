@@ -1,5 +1,5 @@
 import { Vector2 } from "three";
-import { Air, Cell, Tile } from "../../../core/tile";
+import { Air, Cell, Tile } from ".";
 export type TileEvent =
   | EventCellTransferEnergy
   | EventCellEat

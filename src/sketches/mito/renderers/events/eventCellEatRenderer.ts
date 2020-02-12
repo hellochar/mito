@@ -1,5 +1,5 @@
+import { EventCellEat } from "core/tile/tileEvent";
 import { distScalar, eatBuffer } from "sketches/mito/audio";
-import { EventCellEat } from "sketches/mito/game/tileEvent";
 import { textureFromSpritesheet } from "sketches/mito/spritesheet";
 import { Audio, Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";

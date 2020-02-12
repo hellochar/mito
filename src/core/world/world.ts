@@ -9,7 +9,6 @@ import {
   GeneratorContext,
   TileGenerators,
 } from "../../sketches/mito/game/environment";
-import { TileEvent } from "../../sketches/mito/game/tileEvent";
 import { standardGenome } from "../../std/genomes/standardGenome";
 import Genome from "../cell/genome";
 import { Entity, isSteppable, step } from "../entity";
@@ -18,6 +17,7 @@ import { Player, PlayerSeed } from "../player/player";
 import { Season, seasonFromTime } from "../season";
 import { Species } from "../species";
 import { Air, Cell, Soil, Tile } from "../tile";
+import { TileEvent } from "../tile/tileEvent";
 import { StepStats } from "./stepStats";
 import { WeatherController } from "./weatherController";
 

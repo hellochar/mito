@@ -1,4 +1,4 @@
-import { TileEvent } from "sketches/mito/game/tileEvent";
+import { TileEvent } from "core/tile/tileEvent";
 import { Renderer } from "../Renderer";
 import { WorldRenderer } from "../WorldRenderer";
 

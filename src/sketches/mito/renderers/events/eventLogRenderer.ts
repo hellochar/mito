@@ -1,4 +1,4 @@
-import { TileEvent, TileEventType } from "../../game/tileEvent";
+import { TileEvent, TileEventType } from "../../../../core/tile/tileEvent";
 import { Renderer } from "../Renderer";
 import { WorldRenderer } from "../WorldRenderer";
 import EventCellEatRenderer from "./eventCellEatRenderer";

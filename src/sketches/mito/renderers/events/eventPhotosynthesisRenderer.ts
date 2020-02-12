@@ -1,5 +1,5 @@
+import { EventPhotosynthesis } from "core/tile/tileEvent";
 import { polyUpDown } from "math/easing";
-import { EventPhotosynthesis } from "sketches/mito/game/tileEvent";
 import { textureFromSpritesheet } from "sketches/mito/spritesheet";
 import { Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";

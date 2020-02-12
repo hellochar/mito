@@ -1,6 +1,6 @@
+import { EventCollectSunlight } from "core/tile/tileEvent";
 import { randFloat } from "math";
 import { polyEarlyUpDown } from "math/easing";
-import { EventCollectSunlight } from "sketches/mito/game/tileEvent";
 import { textureFromSpritesheet } from "sketches/mito/spritesheet";
 import { Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";

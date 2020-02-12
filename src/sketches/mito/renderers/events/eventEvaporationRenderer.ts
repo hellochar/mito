@@ -1,4 +1,4 @@
-import { EventEvaporation } from "sketches/mito/game/tileEvent";
+import { EventEvaporation } from "core/tile/tileEvent";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { InstancedTileRenderer } from "../tile/InstancedTileRenderer";
