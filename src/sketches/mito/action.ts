@@ -1,5 +1,5 @@
 import { Vector2 } from "three";
-import { Interactable } from "./game/interactable";
+import { Interactable } from "../../core/interactable";
 import { CellArgs } from "./game/tile/cell";
 import { CellType } from "./game/tile/genome";
 
