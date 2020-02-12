@@ -13,7 +13,7 @@ import { GenePhotosynthesis } from "std/genes/GenePhotosynthesis";
 import { GeneFruit, GeneSeed } from "std/genes/GeneReproducer";
 import { Color, Scene, Vector2, Vector3 } from "three";
 import { Constructor } from "typings/constructor";
-import { MaterialInfo } from "../../game/materialInfo";
+import { MaterialInfo } from "../../../../core/cell/materialInfo";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";
 import { Animation, AnimationController } from "./Animation";

@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
-import { MaterialInfo } from "../../sketches/mito/game/materialInfo";
 import { CellArgs } from "./cell";
 import Chromosome from "./chromosome";
+import { MaterialInfo } from "./materialInfo";
 
 export interface CellInteraction {
   type: "give" | "take";
