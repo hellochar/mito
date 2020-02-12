@@ -218,7 +218,8 @@ export class Cell extends Tile implements Interactable {
 
   stepTemperature(dt: number) {
     const neighbors = this.world.tileNeighbors(this.pos);
-    this.nextTemperature = nextTemperature(this, neighbors, dt);
+    const neighborTemperatures = Array.from(neighbors.values()).map((t) => t.temperatureFloat);
+    this.nextTemperature = nextTemperature(this.temperatureFloat, neighborTemperatures, dt);
     // if we're cold, try to naturally heat ourselves
     if (this.temperatureFloat <= 32) {
       const chanceToFreeze = (this.temperature === Temperature.Cold ? 0.03 : 0.3) * dt;

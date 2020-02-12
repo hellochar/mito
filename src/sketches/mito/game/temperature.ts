@@ -1,5 +1,4 @@
 import { lerp } from "math";
-import { Cell, Tile } from "./tile";
 
 export enum Temperature {
   Scorching = "Scorching",
@@ -23,13 +22,12 @@ export function temperatureFor(t: number) {
   }
 }
 
-export function nextTemperature(t: Cell, neighbors: Map<any, Tile>, dt: number): number {
-  const temperature = t.temperatureFloat;
-  let averageTemperature = temperature;
-  for (const tile of neighbors.values()) {
-    averageTemperature += tile.temperatureFloat;
+export function nextTemperature(currentTemperature: number, neighborTemperatures: number[], dt: number): number {
+  let averageTemperature = currentTemperature;
+  for (const temp of neighborTemperatures) {
+    averageTemperature += temp;
   }
-  averageTemperature /= neighbors.size + 1;
+  averageTemperature /= neighborTemperatures.length + 1;
   // TODO maybe use proper dt-scaling lerp
-  return lerp(temperature, averageTemperature, Math.min(6 * dt, 1));
+  return lerp(currentTemperature, averageTemperature, Math.min(6 * dt, 1));
 }
