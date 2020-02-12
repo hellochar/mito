@@ -1,7 +1,7 @@
 import { Tile } from "core/tile";
 import { createSimpleSchema, object } from "serializr";
 import { Vector2 } from "three";
-import { World } from "../sketches/mito/game";
+import { World } from ".";
 import { TileGeneratorName } from "../std/tileGenerators";
 
 export interface Environment {

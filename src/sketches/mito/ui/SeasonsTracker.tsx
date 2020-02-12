@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Season, SEASON_NAMES } from "../game";
+import { Season, SEASON_NAMES } from "../../../core";
 import "./SeasonsTracker.scss";
 
 export default function SeasonsTracker({ time, season }: { time: number; season: Season }) {

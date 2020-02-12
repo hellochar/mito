@@ -1,8 +1,8 @@
 import { nf } from "common/formatters";
 import React, { memo, useRef } from "react";
+import { World } from "../../../core";
 import { TIME_PER_SEASON } from "../../../core/constants";
 import { GenePhotosynthesis, GeneSoilAbsorption } from "../../../std/genes";
-import { World } from "../game";
 import { ResourceIcon } from "./ResourceIcon";
 
 // time is just used for re-rendering

@@ -3,8 +3,8 @@ import { Cell } from "core/tile";
 import { Layout, PlotData } from "plotly.js";
 import React from "react";
 import { standardGenome } from "std/genomes/standardGenome";
+import { World } from "../core";
 import { newBaseSpecies } from "../core/species";
-import { World } from "../sketches/mito/game";
 import { Experiment, Visitors } from "./experiment";
 
 const allSoilEnvironment: Environment = {

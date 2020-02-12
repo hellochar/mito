@@ -2,8 +2,8 @@ import { TIME_PER_DAY } from "core/constants";
 import { GameResult } from "game/gameResult";
 import React from "react";
 import { Temperate } from "std/environments";
+import { World } from "../core";
 import { newBaseSpecies } from "../core/species";
-import { World } from "../sketches/mito/game";
 import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
 import { mockFruit } from "./TestWinScreen";
 

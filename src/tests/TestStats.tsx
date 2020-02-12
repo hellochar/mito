@@ -1,10 +1,10 @@
 import { Environment } from "core/environment";
 import { Layout, PlotData } from "plotly.js";
 import React from "react";
+import { World } from "../core";
 import { hasInventory } from "../core/inventory";
 import { newBaseSpecies } from "../core/species";
 import { Air, Fountain, Rock, Soil } from "../core/tile";
-import { World } from "../sketches/mito/game";
 import { Desert, Rocky, Temperate } from "../std/environments";
 import { findBuildCandidateTiles } from "../std/worldUtils";
 import { Experiment, ExperimentSuite } from "./experiment";

@@ -1,11 +1,11 @@
 import { sleep } from "common/promise";
 import { easeSinInOut } from "d3-ease";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
+import { Player } from "../../../core";
 import { Action, ActionBuild, ActionLong } from "../../../core/player/action";
 import { Tile } from "../../../core/tile";
 import { clamp, lerp2, map, randFloat } from "../../../math";
 import { build, deconstruct, dropSugar, dropWater, footsteps, interactSound, sticky } from "../audio";
-import { Player } from "../game";
 import { Mito } from "../index";
 import { textureFromSpritesheet } from "../spritesheet";
 import NeuronMesh from "./neuronMesh";

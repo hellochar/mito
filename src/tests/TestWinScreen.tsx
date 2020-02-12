@@ -4,9 +4,9 @@ import { Temperate } from "std/environments";
 import { GeneFruit } from "std/genes/GeneReproducer";
 import { standardGenome } from "std/genomes/standardGenome";
 import { Vector2 } from "three";
+import { World } from "../core";
 import { newBaseSpecies } from "../core/species";
 import { Cell } from "../core/tile";
-import { World } from "../sketches/mito/game";
 import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
 
 export function mockFruit(world: World, percent: number, timeMatured?: number) {

@@ -1,5 +1,5 @@
+import { World } from "core";
 import { Cell, Tile } from "core/tile";
-import { World } from "sketches/mito/game";
 import { SPRITESHEET } from "sketches/mito/spritesheet";
 import {
   Color,

@@ -1,8 +1,8 @@
 import { AStarFinder, DiagonalMovement, Grid } from "pathfinding";
 import { Vector2 } from "three";
+import { World } from "../core";
 import { ActionMove } from "../core/player/action";
 import { Cell } from "../core/tile";
-import { World } from "../sketches/mito/game";
 import { MOVEMENTS } from "../sketches/mito/keymap";
 
 export function findPositionsThroughTissue(world: World, target: Vector2, includeTargetIfNonTissue = false) {
