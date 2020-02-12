@@ -10,9 +10,9 @@ import {
   TileGenerators,
 } from "../../sketches/mito/game/environment";
 import { Air, Cell, Soil, Tile } from "../../sketches/mito/game/tile";
-import Genome from "../../sketches/mito/game/tile/genome";
 import { standardGenome } from "../../sketches/mito/game/tile/standardGenome";
 import { TileEvent } from "../../sketches/mito/game/tileEvent";
+import Genome from "../cell/genome";
 import { Entity, isSteppable, step } from "../entity";
 import { hasInventory } from "../inventory";
 import { Player, PlayerSeed } from "../player/player";

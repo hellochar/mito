@@ -1,9 +1,9 @@
 import React from "react";
 import GN from "sketches/mito/ui/GN";
 import { Vector2 } from "three";
+import { Cell } from "../../../../../core/cell/cell";
+import { Gene } from "../../../../../core/cell/chromosome";
 import { Air } from "../air";
-import { Cell } from "../cell";
-import { Gene } from "../chromosome";
 
 export interface PhotosynthesisState {
   totalSugarProduced: number;

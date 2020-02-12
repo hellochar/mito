@@ -1,4 +1,4 @@
-import { Gene, GeneInstance } from "sketches/mito/game/tile/chromosome";
+import { Gene, GeneInstance } from "core/cell/chromosome";
 import { Renderer } from "../Renderer";
 import { InstancedTileRenderer } from "./InstancedTileRenderer";
 

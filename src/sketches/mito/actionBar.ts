@@ -1,9 +1,9 @@
 import { Vector2 } from "three";
 import Mito from ".";
+import { CellArgs } from "../../core/cell/cell";
 import { isInteractable } from "../../core/interactable";
 import { ActionBuild, ActionInteract } from "../../core/player/action";
 import { Cell, Tile } from "./game/tile";
-import { CellArgs } from "./game/tile/cell";
 import Input from "./input";
 
 export abstract class ActionBar {

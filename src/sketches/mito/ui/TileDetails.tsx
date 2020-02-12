@@ -2,13 +2,13 @@
 import { nf } from "common/formatters";
 import * as React from "react";
 import { GiDustCloud } from "react-icons/gi";
+import { CellEffectConstructor } from "../../../core/cell/cellEffect";
+import { Gene, GeneInstance } from "../../../core/cell/chromosome";
+import { describeCellInteraction } from "../../../core/cell/genome";
 import { Air, Cell, Fountain, FreezeEffect, GrowingCell, Soil, Tile } from "../game/tile";
-import { CellEffectConstructor } from "../game/tile/cellEffect";
-import { Gene, GeneInstance } from "../game/tile/chromosome";
 import { GeneSoilAbsorption, SoilAbsorptionState } from "../game/tile/genes";
 import { GenePhotosynthesis, PhotosynthesisState } from "../game/tile/genes/GenePhotosynthesis";
 import { GeneFruit, GeneSeed, ReproducerState } from "../game/tile/genes/GeneReproducer";
-import { describeCellInteraction } from "../game/tile/genome";
 import { InventoryBar } from "./InventoryBar";
 import TemperatureInfo from "./TemperatureInfo";
 import "./TileDetails.scss";

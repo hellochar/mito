@@ -1,5 +1,5 @@
-import { Cell } from "../cell";
-import { Gene } from "../chromosome";
+import { Cell } from "../../../../../core/cell/cell";
+import { Gene } from "../../../../../core/cell/chromosome";
 /**
  * Vascular cells will connect to other neighboring Vascular cells.
  * Water in a Vascular cell will do two things:

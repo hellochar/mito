@@ -1,5 +1,5 @@
+import Genome from "core/cell/genome";
 import { createSimpleSchema, identifier, list, object, primitive, reference } from "serializr";
-import Genome from "sketches/mito/game/tile/genome";
 import { tutorialGenome } from "sketches/mito/game/tile/tutorialGenome";
 import uuid from "uuid";
 

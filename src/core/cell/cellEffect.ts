@@ -1,8 +1,8 @@
-import { TIME_PER_DAY } from "../../../../core/constants";
-import { Entity, StopStep } from "../../../../core/entity";
-import { Interactable } from "../../../../core/interactable";
-import { Temperature } from "../../../../core/temperature";
-import { Constructor } from "../../../../typings/constructor";
+import { Constructor } from "../../typings/constructor";
+import { TIME_PER_DAY } from "../constants";
+import { Entity, StopStep } from "../entity";
+import { Interactable } from "../interactable";
+import { Temperature } from "../temperature";
 import { Cell } from "./cell";
 export abstract class CellEffect {
   private timeMade!: number;

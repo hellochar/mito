@@ -1,5 +1,5 @@
+import { CancerEffect } from "core/cell/cellEffect";
 import { lerp } from "math";
-import { CancerEffect } from "sketches/mito/game/tile/cellEffect";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, RingBufferGeometry, Scene } from "three";
 import Mito from "../..";
 import { Cell, CellEffect, FreezeEffect } from "../../game/tile";

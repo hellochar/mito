@@ -1,11 +1,11 @@
 import { arrayProxy } from "common/arrayProxy";
+import { GeneInstance } from "core/cell/chromosome";
 import { Temperature } from "core/temperature";
 import { easeCubic } from "d3-ease";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
 import Mito from "sketches/mito";
 import { Air, Cell, DeadCell, Fountain, GrowingCell, Rock, Tile } from "sketches/mito/game/tile";
-import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
 import { GeneDirectionalPush } from "sketches/mito/game/tile/genes/GeneDirectionalPush";
 import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";

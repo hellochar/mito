@@ -1,6 +1,6 @@
 import React from "react";
 import GN from "sketches/mito/ui/GN";
-import { Gene } from "../chromosome";
+import { Gene } from "../../../../../core/cell/chromosome";
 
 export const GeneDiffuseWater = Gene.make(
   {

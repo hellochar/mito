@@ -2,9 +2,9 @@ import { Inventory } from "core/inventory";
 import MP from "game/ui/common/MP";
 import { clamp } from "math";
 import React from "react";
+import { Cell } from "../../../../../core/cell/cell";
+import { Gene, GeneInstance } from "../../../../../core/cell/chromosome";
 import { TIME_PER_MONTH } from "../../../../../core/constants";
-import { Cell } from "../cell";
-import { Gene, GeneInstance } from "../chromosome";
 
 export interface ReproducerState {
   timeMatured?: number;

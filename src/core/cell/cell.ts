@@ -1,18 +1,18 @@
 import { Inventory } from "core/inventory";
 import { Vector2 } from "three";
-import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../../../../core/constants";
-import { Entity, step } from "../../../../core/entity";
-import { Interactable, isInteractable } from "../../../../core/interactable";
-import { nextTemperature, Temperature } from "../../../../core/temperature";
-import { Tile } from "../../../../core/tile/tile";
-import { World } from "../../../../core/world/world";
-import { DIRECTIONS } from "../../directions";
+import { DIRECTIONS } from "../../sketches/mito/directions";
+import { Rock } from "../../sketches/mito/game/tile/rock";
+import { Soil } from "../../sketches/mito/game/tile/soil";
+import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../constants";
+import { Entity, step } from "../entity";
+import { Interactable, isInteractable } from "../interactable";
+import { nextTemperature, Temperature } from "../temperature";
+import { Tile } from "../tile/tile";
+import { World } from "../world/world";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
 import Chromosome, { Gene, GeneInstance, GeneStaticProperties } from "./chromosome";
 import { DeadCell } from "./deadCell";
 import { CellType } from "./genome";
-import { Rock } from "./rock";
-import { Soil } from "./soil";
 
 export interface CellArgs {
   direction?: Vector2;

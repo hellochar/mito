@@ -1,5 +1,6 @@
 import { Color, Vector2 } from "three";
-import Chromosome from "./chromosome";
+import Chromosome from "../../../../core/cell/chromosome";
+import Genome, { CellType } from "../../../../core/cell/genome";
 import {
   GeneAttractsWater,
   GeneEnergyTransfer,
@@ -11,10 +12,9 @@ import {
 import { GeneAttractsSugar } from "./genes/GeneAttractsSugar";
 import { GeneCannotFreeze } from "./genes/GeneCannotFreeze";
 import { GeneDirectionalPush } from "./genes/GeneDirectionalPush";
-import { GeneFruit } from "./genes/GeneReproducer";
 import { GeneObstacle } from "./genes/GeneObstacle";
 import { GenePhotosynthesis } from "./genes/GenePhotosynthesis";
-import Genome, { CellType } from "./genome";
+import { GeneFruit } from "./genes/GeneReproducer";
 
 const cellTypeTissue: CellType = {
   name: "Tissue",

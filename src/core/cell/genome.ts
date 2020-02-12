@@ -1,5 +1,5 @@
 import { Vector2 } from "three";
-import { MaterialInfo } from "../materialInfo";
+import { MaterialInfo } from "../../sketches/mito/game/materialInfo";
 import { CellArgs } from "./cell";
 import Chromosome from "./chromosome";
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from "three";
-import { CellType } from "../game/tile/genome";
+import { CellType } from "../../../core/cell/genome";
 import { textureFromSpritesheet } from "../spritesheet";
 import { SceneObject } from "./sceneObject";
 

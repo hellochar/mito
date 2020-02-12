@@ -1,5 +1,5 @@
 import React from "react";
-import { CellType } from "../game/tile/genome";
+import { CellType } from "../../../core/cell/genome";
 import { textureFromSpritesheet } from "../spritesheet";
 import "./IconCell.scss";
 

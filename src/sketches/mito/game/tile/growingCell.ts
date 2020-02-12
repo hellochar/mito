@@ -1,12 +1,12 @@
 import { randFloat } from "math";
 import { buildComplete } from "sketches/mito/audio";
 import { Vector2 } from "three";
+import { Cell } from "../../../../core/cell/cell";
+import Chromosome from "../../../../core/cell/chromosome";
+import { CellType } from "../../../../core/cell/genome";
 import { World } from "../../../../core/world/world";
-import { Cell } from "./cell";
-import Chromosome from "./chromosome";
 import { GeneLiving } from "./genes";
 import { GeneObstacle } from "./genes/GeneObstacle";
-import { CellType } from "./genome";
 
 const chromosomeGrowingCell = new Chromosome(GeneLiving.level(2), GeneObstacle.level(0));
 

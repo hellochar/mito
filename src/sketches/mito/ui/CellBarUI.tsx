@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import * as React from "react";
 import { Vector2 } from "three";
+import { CellType } from "../../../core/cell/genome";
 import { CellBar } from "../actionBar";
-import { CellType } from "../game/tile/genome";
 import { spritesheetLoaded } from "../spritesheet";
 import "./CellBarUI.scss";
 import { HotkeyButton } from "./HotkeyButton";
