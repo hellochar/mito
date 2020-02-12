@@ -1,11 +1,11 @@
 import { Inventory } from "sketches/mito/inventory";
 import { Vector2 } from "three";
+import { World } from "../../../../core/world/world";
 import { DIRECTIONS } from "../../directions";
 import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../constants";
 import { Entity, step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
-import { World } from "../world";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
 import Chromosome, { Gene, GeneInstance, GeneStaticProperties } from "./chromosome";
 import { DeadCell } from "./deadCell";

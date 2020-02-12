@@ -1,11 +1,11 @@
 import shuffle from "math/shuffle";
 import { Vector2 } from "three";
+import { World } from "../../../../core/world/world";
 import { map, randRound } from "../../../../math/index";
 import { HasInventory, Inventory } from "../../inventory";
 import { canPullResources } from "../canPullResources";
 import { Steppable } from "../entity";
 import { Temperature, temperatureFor } from "../temperature";
-import { World } from "../world";
 
 export abstract class Tile implements Steppable, HasInventory {
   displayName = "Tile";

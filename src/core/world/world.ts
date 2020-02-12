@@ -1,19 +1,24 @@
 import { gridRange } from "math/arrays";
 import { Vector2 } from "three";
-import devlog from "../../../common/devlog";
-import { Species } from "../../../core/species";
-import shuffle from "../../../math/shuffle";
-import { DIRECTION_VALUES } from "../directions";
-import { hasInventory } from "../inventory";
-import { Entity, isSteppable, step } from "./entity";
-import { createGeneratorContext, Environment, GeneratorContext, TileGenerators } from "./environment";
-import { Player, PlayerSeed } from "./player";
-import { Season, seasonFromTime } from "./season";
+import devlog from "../../common/devlog";
+import shuffle from "../../math/shuffle";
+import { DIRECTION_VALUES } from "../../sketches/mito/directions";
+import { Entity, isSteppable, step } from "../../sketches/mito/game/entity";
+import {
+  createGeneratorContext,
+  Environment,
+  GeneratorContext,
+  TileGenerators,
+} from "../../sketches/mito/game/environment";
+import { Player, PlayerSeed } from "../../sketches/mito/game/player";
+import { Season, seasonFromTime } from "../../sketches/mito/game/season";
+import { Air, Cell, Soil, Tile } from "../../sketches/mito/game/tile";
+import Genome from "../../sketches/mito/game/tile/genome";
+import { standardGenome } from "../../sketches/mito/game/tile/standardGenome";
+import { TileEvent } from "../../sketches/mito/game/tileEvent";
+import { hasInventory } from "../../sketches/mito/inventory";
+import { Species } from "../species";
 import { StepStats } from "./stepStats";
-import { Air, Cell, Soil, Tile } from "./tile";
-import Genome from "./tile/genome";
-import { standardGenome } from "./tile/standardGenome";
-import { TileEvent } from "./tileEvent";
 import { WeatherController } from "./weatherController";
 
 export interface WorldOptions {

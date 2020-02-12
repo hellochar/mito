@@ -14,10 +14,10 @@ import {
   Vector2,
   Vector3,
 } from "three";
+import { World } from "../../../core/world/world";
 import { LightRays } from "../renderers/lightRays";
 import { WorldRenderer } from "../renderers/WorldRenderer";
 import { Air, Soil, Tile } from "./tile";
-import { World } from "./world";
 
 class LightOccluderManager {
   // TODO weakmap? or some sort of eviction policy?

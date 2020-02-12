@@ -1,9 +1,9 @@
 import { Vector2 } from "three";
 import { Noise } from "../../../../common/perlin";
+import { World } from "../../../../core/world/world";
 import { map } from "../../../../math/index";
 import { Inventory } from "../../inventory";
 import { canPullResources } from "../canPullResources";
-import { World } from "../world";
 import { Tile } from "./tile";
 export class Air extends Tile {
   displayName = "Air";

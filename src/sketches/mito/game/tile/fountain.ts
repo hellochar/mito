@@ -1,5 +1,5 @@
 import { Vector2 } from "three";
-import { World } from "../world";
+import { World } from "../../../../core/world/world";
 import { Silt } from "./soil";
 export class Fountain extends Silt {
   displayName = "Fountain";

@@ -1,6 +1,7 @@
 import { sleep } from "common/promise";
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
+import { World } from "../../../core/world/world";
 import {
   Action,
   ActionBuild,
@@ -25,7 +26,6 @@ import { Air, Cell, FreezeEffect, GrowingCell, Tile } from "./tile";
 import { CellArgs } from "./tile/cell";
 import { GeneDirectionalPush } from "./tile/genes/GeneDirectionalPush";
 import { CellType } from "./tile/genome";
-import { World } from "./world";
 
 const waterCost = 1;
 const sugarCost = 1;

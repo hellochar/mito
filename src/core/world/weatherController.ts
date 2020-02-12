@@ -1,7 +1,7 @@
 import { randInt, randRound } from "math";
-import { params } from "../params";
-import { PERCENT_DAYLIGHT, TIME_PER_DAY } from "./constants";
-import { Air } from "./tile";
+import { PERCENT_DAYLIGHT, TIME_PER_DAY } from "../../sketches/mito/game/constants";
+import { Air } from "../../sketches/mito/game/tile";
+import { params } from "../../sketches/mito/params";
 import { World } from "./world";
 /**
  * WeatherController is responsible for weather related properties, such as:

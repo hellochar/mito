@@ -1,7 +1,7 @@
 import { randFloat } from "math";
 import { buildComplete } from "sketches/mito/audio";
 import { Vector2 } from "three";
-import { World } from "../world";
+import { World } from "../../../../core/world/world";
 import { Cell } from "./cell";
 import Chromosome from "./chromosome";
 import { GeneLiving } from "./genes";

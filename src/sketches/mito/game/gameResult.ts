@@ -1,5 +1,5 @@
+import { World } from "../../../core/world/world";
 import { Cell } from "./tile";
-import { World } from "./world";
 
 export interface GameResult {
   status: "won" | "lost";
