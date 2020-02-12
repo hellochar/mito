@@ -1,10 +1,10 @@
 import { arrayProxy } from "common/arrayProxy";
+import { Temperature } from "core/temperature";
 import { easeCubic } from "d3-ease";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
 import Mito from "sketches/mito";
 import { Constructor } from "sketches/mito/constructor";
-import { Temperature } from "sketches/mito/game/temperature";
 import { Air, Cell, DeadCell, Fountain, GrowingCell, Rock, Tile } from "sketches/mito/game/tile";
 import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
