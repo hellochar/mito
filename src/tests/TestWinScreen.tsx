@@ -1,7 +1,7 @@
 import { GameResult } from "game/gameResult";
 import React from "react";
-import { standardGenome } from "sketches/mito/game/tile/standardGenome";
 import { GeneFruit } from "std/genes/GeneReproducer";
+import { standardGenome } from "std/genomes/standardGenome";
 import { Vector2 } from "three";
 import { newBaseSpecies } from "../core/species";
 import { World } from "../sketches/mito/game";

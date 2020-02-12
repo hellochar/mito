@@ -1,16 +1,10 @@
 import { Color, Vector2 } from "three";
-import Chromosome from "../../../../core/cell/chromosome";
-import Genome, { CellType } from "../../../../core/cell/genome";
-import {
-  GeneEnergyTransfer,
-  GeneInventory,
-  GeneLiving,
-  GeneMetabolism,
-  GeneSoilAbsorption,
-} from "../../../../std/genes";
-import { GeneObstacle } from "../../../../std/genes/GeneObstacle";
-import { GenePhotosynthesis } from "../../../../std/genes/GenePhotosynthesis";
-import { GeneSeed } from "../../../../std/genes/GeneReproducer";
+import Chromosome from "../../core/cell/chromosome";
+import Genome, { CellType } from "../../core/cell/genome";
+import { GeneEnergyTransfer, GeneInventory, GeneLiving, GeneMetabolism, GeneSoilAbsorption } from "../genes";
+import { GeneObstacle } from "../genes/GeneObstacle";
+import { GenePhotosynthesis } from "../genes/GenePhotosynthesis";
+import { GeneSeed } from "../genes/GeneReproducer";
 
 const cellTypeTissue: CellType = {
   name: "Tissue",

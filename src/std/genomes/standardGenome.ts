@@ -1,6 +1,6 @@
 import { Color, Vector2 } from "three";
-import Chromosome from "../../../../core/cell/chromosome";
-import Genome, { CellType } from "../../../../core/cell/genome";
+import Chromosome from "../../core/cell/chromosome";
+import Genome, { CellType } from "../../core/cell/genome";
 import {
   GeneAttractsWater,
   GeneEnergyTransfer,
@@ -8,13 +8,13 @@ import {
   GeneLiving,
   GeneMetabolism,
   GeneSoilAbsorption,
-} from "../../../../std/genes";
-import { GeneAttractsSugar } from "../../../../std/genes/GeneAttractsSugar";
-import { GeneCannotFreeze } from "../../../../std/genes/GeneCannotFreeze";
-import { GeneDirectionalPush } from "../../../../std/genes/GeneDirectionalPush";
-import { GeneObstacle } from "../../../../std/genes/GeneObstacle";
-import { GenePhotosynthesis } from "../../../../std/genes/GenePhotosynthesis";
-import { GeneFruit } from "../../../../std/genes/GeneReproducer";
+} from "../genes";
+import { GeneAttractsSugar } from "../genes/GeneAttractsSugar";
+import { GeneCannotFreeze } from "../genes/GeneCannotFreeze";
+import { GeneDirectionalPush } from "../genes/GeneDirectionalPush";
+import { GeneObstacle } from "../genes/GeneObstacle";
+import { GenePhotosynthesis } from "../genes/GenePhotosynthesis";
+import { GeneFruit } from "../genes/GeneReproducer";
 
 const cellTypeTissue: CellType = {
   name: "Tissue",

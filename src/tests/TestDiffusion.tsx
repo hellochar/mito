@@ -1,7 +1,7 @@
 import { Layout, PlotData } from "plotly.js";
 import React from "react";
 import { Cell } from "sketches/mito/game/tile";
-import { standardGenome } from "sketches/mito/game/tile/standardGenome";
+import { standardGenome } from "std/genomes/standardGenome";
 import { newBaseSpecies } from "../core/species";
 import { World } from "../sketches/mito/game";
 import { Environment } from "../sketches/mito/game/environment";

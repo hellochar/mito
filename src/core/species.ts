@@ -1,6 +1,6 @@
 import Genome from "core/cell/genome";
 import { createSimpleSchema, identifier, list, object, primitive, reference } from "serializr";
-import { tutorialGenome } from "sketches/mito/game/tile/tutorialGenome";
+import { tutorialGenome } from "std/genomes/tutorialGenome";
 import uuid from "uuid";
 
 export interface Species {
