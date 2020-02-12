@@ -1,6 +1,6 @@
 import { easeBounceOut, easeQuadOut } from "d3-ease";
-import Ticker from "global/ticker";
 import { polyUpDown } from "math/easing";
+import Ticker from "std/ticker";
 import { DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
 import { lerp, map } from "../../../math";
 import { fruitPoof, introBounce } from "../audio";

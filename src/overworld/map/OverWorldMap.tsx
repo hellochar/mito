@@ -1,7 +1,7 @@
 import { AppActions, AppReducerContext, PopulationAttempt } from "game/app";
-import Ticker from "global/ticker";
 import { lerp } from "math";
 import React from "react";
+import Ticker from "std/ticker";
 import { Vector2 } from "three";
 import { HexTile } from "../../core/hexTile";
 import { getCameraPositionCenteredOn, getClickedHexCoords, pixelPosition } from "../hexMath";

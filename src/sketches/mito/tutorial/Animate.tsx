@@ -1,5 +1,5 @@
 import React from "react";
-import Ticker from "global/ticker";
+import Ticker from "std/ticker";
 
 export class Animate extends React.Component<{
   a: (time: number) => void;

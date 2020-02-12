@@ -1,8 +1,8 @@
 import classnames from "classnames";
-import Ticker from "global/ticker";
 import { Howler } from "howler";
 import * as React from "react";
 import { FaVolumeOff, FaVolumeUp } from "react-icons/fa";
+import Ticker from "std/ticker";
 import * as THREE from "three";
 import { ISketch, SketchAudioContext, SketchConstructor, UI_EVENTS } from "./sketch";
 

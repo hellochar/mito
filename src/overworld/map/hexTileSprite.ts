@@ -5,9 +5,9 @@ import { Species } from "core/species";
 import { easeExpIn } from "d3-ease";
 import { scaleLinear } from "d3-scale";
 import { PopulationAttempt } from "game/app";
-import Ticker from "global/ticker";
 import { clamp, map, sawTooth } from "math";
 import { generateNaturalRandomHexagonPoints, pixelPosition } from "overworld/hexMath";
+import Ticker from "std/ticker";
 import { Vector2 } from "three";
 import { CameraState } from "./OverWorldMap";
 

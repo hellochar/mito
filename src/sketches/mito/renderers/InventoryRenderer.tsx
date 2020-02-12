@@ -1,4 +1,4 @@
-import Ticker from "global/ticker";
+import Ticker from "std/ticker";
 import { Color, Scene, Vector2 } from "three";
 import lazy from "../../../common/lazy";
 import { map } from "../../../math";

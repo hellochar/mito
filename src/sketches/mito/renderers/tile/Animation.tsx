@@ -1,4 +1,4 @@
-import Ticker from "global/ticker";
+import Ticker from "std/ticker";
 
 export type Animation = (t: number, dt: number) => boolean;
 
