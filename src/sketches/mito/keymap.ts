@@ -1,4 +1,4 @@
-import { Action, ActionMove } from "./action";
+import { Action, ActionMove } from "../../core/player/action";
 import { DIRECTIONS } from "./directions";
 
 export const ACTION_CONTINUOUS_KEYMAP: { [key: string]: Action } = {

@@ -1,6 +1,6 @@
 import { AStarFinder, DiagonalMovement, Grid } from "pathfinding";
 import { Vector2 } from "three";
-import { ActionMove } from "../sketches/mito/action";
+import { ActionMove } from "../core/player/action";
 import { World } from "../sketches/mito/game";
 import { Cell } from "../sketches/mito/game/tile";
 import { MOVEMENTS } from "../sketches/mito/keymap";

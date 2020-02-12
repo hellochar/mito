@@ -1,6 +1,6 @@
 import React from "react";
 import { Vector2 } from "three";
-import { ActionMove } from "./action";
+import { ActionMove } from "../../core/player/action";
 import { Cell } from "./game/tile";
 import { Mito } from "./index";
 import Input from "./input";

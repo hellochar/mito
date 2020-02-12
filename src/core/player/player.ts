@@ -1,16 +1,20 @@
 import { sleep } from "common/promise";
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
+import { Air, Cell, FreezeEffect, GrowingCell, Tile } from "../../sketches/mito/game/tile";
+import { CellArgs } from "../../sketches/mito/game/tile/cell";
+import { GeneDirectionalPush } from "../../sketches/mito/game/tile/genes/GeneDirectionalPush";
+import { CellType } from "../../sketches/mito/game/tile/genome";
 import {
   PLAYER_BASE_SPEED,
   PLAYER_MAX_RESOURCES,
   PLAYER_MOVED_BY_TRANSPORT_SPEED,
   PLAYER_STARTING_SUGAR,
   PLAYER_STARTING_WATER,
-} from "../../../core/constants";
-import { Steppable } from "../../../core/entity";
-import { Inventory } from "../../../core/inventory";
-import { World } from "../../../core/world/world";
+} from "../constants";
+import { Steppable } from "../entity";
+import { Inventory } from "../inventory";
+import { World } from "../world/world";
 import {
   Action,
   ActionBuild,
@@ -21,11 +25,7 @@ import {
   ActionMove,
   ActionMultiple,
   ActionPickup,
-} from "../action";
-import { Air, Cell, FreezeEffect, GrowingCell, Tile } from "./tile";
-import { CellArgs } from "./tile/cell";
-import { GeneDirectionalPush } from "./tile/genes/GeneDirectionalPush";
-import { CellType } from "./tile/genome";
+} from "./action";
 
 const waterCost = 1;
 const sugarCost = 1;

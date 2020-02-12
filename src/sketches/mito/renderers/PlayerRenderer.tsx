@@ -1,8 +1,8 @@
 import { sleep } from "common/promise";
 import { easeSinInOut } from "d3-ease";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
+import { Action, ActionBuild, ActionLong } from "../../../core/player/action";
 import { clamp, lerp2, map, randFloat } from "../../../math";
-import { Action, ActionBuild, ActionLong } from "../action";
 import { build, deconstruct, dropSugar, dropWater, footsteps, interactSound, sticky } from "../audio";
 import { Player } from "../game";
 import { Tile } from "../game/tile";

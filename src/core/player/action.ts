@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
-import { Interactable } from "../../core/interactable";
-import { CellArgs } from "./game/tile/cell";
-import { CellType } from "./game/tile/genome";
+import { CellArgs } from "../../sketches/mito/game/tile/cell";
+import { CellType } from "../../sketches/mito/game/tile/genome";
+import { Interactable } from "../interactable";
 
 export interface ActionMove {
   type: "move";

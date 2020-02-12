@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
 import Mito from ".";
 import { isInteractable } from "../../core/interactable";
-import { ActionBuild, ActionInteract } from "./action";
+import { ActionBuild, ActionInteract } from "../../core/player/action";
 import { Cell, Tile } from "./game/tile";
 import { CellArgs } from "./game/tile/cell";
 import Input from "./input";
