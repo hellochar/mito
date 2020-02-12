@@ -4,7 +4,6 @@ import { easeCubic } from "d3-ease";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
 import Mito from "sketches/mito";
-import { Constructor } from "sketches/mito/constructor";
 import { Air, Cell, DeadCell, Fountain, GrowingCell, Rock, Tile } from "sketches/mito/game/tile";
 import { GeneInstance } from "sketches/mito/game/tile/chromosome";
 import { GeneSoilAbsorption } from "sketches/mito/game/tile/genes";
@@ -13,6 +12,7 @@ import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynth
 import { GeneFruit, GeneSeed } from "sketches/mito/game/tile/genes/GeneReproducer";
 import { Clay, Sand, Silt } from "sketches/mito/game/tile/soil";
 import { Color, Scene, Vector2, Vector3 } from "three";
+import { Constructor } from "typings/constructor";
 import { MaterialInfo } from "../../game/materialInfo";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";

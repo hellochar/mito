@@ -2,7 +2,7 @@ import { TIME_PER_DAY } from "../../../../core/constants";
 import { Entity, StopStep } from "../../../../core/entity";
 import { Interactable } from "../../../../core/interactable";
 import { Temperature } from "../../../../core/temperature";
-import { Constructor } from "../../constructor";
+import { Constructor } from "../../../../typings/constructor";
 import { Cell } from "./cell";
 export abstract class CellEffect {
   private timeMade!: number;
@@ -31,6 +31,7 @@ export abstract class CellEffect {
     this.cell.effects.splice(index, 1);
   }
 }
+
 export interface CellEffectConstructor extends Constructor<CellEffect> {
   displayName: string;
   stacks?: boolean;
