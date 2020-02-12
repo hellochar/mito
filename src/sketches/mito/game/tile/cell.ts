@@ -4,6 +4,7 @@ import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../../../../core/con
 import { Entity, step } from "../../../../core/entity";
 import { Interactable, isInteractable } from "../../../../core/interactable";
 import { nextTemperature, Temperature } from "../../../../core/temperature";
+import { Tile } from "../../../../core/tile/tile";
 import { World } from "../../../../core/world/world";
 import { DIRECTIONS } from "../../directions";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
@@ -12,7 +13,6 @@ import { DeadCell } from "./deadCell";
 import { CellType } from "./genome";
 import { Rock } from "./rock";
 import { Soil } from "./soil";
-import { Tile } from "./tile";
 
 export interface CellArgs {
   direction?: Vector2;

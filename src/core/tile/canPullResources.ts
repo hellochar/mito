@@ -1,5 +1,5 @@
-import { HasInventory } from "../../../core/inventory";
-import { Air, Cell, Soil } from "./tile";
+import { Air, Cell, Soil } from "../../sketches/mito/game/tile";
+import { HasInventory } from "../inventory";
 
 export function canPullResources(receiver: HasInventory, giver: HasInventory): boolean {
   // allow direct ancestors/child relationships to exchange resources with each other (e.g. Soil and Fountain)
