@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import { Button } from "common/Button";
+import { Button } from "game/ui/common/Button";
 import * as React from "react";
 import { getDecidedGameResult } from "../../../game/gameResult";
 import { PlayerSeedControlScheme } from "../ControlScheme";

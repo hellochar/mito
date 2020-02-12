@@ -1,11 +1,11 @@
 import fruitSrc from "assets/images/fruit.png";
 import classNames from "classnames";
-import MP from "common/MP";
+import MP from "game/ui/common/MP";
 import { map } from "math";
 import * as React from "react";
-import Character from "../../../common/Character";
 import { seasonDisplay, seasonFromTime } from "../../../core/season";
 import { GameResult } from "../../../game/gameResult";
+import Character from "../../../game/ui/common/Character";
 import { mitoDeath } from "../audio";
 import { Cell } from "../game/tile";
 import { GeneInstance } from "../game/tile/chromosome";

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import DynamicNumber from "common/DynamicNumber";
+import DynamicNumber from "game/ui/common/DynamicNumber";
 import * as React from "react";
 import "./InventoryBar.scss";
 import { ResourceIcon } from "./ResourceIcon";

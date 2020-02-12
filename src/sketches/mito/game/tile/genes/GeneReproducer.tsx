@@ -1,5 +1,5 @@
-import MP from "common/MP";
 import { Inventory } from "core/inventory";
+import MP from "game/ui/common/MP";
 import { clamp } from "math";
 import React from "react";
 import { TIME_PER_MONTH } from "../../../../../core/constants";

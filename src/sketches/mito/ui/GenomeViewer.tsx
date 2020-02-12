@@ -1,6 +1,6 @@
 import classNames from "classnames";
-import DynamicNumber from "common/DynamicNumber";
 import { nf } from "common/formatters";
+import DynamicNumber from "game/ui/common/DynamicNumber";
 import { arrayRange } from "math/arrays";
 import * as React from "react";
 import { FaArrowsAltV, FaGripLines } from "react-icons/fa";

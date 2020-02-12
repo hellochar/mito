@@ -1,9 +1,9 @@
-import LookAtMouse from "common/LookAtMouse";
+import LookAtMouse from "game/ui/common/LookAtMouse";
 import React from "react";
 import Popover from "react-popover";
-import Character from "../../../common/Character";
-import MP from "../../../common/MP";
 import { Species } from "../../../core/species";
+import Character from "../common/Character";
+import MP from "../common/MP";
 import "./SpeciesNode.scss";
 import SpeciesPopoverDetails from "./SpeciesPopoverDetails";
 

@@ -1,6 +1,6 @@
 import classNames from "classnames";
-import DynamicNumber from "common/DynamicNumber";
 import { useAppReducer } from "game/app";
+import DynamicNumber from "game/ui/common/DynamicNumber";
 import React, { useState } from "react";
 import { GiSandsOfTime } from "react-icons/gi";
 import { HexTile } from "../../../core/overworld/hexTile";

@@ -1,6 +1,6 @@
 import React from "react";
 import Ticker from "std/ticker";
-import { nf } from "./formatters";
+import { nf } from "../../../common/formatters";
 
 export interface DynamicNumberProps {
   value: number;

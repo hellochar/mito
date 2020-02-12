@@ -1,4 +1,4 @@
-import DynamicNumber, { DynamicNumberProps } from "common/DynamicNumber";
+import DynamicNumber, { DynamicNumberProps } from "game/ui/common/DynamicNumber";
 import React from "react";
 
 const GN: React.FC<DynamicNumberProps> = (props) => {

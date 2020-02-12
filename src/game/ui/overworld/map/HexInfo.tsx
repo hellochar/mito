@@ -1,9 +1,9 @@
 import { Species } from "core/species";
 import React from "react";
-import { Button } from "../../../../common/Button";
-import Expand from "../../../../common/Expand";
-import MP from "../../../../common/MP";
 import { HexTile } from "../../../../core/overworld/hexTile";
+import { Button } from "../../common/Button";
+import Expand from "../../common/Expand";
+import MP from "../../common/MP";
 import "./HexInfo.scss";
 
 interface HexInfo {

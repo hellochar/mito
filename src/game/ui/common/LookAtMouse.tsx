@@ -2,8 +2,8 @@
 import useBoundingclientrectRef from "@rooks/use-boundingclientrect-ref";
 import classNames from "classnames";
 import React from "react";
+import useMousePosition from "../../../common/useMousePosition";
 import "./LookAtMouse.scss";
-import useMousePosition from "./useMousePosition";
 
 interface LookAtMouseProps {
   displayBlock?: boolean;

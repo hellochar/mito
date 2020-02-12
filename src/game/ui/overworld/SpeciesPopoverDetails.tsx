@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "../../../common/Button";
 import { Species } from "../../../core/species";
+import { Button } from "../common/Button";
 import "./SpeciesPopoverDetails.scss";
 
 export interface SpeciesPopoverDetailsProps {
