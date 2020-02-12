@@ -1,14 +1,10 @@
+import { Environment } from "core/environment";
 import { gridRange } from "math/arrays";
+import { TileGenerators } from "std/tileGenerators";
 import { Vector2 } from "three";
 import devlog from "../../common/devlog";
 import shuffle from "../../math/shuffle";
 import { DIRECTION_VALUES } from "../../sketches/mito/directions";
-import {
-  createGeneratorContext,
-  Environment,
-  GeneratorContext,
-  TileGenerators,
-} from "../../sketches/mito/game/environment";
 import { standardGenome } from "../../std/genomes/standardGenome";
 import Genome from "../cell/genome";
 import { Entity, isSteppable, step } from "../entity";
@@ -18,6 +14,7 @@ import { Season, seasonFromTime } from "../season";
 import { Species } from "../species";
 import { Air, Cell, Soil, Tile } from "../tile";
 import { TileEvent } from "../tile/tileEvent";
+import { createGeneratorContext, GeneratorContext } from "./generatorContext";
 import { StepStats } from "./stepStats";
 import { WeatherController } from "./weatherController";
 

@@ -1,10 +1,10 @@
+import { Environment } from "core/environment";
 import { Cell } from "core/tile";
 import { Layout, PlotData } from "plotly.js";
 import React from "react";
 import { standardGenome } from "std/genomes/standardGenome";
 import { newBaseSpecies } from "../core/species";
 import { World } from "../sketches/mito/game";
-import { Environment } from "../sketches/mito/game/environment";
 import { Experiment, Visitors } from "./experiment";
 
 const allSoilEnvironment: Environment = {

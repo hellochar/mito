@@ -1,5 +1,5 @@
+import { EnvironmentSchema } from "core/environment";
 import { createSimpleSchema, object, primitive, reference } from "serializr";
-import { EnvironmentSchema } from "../../sketches/mito/game/environment";
 import { Species, SpeciesSchema } from "../species";
 
 export interface LevelInfo {
