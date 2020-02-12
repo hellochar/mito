@@ -1,5 +1,5 @@
-import { World } from ".";
-import { Tile } from "./tile";
+import { World } from "../sketches/mito/game";
+import { Tile } from "../sketches/mito/game/tile";
 
 export function findBuildCandidateTiles(world: World, predicate?: (tile: Tile) => boolean) {
   const entityPredicate: (tile: Tile) => boolean = (t) => world.player.isWalkable(t);

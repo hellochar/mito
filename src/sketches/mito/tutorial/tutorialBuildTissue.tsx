@@ -1,8 +1,8 @@
 import * as React from "react";
+import { findBuildCandidateTiles } from "../../../std/worldUtils";
 import { Action } from "../action";
 import { Air, Soil } from "../game/tile";
 import { standardGenome } from "../game/tile/standardGenome";
-import { findBuildCandidateTiles } from "../game/worldUtils";
 import TileHighlight from "./tileHighlight";
 import { Tutorial } from "./tutorial";
 
