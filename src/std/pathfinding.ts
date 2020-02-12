@@ -1,9 +1,9 @@
 import { AStarFinder, DiagonalMovement, Grid } from "pathfinding";
 import { Vector2 } from "three";
-import { ActionMove } from "./action";
-import { World } from "./game";
-import { Cell } from "./game/tile";
-import { MOVEMENTS } from "./keymap";
+import { ActionMove } from "../sketches/mito/action";
+import { World } from "../sketches/mito/game";
+import { Cell } from "../sketches/mito/game/tile";
+import { MOVEMENTS } from "../sketches/mito/keymap";
 
 export function findPositionsThroughTissue(world: World, target: Vector2, includeTargetIfNonTissue = false) {
   const grid = newGrid(world.width, world.height, (x, y, g) => {
