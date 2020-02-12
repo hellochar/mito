@@ -1,9 +1,9 @@
 import { MousePositionContext } from "common/useMousePosition";
+import { GameResult } from "game/gameResult";
 import OverWorldScreen from "game/ui/overworld/OverWorldScreen";
 import React from "react";
 import { CSSTransition } from "react-transition-group";
 import { createSelector } from "reselect";
-import { GameResult } from "sketches/mito/game/gameResult";
 import { FullPageSketch } from "../../sketches/fullPageSketch";
 import Mito from "../../sketches/mito";
 import GameResultsScreen from "../../sketches/mito/ui/GameResultsScreen";

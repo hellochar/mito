@@ -1,8 +1,8 @@
 import classnames from "classnames";
 import { Button } from "common/Button";
 import * as React from "react";
+import { getDecidedGameResult } from "../../../game/gameResult";
 import { PlayerSeedControlScheme } from "../ControlScheme";
-import { getDecidedGameResult } from "../game/gameResult";
 import Mito from "../index";
 import Input from "../input";
 import CellBarUI from "./CellBarUI";

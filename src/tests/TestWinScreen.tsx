@@ -1,5 +1,5 @@
+import { GameResult } from "game/gameResult";
 import React from "react";
-import { GameResult } from "sketches/mito/game/gameResult";
 import { GeneFruit } from "sketches/mito/game/tile/genes/GeneReproducer";
 import { standardGenome } from "sketches/mito/game/tile/standardGenome";
 import { Vector2 } from "three";
