@@ -1,6 +1,6 @@
 import { useAppReducer } from "game/app";
 import React from "react";
-import { Species } from "../core/species";
+import { Species } from "../../../core/species";
 import "./PhylogeneticTree.scss";
 import SpeciesNode from "./SpeciesNode";
 

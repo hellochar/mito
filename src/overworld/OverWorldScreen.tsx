@@ -1,9 +1,9 @@
 import classNames from "classnames";
 import { Button } from "common/Button";
 import { Species } from "core/species";
-import PhylogeneticTree from "evolution/PhylogeneticTree";
 import { useAppReducer } from "game/app";
 import { resetGame, save } from "game/app/saveLoad";
+import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
 import React, { useCallback, useEffect, useState } from "react";
 import { GiFamilyTree } from "react-icons/gi";
 import { EpochUI } from "./EpochUI";
