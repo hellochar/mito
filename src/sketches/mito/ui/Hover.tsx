@@ -1,6 +1,6 @@
 import * as React from "react";
 import Mito from "..";
-import { Tile } from "../game/tile";
+import { Tile } from "../../../core/tile";
 import Input from "../input";
 import BuildBlueprint from "../tutorial/buildBlueprint";
 import PointHighlight from "../tutorial/PointHighlight";

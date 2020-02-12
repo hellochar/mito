@@ -19,9 +19,9 @@ import whooshSrc from "assets/audio/whoosh.mp3";
 import { Howl } from "howler";
 import * as THREE from "three";
 import devlog from "../../common/devlog";
+import { Tile } from "../../core/tile";
 import { SketchAudioContext } from "../sketch";
 import { Player } from "./game";
-import { Tile } from "./game/tile";
 
 export let mito: AudioUnit;
 export let strings: AudioUnit;

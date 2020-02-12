@@ -1,9 +1,9 @@
 import mapRecord from "common/mapRecord";
 import plantNames from "common/plantNames";
 import { clamp, sampleArray } from "math";
-import { Cell } from "../../sketches/mito/game/tile";
 import { CELL_BUILD_TIME } from "../constants";
 import { Steppable } from "../entity";
+import { Cell } from "../tile";
 
 const defaultProperties: GeneStaticProperties = {
   cantFreeze: false,

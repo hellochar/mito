@@ -1,7 +1,7 @@
 import React from "react";
 import { Vector2 } from "three";
 import { ActionMove } from "../../core/player/action";
-import { Cell } from "./game/tile";
+import { Cell } from "../../core/tile";
 import { Mito } from "./index";
 import Input from "./input";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";

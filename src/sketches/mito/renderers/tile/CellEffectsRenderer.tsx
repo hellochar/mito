@@ -2,7 +2,7 @@ import { CancerEffect } from "core/cell/cellEffect";
 import { lerp } from "math";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, RingBufferGeometry, Scene } from "three";
 import Mito from "../..";
-import { Cell, CellEffect, FreezeEffect } from "../../game/tile";
+import { Cell, CellEffect, FreezeEffect } from "../../../../core/tile";
 import { textureFromSpritesheet } from "../../spritesheet";
 import { Renderer } from "../Renderer";
 

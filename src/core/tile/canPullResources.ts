@@ -1,4 +1,4 @@
-import { Air, Cell, Soil } from "../../sketches/mito/game/tile";
+import { Air, Cell, Soil } from ".";
 import { HasInventory } from "../inventory";
 
 export function canPullResources(receiver: HasInventory, giver: HasInventory): boolean {

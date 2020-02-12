@@ -1,5 +1,5 @@
+import { Cell } from "../core/tile";
 import { World } from "../core/world/world";
-import { Cell } from "../sketches/mito/game/tile";
 
 export interface GameResult {
   status: "won" | "lost";

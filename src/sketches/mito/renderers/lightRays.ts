@@ -8,7 +8,7 @@ import {
   Vector2,
   VertexColors,
 } from "three";
-import { Tile } from "../game/tile";
+import { Tile } from "../../../core/tile";
 
 const MAX_LIGHTRAYS = 1000;
 

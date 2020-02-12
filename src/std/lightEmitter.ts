@@ -14,8 +14,8 @@ import {
   Vector2,
   Vector3,
 } from "three";
+import { Air, Soil, Tile } from "../core/tile";
 import { World } from "../core/world/world";
-import { Air, Soil, Tile } from "../sketches/mito/game/tile";
 import { LightRays } from "../sketches/mito/renderers/lightRays";
 import { WorldRenderer } from "../sketches/mito/renderers/WorldRenderer";
 

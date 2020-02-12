@@ -1,7 +1,7 @@
 import { map } from "math";
 import * as React from "react";
 import { Temperature, temperatureFor } from "../../../core/temperature";
-import { Tile } from "../game/tile";
+import { Tile } from "../../../core/tile";
 
 const COLOR_FOR_TEMPERATURE: Record<Temperature, string> = {
   Freezing: "darkblue",

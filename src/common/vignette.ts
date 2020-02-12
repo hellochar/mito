@@ -1,7 +1,7 @@
 import { TIME_PER_SEASON } from "core/constants";
+import { Tile } from "core/tile";
 import { map } from "math";
 import Mito from "sketches/mito";
-import { Tile } from "sketches/mito/game/tile";
 import { WorldRenderer } from "sketches/mito/renderers/WorldRenderer";
 // import { createRendererFor } from "sketches/mito/renderers/WorldRenderer";
 import { OrthographicCamera, Scene, Vector2, WebGLRenderTarget } from "three";

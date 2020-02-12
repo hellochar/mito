@@ -1,8 +1,8 @@
 import { createSelector } from "reselect";
 import { Scene } from "three";
 import Mito from "..";
+import { Tile } from "../../../core/tile";
 import { Entity, Player, PlayerSeed, StepStats, World } from "../game";
-import { Tile } from "../game/tile";
 import { EventLogRenderer } from "./events/eventLogRenderer";
 import { InventoryRenderer } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";

@@ -5,11 +5,11 @@ import { map } from "math";
 import * as React from "react";
 import { GeneInstance } from "../../../core/cell/chromosome";
 import { seasonDisplay, seasonFromTime } from "../../../core/season";
+import { Cell } from "../../../core/tile";
 import { GameResult } from "../../../game/gameResult";
 import Character from "../../../game/ui/common/Character";
 import { GeneFruit, reproducerGetPercentMatured } from "../../../std/genes/GeneReproducer";
 import { mitoDeath } from "../audio";
-import { Cell } from "../game/tile";
 import "./GameResultsScreen.scss";
 import { Glow } from "./Glow";
 

@@ -1,8 +1,8 @@
 import { Vector2 } from "three";
+import { Fountain, Rock, Tile } from "../../../../core/tile";
 import { Clay, Sand, Silt } from "../../../../core/tile/soil";
 import { World } from "../../../../core/world/world";
 import { clamp, map } from "../../../../math";
-import { Fountain, Rock, Tile } from "../tile";
 
 export type TileGenerator = (pos: Vector2, world: World) => Tile | undefined;
 export type ScalarField = (pos: Vector2, world: World) => number;

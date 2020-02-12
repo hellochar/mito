@@ -1,5 +1,5 @@
+import { Tile } from "core/tile";
 import { World } from "sketches/mito/game";
-import { Tile } from "sketches/mito/game/tile";
 
 export type Visitor = (tiles: Tile[], world: World) => number;
 

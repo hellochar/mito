@@ -8,6 +8,7 @@ import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRe
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as Nodes from "three/examples/jsm/nodes/Nodes";
 import configure from "../../common/configure";
+import { Tile } from "../../core/tile";
 import { GameResult, maybeGetGameResult } from "../../game/gameResult";
 import { clamp, lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
@@ -16,7 +17,6 @@ import { drums, hookUpAudio, strings, whoosh } from "./audio";
 import { ControlScheme, PlayerSeedControlScheme } from "./ControlScheme";
 import { World } from "./game";
 import { environmentFromLevelInfo } from "./game/environment";
-import { Tile } from "./game/tile";
 import { OvalNode } from "./ovalNode";
 import { params } from "./params";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";

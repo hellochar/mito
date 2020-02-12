@@ -3,7 +3,7 @@ import Mito from ".";
 import { CellArgs } from "../../core/cell/cell";
 import { isInteractable } from "../../core/interactable";
 import { ActionBuild, ActionInteract } from "../../core/player/action";
-import { Cell, Tile } from "./game/tile";
+import { Cell, Tile } from "../../core/tile";
 import Input from "./input";
 
 export abstract class ActionBar {
