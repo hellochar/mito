@@ -1,6 +1,6 @@
 import { poissonDisc } from "math/poissonDisc";
 import { Vector2 } from "three";
-import { HexTile } from "../core/hexTile";
+import { HexTile } from "../../../core/hexTile";
 import { CameraState } from "./map/OverWorldMap";
 
 /**

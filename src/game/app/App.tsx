@@ -1,5 +1,5 @@
 import { MousePositionContext } from "common/useMousePosition";
-import OverWorldScreen from "overworld/OverWorldScreen";
+import OverWorldScreen from "game/ui/overworld/OverWorldScreen";
 import React from "react";
 import { CSSTransition } from "react-transition-group";
 import { createSelector } from "reselect";
