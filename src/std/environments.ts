@@ -1,19 +1,5 @@
 import { LevelInfo } from "core/overworld/levelInfo";
-import { createSimpleSchema, object } from "serializr";
-import { TileGenerator, TileGeneratorName } from "./tileGenerators";
-
-export interface Environment {
-  airEvaporation: number;
-  climate: {
-    timeBetweenRainfall: number;
-    rainDuration: number;
-    waterPerSecond: number;
-  };
-  secondsToEvaporate: number;
-  floorCo2: number;
-  temperaturePerSeason: number[];
-  fill: TileGeneratorName | TileGenerator;
-}
+import { Environment } from "../core/environment";
 
 export function environmentFromLevelInfo(info: LevelInfo) {
   // const { rainfall, soilType, temperature } = levelInfo;
@@ -35,11 +21,6 @@ export function environmentFromLevelInfo(info: LevelInfo) {
   }
   // return Reservoires;
 }
-
-export const EnvironmentSchema = createSimpleSchema<Environment>({
-  climate: object(createSimpleSchema({ "*": true })),
-  "*": true,
-});
 
 export const Level0: Environment = {
   airEvaporation: 0.2,
