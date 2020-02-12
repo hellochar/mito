@@ -1,5 +1,5 @@
 import { easeExpOut } from "d3-ease";
-import { GeneDirectionalPush } from "sketches/mito/game/tile/genes/GeneDirectionalPush";
+import { GeneDirectionalPush } from "std/genes/GeneDirectionalPush";
 import { ArrowHelper, Object3D, Vector2, Vector3 } from "three";
 import { Animation } from "./Animation";
 import { GeneRenderer } from "./GeneRenderer";

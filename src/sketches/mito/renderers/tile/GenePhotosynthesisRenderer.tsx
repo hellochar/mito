@@ -1,5 +1,5 @@
 import { blopBuffer, distScalar } from "sketches/mito/audio";
-import { GenePhotosynthesis } from "sketches/mito/game/tile/genes/GenePhotosynthesis";
+import { GenePhotosynthesis } from "std/genes/GenePhotosynthesis";
 import { Audio, Object3D, Vector2, Vector3 } from "three";
 import { GeneRenderer } from "./GeneRenderer";
 import makeLine from "./makeLine";

@@ -7,9 +7,9 @@ import { GeneInstance } from "../../../core/cell/chromosome";
 import { seasonDisplay, seasonFromTime } from "../../../core/season";
 import { GameResult } from "../../../game/gameResult";
 import Character from "../../../game/ui/common/Character";
+import { GeneFruit, reproducerGetPercentMatured } from "../../../std/genes/GeneReproducer";
 import { mitoDeath } from "../audio";
 import { Cell } from "../game/tile";
-import { GeneFruit, reproducerGetPercentMatured } from "../game/tile/genes/GeneReproducer";
 import "./GameResultsScreen.scss";
 import { Glow } from "./Glow";
 

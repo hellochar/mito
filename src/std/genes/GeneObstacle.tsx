@@ -1,5 +1,5 @@
 import React from "react";
-import { Gene } from "../../../../../core/cell/chromosome";
+import { Gene } from "../../core/cell/chromosome";
 export const GeneObstacle = Gene.make(
   {
     name: "Obstacle",

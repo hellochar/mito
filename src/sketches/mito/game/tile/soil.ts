@@ -1,7 +1,7 @@
 import { Inventory } from "core/inventory";
-import { canPullResources } from "../../../../core/tile/canPullResources";
-import { Tile } from "../../../../core/tile/tile";
-import { clamp, map, randRound } from "../../../../math/index";
+import { canPullResources } from "core/tile/canPullResources";
+import { Tile } from "core/tile/tile";
+import { clamp, map, randRound } from "math/index";
 export abstract class Soil extends Tile {
   /**
    * Soil will aggressively hold onto water below saturation;

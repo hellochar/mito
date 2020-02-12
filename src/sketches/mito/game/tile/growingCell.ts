@@ -5,8 +5,8 @@ import { Cell } from "../../../../core/cell/cell";
 import Chromosome from "../../../../core/cell/chromosome";
 import { CellType } from "../../../../core/cell/genome";
 import { World } from "../../../../core/world/world";
-import { GeneLiving } from "./genes";
-import { GeneObstacle } from "./genes/GeneObstacle";
+import { GeneLiving } from "../../../../std/genes";
+import { GeneObstacle } from "../../../../std/genes/GeneObstacle";
 
 const chromosomeGrowingCell = new Chromosome(GeneLiving.level(2), GeneObstacle.level(0));
 

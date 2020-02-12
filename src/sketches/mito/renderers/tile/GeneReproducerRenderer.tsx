@@ -2,7 +2,7 @@ import { nf } from "common/formatters";
 import { Gene } from "core/cell/chromosome";
 import { map } from "math";
 import React from "react";
-import { reproducerGetPercentMatured, ReproducerState } from "sketches/mito/game/tile/genes/GeneReproducer";
+import { reproducerGetPercentMatured, ReproducerState } from "std/genes/GeneReproducer";
 import { GeneRenderer } from "./GeneRenderer";
 import "./GeneReproducerRenderer.scss";
 

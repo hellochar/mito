@@ -2,7 +2,7 @@ import { sleep } from "common/promise";
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
 import { Air, Cell, FreezeEffect, GrowingCell, Tile } from "../../sketches/mito/game/tile";
-import { GeneDirectionalPush } from "../../sketches/mito/game/tile/genes/GeneDirectionalPush";
+import { GeneDirectionalPush } from "../../std/genes/GeneDirectionalPush";
 import { CellArgs } from "../cell/cell";
 import { CellType } from "../cell/genome";
 import {

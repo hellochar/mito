@@ -8,13 +8,13 @@ import {
   GeneLiving,
   GeneMetabolism,
   GeneSoilAbsorption,
-} from "./genes";
-import { GeneAttractsSugar } from "./genes/GeneAttractsSugar";
-import { GeneCannotFreeze } from "./genes/GeneCannotFreeze";
-import { GeneDirectionalPush } from "./genes/GeneDirectionalPush";
-import { GeneObstacle } from "./genes/GeneObstacle";
-import { GenePhotosynthesis } from "./genes/GenePhotosynthesis";
-import { GeneFruit } from "./genes/GeneReproducer";
+} from "../../../../std/genes";
+import { GeneAttractsSugar } from "../../../../std/genes/GeneAttractsSugar";
+import { GeneCannotFreeze } from "../../../../std/genes/GeneCannotFreeze";
+import { GeneDirectionalPush } from "../../../../std/genes/GeneDirectionalPush";
+import { GeneObstacle } from "../../../../std/genes/GeneObstacle";
+import { GenePhotosynthesis } from "../../../../std/genes/GenePhotosynthesis";
+import { GeneFruit } from "../../../../std/genes/GeneReproducer";
 
 const cellTypeTissue: CellType = {
   name: "Tissue",
