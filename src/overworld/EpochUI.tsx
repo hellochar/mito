@@ -3,8 +3,8 @@ import DynamicNumber from "common/DynamicNumber";
 import { useAppReducer } from "game/app";
 import React, { useState } from "react";
 import { GiSandsOfTime } from "react-icons/gi";
+import { HexTile } from "../core/hexTile";
 import "./EpochUI.scss";
-import { HexTile } from "./hexTile";
 
 export function EpochUI({ onNextEpoch, onFocusHex }: EpochUIProps) {
   const [{ epoch }] = useAppReducer();

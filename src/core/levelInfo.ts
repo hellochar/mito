@@ -1,6 +1,6 @@
 import { createSimpleSchema, object, primitive, reference } from "serializr";
-import { Species, SpeciesSchema } from "../core/species";
 import { EnvironmentSchema } from "../sketches/mito/game/environment";
+import { Species, SpeciesSchema } from "./species";
 
 export interface LevelInfo {
   seed: number;

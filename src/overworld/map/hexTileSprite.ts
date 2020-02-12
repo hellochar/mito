@@ -1,5 +1,6 @@
 import testVignetteUrl from "assets/images/test-vignette.png";
 import { sleep } from "common/promise";
+import { HexTile } from "core/hexTile";
 import { Species } from "core/species";
 import { easeExpIn } from "d3-ease";
 import { scaleLinear } from "d3-scale";
@@ -7,7 +8,6 @@ import { PopulationAttempt } from "game/app";
 import Ticker from "global/ticker";
 import { clamp, map, sawTooth } from "math";
 import { generateNaturalRandomHexagonPoints, pixelPosition } from "overworld/hexMath";
-import { HexTile } from "overworld/hexTile";
 import { Vector2 } from "three";
 import { CameraState } from "./OverWorldMap";
 

@@ -6,8 +6,8 @@ import { resetGame, save } from "game/app/saveLoad";
 import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
 import React, { useCallback, useEffect, useState } from "react";
 import { GiFamilyTree } from "react-icons/gi";
+import { HexTile } from "../core/hexTile";
 import { EpochUI } from "./EpochUI";
-import { HexTile } from "./hexTile";
 import { OverWorldMap } from "./map/OverWorldMap";
 import "./OverWorldScreen.scss";
 

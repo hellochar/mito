@@ -1,6 +1,6 @@
 import React from "react";
+import { HexTile } from "../../core/hexTile";
 import { pixelPosition } from "../hexMath";
-import { HexTile } from "../hexTile";
 import { CameraState } from "./OverWorldMap";
 import "./OverWorldPopover.scss";
 
