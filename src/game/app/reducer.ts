@@ -1,4 +1,4 @@
-import { HexTile } from "core/hexTile";
+import { HexTile } from "core/overworld/hexTile";
 import { lineage, Species } from "core/species";
 import React, { useContext } from "react";
 import { GameResult } from "sketches/mito/game/gameResult";

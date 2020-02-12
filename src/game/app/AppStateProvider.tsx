@@ -1,5 +1,5 @@
 import { sleep } from "common/promise";
-import { OverWorld } from "core/overWorld";
+import { OverWorld } from "core/overworld/overWorld";
 import { newBaseSpecies } from "core/species";
 import React, { useEffect } from "react";
 import { AppActions, AppReducerContext, reducer } from "./reducer";

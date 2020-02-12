@@ -1,6 +1,6 @@
 import testVignetteUrl from "assets/images/test-vignette.png";
 import { sleep } from "common/promise";
-import { HexTile } from "core/hexTile";
+import { HexTile } from "core/overworld/hexTile";
 import { Species } from "core/species";
 import { easeExpIn } from "d3-ease";
 import { scaleLinear } from "d3-scale";

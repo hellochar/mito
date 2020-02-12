@@ -3,7 +3,7 @@ import { lerp } from "math";
 import React from "react";
 import Ticker from "std/ticker";
 import { Vector2 } from "three";
-import { HexTile } from "../../../../core/hexTile";
+import { HexTile } from "../../../../core/overworld/hexTile";
 import { getCameraPositionCenteredOn, getClickedHexCoords, pixelPosition } from "../hexMath";
 import HexInfo from "./HexInfo";
 import HexTileSprite, { DrawingContext } from "./hexTileSprite";

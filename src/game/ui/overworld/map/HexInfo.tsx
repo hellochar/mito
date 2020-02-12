@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "../../../../common/Button";
 import Expand from "../../../../common/Expand";
 import MP from "../../../../common/MP";
-import { HexTile } from "../../../../core/hexTile";
+import { HexTile } from "../../../../core/overworld/hexTile";
 import "./HexInfo.scss";
 
 interface HexInfo {

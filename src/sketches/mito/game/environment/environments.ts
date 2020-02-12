@@ -1,4 +1,4 @@
-import { LevelInfo } from "core/levelInfo";
+import { LevelInfo } from "core/overworld/levelInfo";
 import { createSimpleSchema, object } from "serializr";
 import { TileGenerator, TileGeneratorName } from "./tileGenerators";
 
