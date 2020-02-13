@@ -1,7 +1,7 @@
 import { Inventory } from "core/inventory";
 import { Vector2 } from "three";
-import { DIRECTIONS } from "../../sketches/mito/directions";
 import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../constants";
+import { DIRECTIONS } from "../directions";
 import { Entity, step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
