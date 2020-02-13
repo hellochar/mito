@@ -6,9 +6,9 @@ import { Button } from "game/ui/common/Button";
 import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
 import React, { useCallback, useEffect, useState } from "react";
 import { GiFamilyTree } from "react-icons/gi";
-import { HexTile } from "../../../core/overworld/hexTile";
-import { EpochUI } from "./EpochUI";
-import { OverWorldMap } from "./map/OverWorldMap";
+import { HexTile } from "../../core/overworld/hexTile";
+import { EpochUI } from "../ui/overworld/EpochUI";
+import { OverWorldMap } from "../ui/overworld/map/OverWorldMap";
 import "./OverWorldScreen.scss";
 
 export interface OverWorldScreenProps {

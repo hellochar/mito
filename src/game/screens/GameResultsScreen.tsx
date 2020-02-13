@@ -3,15 +3,15 @@ import classNames from "classnames";
 import MP from "game/ui/common/MP";
 import { map } from "math";
 import * as React from "react";
-import { GeneInstance } from "../../../core/cell/chromosome";
-import { seasonDisplay, seasonFromTime } from "../../../core/season";
-import { Cell } from "../../../core/tile";
-import { GameResult } from "../../../game/gameResult";
-import Character from "../../../game/ui/common/Character";
-import { GeneFruit, reproducerGetPercentMatured } from "../../../std/genes/GeneReproducer";
-import { mitoDeath } from "../audio";
+import { GeneInstance } from "../../core/cell/chromosome";
+import { seasonDisplay, seasonFromTime } from "../../core/season";
+import { Cell } from "../../core/tile";
+import { mitoDeath } from "../../sketches/mito/audio";
+import { Glow } from "../../sketches/mito/ui/Glow";
+import { GeneFruit, reproducerGetPercentMatured } from "../../std/genes/GeneReproducer";
+import { GameResult } from "../gameResult";
+import Character from "../ui/common/Character";
 import "./GameResultsScreen.scss";
-import { Glow } from "./Glow";
 
 interface GameResultsScreenProps {
   onDone: () => void;

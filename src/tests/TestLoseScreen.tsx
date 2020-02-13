@@ -4,7 +4,7 @@ import React from "react";
 import { Temperate } from "std/environments";
 import { World } from "../core";
 import { newBaseSpecies } from "../core/species";
-import GameResultsScreen from "../sketches/mito/ui/GameResultsScreen";
+import GameResultsScreen from "../game/screens/GameResultsScreen";
 import { mockFruit } from "./TestWinScreen";
 
 export function TestLoseScreen() {

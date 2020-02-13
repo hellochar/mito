@@ -1,16 +1,16 @@
 import { MousePositionContext } from "common/useMousePosition";
 import { GameResult } from "game/gameResult";
-import OverWorldScreen from "game/ui/overworld/OverWorldScreen";
+import OverWorldScreen from "game/screens/OverWorldScreen";
 import React from "react";
 import { CSSTransition } from "react-transition-group";
 import { createSelector } from "reselect";
 import { FullPageSketch } from "../../sketches/fullPageSketch";
 import Mito from "../../sketches/mito";
-import GameResultsScreen from "../../sketches/mito/ui/GameResultsScreen";
+import { LocalForageStateProvider } from "../app/AppStateProvider";
+import { AppReducerContext, useAppReducer } from "../app/reducer";
+import { AppState } from "../app/state";
 import "./App.scss";
-import { LocalForageStateProvider } from "./AppStateProvider";
-import { AppReducerContext, useAppReducer } from "./reducer";
-import { AppState } from "./state";
+import GameResultsScreen from "./GameResultsScreen";
 
 interface AppComponentState {
   mousePosition: { x: number; y: number };
