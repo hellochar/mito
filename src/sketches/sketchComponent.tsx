@@ -4,12 +4,12 @@ import * as React from "react";
 import { FaVolumeOff, FaVolumeUp } from "react-icons/fa";
 import Ticker from "std/ticker";
 import * as THREE from "three";
-import { ISketch, SketchAudioContext, SketchConstructor, UI_EVENTS } from "./sketch";
+import Mito from "./mito";
+import { ISketch, SketchAudioContext, UI_EVENTS } from "./sketch";
 
 export interface ISketchComponentProps extends React.DOMAttributes<HTMLDivElement> {
   eventsOnBody?: boolean;
   errorElement?: JSX.Element;
-  sketchClass: SketchConstructor;
   otherArgs?: any[];
 }
 
@@ -250,8 +250,8 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
         renderer.debug.checkShaderErrors = true;
         ref.appendChild(renderer.domElement);
 
-        const otherArgs = this.props.otherArgs || [];
-        const sketch = new this.props.sketchClass(renderer, this.audioContext, ...otherArgs);
+        const [attempt, onWinLoss] = this.props.otherArgs || [];
+        const sketch = new Mito(renderer, this.audioContext, attempt as any, onWinLoss as any);
         this.setState({ status: { type: "success", sketch: sketch } });
       } catch (e) {
         this.setState({ status: { type: "error", error: e } });
@@ -269,10 +269,10 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
   };
 
   public render() {
-    const { sketchClass, otherArgs, eventsOnBody, errorElement, ...containerProps } = this.props;
+    const { otherArgs, eventsOnBody, errorElement, ...containerProps } = this.props;
     const className = classnames("sketch-component", this.state.status.type);
     return (
-      <div {...containerProps} id={this.props.sketchClass.id} className={className} ref={this.handleContainerRef}>
+      <div {...containerProps} className={className} ref={this.handleContainerRef}>
         {this.renderSketchOrStatus()}
       </div>
     );
@@ -282,13 +282,7 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
     const { status } = this.state;
     if (status.type === "success") {
       // key on id to not destroy and re-create the component somehow
-      return (
-        <SketchSuccessComponent
-          key={this.props.sketchClass.id}
-          sketch={status.sketch}
-          eventsOnBody={this.props.eventsOnBody}
-        />
-      );
+      return <SketchSuccessComponent sketch={status.sketch} eventsOnBody={this.props.eventsOnBody} />;
     } else if (status.type === "error") {
       const errorElement = this.props.errorElement || this.renderDefaultErrorElement(status.error.message);
       return errorElement;

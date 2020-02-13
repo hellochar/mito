@@ -1,18 +1,16 @@
 import * as React from "react";
-
-import { SketchConstructor } from "./sketch";
-import { SketchComponent } from "./sketchComponent";
+import { SketchComponent } from "../../sketches/sketchComponent";
+import "./MitoScreen.scss";
 
 export interface ISketchRouteProps {
-  sketchClass: SketchConstructor;
   otherArgs?: any[];
 }
 
-export class FullPageSketch extends React.PureComponent<ISketchRouteProps, {}> {
+export default class MitoScreen extends React.PureComponent<ISketchRouteProps, {}> {
   public render() {
     return (
       <div className="full-page-sketch" ref={this.handleDivRef}>
-        <SketchComponent sketchClass={this.props.sketchClass} otherArgs={this.props.otherArgs} />
+        <SketchComponent otherArgs={this.props.otherArgs} />
       </div>
     );
   }

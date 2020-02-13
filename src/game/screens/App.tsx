@@ -4,13 +4,12 @@ import OverWorldScreen from "game/screens/OverWorldScreen";
 import React from "react";
 import { CSSTransition } from "react-transition-group";
 import { createSelector } from "reselect";
-import { FullPageSketch } from "../../sketches/fullPageSketch";
-import Mito from "../../sketches/mito";
 import { LocalForageStateProvider } from "../app/AppStateProvider";
 import { AppReducerContext, useAppReducer } from "../app/reducer";
 import { AppState } from "../app/state";
 import "./App.scss";
 import GameResultsScreen from "./GameResultsScreen";
+import MitoScreen from "./MitoScreen";
 
 interface AppComponentState {
   mousePosition: { x: number; y: number };
@@ -78,7 +77,7 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
             <OverWorldScreen onNextEpoch={this.handleNextEpoch} />
           </AppScreen>
           <AppScreen show={state.activePopulationAttempt != null && state.activeGameResult == null}>
-            <FullPageSketch sketchClass={Mito} otherArgs={this.otherArgsSelector(state)} />
+            <MitoScreen otherArgs={this.otherArgsSelector(state)} />
           </AppScreen>
           <AppScreen show={state.activeGameResult != null}>
             {state.activeGameResult ? (

@@ -62,12 +62,6 @@ export abstract class ISketch {
   destroy?(): void;
 }
 
-export interface SketchConstructor {
-  new (renderer: THREE.WebGLRenderer, audioContext: SketchAudioContext, ...otherArgs: any[]): ISketch;
-
-  id?: string;
-}
-
 export interface SketchAudioContext extends AudioContext {
   gain: GainNode;
 }
