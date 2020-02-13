@@ -2,8 +2,8 @@ import { nf } from "common/formatters";
 import React, { memo, useRef } from "react";
 import { World } from "../../../core";
 import { TIME_PER_SEASON } from "../../../core/constants";
+import { ResourceIcon } from "../../../sketches/mito/ui/ResourceIcon";
 import { GenePhotosynthesis, GeneSoilAbsorption } from "../../../std/genes";
-import { ResourceIcon } from "./ResourceIcon";
 
 // time is just used for re-rendering
 const PlantStats: React.FC<{ world: World; time: number }> = memo(({ world, time }) => {

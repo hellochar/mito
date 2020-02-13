@@ -1,3 +1,3 @@
-export * from "./Hover";
-export * from "./HUD";
-export * from "./TileDetails";
+export * from "../../../game/ui/ingame/Hover";
+export * from "../../../game/ui/ingame/HUD";
+export * from "../../../game/ui/ingame/TileDetails";

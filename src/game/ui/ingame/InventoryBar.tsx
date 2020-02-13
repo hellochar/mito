@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import DynamicNumber from "game/ui/common/DynamicNumber";
 import * as React from "react";
+import { ResourceIcon } from "../../../sketches/mito/ui/ResourceIcon";
 import "./InventoryBar.scss";
-import { ResourceIcon } from "./ResourceIcon";
 
 export const InventoryBar: React.FC<{
   water: number;

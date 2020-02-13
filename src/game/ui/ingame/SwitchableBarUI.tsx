@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import * as React from "react";
-import { CellBar, SwitchableBar } from "../actionBar";
+import { CellBar, SwitchableBar } from "../../../sketches/mito/actionBar";
+import { HotkeyButton } from "../../../sketches/mito/ui/HotkeyButton";
 import CellBarUI from "./CellBarUI";
-import { HotkeyButton } from "./HotkeyButton";
 import "./SwitchableBarUI.scss";
 import { TileDetails } from "./TileDetails";
 

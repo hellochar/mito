@@ -12,6 +12,7 @@ import configure from "../../common/configure";
 import { World } from "../../core";
 import { Tile } from "../../core/tile";
 import { GameResult, maybeGetGameResult } from "../../game/gameResult";
+import Debug from "../../game/ui/ingame/Debug";
 import { clamp, lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { AltHeldBar } from "./actionBar";
@@ -23,7 +24,6 @@ import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
 import { Hover, HUD } from "./ui";
-import Debug from "./ui/Debug";
 import { Instructions } from "./ui/Instructions";
 import { WorldDOMElement } from "./WorldDOMElement";
 
