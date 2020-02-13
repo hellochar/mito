@@ -1,6 +1,5 @@
 import { randInt, randRound } from "math";
-import { params } from "../../sketches/mito/params";
-import { PERCENT_DAYLIGHT, TIME_PER_DAY } from "../constants";
+import { PERCENT_DAYLIGHT, SUNLIGHT_DIFFUSION, SUNLIGHT_REINTRODUCTION, TIME_PER_DAY } from "../constants";
 import { Air } from "../tile";
 import { World } from "./world";
 /**
@@ -94,11 +93,11 @@ export class WeatherController {
               sunlight = leftSunlight * -directionalBias + upSunlight * (1 - -directionalBias);
             }
             sunlight =
-              sunlight * (1 - params.sunlightDiffusion) +
-              ((upSunlight + rightSunlight + leftSunlight) / 3) * params.sunlightDiffusion;
+              sunlight * (1 - SUNLIGHT_DIFFUSION) +
+              ((upSunlight + rightSunlight + leftSunlight) / 3) * SUNLIGHT_DIFFUSION;
           }
           // have at least a bit
-          sunlight = params.sunlightReintroduction + sunlight * (1 - params.sunlightReintroduction);
+          sunlight = SUNLIGHT_REINTRODUCTION + sunlight * (1 - SUNLIGHT_REINTRODUCTION);
           sunlight *= sunAmount;
           t.sunlightCached = sunlight;
         }

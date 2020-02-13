@@ -65,25 +65,6 @@ export const TISSUE_INVENTORY_CAPACITY = 6;
  */
 export const LEAF_REACTION_TIME = 40;
 
-/**
- * How much water Leaves absorb per second.
- */
-export const LEAF_WATER_INTAKE_PER_SECOND = 0.5;
+export const SUNLIGHT_REINTRODUCTION = 0.15;
 
-/**
- * Number of seconds between Root Absorption events.
- */
-export const ROOT_TIME_BETWEEN_ABSORPTIONS = 4.5;
-
-/**
- * How many total resources a Fruit needs to mature.
- */
-export const FRUIT_NEEDED_RESOURCES = 500;
-
-/**
- * How long it takes for a Fruit to reach full Maturation, given that it has
- * perfect resource availability.
- */
-export const FRUIT_TIME_TO_MATURE = TIME_PER_MONTH;
-
-export const TRANSPORT_TIME_BETWEEN_TRANSFERS = 1;
+export const SUNLIGHT_DIFFUSION = 0.0;
