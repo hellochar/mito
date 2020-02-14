@@ -3,8 +3,8 @@ import * as React from "react";
 import { Vector2 } from "three";
 import { CellType } from "../../../core/cell/genome";
 import { spritesheetLoaded } from "../../../sketches/mito/spritesheet";
-import IconCell from "../../../sketches/mito/ui/IconCell";
 import { CellBar } from "../../input/actionBar";
+import IconCell from "../common/IconCell";
 import "./CellBarUI.scss";
 import { HotkeyButton } from "./HotkeyButton";
 

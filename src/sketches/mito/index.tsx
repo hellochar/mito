@@ -16,15 +16,15 @@ import { GameResult, maybeGetGameResult } from "../../game/gameResult";
 import { AltHeldBar } from "../../game/input/actionBar";
 import { ControlScheme, PlayerSeedControlScheme } from "../../game/input/ControlScheme";
 import { params } from "../../game/params";
+import { Hover, HUD } from "../../game/ui/ingame";
 import Debug from "../../game/ui/ingame/Debug";
+import { Instructions } from "../../game/ui/ingame/Instructions";
 import { clamp, lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { OvalNode } from "./ovalNode";
 import { InstancedTileRenderer } from "./renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "./renderers/WorldRenderer";
 import { NewPlayerTutorial } from "./tutorial";
-import { Hover, HUD } from "./ui";
-import { Instructions } from "./ui/Instructions";
 import { WorldDOMElement } from "./WorldDOMElement";
 
 export interface CameraState {

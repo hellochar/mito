@@ -6,11 +6,11 @@ import * as React from "react";
 import { GeneInstance } from "../../core/cell/chromosome";
 import { seasonDisplay, seasonFromTime } from "../../core/season";
 import { Cell } from "../../core/tile";
-import { Glow } from "../../sketches/mito/ui/Glow";
 import { GeneFruit, reproducerGetPercentMatured } from "../../std/genes/GeneReproducer";
 import { mitoDeath } from "../audio";
 import { GameResult } from "../gameResult";
 import Character from "../ui/common/Character";
+import { Glow } from "../ui/common/Glow";
 import "./GameResultsScreen.scss";
 
 interface GameResultsScreenProps {

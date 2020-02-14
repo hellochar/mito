@@ -8,7 +8,7 @@ import { TiThMenu } from "react-icons/ti";
 import { GeneStaticProperties, RealizedGene } from "../../../core/cell/chromosome";
 import Genome, { CellInteraction, CellType, describeCellInteraction } from "../../../core/cell/genome";
 import { spritesheetLoaded } from "../../../sketches/mito/spritesheet";
-import IconCell from "../../../sketches/mito/ui/IconCell";
+import IconCell from "../common/IconCell";
 import "./GenomeViewer.scss";
 
 interface DragInfo {
