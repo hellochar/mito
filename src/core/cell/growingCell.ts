@@ -1,5 +1,5 @@
+import { buildComplete } from "game/audio";
 import { randFloat } from "math";
-import { buildComplete } from "sketches/mito/audio";
 import { Vector2 } from "three";
 import { GeneLiving } from "../../std/genes";
 import { GeneObstacle } from "../../std/genes/GeneObstacle";

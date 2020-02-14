@@ -4,8 +4,8 @@ import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene,
 import { Player } from "../../../core";
 import { Action, ActionBuild, ActionLong } from "../../../core/player/action";
 import { Tile } from "../../../core/tile";
+import { build, deconstruct, dropSugar, dropWater, footsteps, interactSound, sticky } from "../../../game/audio";
 import { clamp, lerp2, map, randFloat } from "../../../math";
-import { build, deconstruct, dropSugar, dropWater, footsteps, interactSound, sticky } from "../audio";
 import { Mito } from "../index";
 import { textureFromSpritesheet } from "../spritesheet";
 import NeuronMesh from "./neuronMesh";

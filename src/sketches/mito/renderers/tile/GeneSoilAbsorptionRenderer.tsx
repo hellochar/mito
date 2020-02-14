@@ -1,4 +1,4 @@
-import { distScalar, suckWaterBuffer } from "sketches/mito/audio";
+import { distScalar, suckWaterBuffer } from "game/audio";
 import { GeneSoilAbsorption } from "std/genes";
 import { Audio, Color, Object3D, Vector2, Vector3 } from "three";
 import { GeneRenderer } from "./GeneRenderer";
