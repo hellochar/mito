@@ -4,7 +4,7 @@ import { CellArgs } from "../../core/cell/cell";
 import { isInteractable } from "../../core/interactable";
 import { ActionBuild, ActionInteract } from "../../core/player/action";
 import { Cell, Tile } from "../../core/tile";
-import Input from "./input";
+import Keyboard from "./keyboard";
 
 export abstract class ActionBar {
   abstract leftClick(target: Tile): void;
@@ -181,7 +181,7 @@ export class AltHeldBar extends ActionBar {
   }
 
   barFor(target: Tile) {
-    if (target instanceof Cell || Input.isAltHeld()) {
+    if (target instanceof Cell || Keyboard.isAltHeld()) {
       return this.interactBar;
     } else {
       return this.buildBar;

@@ -3,7 +3,7 @@ import { Button } from "game/ui/common/Button";
 import * as React from "react";
 import { PlayerSeedControlScheme } from "../../../sketches/mito/ControlScheme";
 import Mito from "../../../sketches/mito/index";
-import Input from "../../../sketches/mito/input";
+import Keyboard from "../../../sketches/mito/keyboard";
 import GenomeViewer from "../../../sketches/mito/ui/GenomeViewer";
 import { HotkeyButton } from "../../../sketches/mito/ui/HotkeyButton";
 import { getDecidedGameResult } from "../../gameResult";
@@ -83,7 +83,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
           {/* <SwitchableBarUI bar={this.mito.actionBar} /> */}
           <CellBarUI
             bar={this.mito.actionBar.buildBar}
-            disabled={this.mito.world.player.getBuildError() || (Input.isAltHeld() ? true : undefined)}
+            disabled={this.mito.world.player.getBuildError() || (Keyboard.isAltHeld() ? true : undefined)}
           />
         </div>
       </>

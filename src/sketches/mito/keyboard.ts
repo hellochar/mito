@@ -1,4 +1,4 @@
-export const Input = new (class Input {
+export const Keyboard = new (class Input {
   readonly keyMap = new Set<string>();
 
   constructor() {
@@ -33,4 +33,4 @@ export const Input = new (class Input {
   }
 })();
 
-export default Input;
+export default Keyboard;

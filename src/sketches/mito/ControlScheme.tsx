@@ -3,7 +3,7 @@ import { Vector2 } from "three";
 import { ActionMove } from "../../core/player/action";
 import { Cell } from "../../core/tile";
 import { Mito } from "./index";
-import Input from "./input";
+import Keyboard from "./keyboard";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 import { params } from "./params";
 import { TileDetails } from "./ui";
@@ -24,7 +24,7 @@ export class ControlScheme {
 
   animate(_ms: number) {
     const { mito } = this;
-    if (Input.isAltHeld() && this.altElement == null) {
+    if (Keyboard.isAltHeld() && this.altElement == null) {
       this.altElement = mito.addWorldDOMElement(
         () => mito.getHighlightedTile()!,
         () => {
@@ -35,7 +35,7 @@ export class ControlScheme {
           );
         }
       );
-    } else if (!Input.isAltHeld() && this.altElement != null) {
+    } else if (!Keyboard.isAltHeld() && this.altElement != null) {
       mito.removeWorldDOMElement(this.altElement);
       this.altElement = undefined;
     }
@@ -44,11 +44,11 @@ export class ControlScheme {
     }
     // disable this for now so i can open interaction cell editor in genomeviewer
     // this.canvas.focus();
-    const moveAction = this.keysToMovement(Input.keyMap);
+    const moveAction = this.keysToMovement(Keyboard.keyMap);
     if (moveAction) {
       mito.world.player.setAction(moveAction);
     }
-    for (const key of Input.keyMap) {
+    for (const key of Keyboard.keyMap) {
       if (ACTION_CONTINUOUS_KEYMAP[key]) {
         mito.world.player.setAction(ACTION_CONTINUOUS_KEYMAP[key]);
       }

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Tile } from "../../../core/tile";
 import Mito from "../../../sketches/mito";
-import Input from "../../../sketches/mito/input";
+import Keyboard from "../../../sketches/mito/keyboard";
 import BuildBlueprint from "../../../sketches/mito/tutorial/buildBlueprint";
 import PointHighlight from "../../../sketches/mito/tutorial/PointHighlight";
 
@@ -34,7 +34,7 @@ export class Hover extends React.Component<HoverProps> {
     if (tile == null) {
       return;
     }
-    const showBuildBlueprint = this.props.mito.world.player.canBuildAt(tile) && !Input.isAltHeld();
+    const showBuildBlueprint = this.props.mito.world.player.canBuildAt(tile) && !Keyboard.isAltHeld();
     const buildElement = showBuildBlueprint ? (
       <BuildBlueprint
         x={tile.pos.x}

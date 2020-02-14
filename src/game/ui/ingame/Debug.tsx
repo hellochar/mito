@@ -1,7 +1,7 @@
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
 import Mito from "../../../sketches/mito";
-import Input from "../../../sketches/mito/input";
+import Keyboard from "../../../sketches/mito/keyboard";
 import PlantStats from "./PlantStats";
 
 const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
@@ -39,7 +39,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
         <div>Evaporated Air: {mito.world.numEvaporatedAir}</div>
         <div>Evaporated Soil: {mito.world.numEvaporatedSoil}</div>
       </div>
-      <div style={{ background: "white" }}>{Array.from(Input.keyMap.values()).join(", ")}</div>
+      <div style={{ background: "white" }}>{Array.from(Keyboard.keyMap.values()).join(", ")}</div>
     </div>
   );
 };
