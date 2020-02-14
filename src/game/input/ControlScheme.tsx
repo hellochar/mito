@@ -2,12 +2,12 @@ import React from "react";
 import { Vector2 } from "three";
 import { ActionMove } from "../../core/player/action";
 import { Cell } from "../../core/tile";
-import { Mito } from "./index";
+import { Mito } from "../../sketches/mito/index";
+import { params } from "../../sketches/mito/params";
+import { TileDetails } from "../../sketches/mito/ui";
+import { WorldDOMElement } from "../../sketches/mito/WorldDOMElement";
 import Keyboard from "./keyboard";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
-import { params } from "./params";
-import { TileDetails } from "./ui";
-import { WorldDOMElement } from "./WorldDOMElement";
 
 export class ControlScheme {
   private altElement?: WorldDOMElement;

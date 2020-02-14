@@ -1,7 +1,7 @@
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
 import Mito from "../../../sketches/mito";
-import Keyboard from "../../../sketches/mito/keyboard";
+import Keyboard from "../../input/keyboard";
 import PlantStats from "./PlantStats";
 
 const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {

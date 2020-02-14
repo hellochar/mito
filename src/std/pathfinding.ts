@@ -3,7 +3,7 @@ import { Vector2 } from "three";
 import { World } from "../core";
 import { ActionMove } from "../core/player/action";
 import { Cell } from "../core/tile";
-import { MOVEMENTS } from "../sketches/mito/keymap";
+import { MOVEMENTS } from "../game/input/keymap";
 
 export function findPositionsThroughTissue(world: World, target: Vector2, includeTargetIfNonTissue = false) {
   const grid = newGrid(world.width, world.height, (x, y, g) => {
