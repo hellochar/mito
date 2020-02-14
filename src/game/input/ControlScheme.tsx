@@ -3,9 +3,9 @@ import { Vector2 } from "three";
 import { ActionMove } from "../../core/player/action";
 import { Cell } from "../../core/tile";
 import { Mito } from "../../sketches/mito/index";
-import { params } from "../../sketches/mito/params";
 import { TileDetails } from "../../sketches/mito/ui";
 import { WorldDOMElement } from "../../sketches/mito/WorldDOMElement";
+import { params } from "../params";
 import Keyboard from "./keyboard";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 
