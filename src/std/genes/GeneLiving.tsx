@@ -1,5 +1,5 @@
 import React from "react";
-import GN from "sketches/mito/ui/GN";
+import GN from "std/genes/GN";
 import { Gene } from "../../core/cell/chromosome";
 export const GeneLiving = Gene.make(
   {
