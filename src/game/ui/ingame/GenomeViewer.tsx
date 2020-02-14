@@ -7,9 +7,9 @@ import { FaArrowsAltV, FaGripLines } from "react-icons/fa";
 import { TiThMenu } from "react-icons/ti";
 import { GeneStaticProperties, RealizedGene } from "../../../core/cell/chromosome";
 import Genome, { CellInteraction, CellType, describeCellInteraction } from "../../../core/cell/genome";
-import { spritesheetLoaded } from "../spritesheet";
+import { spritesheetLoaded } from "../../../sketches/mito/spritesheet";
+import IconCell from "../../../sketches/mito/ui/IconCell";
 import "./GenomeViewer.scss";
-import IconCell from "./IconCell";
 
 interface DragInfo {
   gene: RealizedGene;
