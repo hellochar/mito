@@ -3,10 +3,10 @@ import * as React from "react";
 import { Vector2 } from "three";
 import { CellType } from "../../../core/cell/genome";
 import { spritesheetLoaded } from "../../../sketches/mito/spritesheet";
-import { HotkeyButton } from "../../../sketches/mito/ui/HotkeyButton";
 import IconCell from "../../../sketches/mito/ui/IconCell";
 import { CellBar } from "../../input/actionBar";
 import "./CellBarUI.scss";
+import { HotkeyButton } from "./HotkeyButton";
 
 export interface CellBarProps {
   bar: CellBar;
