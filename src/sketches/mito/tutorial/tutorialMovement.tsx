@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Action } from "../../../core/player/action";
 import { MOVEMENT_KEYS } from "../../../game/input/keymap";
-import { MOVEMENT_KEY_MESHES } from "../movementKeyMeshes";
+import { MOVEMENT_KEY_MESHES } from "./movementKeyMeshes";
 import { SceneObject } from "./sceneObject";
 import { Tutorial } from "./tutorial";
 
