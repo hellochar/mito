@@ -1,9 +1,9 @@
-import VignetteCapturer from "common/vignette";
 import { easeSinIn } from "d3-ease";
 import { EventEmitter } from "events";
 import { PopulationAttempt } from "game/app";
 import * as React from "react";
 import { environmentFromLevelInfo } from "std/environments";
+import VignetteCapturer from "std/vignette";
 import * as THREE from "three";
 import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
