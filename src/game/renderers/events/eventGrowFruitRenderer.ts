@@ -1,8 +1,8 @@
 import { EventGrowFruit } from "core/tile/tileEvent";
 import { easeCubicIn } from "d3-ease";
+import { textureFromSpritesheet } from "game/spritesheet";
 import { map } from "math";
 import { polyUpDown } from "math/easing";
-import { textureFromSpritesheet } from "sketches/mito/spritesheet";
 import { Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { WorldRenderer } from "../WorldRenderer";

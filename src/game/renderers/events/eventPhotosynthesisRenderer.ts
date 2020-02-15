@@ -1,6 +1,6 @@
 import { EventPhotosynthesis } from "core/tile/tileEvent";
+import { textureFromSpritesheet } from "game/spritesheet";
 import { polyUpDown } from "math/easing";
-import { textureFromSpritesheet } from "sketches/mito/spritesheet";
 import { Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { InstancedTileRenderer } from "../tile/InstancedTileRenderer";

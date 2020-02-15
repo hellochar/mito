@@ -1,6 +1,6 @@
 import spritesheetUrl from "assets/images/spritesheet.png";
 import * as THREE from "three";
-import lazy from "../../common/lazy";
+import lazy from "../common/lazy";
 
 const spriteSize = 32; // 32x32 sprites
 export let spritesheetLoaded = false;

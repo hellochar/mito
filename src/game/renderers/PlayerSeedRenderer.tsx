@@ -6,8 +6,8 @@ import { PlayerSeed } from "../../core";
 import { MaterialInfo } from "../../core/cell/materialInfo";
 import { lerp, map } from "../../math";
 import { Mito } from "../../sketches/mito/index";
-import { textureFromSpritesheet } from "../../sketches/mito/spritesheet";
 import { fruitPoof, introBounce } from "../audio";
+import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
 import { also, Animation, AnimationController, animPause, chain } from "./tile/Animation";
 

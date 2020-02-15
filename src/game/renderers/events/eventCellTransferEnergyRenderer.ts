@@ -1,6 +1,6 @@
 import { EventCellTransferEnergy } from "core/tile/tileEvent";
+import { textureFromSpritesheet } from "game/spritesheet";
 import { map } from "math";
-import { textureFromSpritesheet } from "sketches/mito/spritesheet";
 import { Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { WorldRenderer } from "../WorldRenderer";

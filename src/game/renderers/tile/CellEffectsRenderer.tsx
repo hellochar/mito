@@ -3,7 +3,7 @@ import { lerp } from "math";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, RingBufferGeometry, Scene } from "three";
 import { Cell, CellEffect, FreezeEffect } from "../../../core/tile";
 import Mito from "../../../sketches/mito";
-import { textureFromSpritesheet } from "../../../sketches/mito/spritesheet";
+import { textureFromSpritesheet } from "../../spritesheet";
 import { Renderer } from "../Renderer";
 
 export class CellEffectsRenderer extends Renderer<Cell> {

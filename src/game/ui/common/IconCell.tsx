@@ -1,6 +1,6 @@
 import React from "react";
 import { CellType } from "../../../core/cell/genome";
-import { textureFromSpritesheet } from "../../../sketches/mito/spritesheet";
+import { textureFromSpritesheet } from "../../spritesheet";
 import "./IconCell.scss";
 
 const IconCell: React.FC<{ cellType: CellType; spritesheetLoaded: boolean } & React.HTMLProps<HTMLDivElement>> = ({
