@@ -1,9 +1,8 @@
 import * as React from "react";
 import * as THREE from "three";
-
-import lazy from "../../../common/lazy";
-import { SceneObject } from "./sceneObject";
+import lazy from "../../common/lazy";
 import { Animate } from "./Animate";
+import { SceneObject } from "./sceneObject";
 
 export const TILE_HIGHLIGHT = lazy(() => {
   const geometry = new THREE.PlaneBufferGeometry(1, 1);

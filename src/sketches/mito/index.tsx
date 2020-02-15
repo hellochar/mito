@@ -18,13 +18,13 @@ import { ControlScheme, PlayerSeedControlScheme } from "../../game/input/Control
 import { params } from "../../game/params";
 import { InstancedTileRenderer } from "../../game/renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "../../game/renderers/WorldRenderer";
+import { NewPlayerTutorial } from "../../game/tutorial";
 import { Hover, HUD } from "../../game/ui/ingame";
 import Debug from "../../game/ui/ingame/Debug";
 import { Instructions } from "../../game/ui/ingame/Instructions";
 import { clamp, lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
 import { OvalNode } from "./ovalNode";
-import { NewPlayerTutorial } from "./tutorial";
 import { WorldDOMElement } from "./WorldDOMElement";
 
 export interface CameraState {

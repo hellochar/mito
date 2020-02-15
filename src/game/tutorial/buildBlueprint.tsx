@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from "three";
-import { CellType } from "../../../core/cell/genome";
-import { textureFromSpritesheet } from "../spritesheet";
+import { CellType } from "../../core/cell/genome";
+import { textureFromSpritesheet } from "../../sketches/mito/spritesheet";
 import { SceneObject } from "./sceneObject";
 
 export const BUILD_BLUEPRINT = (() => {

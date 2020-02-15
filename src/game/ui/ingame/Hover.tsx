@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Tile } from "../../../core/tile";
 import Mito from "../../../sketches/mito";
-import BuildBlueprint from "../../../sketches/mito/tutorial/buildBlueprint";
-import PointHighlight from "../../../sketches/mito/tutorial/PointHighlight";
 import Keyboard from "../../input/keyboard";
+import BuildBlueprint from "../../tutorial/buildBlueprint";
+import PointHighlight from "../../tutorial/PointHighlight";
 
 interface HoverProps {
   mito: Mito;

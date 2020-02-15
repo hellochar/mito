@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { MOVEMENT_KEYS } from "../../../game/input/keymap";
+import { MOVEMENT_KEYS } from "../input/keymap";
 
 const fontMeshGeometry = new THREE.PlaneGeometry(1, 1);
 fontMeshGeometry.rotateX(Math.PI);
