@@ -1,15 +1,15 @@
 import classnames from "classnames";
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
-import Mito from "../../../sketches/mito/index";
-import { getDecidedGameResult } from "../../gameResult";
-import { PlayerSeedControlScheme } from "../../input/ControlScheme";
-import Keyboard from "../../input/keyboard";
+import Mito from "../../../../sketches/mito/index";
+import { getDecidedGameResult } from "../../../gameResult";
+import { PlayerSeedControlScheme } from "../../../input/ControlScheme";
+import Keyboard from "../../../input/keyboard";
+import GenomeViewer from "../GenomeViewer";
+import { HotkeyButton } from "../HotkeyButton";
+import { InventoryBar } from "../InventoryBar";
 import CellBarUI from "./CellBarUI";
-import GenomeViewer from "./GenomeViewer";
-import { HotkeyButton } from "./HotkeyButton";
 import "./HUD.scss";
-import { InventoryBar } from "./InventoryBar";
 import SeasonsTracker from "./SeasonsTracker";
 
 export interface HUDProps {

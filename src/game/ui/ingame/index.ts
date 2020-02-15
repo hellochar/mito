@@ -1,3 +1,3 @@
 export * from "./Hover";
-export * from "./HUD";
+export * from "./hud/HUD";
 export * from "./TileDetails";

@@ -1,10 +1,10 @@
 import classNames from "classnames";
 import * as React from "react";
-import { CellBar, SwitchableBar } from "../../input/actionBar";
+import { CellBar, SwitchableBar } from "../../../input/actionBar";
+import { HotkeyButton } from "../HotkeyButton";
+import { TileDetails } from "../TileDetails";
 import CellBarUI from "./CellBarUI";
-import { HotkeyButton } from "./HotkeyButton";
 import "./SwitchableBarUI.scss";
-import { TileDetails } from "./TileDetails";
 
 export interface SwitchableBarUIProps {
   bar: SwitchableBar;

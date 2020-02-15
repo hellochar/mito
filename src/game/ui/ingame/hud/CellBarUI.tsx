@@ -1,12 +1,12 @@
 import classNames from "classnames";
 import * as React from "react";
 import { Vector2 } from "three";
-import { CellType } from "../../../core/cell/genome";
-import { spritesheetLoaded } from "../../../sketches/mito/spritesheet";
-import { CellBar } from "../../input/actionBar";
-import IconCell from "../common/IconCell";
+import { CellType } from "../../../../core/cell/genome";
+import { spritesheetLoaded } from "../../../../sketches/mito/spritesheet";
+import { CellBar } from "../../../input/actionBar";
+import IconCell from "../../common/IconCell";
+import { HotkeyButton } from "../HotkeyButton";
 import "./CellBarUI.scss";
-import { HotkeyButton } from "./HotkeyButton";
 
 export interface CellBarProps {
   bar: CellBar;
