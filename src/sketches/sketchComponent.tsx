@@ -4,7 +4,7 @@ import * as React from "react";
 import { FaVolumeOff, FaVolumeUp } from "react-icons/fa";
 import Ticker from "std/ticker";
 import * as THREE from "three";
-import Mito from "./mito";
+import Mito from "./mito/mito";
 import { ISketch, SketchAudioContext, UI_EVENTS } from "./sketch";
 
 export interface ISketchComponentProps extends React.DOMAttributes<HTMLDivElement> {

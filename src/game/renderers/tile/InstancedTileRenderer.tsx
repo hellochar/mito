@@ -6,7 +6,7 @@ import { Clay, Sand, Silt } from "core/tile/soil";
 import { easeCubic } from "d3-ease";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
-import Mito from "sketches/mito";
+import Mito from "sketches/mito/mito";
 import { GeneSoilAbsorption } from "std/genes";
 import { GeneDirectionalPush } from "std/genes/GeneDirectionalPush";
 import { GenePhotosynthesis } from "std/genes/GenePhotosynthesis";

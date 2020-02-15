@@ -1,6 +1,6 @@
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
-import Mito from "../../../sketches/mito";
+import Mito from "../../../sketches/mito/mito";
 import Keyboard from "../../input/keyboard";
 import PlantStats from "./PlantStats";
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Action } from "../../core/player/action";
-import Mito from "../../sketches/mito";
+import Mito from "../../sketches/mito/mito";
 import { Tutorial } from "./tutorial";
 import { TutorialBuildLeaf, TutorialBuildRoot, TutorialBuildTissue } from "./tutorialBuildTissue";
 import TutorialMovement from "./tutorialMovement";

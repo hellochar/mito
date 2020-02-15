@@ -2,7 +2,7 @@ import React from "react";
 import { Vector2 } from "three";
 import { ActionMove } from "../../core/player/action";
 import { Cell } from "../../core/tile";
-import { Mito } from "../../sketches/mito/index";
+import { Mito } from "../../sketches/mito/mito";
 import { WorldDOMElement } from "../../sketches/mito/WorldDOMElement";
 import { params } from "../params";
 import { TileDetails } from "../ui/ingame";

@@ -2,7 +2,7 @@ import React from "react";
 import { Vector2 } from "three";
 import uuid from "uuid";
 import { Tile } from "../../core/tile";
-import { Mito } from "./index";
+import { Mito } from "./mito";
 export class WorldDOMElement {
   uuid = uuid();
 

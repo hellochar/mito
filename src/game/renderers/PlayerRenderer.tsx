@@ -5,7 +5,7 @@ import { Player } from "../../core";
 import { Action, ActionBuild, ActionLong } from "../../core/player/action";
 import { Tile } from "../../core/tile";
 import { clamp, lerp2, map, randFloat } from "../../math";
-import { Mito } from "../../sketches/mito/index";
+import { Mito } from "../../sketches/mito/mito";
 import { build, deconstruct, dropSugar, dropWater, footsteps, interactSound, sticky } from "../audio";
 import { textureFromSpritesheet } from "../spritesheet";
 import NeuronMesh from "./neuronMesh";

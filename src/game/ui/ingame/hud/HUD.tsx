@@ -1,7 +1,7 @@
 import classnames from "classnames";
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
-import Mito from "../../../../sketches/mito/index";
+import Mito from "../../../../sketches/mito/mito";
 import { getDecidedGameResult } from "../../../gameResult";
 import { PlayerSeedControlScheme } from "../../../input/ControlScheme";
 import Keyboard from "../../../input/keyboard";

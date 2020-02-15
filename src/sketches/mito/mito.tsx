@@ -24,6 +24,7 @@ import Debug from "../../game/ui/ingame/Debug";
 import { Instructions } from "../../game/ui/ingame/Instructions";
 import { clamp, lerp, lerp2, map } from "../../math/index";
 import { ISketch, SketchAudioContext } from "../sketch";
+import "./mito.scss";
 import { OvalNode } from "./ovalNode";
 import { WorldDOMElement } from "./WorldDOMElement";
 

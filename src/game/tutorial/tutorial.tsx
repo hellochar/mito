@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Action } from "../../core/player/action";
-import Mito from "../../sketches/mito";
+import Mito from "../../sketches/mito/mito";
 
 export interface TutorialProps {
   time: number;

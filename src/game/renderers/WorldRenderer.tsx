@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 import { Scene } from "three";
 import { Entity, Player, PlayerSeed, StepStats, World } from "../../core";
 import { Tile } from "../../core/tile";
-import Mito from "../../sketches/mito";
+import Mito from "../../sketches/mito/mito";
 import { EventLogRenderer } from "./events/eventLogRenderer";
 import { InventoryRenderer } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";
