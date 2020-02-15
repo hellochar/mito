@@ -1,10 +1,10 @@
 import classnames from "classnames";
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
-import Mito from "../../../../sketches/mito/mito";
 import { getDecidedGameResult } from "../../../gameResult";
 import { PlayerSeedControlScheme } from "../../../input/ControlScheme";
 import Keyboard from "../../../input/keyboard";
+import Mito from "../../../mito/mito";
 import GenomeViewer from "../GenomeViewer";
 import { HotkeyButton } from "../HotkeyButton";
 import { InventoryBar } from "../InventoryBar";

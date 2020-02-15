@@ -1,5 +1,5 @@
 import { Scene } from "three";
-import { Mito } from "../../sketches/mito/mito";
+import { Mito } from "../mito/mito";
 export abstract class Renderer<T> {
   constructor(public target: T, public scene: Scene, public mito: Mito) {}
 

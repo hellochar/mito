@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Tile } from "../../../core/tile";
-import Mito from "../../../sketches/mito/mito";
 import Keyboard from "../../input/keyboard";
+import Mito from "../../mito/mito";
 import BuildBlueprint from "../../tutorial/buildBlueprint";
 import PointHighlight from "../../tutorial/PointHighlight";
 

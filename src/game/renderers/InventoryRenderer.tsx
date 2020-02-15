@@ -3,7 +3,7 @@ import { Color, Scene, Vector2 } from "three";
 import lazy from "../../common/lazy";
 import { Inventory } from "../../core/inventory";
 import { map } from "../../math";
-import { Mito } from "../../sketches/mito/mito";
+import { Mito } from "../mito/mito";
 import { textureFromSpritesheet } from "../spritesheet";
 import { CommittablePoints } from "./committablePoints";
 import { Renderer } from "./Renderer";

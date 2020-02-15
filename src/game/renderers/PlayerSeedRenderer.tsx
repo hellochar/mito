@@ -5,8 +5,8 @@ import { DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from 
 import { PlayerSeed } from "../../core";
 import { MaterialInfo } from "../../core/cell/materialInfo";
 import { lerp, map } from "../../math";
-import { Mito } from "../../sketches/mito/mito";
 import { fruitPoof, introBounce } from "../audio";
+import { Mito } from "../mito/mito";
 import { textureFromSpritesheet } from "../spritesheet";
 import { Renderer } from "./Renderer";
 import { also, Animation, AnimationController, animPause, chain } from "./tile/Animation";
