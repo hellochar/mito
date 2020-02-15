@@ -16,8 +16,8 @@ import {
 } from "three";
 import { Air, Soil, Tile } from "../core/tile";
 import { World } from "../core/world/world";
-import { LightRays } from "../sketches/mito/renderers/lightRays";
-import { WorldRenderer } from "../sketches/mito/renderers/WorldRenderer";
+import { LightRays } from "../game/renderers/lightRays";
+import { WorldRenderer } from "../game/renderers/WorldRenderer";
 
 class LightOccluderManager {
   // TODO weakmap? or some sort of eviction policy?

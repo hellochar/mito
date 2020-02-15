@@ -2,12 +2,12 @@ import { easeBounceOut, easeQuadOut } from "d3-ease";
 import { polyUpDown } from "math/easing";
 import Ticker from "std/ticker";
 import { DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
-import { PlayerSeed } from "../../../core";
-import { MaterialInfo } from "../../../core/cell/materialInfo";
-import { fruitPoof, introBounce } from "../../../game/audio";
-import { lerp, map } from "../../../math";
-import { Mito } from "../index";
-import { textureFromSpritesheet } from "../spritesheet";
+import { PlayerSeed } from "../../core";
+import { MaterialInfo } from "../../core/cell/materialInfo";
+import { lerp, map } from "../../math";
+import { Mito } from "../../sketches/mito/index";
+import { textureFromSpritesheet } from "../../sketches/mito/spritesheet";
+import { fruitPoof, introBounce } from "../audio";
 import { Renderer } from "./Renderer";
 import { also, Animation, AnimationController, animPause, chain } from "./tile/Animation";
 

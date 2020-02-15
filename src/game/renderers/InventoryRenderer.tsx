@@ -1,10 +1,10 @@
 import Ticker from "std/ticker";
 import { Color, Scene, Vector2 } from "three";
-import lazy from "../../../common/lazy";
-import { Inventory } from "../../../core/inventory";
-import { map } from "../../../math";
-import { Mito } from "../index";
-import { textureFromSpritesheet } from "../spritesheet";
+import lazy from "../../common/lazy";
+import { Inventory } from "../../core/inventory";
+import { map } from "../../math";
+import { Mito } from "../../sketches/mito/index";
+import { textureFromSpritesheet } from "../../sketches/mito/spritesheet";
 import { CommittablePoints } from "./committablePoints";
 import { Renderer } from "./Renderer";
 
