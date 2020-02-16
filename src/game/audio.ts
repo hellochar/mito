@@ -16,12 +16,12 @@ import mitoDeathMp3 from "assets/audio/mitodeath.mp3";
 import stickySoundSrc from "assets/audio/sticky.mp3";
 import suckWaterSrc from "assets/audio/suckwater.wav";
 import whooshSrc from "assets/audio/whoosh.mp3";
+import { SketchAudioContext } from "game/screens/sketch/sketch";
 import { Howl } from "howler";
 import * as THREE from "three";
 import devlog from "../common/devlog";
 import { Player } from "../core";
 import { Tile } from "../core/tile";
-import { SketchAudioContext } from "../sketches/sketch";
 
 export let mito: AudioUnit;
 export let strings: AudioUnit;

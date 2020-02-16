@@ -1,6 +1,7 @@
 import { easeSinIn } from "d3-ease";
 import { EventEmitter } from "events";
 import { PopulationAttempt } from "game/app";
+import { ISketch, SketchAudioContext } from "game/screens/sketch/sketch";
 import * as React from "react";
 import { environmentFromLevelInfo } from "std/environments";
 import VignetteCapturer from "std/vignette";
@@ -12,7 +13,6 @@ import configure from "../../common/configure";
 import { World } from "../../core";
 import { Tile } from "../../core/tile";
 import { clamp, lerp, lerp2, map } from "../../math/index";
-import { ISketch, SketchAudioContext } from "../../sketches/sketch";
 import { drums, hookUpAudio, strings, whoosh } from "../audio";
 import { GameResult, maybeGetGameResult } from "../gameResult";
 import { AltHeldBar } from "../input/actionBar";

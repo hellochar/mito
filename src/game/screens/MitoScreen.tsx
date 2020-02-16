@@ -1,5 +1,5 @@
+import { SketchComponent } from "game/screens/sketch/SketchComponent";
 import * as React from "react";
-import { SketchComponent } from "../../sketches/sketchComponent";
 import "./MitoScreen.scss";
 
 export interface ISketchRouteProps {
