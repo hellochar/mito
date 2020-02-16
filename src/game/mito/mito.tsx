@@ -24,14 +24,12 @@ import { NewPlayerTutorial } from "../tutorial";
 import { Hover, HUD } from "../ui/ingame";
 import Debug from "../ui/ingame/Debug";
 import { Instructions } from "../ui/ingame/Instructions";
+import { CameraState } from "./cameraState";
+import { logRenderInfo } from "./logRenderInfo";
 import "./mito.scss";
 import { OvalNode } from "./ovalNode";
+import { perfDebugThreeObjects } from "./perfDebugThreeObjects";
 import { WorldDOMElement } from "./WorldDOMElement";
-
-export interface CameraState {
-  center: THREE.Vector2;
-  zoom: number;
-}
 
 export class Mito extends ISketch {
   static id = "mito";
@@ -152,23 +150,11 @@ export class Mito extends ISketch {
       this.mouseDown = false;
     },
     wheel: (e: WheelEvent) => {
-      // if (e.shiftKey) {
-      // on my mouse, one scroll is + or - 125
       const delta = -(e.deltaX + e.deltaY) / 125 / 20;
       const currZoom = this.userZoom;
       const scalar = Math.pow(2, delta);
-      // console.log(currZoom);
-      // zoom of 2 is zooming in
-      // const newZoom = Math.min(Math.max(currZoom * scalar, 1), 2.5);
       const newZoom = currZoom * scalar;
       this.userZoom = newZoom;
-      // } else {
-      //   if (e.deltaX + e.deltaY < 0) {
-      //     this.setCellBarIndex(this.cellBarIndex - 1);
-      //   } else {
-      //     this.setCellBarIndex(this.cellBarIndex + 1);
-      //   }
-      // }
     },
   };
 
@@ -227,42 +213,6 @@ export class Mito extends ISketch {
       }
       return;
     }
-  }
-
-  public logRenderInfo() {
-    console.log(
-      `Geometries in memory: ${this.renderer.info.memory.geometries}
-Textures in memory: ${this.renderer.info.memory.textures}
-Number of Programs: ${this.renderer.info.programs!.length}
-# Render Calls: ${this.renderer.info.render.calls}
-# Render Lines: ${this.renderer.info.render.lines}
-# Render Points: ${this.renderer.info.render.points}
-# Render Tris: ${this.renderer.info.render.triangles}
-`
-    );
-  }
-
-  public perfDebug() {
-    // count how many have autoUpdate enabled
-    let yes = 0,
-      no = 0;
-    this.scene.traverse((o) => {
-      if (o.matrixAutoUpdate) {
-        yes++;
-      } else {
-        no++;
-      }
-    });
-    console.log("matrixAutoUpdate: yes", yes, ", no", no);
-
-    // count how many vertices of each type there are
-    const s = new Map();
-    this.scene.traverse((o) => {
-      const k = s.get(o.name || o.constructor.name) || [];
-      s.set(o.name || o.constructor.name, k);
-      k.push(o);
-    });
-    console.log(s);
   }
 
   public worldStep(dt: number) {
@@ -360,7 +310,6 @@ Number of Programs: ${this.renderer.info.programs!.length}
     this.worldRenderer.update();
 
     this.highlightedTile = this.getHighlightedTile();
-    // console.log(this.highlightedTile!.pos);
     if (this.highlightedTile != null) {
       (this.worldRenderer.getOrCreateRenderer(this.highlightedTile) as InstancedTileRenderer).updateHover();
     }
@@ -388,10 +337,10 @@ Number of Programs: ${this.renderer.info.programs!.length}
       this.renderer.clearDepth();
       this.renderer.render(this.scenePlayerSeed, this.camera);
     }
-    // if (params.debug && this.frameCount % 100 === 0) {
-    // this.perfDebug();
-    // this.logRenderInfo();
-    // }
+    if (params.debugPerf && this.frameCount % 100 === 0) {
+      perfDebugThreeObjects(this);
+      logRenderInfo(this.renderer);
+    }
   }
 
   defaultCameraState(): CameraState {
