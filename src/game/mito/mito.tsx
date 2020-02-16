@@ -12,8 +12,6 @@ import configure from "../../common/configure";
 import { World } from "../../core";
 import { Tile } from "../../core/tile";
 import { clamp, lerp, lerp2, map } from "../../math/index";
-import { OvalNode } from "../../sketches/mito/ovalNode";
-import { WorldDOMElement } from "../../sketches/mito/WorldDOMElement";
 import { ISketch, SketchAudioContext } from "../../sketches/sketch";
 import { drums, hookUpAudio, strings, whoosh } from "../audio";
 import { GameResult, maybeGetGameResult } from "../gameResult";
@@ -27,6 +25,8 @@ import { Hover, HUD } from "../ui/ingame";
 import Debug from "../ui/ingame/Debug";
 import { Instructions } from "../ui/ingame/Instructions";
 import "./mito.scss";
+import { OvalNode } from "./ovalNode";
+import { WorldDOMElement } from "./WorldDOMElement";
 
 export interface CameraState {
   center: THREE.Vector2;
