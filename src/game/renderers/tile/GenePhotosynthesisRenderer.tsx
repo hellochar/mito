@@ -50,7 +50,9 @@ export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis>
 
   destroy() {
     this.scene.remove(this.neighborLines);
-    this.audio.disconnect();
+    if (this.audio != null) {
+      this.audio.disconnect();
+    }
   }
 }
 
