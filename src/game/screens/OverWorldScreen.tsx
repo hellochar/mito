@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { Species } from "core/species";
 import { useAppReducer } from "game/app";
 import { resetGame, save } from "game/app/saveLoad";
+import { mitoOverworld } from "game/audio";
 import { Button } from "game/ui/common/Button";
 import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
 import React, { useCallback, useEffect, useState } from "react";
@@ -16,6 +17,13 @@ export interface OverWorldScreenProps {
 }
 
 const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
+  useEffect(() => {
+    mitoOverworld.play();
+    return () => {
+      mitoOverworld.stop();
+    };
+  }, []);
+
   const [leftPanelOpen, setLeftPanelOpen] = useState(false);
 
   useEffect(() => {
