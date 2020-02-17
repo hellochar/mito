@@ -45,7 +45,7 @@ const Level0: TileGenerator = (pos, world) => {
   const soilLevel =
     world.height / 2 - (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 - 16 * noiseHeight.perlin2(10, x / 20 + 10);
   if (y > soilLevel) {
-    const rockThreshold = map(y - world.height / 2, 0, world.height / 2, -0.7, 0.3);
+    const rockThreshold = map(y - world.height / 2, 0, world.height / 2, -0.8, 0.3);
     const isRock = noiseRock.simplex2(x / 5, y / 5) < rockThreshold;
     if (isRock) {
       const rock = new Rock(pos, world);
@@ -55,6 +55,11 @@ const Level0: TileGenerator = (pos, world) => {
       const simplexScalar = 0.2;
       // the + at the end makes a *huge* difference
       const simplexValue = noiseWater.simplex2(x * simplexScalar, y * simplexScalar) + 0.2;
+
+      const isFountain = simplexValue > 0.8 && y - soilLevel > 5;
+      if (isFountain) {
+        return new Fountain(pos, world, 3, map(y, world.height / 2, world.height, 100, 300));
+      }
 
       if (heightScalar * simplexValue > 1) {
         const emitWaterScalar = Math.min(heightScalar * simplexValue, 1);
@@ -66,7 +71,7 @@ const Level0: TileGenerator = (pos, world) => {
         );
       } else {
         const s = new Silt(pos, world)!;
-        const water = Math.round(clamp((simplexValue > 0.4 ? heightScalar : 0) * 10, 1, 10));
+        const water = Math.round(clamp((simplexValue > 0.4 ? heightScalar : 0) * 10 * 3, 1, 10));
         s.inventory.set(water, 0);
         return s;
       }

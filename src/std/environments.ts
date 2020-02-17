@@ -26,11 +26,11 @@ export const Level0: Environment = {
   airEvaporation: 0.2,
   climate: {
     timeBetweenRainfall: 40,
-    rainDuration: 2,
-    waterPerSecond: 100,
+    rainDuration: 3,
+    waterPerSecond: 200,
   },
   secondsToEvaporate: 166,
-  floorCo2: 0.5,
+  floorCo2: 0.85,
   temperaturePerSeason: [51, 56, 52, 43],
   fill: "Level0",
 };
