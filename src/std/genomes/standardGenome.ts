@@ -77,7 +77,7 @@ const cellTypeRoot: CellType = {
 const cellTypeTransport: CellType = {
   name: "Transport",
   chromosome: new Chromosome(
-    GeneLiving.level(1),
+    GeneLiving.level(3),
     GeneInventory.level(3),
     GeneDirectionalPush.level(2),
     GeneEnergyTransfer.level(2)
