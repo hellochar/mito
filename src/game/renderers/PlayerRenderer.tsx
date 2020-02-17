@@ -38,7 +38,7 @@ export class PlayerRenderer extends Renderer<Player> {
 
   handleStartLongAction = (action: ActionLong) => {
     if (action.effect.type === "build") {
-      this.animation.set(this.longBuildAnimation(action as ActionLong<ActionBuild>));
+      this.animation.set(this.buildReproducerAnimation(action as ActionLong<ActionBuild>));
     }
   };
 
@@ -101,7 +101,7 @@ export class PlayerRenderer extends Renderer<Player> {
     this.scene.remove(this.mesh);
   }
 
-  longBuildAnimation(actionLong: ActionLong<ActionBuild>): Animation {
+  buildReproducerAnimation(actionLong: ActionLong<ActionBuild>): Animation {
     const animWaitForCameraZoomIn = animPause(0.5);
     let w = 0;
     const animShakeDuration = 1.5;
