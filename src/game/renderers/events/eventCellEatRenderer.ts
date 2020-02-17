@@ -38,6 +38,7 @@ export default class EventCellEatRenderer extends EventRendererFFPoints<EventCel
     eatBuffer.then((buffer) => {
       audio.setBuffer(buffer);
       audio.play();
+      audio.setDetune(1200);
     });
     return audio;
   })();

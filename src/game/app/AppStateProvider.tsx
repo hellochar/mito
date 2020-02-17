@@ -2,7 +2,7 @@ import { sleep } from "common/promise";
 import { OverWorld } from "core/overworld/overWorld";
 import { newBaseSpecies } from "core/species";
 import React, { useEffect } from "react";
-import { AppActions, AppReducerContext, reducer } from "./reducer";
+import { AATransitionEnd, AppActions, AppReducerContext, reducer } from "./reducer";
 import { load, saveOnActionMiddleware } from "./saveLoad";
 import { AppState } from "./state";
 
@@ -25,8 +25,26 @@ export function autoTransitionEndDispatchMiddleware(dispatch: React.Dispatch<App
   return newDispatch;
 }
 
+export function handleTransitionEndMiddleware(
+  reducer: React.Reducer<AppState, AppActions>
+): React.Reducer<AppState, AppActions> {
+  function handleTransitionEnd(state: AppState, action: AATransitionEnd): AppState {
+    const { transition, ...stateWithoutTransition } = state;
+    const newState = reducer(stateWithoutTransition, transition!);
+    return newState;
+  }
+
+  return (state, action) => {
+    if (action.type === "AATransitionEnd") {
+      return handleTransitionEnd(state, action);
+    } else {
+      return reducer(state, action);
+    }
+  };
+}
+
 export function AppStateProvider({ children, appState }: AppStateProviderProps) {
-  const reducerWithMiddleware = React.useMemo(() => saveOnActionMiddleware(reducer), []);
+  const reducerWithMiddleware = React.useMemo(() => handleTransitionEndMiddleware(saveOnActionMiddleware(reducer)), []);
   const [state, dispatchRaw] = React.useReducer(reducerWithMiddleware, appState);
   const dispatch = React.useMemo(() => autoTransitionEndDispatchMiddleware(dispatchRaw), []);
   const reducerTuple = React.useMemo(() => [state, dispatch] as [AppState, React.Dispatch<AppActions>], [
@@ -47,7 +65,7 @@ export const LocalForageStateProvider: React.FC<{ loadingComponent: JSX.Element 
         if (appState) setState(appState);
       })
       .catch(() => {
-        console.log("caught");
+        console.log("couldn't load appState from localForage; resetting game");
         setState(newInitialAppState());
       });
   }, []);

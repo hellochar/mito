@@ -35,7 +35,9 @@ export function reducer(state: AppState, action: AppActions): AppState {
     case "AATransitionStart":
       return handleTransitionStart(state, action);
     case "AATransitionEnd":
-      return handleTransitionEnd(state, action);
+      // no-op; this must be handled in the middleware
+      return state;
+    // return handleTransitionEnd(state, action);
   }
 }
 
@@ -189,10 +191,4 @@ function handleTransitionStart(state: AppState, action: AATransitionStart): AppS
 
 export interface AATransitionEnd {
   type: "AATransitionEnd";
-}
-
-function handleTransitionEnd(state: AppState, action: AATransitionEnd): AppState {
-  const { transition, ...stateWithoutTransition } = state;
-  const newState = reducer(stateWithoutTransition, transition!);
-  return newState;
 }
