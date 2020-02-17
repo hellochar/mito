@@ -68,7 +68,7 @@ export default class HexTileSprite {
     } else {
       c.globalAlpha = 1;
     }
-    if (this.tile.info.visible) {
+    if (this.tile.info.visible || true) {
       // base color
       c.fillStyle = COLOR_SCALE_HEIGHT(this.tile.info.height);
       c.strokeStyle = "rgb(112, 112, 112)";
@@ -124,11 +124,13 @@ export default class HexTileSprite {
   }
 
   private drawNumericHeight(c: CanvasRenderingContext2D, scale: number, px: number, py: number) {
-    c.font = `${(12 * scale) / 48}px serif`;
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    c.fillStyle = "#666";
-    c.fillText(this.tile.info.height + "", px, py, scale);
+    if (this.tile.info.height >= 0) {
+      c.font = `${(12 * scale) / 48}px serif`;
+      c.textAlign = "center";
+      c.textBaseline = "middle";
+      c.fillStyle = "#666";
+      c.fillText(this.tile.info.height + "", px, py, scale);
+    }
   }
 
   drawVignettes(c: CanvasRenderingContext2D, species: Species, px: number, py: number, scale: number) {
