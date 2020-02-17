@@ -5,7 +5,7 @@ import deconstructSoundSrc from "assets/audio/deconstruct.mp3";
 import dropWaterSrc from "assets/audio/drop_water.mp3";
 import eatingSoundSrc from "assets/audio/eating.mp3";
 import footstepsSrc from "assets/audio/footsteps.wav";
-import fruitPoofSrc from "assets/audio/fruit-poof.mp3";
+import fruitPoofSrc from "assets/audio/fruit-popOpen.mp3";
 import impactSoftMedium003Src from "assets/audio/impactSoft_medium_003.mp3";
 import interactSoundSrc from "assets/audio/interact.mp3";
 import introBounceSrc from "assets/audio/intro-bounce.mp3";
@@ -60,7 +60,7 @@ export const whoosh = new Howl({
 
 export const fruitPoof = new Howl({
   src: fruitPoofSrc,
-  volume: 0.5,
+  volume: 0.3,
 });
 
 export const build = new Howl({

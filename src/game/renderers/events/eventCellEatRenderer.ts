@@ -38,14 +38,14 @@ export default class EventCellEatRenderer extends EventRendererFFPoints<EventCel
     eatBuffer.then((buffer) => {
       audio.setBuffer(buffer);
       audio.play();
-      audio.setDetune(1200);
+      audio.setDetune(600);
     });
     return audio;
   })();
 
   handle(event: EventCellEat) {
     const { who } = event;
-    const baseVolume = 0.75;
+    const baseVolume = 0.04;
     const volume = distScalar(who, this.mito.world.player) * baseVolume;
     if (volume > this.audio.gain.gain.value) {
       this.audio.gain.gain.setValueAtTime(volume, 0);
