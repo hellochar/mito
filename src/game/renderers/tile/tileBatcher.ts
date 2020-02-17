@@ -194,7 +194,7 @@ class TileBatcher {
       this.instances.set(key, new BatchInstance(this, index));
     }
     const instance = this.instances.get(key)!;
-    instance.checkout();
+    instance.checkout(tile);
     return instance;
   }
 
@@ -216,38 +216,38 @@ export class BatchInstance {
 
   private static numInUse = 0;
 
-  private inUse = false;
+  private owner?: object;
 
   constructor(batcher: TileBatcher, index: number) {
     this.batcher = batcher;
     this.index = index;
   }
 
-  checkout() {
-    if (this.inUse) {
+  checkout(owner: object) {
+    if (this.owner != null) {
       // throw new Error("Checking out instance that's already in use!" + this.index);
-      console.warn("Checking out instance that's already in use!" + this.index);
+      console.warn("Checking out instance that's already in use!", this.index, owner);
     }
-    this.inUse = true;
+    this.owner = owner;
     BatchInstance.numInUse++;
   }
 
   commitColor(color: Color) {
-    if (!this.inUse) {
+    if (!this.owner) {
       throw new Error("freed tileBatcher still in use!");
     }
     this.batcher.colors.setXYZ(this.index, color.r, color.g, color.b);
   }
 
   commitCenter(x: number, y: number, z: number) {
-    if (!this.inUse) {
+    if (!this.owner) {
       throw new Error("freed tileBatcher still in use!");
     }
     this.batcher.centers.setXYZ(this.index, x, y, z);
   }
 
   commitScale(scale: Vector3) {
-    if (!this.inUse) {
+    if (!this.owner) {
       throw new Error("freed tileBatcher still in use!");
     }
     this.batcher.scales.setXYZ(this.index, scale.x, scale.y, scale.z);
@@ -264,7 +264,7 @@ export class BatchInstance {
   destroy() {
     this.commitColor(BLACK);
     this.commitScale(ZERO);
-    this.inUse = false;
+    this.owner = undefined;
     BatchInstance.numInUse--;
   }
 }

@@ -1,7 +1,7 @@
 import { easeBounceOut, easeQuadOut } from "d3-ease";
 import { polyUpDown } from "math/easing";
 import Ticker from "std/ticker";
-import { DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
+import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
 import { PlayerSeed } from "../../core";
 import { MaterialInfo } from "../../core/cell/materialInfo";
 import { lerp, map } from "../../math";
@@ -124,7 +124,7 @@ function newMesh(material: MaterialInfo) {
       // depthWrite: false,
       // depthTest: false,
       map: textureFromSpritesheet(material.texturePosition.x, material.texturePosition.y),
-      color: material.color,
+      color: material.color ?? new Color("white"),
       side: DoubleSide,
     })
   );
