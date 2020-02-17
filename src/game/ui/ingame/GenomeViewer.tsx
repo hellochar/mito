@@ -25,7 +25,7 @@ type GenomeViewerStateTupleType = [GenomeViewerState, React.Dispatch<React.SetSt
 const DraggedContext = React.createContext<GenomeViewerStateTupleType>(null!);
 
 const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
-  const tuple = React.useState<GenomeViewerState>({ view: "small" });
+  const tuple = React.useState<GenomeViewerState>({ view: "expanded" });
   const [state, setState] = tuple;
   const handleViewSmall = React.useCallback(() => {
     setState((s) => ({ ...s, view: "small" }));
