@@ -1,3 +1,11 @@
+// when you press one, the other one gets removed from the keyMap
+const OPPOSITE_KEYS: Record<string, string> = {
+  KeyS: "KeyW",
+  KeyW: "KeyS",
+  KeyA: "KeyD",
+  KeyD: "KeyA",
+};
+
 export const Keyboard = new (class Input {
   readonly keyMap = new Set<string>();
 
@@ -13,6 +21,9 @@ export const Keyboard = new (class Input {
 
   private handleKeyDown = (event: KeyboardEvent) => {
     this.keyMap.add(event.code);
+    if (event.code in OPPOSITE_KEYS) {
+      this.keyMap.delete(OPPOSITE_KEYS[event.code]);
+    }
     const isOpeningDevtoolsOnChrome =
       (event.code === "KeyI" && event.shiftKey && event.ctrlKey) ||
       (event.code === "KeyI" && event.altKey && event.metaKey);
