@@ -39,7 +39,7 @@ export const mitoOverworld = new Howl({
   src: mitoOverworldMp3,
   autoplay: false,
   loop: true,
-  volume: 1,
+  volume: 0.15,
 });
 
 export const footsteps = new Howl({
