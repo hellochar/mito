@@ -48,7 +48,11 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   }
 
   componentDidMount() {
-    this.mito.eventEmitter.on("keydown", this.handleKeyDown);
+    window.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("keydown", this.handleKeyDown);
   }
 
   private handleKeyDown = (e: KeyboardEvent) => {

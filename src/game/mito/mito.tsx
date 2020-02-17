@@ -1,5 +1,4 @@
 import { easeSinIn } from "d3-ease";
-import { EventEmitter } from "events";
 import { PopulationAttempt } from "game/app";
 import { ISketch, SketchAudioContext } from "game/screens/sketch/sketch";
 import * as React from "react";
@@ -75,9 +74,18 @@ export class Mito extends ISketch {
 
   private userZoom: number;
 
-  eventEmitter: EventEmitter = new EventEmitter();
+  private _controls?: ControlScheme;
 
-  public controls: ControlScheme;
+  public get controls() {
+    return this._controls;
+  }
+
+  public set controls(controls: ControlScheme | undefined) {
+    if (this._controls != null) {
+      this._controls.destroy();
+    }
+    this._controls = controls;
+  }
 
   public nodeFrame = new Nodes.NodeFrame(0);
 
@@ -169,7 +177,8 @@ export class Mito extends ISketch {
   }
 
   destroy() {
-    this.controls.destroy();
+    // calls destroy
+    this.controls = undefined;
     window.onbeforeunload = null;
   }
 
@@ -302,7 +311,7 @@ export class Mito extends ISketch {
   }
 
   public animate(millisDelta: number) {
-    this.controls.animate(millisDelta);
+    this.controls?.animate(millisDelta);
 
     // cap out at 1/3rd of a second in one frame (about 10 frames)
     const dt = Math.min(millisDelta / 1000, 1 / 3);

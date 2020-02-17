@@ -9,17 +9,23 @@ import { TileDetails } from "../ui/ingame";
 import Keyboard from "./keyboard";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 
-export class ControlScheme {
+export interface ControlScheme {
+  animate(ms: number): void;
+
+  destroy(): void;
+
+  isInteract(): boolean;
+}
+
+export class PlayerControlScheme implements ControlScheme {
   private altElement?: WorldDOMElement;
 
   public constructor(public mito: Mito) {
     window.addEventListener("keydown", this.handleKeyDown);
-    window.addEventListener("keyup", this.handleKeyUp);
   }
 
   destroy() {
     window.removeEventListener("keydown", this.handleKeyDown);
-    window.removeEventListener("keyup", this.handleKeyUp);
   }
 
   animate(_ms: number) {
@@ -76,11 +82,6 @@ export class ControlScheme {
       }
     }
     mito.actionBar.keyDown(event);
-    mito.eventEmitter.emit("keydown", event);
-  };
-
-  handleKeyUp = (event: KeyboardEvent) => {
-    this.mito.eventEmitter.emit("keyup", event);
   };
 
   public keysToMovement(keys: Set<string>): ActionMove | null {
@@ -125,25 +126,20 @@ export class ControlScheme {
   }
 }
 
-export class PlayerSeedControlScheme extends ControlScheme {
-  constructor(mito: Mito) {
-    super(mito);
-    window.addEventListener("keydown", this.handleKeyDown);
-    window.addEventListener("keyup", this.handleKeyUp);
-  }
-
-  destroy() {
-    window.removeEventListener("keydown", this.handleKeyDown);
-    window.removeEventListener("keyup", this.handleKeyUp);
-  }
-
+export class PlayerSeedControlScheme implements ControlScheme {
   handleKeyDown = (event: KeyboardEvent) => {
     if (event.code === "Space") {
       this.popOut();
     }
   };
 
-  handleKeyUp = () => {};
+  constructor(public mito: Mito) {
+    window.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  destroy() {
+    window.removeEventListener("keydown", this.handleKeyDown);
+  }
 
   animate(_ms: number): void {
     const { mito } = this;
@@ -151,8 +147,6 @@ export class PlayerSeedControlScheme extends ControlScheme {
       // left
       if (mito.mouseButton === 0) {
         this.handleLeftClick();
-      } else if (mito.mouseButton === 2) {
-        this.handleRightClick();
       }
     }
   }
@@ -160,16 +154,8 @@ export class PlayerSeedControlScheme extends ControlScheme {
   public popOut() {
     if (this.mito.world.playerSeed && this.mito.world.time > 3) {
       this.mito.world.playerSeed!.popOut();
-      this.mito.controls = new ControlScheme(this.mito);
+      this.mito.controls = new PlayerControlScheme(this.mito);
     }
-  }
-
-  public keysToMovement(keys: Set<string>): ActionMove | null {
-    return null;
-  }
-
-  public handleRightClick() {
-    // this.popOut();
   }
 
   public handleLeftClick(): void {
@@ -177,10 +163,9 @@ export class PlayerSeedControlScheme extends ControlScheme {
     if (this.mito.world.playerSeed!.pos.distanceTo(clickedPos) < 0.5) {
       this.popOut();
     }
-    // this.popOut();
   }
 
-  public isInteract(): boolean {
+  public isInteract() {
     return false;
   }
 }
