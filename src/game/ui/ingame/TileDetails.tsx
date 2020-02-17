@@ -70,13 +70,13 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   private geneInfos(cell: Cell) {
     return (
       <>
-        {cell.geneInstances.map((gene) => {
+        {cell.geneInstances.map((gene, index) => {
           if (gene.isType(GeneSoilAbsorption)) {
-            return this.soilAbsorptionInfo(gene.state);
+            return <React.Fragment key={index}>{this.soilAbsorptionInfo(gene.state)}</React.Fragment>;
           } else if (gene.isType(GenePhotosynthesis)) {
-            return this.photosynthesisInfo(gene.state);
+            return <React.Fragment key={index}>{this.photosynthesisInfo(gene.state)}</React.Fragment>;
           } else if (gene.isType(GeneFruit) || gene.isType(GeneSeed)) {
-            return this.reproducerInfo(gene);
+            return <React.Fragment key={index}>{this.reproducerInfo(gene)}</React.Fragment>;
           } else {
             return null;
           }
