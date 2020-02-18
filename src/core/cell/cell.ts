@@ -25,7 +25,7 @@ export class Cell extends Tile implements Interactable {
 
   set displayName(n: string) {}
 
-  public energy = 0.5;
+  public energy = 1;
 
   public darkness = 0;
 

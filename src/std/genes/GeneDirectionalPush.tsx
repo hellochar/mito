@@ -14,8 +14,8 @@ export const GeneDirectionalPush = Gene.make(
       <>
         <b>Directional.</b>
         <br />
-        Every <GN value={secondsPerPush} sigFigs={2} /> seconds, directionally push 1 Water and 1 Sugar from this Cell
-        into the directed Cell.
+        Every <GN value={secondsPerPush} sigFigs={2} /> seconds, directionally pull 1 Water and 1 Sugar from behind into
+        this Cell, and also push 1 Water and 1 Sugar into the directed Cell.
       </>
     ),
     static: {
@@ -30,9 +30,17 @@ export const GeneDirectionalPush = Gene.make(
     state.didJustTransport = false;
     if (state.cooldown <= 0) {
       state.cooldown += secondsPerPush;
-      const targetTile = cell.world.tileAt(cell.pos.x + cell.args!.direction!.x, cell.pos.y + cell.args!.direction!.y);
-      if (targetTile instanceof Cell) {
-        state.didJustTransport = push(cell, targetTile, 1, 1);
+      const forwardTile = cell.world.tileAt(cell.pos.x + cell.args!.direction!.x, cell.pos.y + cell.args!.direction!.y);
+      if (forwardTile instanceof Cell) {
+        state.didJustTransport = push(cell, forwardTile, 1, 1);
+      }
+
+      const backwardTile = cell.world.tileAt(
+        cell.pos.x - cell.args!.direction!.x,
+        cell.pos.y - cell.args!.direction!.y
+      );
+      if (backwardTile instanceof Cell) {
+        state.didJustTransport = state.didJustTransport || push(backwardTile, cell, 1, 1);
       }
     }
     state.cooldown -= dt;
