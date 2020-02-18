@@ -10,7 +10,7 @@ export const GeneLiving = Gene.make(
     },
     description: ({ secondsPerUpkeep }) => (
       <>
-        Needs 1 sugar every <GN value={secondsPerUpkeep} /> seconds.
+        Burns 100% energy every <GN value={secondsPerUpkeep} /> seconds.
       </>
     ),
   },
