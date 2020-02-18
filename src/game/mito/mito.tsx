@@ -177,8 +177,9 @@ export class Mito extends ISketch {
   }
 
   destroy() {
-    // calls destroy
+    // settings controls to undefined calls destroy on controls
     this.controls = undefined;
+
     window.onbeforeunload = null;
   }
 
