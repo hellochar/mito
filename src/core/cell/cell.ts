@@ -191,28 +191,34 @@ export class Cell extends Tile implements Interactable {
     const tileNeighbors = this.world.tileNeighbors(this.pos);
     this.stepDroop(tileNeighbors, dt);
 
-    // cell effects and genes scale according to tempo
-    dt = this.tempo * dt;
-    for (const effect of this.effects) {
-      effect.step(dt);
-    }
-    this.geneInstances.forEach((g) => step(g, dt));
-
-    // TODO scale freefalling by dt
     if (this.droopY > 0.5) {
       if (this.pos.y < this.world.height - 1) {
         // make the player ride the train!
         if (this.world.player.pos.equals(this.pos)) {
-          this.world.player.pos.y += 1;
+          this.world.player.posFloat.y += 1;
         }
         this.world.maybeRemoveCellAt(this.pos);
         this.pos.y += 1;
         this.droopY -= 1;
         this.world.setTileAt(this.pos, this);
+      } else {
+        this.droopY = 0.5;
       }
     }
+
     if (this.energy <= 0) {
       this.die();
+    } else {
+      // cell effects and genes scale according to tempo
+      dt = this.tempo * dt;
+
+      // step all cell effects (e.g.freezing)
+      for (const effect of this.effects) {
+        effect.step(dt);
+      }
+
+      // step all genes
+      this.geneInstances.forEach((g) => step(g, dt));
     }
   }
 
@@ -253,27 +259,20 @@ export class Cell extends Tile implements Interactable {
     if (this.energy < 0.5) {
       this.droopY += droopAmount;
     }
-    let hasSupportBelow = false;
     for (const cell of [below, belowLeft, belowRight]) {
       if (cell instanceof Rock || cell instanceof Soil) {
         this.droopY = Math.min(this.droopY, 0);
         return;
       } else if (cell instanceof Cell) {
         this.droopY = Math.min(this.droopY, cell.droopY);
-        hasSupportBelow = true;
         return;
       }
     }
     const springNeighborCells = [aboveLeft, above, aboveRight, left, right, this].filter(
       (n) => n instanceof Cell
     ) as Cell[];
-    // special case - if there's no support and nothing below me, just start freefalling
-    if (!hasSupportBelow && springNeighborCells.length === 1) {
-      this.droopY += 1;
-    } else {
-      // TODO tighten springs scaled by dt
-      this.droopY = springNeighborCells.reduce((sum, n) => sum + n.droopY, 0) / springNeighborCells.length;
-    }
+    // TODO tighten springs scaled by dt
+    this.droopY = springNeighborCells.reduce((sum, n) => sum + n.droopY, 0) / springNeighborCells.length;
   }
 
   stepDarkness(neighbors: Map<Vector2, Tile>) {

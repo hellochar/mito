@@ -42,6 +42,10 @@ export const PERCENT_DAYLIGHT = 0.9; // 45 second days, 5 second nights
  */
 export const CELL_BUILD_TIME = 1.0;
 
+/**
+ * How many tiles per frame a cell will freefall in the Air. Unscaled
+ * by time.
+ */
 export const CELL_DROOP = 0.13;
 
 /**
