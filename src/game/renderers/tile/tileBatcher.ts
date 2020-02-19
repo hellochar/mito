@@ -187,7 +187,7 @@ class TileBatcher {
     const positionOffset = pos.y * this.world.width + pos.x;
     const index = layerOffset + positionOffset;
     if (!Number.isInteger(index)) {
-      throw new Error("index " + index + " is not integer!");
+      console.error("index " + index + " is not integer!");
     }
     const key = String(index);
     if (!this.instances.has(key)) {
@@ -234,21 +234,21 @@ export class BatchInstance {
 
   commitColor(color: Color) {
     if (!this.owner) {
-      throw new Error("freed tileBatcher still in use!");
+      console.error("freed tileBatcher still in use!");
     }
     this.batcher.colors.setXYZ(this.index, color.r, color.g, color.b);
   }
 
   commitCenter(x: number, y: number, z: number) {
     if (!this.owner) {
-      throw new Error("freed tileBatcher still in use!");
+      console.error("freed tileBatcher still in use!");
     }
     this.batcher.centers.setXYZ(this.index, x, y, z);
   }
 
   commitScale(scale: Vector3) {
     if (!this.owner) {
-      throw new Error("freed tileBatcher still in use!");
+      console.error("freed tileBatcher still in use!");
     }
     this.batcher.scales.setXYZ(this.index, scale.x, scale.y, scale.z);
   }
