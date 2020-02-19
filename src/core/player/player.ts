@@ -96,6 +96,10 @@ export class Player implements Steppable {
     }
   }
 
+  /**
+   * Get this player's position taking into
+   * account the droop of the cell it's on.
+   */
   public droopPosFloat() {
     const droopY = this.droopY();
     if (droopY !== 0) {
@@ -146,6 +150,11 @@ export class Player implements Steppable {
     if (!this.isWalkable(this.currentTile())) {
       const nearestWalkableCell = this.findNearestWalkableCell();
       if (nearestWalkableCell != null) {
+        this.world.logEvent({
+          type: "oof",
+          from: this.posFloat,
+          to: nearestWalkableCell,
+        });
         this.posFloat.copy(nearestWalkableCell.pos);
       }
     }
@@ -204,6 +213,10 @@ export class Player implements Steppable {
         return this.attemptLong(action, dt);
     }
   }
+
+  public isWalkable(pos: Tile): pos is Cell;
+
+  public isWalkable(pos: Vector2): boolean;
 
   public isWalkable(pos: Tile | Vector2) {
     const tile = pos instanceof Vector2 ? this.world.tileAt(Math.round(pos.x), Math.round(pos.y)) : pos;

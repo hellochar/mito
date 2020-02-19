@@ -1,4 +1,5 @@
 import { sleep } from "common/promise";
+import { EventOof } from "core/tile/tileEvent";
 import { easeSinInOut } from "d3-ease";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { Player } from "../../core";
@@ -43,6 +44,7 @@ export class PlayerRenderer extends Renderer<Player> {
   };
 
   handleAction = (action: Action) => {
+    this.mito.addFloatingText(this.target.posFloat, action.type);
     if (action.type === "interact") {
       this.neuronMesh.handleInteracted();
       interactSound.fade(1.0, 0.0, 200);
@@ -71,23 +73,29 @@ export class PlayerRenderer extends Renderer<Player> {
     }
   };
 
-  private prevHighlight?: Tile;
+  private prevHighlightedTile?: Tile;
 
   update() {
     const pos = this.target.droopPosFloat().clone();
+
+    const oof = this.target.world.getLastStepStats().events.oof[0] as EventOof;
+    if (oof) {
+      this.mito.addFloatingText(pos, "oof");
+    }
+
     this.mesh.position.set(pos.x, pos.y, 2);
 
     const dt = 1 / 60;
     const isInteract = this.mito.controls?.isInteract() ?? false;
     const highlight = this.mito.getHighlightedTile();
     const neuronMeshTarget = isInteract ? highlight!.pos.clone().sub(pos) : ZERO;
-    if (this.prevHighlight !== highlight) {
+    if (this.prevHighlightedTile !== highlight) {
       const id = sticky.play();
       sticky.rate(randFloat(0.9, 1.1), id);
       sticky.volume(randFloat(0.8, 1), id);
     }
     this.neuronMesh.update(isInteract ? dt * 10 : dt * 5, neuronMeshTarget);
-    this.prevHighlight = highlight;
+    this.prevHighlightedTile = highlight;
     // this.neuronMesh.visible = this.mito.getHighlightedTile() instanceof Cell;
 
     // pos.x += Math.cos(Ticker.now / 1000) * 0.04;

@@ -9,6 +9,7 @@ export class StepStats {
     thaw: [],
     "collect-sunlight": [],
     "grow-fruit": [],
+    oof: [],
   };
 
   constructor(public dt: number, public frame: number, public deleted: Entity[] = [], public added: Entity[] = []) {}

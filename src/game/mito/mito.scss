@@ -236,6 +236,30 @@
   }
 }
 
+.floating-text {
+  color: white;
+  animation: floatUp linear 1s both;
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+
+  @keyframes floatUp {
+    from {
+      opacity: 1;
+      top: 0;
+    }
+
+    50% {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      top: -20px;
+    }
+  }
+}
+
 .tile-details-container {
   position: absolute;
   bottom: 100%;

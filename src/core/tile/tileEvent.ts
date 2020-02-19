@@ -7,7 +7,8 @@ export type TileEvent =
   | EventPhotosynthesis
   | EventThawIce
   | EventCollectSunlight
-  | EventGrowFruit;
+  | EventGrowFruit
+  | EventOof;
 
 export type TileEventType = TileEvent["type"];
 
@@ -52,4 +53,10 @@ export interface EventGrowFruit {
   type: "grow-fruit";
   cell: Cell;
   resourcesUsed: number;
+}
+
+export interface EventOof {
+  type: "oof";
+  from: Vector2;
+  to: Cell;
 }

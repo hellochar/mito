@@ -1,3 +1,4 @@
+import { sleep } from "common/promise";
 import { easeSinIn } from "d3-ease";
 import { PopulationAttempt } from "game/app";
 import { ISketch, SketchAudioContext } from "game/screens/sketch/sketch";
@@ -311,6 +312,15 @@ export class Mito extends ISketch {
     this.worldDomElements.delete(worldDomElement);
   }
 
+  async addFloatingText(position: Vector2 | Tile, text: React.ReactNode) {
+    const element = this.addWorldDOMElement(
+      () => position,
+      () => <div className="floating-text">{text}</div>
+    );
+    await sleep(1000);
+    this.removeWorldDOMElement(element);
+  }
+
   public animate(millisDelta: number) {
     this.controls?.animate(millisDelta);
 
@@ -357,10 +367,9 @@ export class Mito extends ISketch {
     if (this.world.playerSeed == null) {
       const mouseNorm = this.getCameraNormCoordinates(this.mouse.x, this.mouse.y);
 
-      const cameraTarget = new THREE.Vector2(
-        this.world.player.posFloat.x + mouseNorm.x / 2,
-        this.world.player.posFloat.y - mouseNorm.y / 2
-      );
+      const cameraTarget = this.world.player.droopPosFloat().clone();
+      cameraTarget.x += mouseNorm.x / 2;
+      cameraTarget.y -= mouseNorm.y / 2;
 
       return {
         center: cameraTarget,
