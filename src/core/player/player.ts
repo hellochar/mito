@@ -318,7 +318,7 @@ export class Player implements Steppable {
   }
 
   public attemptDeconstruct(action: ActionDeconstruct, _dt: number): boolean {
-    if (!action.position.equals(this.pos) || action.force || true) {
+    if (!action.position.equals(this.pos) || action.force) {
       const cell = this.world.maybeRemoveCellAt(action.position);
       if (cell != null) {
         // refund the resources back
