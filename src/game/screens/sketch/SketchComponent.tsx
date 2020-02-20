@@ -262,9 +262,7 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
       if (this.state.status.type === "success") {
         this.state.status.sketch.canvas.remove();
       }
-      if (this.audioContext != null) {
-        this.audioContext.close();
-      }
+      this.userVolume?.disconnect();
       this.setState({ status: { type: "loading" } });
     }
   };
