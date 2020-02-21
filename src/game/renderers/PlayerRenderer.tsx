@@ -1,6 +1,7 @@
 import { sleep } from "common/promise";
 import { EventOof } from "core/tile/tileEvent";
 import { easeSinInOut } from "d3-ease";
+import { params } from "game/params";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { Player } from "../../core";
 import { Action, ActionBuild, ActionLong } from "../../core/player/action";
@@ -44,7 +45,9 @@ export class PlayerRenderer extends Renderer<Player> {
   };
 
   handleAction = (action: Action) => {
-    this.mito.addFloatingText(this.target.posFloat, action.type);
+    if (params.debug) {
+      this.mito.addFloatingText(this.target.posFloat, action.type);
+    }
     if (action.type === "interact") {
       this.neuronMesh.handleInteracted();
       interactSound.fade(1.0, 0.0, 200);

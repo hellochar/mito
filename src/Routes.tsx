@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import TestDiffusion from "tests/TestDiffusion";
 import { TestLoseScreen } from "tests/TestLoseScreen";
 import { TestWinScreen } from "tests/TestWinScreen";
@@ -24,8 +24,15 @@ export default () => (
     <Route exact path="/">
       <App />
     </Route>
-    <Route path="*">
-      <Redirect to="/" />
-    </Route>
+    <Route path="*" component={Page404} />
   </Switch>
 );
+
+const Page404: React.FC<RouteComponentProps> = () => {
+  return (
+    <div>
+      <h1>Unknown page</h1>
+      <Link to="/">Back to main screen</Link>
+    </div>
+  );
+};
