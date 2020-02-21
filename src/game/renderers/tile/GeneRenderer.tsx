@@ -1,4 +1,5 @@
-import { Gene, GeneInstance } from "core/cell/chromosome";
+import { Gene } from "core/cell/gene";
+import { GeneInstance } from "core/cell/geneInstance";
 import { Renderer } from "../Renderer";
 import { InstancedTileRenderer } from "./InstancedTileRenderer";
 

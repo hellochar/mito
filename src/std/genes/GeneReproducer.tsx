@@ -3,7 +3,8 @@ import MP from "game/ui/common/MP";
 import { clamp } from "math";
 import React from "react";
 import { Cell } from "../../core/cell/cell";
-import { Gene, GeneInstance } from "../../core/cell/chromosome";
+import { Gene } from "../../core/cell/gene";
+import { GeneInstance } from "../../core/cell/geneInstance";
 import { TIME_PER_MONTH } from "../../core/constants";
 
 export interface ReproducerState {

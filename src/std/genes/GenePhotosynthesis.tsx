@@ -2,7 +2,7 @@ import React from "react";
 import GN from "std/genes/GN";
 import { Vector2 } from "three";
 import { Cell } from "../../core/cell/cell";
-import { Gene } from "../../core/cell/chromosome";
+import { Gene } from "../../core/cell/gene";
 import { Air } from "../../core/tile/air";
 
 export interface PhotosynthesisState {

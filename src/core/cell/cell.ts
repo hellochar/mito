@@ -10,8 +10,10 @@ import { Soil } from "../tile/soil";
 import { Tile } from "../tile/tile";
 import { World } from "../world/world";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
-import Chromosome, { Gene, GeneInstance, GeneStaticProperties } from "./chromosome";
+import Chromosome from "./chromosome";
 import { DeadCell } from "./deadCell";
+import { Gene, GeneStaticProperties } from "./gene";
+import { GeneInstance } from "./geneInstance";
 import { CellType } from "./genome";
 
 export interface CellArgs {

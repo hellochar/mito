@@ -1,5 +1,5 @@
 import { arrayProxy } from "common/arrayProxy";
-import { GeneInstance } from "core/cell/chromosome";
+import { GeneInstance } from "core/cell/geneInstance";
 import { Temperature } from "core/temperature";
 import { Air, Cell, DeadCell, Fountain, GrowingCell, Rock, Tile } from "core/tile";
 import { Clay, Sand, Silt } from "core/tile/soil";

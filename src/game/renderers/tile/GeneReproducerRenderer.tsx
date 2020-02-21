@@ -1,5 +1,5 @@
 import { nf } from "common/formatters";
-import { Gene } from "core/cell/chromosome";
+import { Gene } from "core/cell/gene";
 import { map } from "math";
 import React from "react";
 import { reproducerGetPercentMatured, ReproducerState } from "std/genes/GeneReproducer";

@@ -3,7 +3,7 @@ import classNames from "classnames";
 import MP from "game/ui/common/MP";
 import { map } from "math";
 import * as React from "react";
-import { GeneInstance } from "../../core/cell/chromosome";
+import { GeneInstance } from "../../core/cell/geneInstance";
 import { seasonDisplay, seasonFromTime } from "../../core/season";
 import { Cell } from "../../core/tile";
 import { GeneFruit, reproducerGetPercentMatured } from "../../std/genes/GeneReproducer";

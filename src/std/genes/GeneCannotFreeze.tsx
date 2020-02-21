@@ -1,4 +1,4 @@
-import { Gene } from "../../core/cell/chromosome";
+import { Gene } from "../../core/cell/gene";
 
 export const GeneCannotFreeze = Gene.make(
   {

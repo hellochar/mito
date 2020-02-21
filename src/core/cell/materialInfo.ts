@@ -1,3 +1,4 @@
+import { createSimpleSchema } from "serializr";
 import { Color, Vector2 } from "three";
 export interface MaterialInfo {
   /**
@@ -6,3 +7,5 @@ export interface MaterialInfo {
   color?: Color;
   texturePosition: Vector2;
 }
+
+export const MaterialInfoSchema = createSimpleSchema({ "*": true });

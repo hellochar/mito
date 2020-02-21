@@ -1,7 +1,7 @@
 import React from "react";
 import GN from "std/genes/GN";
 import { Cell } from "../../core/cell/cell";
-import { Gene } from "../../core/cell/chromosome";
+import { Gene } from "../../core/cell/gene";
 
 export const GeneAttractsWater = Gene.make(
   {

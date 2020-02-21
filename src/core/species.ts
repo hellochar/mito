@@ -15,12 +15,13 @@ export interface Species {
 
 export const SpeciesSchema = createSimpleSchema<Species>({
   // TODO fill in
-  // genome:
+  genome: object(Genome),
   id: identifier(),
   name: primitive(),
   freeMutationPoints: primitive(),
   totalMutationPoints: primitive(),
 });
+// we can't self-reference SpeciesSchema in its instantiation; set it after
 SpeciesSchema.props.descendants = list(object(SpeciesSchema));
 SpeciesSchema.props.parent = reference(SpeciesSchema);
 

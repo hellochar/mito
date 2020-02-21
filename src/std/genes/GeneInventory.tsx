@@ -1,6 +1,6 @@
 import React from "react";
 import GN from "std/genes/GN";
-import { Gene } from "../../core/cell/chromosome";
+import { Gene } from "../../core/cell/gene";
 export const GeneInventory = Gene.make(
   {
     name: "Inventory",
