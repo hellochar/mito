@@ -7,6 +7,7 @@ const GAME_DATA_KEY = "gameData";
 
 export function save(appState: AppState) {
   const json = serialize(AppStateSchema, appState);
+  console.log("saved json", json);
   const stringToSave = JSON.stringify(json);
   return localforage.setItem(GAME_DATA_KEY, stringToSave);
 }

@@ -4,7 +4,6 @@ import { TileGenerators } from "std/tileGenerators";
 import { Vector2 } from "three";
 import devlog from "../../common/devlog";
 import shuffle from "../../math/shuffle";
-import { standardGenome } from "../../std/genomes/standardGenome";
 import Genome from "../cell/genome";
 import { DIRECTION_VALUES } from "../directions";
 import { Entity, isSteppable, step } from "../entity";
@@ -72,7 +71,7 @@ export class World {
     this.height = options.height;
     this.generatorContext = createGeneratorContext(seed);
     this.species = species;
-    this.genome = species.genome || standardGenome;
+    this.genome = species.genome;
     this.weather = new WeatherController(this);
 
     const tileGenerator = typeof environment.fill === "string" ? TileGenerators[environment.fill] : environment.fill;

@@ -62,11 +62,13 @@ export const LocalForageStateProvider: React.FC<{ loadingComponent: JSX.Element 
   useEffect(() => {
     load()
       .then((appState) => {
-        if (appState) setState(appState);
+        setState(appState);
+        console.log("loading", appState);
       })
       .catch(() => {
-        console.log("couldn't load appState from localForage; resetting game");
-        setState(newInitialAppState());
+        const newGameState = newInitialAppState();
+        console.log("couldn't load appState from localForage; resetting game", newGameState);
+        setState(newGameState);
       });
   }, []);
 

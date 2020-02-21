@@ -1,12 +1,30 @@
 import mapRecord from "common/mapRecord";
 import { clamp } from "math";
+import { custom, serializable } from "serializr";
 import { Cell } from "../tile";
-import { Gene, GeneStaticProperties } from "./gene";
+import { AllGenes, Gene, GeneStaticProperties } from "./gene";
 import { GeneInstance } from "./geneInstance";
 
+function serializeGeneIntoName(gene: Gene): string {
+  return gene.blueprint.name;
+}
+
+function deserializeGeneFromName(name: string): Gene {
+  return AllGenes.get(name)!;
+}
+
 export class RealizedGene<G extends Gene = Gene> {
-  public constructor(public gene: G, public level: number) {
-    this.setLevel(level);
+  @serializable(custom(serializeGeneIntoName, deserializeGeneFromName))
+  public gene: G;
+
+  @serializable
+  public level!: number;
+
+  public constructor(gene?: G, level?: number) {
+    this.gene = gene!;
+    if (level != null) {
+      this.setLevel(level);
+    }
   }
 
   getStaticProperties() {
