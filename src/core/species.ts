@@ -1,5 +1,5 @@
 import Genome from "core/cell/genome";
-import { createSimpleSchema, list, object, primitive, reference } from "serializr";
+import { createSimpleSchema, identifier, list, object, primitive, reference } from "serializr";
 import { tutorialGenome } from "std/genomes/tutorialGenome";
 import uuid from "uuid";
 
@@ -14,7 +14,8 @@ export interface Species {
 }
 
 export const SpeciesSchema = createSimpleSchema<Species>({
-  genome: // TODO fill in
+  // TODO fill in
+  // genome:
   id: identifier(),
   name: primitive(),
   freeMutationPoints: primitive(),
