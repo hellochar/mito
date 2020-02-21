@@ -4,6 +4,7 @@ import { useAppReducer } from "game/app";
 import { resetGame, save } from "game/app/saveLoad";
 import { mitoOverworld } from "game/audio";
 import { Button } from "game/ui/common/Button";
+import GenomeViewer from "game/ui/ingame/GenomeViewer";
 import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
 import React, { useCallback, useEffect, useState } from "react";
 import { GiFamilyTree } from "react-icons/gi";
@@ -39,8 +40,11 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
     };
   }, []);
 
+  const [genomeViewerSpecies, setGenomeViewerSpecies] = useState<Species>();
+
   const handleStartMutate = useCallback((s: Species) => {
     // TODO fill in
+    setGenomeViewerSpecies(s);
   }, []);
 
   function maybeRenderPhylogeneticTreePanel() {
@@ -54,6 +58,12 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
     );
   }
 
+  function maybeRenderGenomeViewer() {
+    if (genomeViewerSpecies) {
+      return <GenomeViewer genome={genomeViewerSpecies.genome} />;
+    }
+  }
+
   const [focusedHex, setFocusedHex] = useState<HexTile | undefined>(undefined);
   const handleFocusHex = useCallback((hex: HexTile) => {
     setFocusedHex(hex);
@@ -65,6 +75,7 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
     <div className="overworld-screen">
       <OverWorldMap focusedHex={focusedHex} />
       {maybeRenderPhylogeneticTreePanel()}
+      {maybeRenderGenomeViewer()}
       <EpochUI onNextEpoch={onNextEpoch} onFocusHex={handleFocusHex} />
       <div style={{ position: "absolute", right: "10px", top: "10px" }}>
         <Button onClick={() => save(appState)}>Save</Button>

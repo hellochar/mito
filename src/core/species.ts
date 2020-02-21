@@ -1,5 +1,5 @@
 import Genome from "core/cell/genome";
-import { createSimpleSchema, identifier, list, object, primitive, reference } from "serializr";
+import { createSimpleSchema, list, object, primitive, reference } from "serializr";
 import { tutorialGenome } from "std/genomes/tutorialGenome";
 import uuid from "uuid";
 
@@ -7,7 +7,6 @@ export interface Species {
   genome: Genome;
   id: string;
   name: string;
-  // cells: Cell[];
   freeMutationPoints: number;
   totalMutationPoints: number;
   descendants: Species[];
@@ -15,13 +14,11 @@ export interface Species {
 }
 
 export const SpeciesSchema = createSimpleSchema<Species>({
+  genome: // TODO fill in
   id: identifier(),
   name: primitive(),
-  genes: list(list(primitive())),
   freeMutationPoints: primitive(),
   totalMutationPoints: primitive(),
-  // descendants: reference(SpeciesSchema),
-  // parent: reference(SpeciesSchema),
 });
 SpeciesSchema.props.descendants = list(object(SpeciesSchema));
 SpeciesSchema.props.parent = reference(SpeciesSchema);
@@ -31,7 +28,6 @@ export function newBaseSpecies(name = "plantum originus"): Species {
     id: uuid(),
     genome: tutorialGenome,
     name,
-    // genes: [mutateRandomNewGene(), mutateRandomNewGene(), mutateRandomNewGene()],
     freeMutationPoints: 0,
     totalMutationPoints: 0,
     descendants: [],
