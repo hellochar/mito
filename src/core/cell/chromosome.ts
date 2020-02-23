@@ -1,9 +1,14 @@
 import { list, object, serializable } from "serializr";
+import { GeneInventory, GeneLiving } from "std/genes";
 import { Cell } from "../tile";
 import { defaultProperties, Gene } from "./gene";
 import { RealizedGene } from "./realizedGene";
 
 export default class Chromosome {
+  static basic(): Chromosome {
+    return new Chromosome(GeneLiving.level(2), GeneInventory.level(2));
+  }
+
   @serializable(list(object(RealizedGene)))
   public genes: RealizedGene[];
 

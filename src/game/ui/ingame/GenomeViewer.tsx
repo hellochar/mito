@@ -1,10 +1,12 @@
 import classNames from "classnames";
 import { nf } from "common/formatters";
+import Chromosome from "core/cell/chromosome";
 import DynamicNumber from "game/ui/common/DynamicNumber";
-import { arrayRange } from "math/arrays";
 import * as React from "react";
 import { FaArrowsAltV, FaGripLines } from "react-icons/fa";
+import { IoIosAddCircleOutline } from "react-icons/io";
 import { TiThMenu } from "react-icons/ti";
+import { Color, Vector2 } from "three";
 import { GeneStaticProperties } from "../../../core/cell/gene";
 import Genome, { CellInteraction, CellType, describeCellInteraction } from "../../../core/cell/genome";
 import { RealizedGene } from "../../../core/cell/realizedGene";
@@ -49,9 +51,40 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
           {genome.cellTypes.map((c) => (
             <CellTypeViewer key={c.name} cellType={c} />
           ))}
+          <AddCellCard genome={genome} />
         </div>
       </div>
     </DraggedContext.Provider>
+  );
+};
+
+const AddCellCard: React.FC<{ genome: Genome }> = ({ genome }) => {
+  // const [state, setState] = React.useContext(DraggedContext);
+  const handleAddCell = React.useCallback(() => {
+    const newCellType = new CellType(
+      "Cell " + (genome.cellTypes.length + 1),
+      0,
+      Chromosome.basic(),
+      {
+        texturePosition: new Vector2(1, 1),
+        color: new Color(Math.random(), Math.random(), Math.random()),
+      },
+      {
+        type: "give",
+        resources: "water and sugar",
+      }
+    );
+    genome.cellTypes.push(newCellType);
+  }, [genome.cellTypes]);
+  return (
+    <div className="add-cell-card">
+      <div className="add-cell" onClick={handleAddCell}>
+        Add Cell
+      </div>
+      <button onClick={handleAddCell}>
+        <IoIosAddCircleOutline />
+      </button>
+    </div>
   );
 };
 
@@ -74,14 +107,6 @@ const CellTypeViewer: React.FC<{ cellType: CellType }> = ({ cellType }) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
-
-  // const additionalGeneSlots = chromosome.geneSlotsAdded();
-  // const totalGeneSlotsEl = (
-  //   <>
-  //     {geneSlots}
-  //     {additionalGeneSlots > 0 ? `+${additionalGeneSlots}` : null}
-  //   </>
-  // );
 
   const handleSetInteraction = React.useCallback(
     (i: CellInteraction | undefined) => {
@@ -223,7 +248,7 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
       <div className="gene-header">
         <GeneCost cost={cost} />
         <h4>
-          {gd.blueprint.name}
+          {gd.blueprint.name} {gene.level + 1}
           {/* <span style={{ opacity: 0.5 }}>{gene.level + 1}</span> */}
           {/* <div className="gene-level-arrows">
               <button className="up" onClick={() => gene.setLevel(level + 1)}>
@@ -236,16 +261,15 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
         </h4>
         {draggable ? <FaGripLines className="grip-lines" /> : null}
       </div>
-      {gene.gene.blueprint.levelCosts.length > 1 ? (
+      {/* {gene.gene.blueprint.levelCosts.length > 1 ? (
         <div className="gene-level-picker">
           {arrayRange(gene.gene.blueprint.levelCosts.length).map((i) => (
             <button key={i} className={classNames({ selected: gene.level === i })} onClick={() => gene.setLevel(i)}>
               {i + 1}
-              {/* <span className="gene-cost">{gene.gene.blueprint.levelCosts[i]}</span> */}
             </button>
           ))}
         </div>
-      ) : null}
+      ) : null} */}
       <div className="description">{gd.blueprint.description(gene.getProps(), gene.getStaticProperties())}</div>
     </div>
     // </LookAtMouse>
