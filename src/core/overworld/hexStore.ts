@@ -9,7 +9,7 @@ export class HexStore {
     return `${i},${j}`;
   }
 
-  get(i: number, j: number) {
+  get(i: number, j: number): HexTile | undefined {
     return this.tiles[this.hash(i, j)];
   }
 

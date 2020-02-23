@@ -119,7 +119,7 @@ export class OverWorld {
    */
   public hexNeighbors(hex: HexTile) {
     const { i, j } = hex;
-    const neighbors: HexTile[] = [];
+    const neighbors: (HexTile | undefined)[] = [];
     neighbors[0] = this.storage.get(i + 1, j);
     neighbors[1] = this.storage.get(i, j + 1);
     neighbors[2] = this.storage.get(i - 1, j + 1);
@@ -135,14 +135,14 @@ export class OverWorld {
    */
   public possibleMigrationSources(target: HexTile) {
     const populatedActiveNeighbors = this.hexNeighbors(target).filter((hex) => {
-      return hex.info.flora != null;
-    });
+      return hex?.info.flora != null;
+    }) as HexTile[];
     if (target.info.flora == null) {
       // if the target is unpopulated, allow any neighbor to migrate into it
       return populatedActiveNeighbors;
     } else {
       // if the target is already populated, disallow "migration" from the same source species
-      return populatedActiveNeighbors.filter((s) => s.info.flora!.species !== target.info.flora!.species);
+      return populatedActiveNeighbors.filter((s) => s != null && s.info.flora!.species !== target.info.flora!.species);
     }
   }
 
@@ -155,8 +155,8 @@ export class OverWorld {
       // find neighbors that are either:
       //  unpopulated, or
       //  populated but with a different species
-      return hex.info.flora == null || hex.info.flora.species !== source.info.flora!.species;
-    });
+      return hex != null && (hex.info.flora == null || hex.info.flora.species !== source.info.flora!.species);
+    }) as HexTile[];
     return unpopulatedNeighbors;
   }
 

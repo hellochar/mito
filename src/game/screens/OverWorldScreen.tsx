@@ -8,6 +8,7 @@ import GenomeViewer from "game/ui/ingame/GenomeViewer";
 import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
 import React, { useCallback, useEffect, useState } from "react";
 import { GiFamilyTree } from "react-icons/gi";
+import ReactModal from "react-modal";
 import { HexTile } from "../../core/overworld/hexTile";
 import { EpochUI } from "../ui/overworld/EpochUI";
 import { OverWorldMap } from "../ui/overworld/map/OverWorldMap";
@@ -58,10 +59,29 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
     );
   }
 
+  const closeGenomeViewer = useCallback(() => {
+    setGenomeViewerSpecies(undefined);
+  }, []);
   function maybeRenderGenomeViewer() {
-    if (genomeViewerSpecies) {
-      return <GenomeViewer genome={genomeViewerSpecies.genome} />;
-    }
+    return (
+      <ReactModal
+        ariaHideApp
+        isOpen={genomeViewerSpecies != null}
+        shouldCloseOnEsc
+        shouldCloseOnOverlayClick
+        onRequestClose={closeGenomeViewer}
+        className="genome-viewer-modal"
+      >
+        {genomeViewerSpecies != null ? (
+          <>
+            <button className="close" onClick={closeGenomeViewer}>
+              ✖
+            </button>
+            <GenomeViewer genome={genomeViewerSpecies.genome} />
+          </>
+        ) : null}
+      </ReactModal>
+    );
   }
 
   const [focusedHex, setFocusedHex] = useState<HexTile | undefined>(undefined);
