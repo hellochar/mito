@@ -3,6 +3,7 @@ import { Vector2 } from "three";
 import { CellArgs } from "./cell";
 import Chromosome from "./chromosome";
 import { MaterialInfo, MaterialInfoSchema } from "./materialInfo";
+import { RealizedGene } from "./realizedGene";
 
 export interface CellInteraction {
   type: "give" | "take";
@@ -55,8 +56,12 @@ export default class Genome {
   @serializable(list(object(CellType)))
   public cellTypes: CellType[];
 
-  constructor(cellTypes?: CellType[]) {
+  @serializable(list(object(RealizedGene)))
+  public unusedGenes: RealizedGene[];
+
+  constructor(cellTypes?: CellType[], unusedGenes?: RealizedGene[]) {
     this.cellTypes = cellTypes!;
+    this.unusedGenes = unusedGenes!;
   }
 }
 
