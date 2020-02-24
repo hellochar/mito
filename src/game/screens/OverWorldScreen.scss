@@ -88,3 +88,16 @@
   border-radius: 4px;
   outline: none;
 }
+
+.species-viewer {
+  .header {
+    text-align: center;
+
+    .species-name {
+      font-size: 2em;
+      font-weight: bold;
+      font-style: italic;
+      display: inline;
+    }
+  }
+}

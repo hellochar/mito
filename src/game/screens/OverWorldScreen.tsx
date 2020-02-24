@@ -4,6 +4,7 @@ import { useAppReducer } from "game/app";
 import { resetGame, save } from "game/app/saveLoad";
 import { mitoOverworld } from "game/audio";
 import { Button } from "game/ui/common/Button";
+import MP from "game/ui/common/MP";
 import GenomeViewer from "game/ui/ingame/GenomeViewer";
 import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
 import React, { useCallback, useEffect, useState } from "react";
@@ -77,7 +78,7 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
             <button className="close" onClick={closeGenomeViewer}>
               ✖
             </button>
-            <GenomeViewer genome={genomeViewerSpecies.genome} />
+            <SpeciesViewer species={genomeViewerSpecies} />
           </>
         ) : null}
       </ReactModal>
@@ -108,3 +109,15 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
 };
 
 export default OverWorldScreen;
+
+const SpeciesViewer: React.FC<{ species: Species }> = ({ species }) => {
+  return (
+    <div className="species-viewer">
+      <div className="header">
+        <div className="species-name">{species.name}</div>
+        - <MP amount={species.freeMutationPoints} /> of <MP amount={species.totalMutationPoints} />
+      </div>
+      <GenomeViewer genome={species.genome} />
+    </div>
+  );
+};
