@@ -3,14 +3,13 @@ import { Button } from "game/ui/common/Button";
 import * as React from "react";
 import { getDecidedGameResult } from "../../../gameResult";
 import { PlayerSeedControlScheme } from "../../../input/ControlScheme";
-import Keyboard from "../../../input/keyboard";
 import Mito from "../../../mito/mito";
 import GenomeViewer from "../GenomeViewer";
 import { HotkeyButton } from "../HotkeyButton";
 import { InventoryBar } from "../InventoryBar";
-import CellBarUI from "./CellBarUI";
 import "./HUD.scss";
 import SeasonsTracker from "./SeasonsTracker";
+import SwitchableBarUI from "./SwitchableBarUI";
 
 export interface HUDProps {
   mito: Mito;
@@ -84,11 +83,11 @@ export class HUD extends React.Component<HUDProps, HUDState> {
             format="icons"
             className="player-inventory-bar"
           />
-          {/* <SwitchableBarUI bar={this.mito.actionBar} /> */}
-          <CellBarUI
+          <SwitchableBarUI bar={this.mito.actionBar} />
+          {/* <CellBarUI
             bar={this.mito.actionBar.buildBar}
             disabled={this.mito.world.player.getBuildError() || (Keyboard.isAltHeld() ? true : undefined)}
-          />
+          /> */}
         </div>
       </>
     );

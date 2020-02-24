@@ -1,3 +1,6 @@
+import { Entity } from "core";
+import { PLAYER_INTERACT_EXCHANGE_SPEED } from "core/constants";
+import { Interactable } from "core/interactable";
 import { Vector2 } from "three";
 import { Noise } from "../../common/perlin";
 import { map } from "../../math/index";
@@ -5,7 +8,7 @@ import { Inventory } from "../inventory";
 import { World } from "../world/world";
 import { canPullResources } from "./canPullResources";
 import { Tile } from "./tile";
-export class Air extends Tile {
+export class Air extends Tile implements Interactable {
   displayName = "Air";
 
   static fallAmount = 30;
@@ -24,6 +27,12 @@ export class Air extends Tile {
     super(pos, world);
     this.darkness = 0;
     this._co2 = this.computeCo2();
+  }
+
+  interact(source: Entity, dt: number): boolean {
+    // give a small bit of sugar/water to the source
+    const { water, sugar } = this.inventory.give(source.inventory, PLAYER_INTERACT_EXCHANGE_SPEED * 0.1 * dt, 0);
+    return water > 0 || sugar > 0;
   }
 
   // Careful - this affects gravity speed

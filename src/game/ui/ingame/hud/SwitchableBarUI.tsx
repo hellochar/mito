@@ -21,9 +21,9 @@ export const SwitchableBarUI: React.FC<SwitchableBarUIProps> = ({ bar }) => {
     ) : null;
   const hudSwitcherHotkeyElement =
     current instanceof CellBar ? (
-      <HotkeyButton className="switcher right" hotkey="Space&nbsp;➡" onClick={() => bar.setToInteract()} />
+      <HotkeyButton className="switcher left" hotkey="⬅&nbsp;Space" onClick={() => bar.setToInteract()} />
     ) : (
-      <HotkeyButton className="switcher left" hotkey="⬅&nbsp;1...5" onClick={() => bar.setToBuild()} />
+      <HotkeyButton className="switcher right" hotkey="1...5&nbsp;➡" onClick={() => bar.setToBuild()} />
     );
   const currentClassName = current instanceof CellBar ? "cell" : "interact";
   return (

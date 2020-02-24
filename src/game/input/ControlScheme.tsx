@@ -1,7 +1,6 @@
 import React from "react";
 import { Vector2 } from "three";
 import { ActionMove } from "../../core/player/action";
-import { Cell } from "../../core/tile";
 import { Mito } from "../mito/mito";
 import { WorldDOMElement } from "../mito/WorldDOMElement";
 import { params } from "../params";
@@ -14,7 +13,7 @@ export interface ControlScheme {
 
   destroy(): void;
 
-  isInteract(): boolean;
+  wouldLeftClickInteract(): boolean;
 }
 
 export class PlayerControlScheme implements ControlScheme {
@@ -107,7 +106,10 @@ export class PlayerControlScheme implements ControlScheme {
     if (tile == null) {
       return;
     }
-    mito.actionBar.rightClick(tile);
+    const action = mito.actionBar.rightClick(tile);
+    if (action) {
+      mito.world.player.setAction(action);
+    }
   }
 
   public handleLeftClick() {
@@ -116,13 +118,16 @@ export class PlayerControlScheme implements ControlScheme {
     if (target == null) {
       return;
     }
-    mito.actionBar.leftClick(target);
+    const action = mito.actionBar.leftClick(target);
+    if (action) {
+      mito.world.player.setAction(action);
+    }
   }
 
-  public isInteract() {
+  public wouldLeftClickInteract() {
     const { mito } = this;
     const tile = mito.getHighlightedTile();
-    return tile != null && mito.actionBar.barFor(tile) === mito.actionBar.interactBar && tile instanceof Cell;
+    return tile != null && mito.actionBar.leftClick(tile)?.type === "interact";
   }
 }
 
@@ -165,7 +170,7 @@ export class PlayerSeedControlScheme implements ControlScheme {
     }
   }
 
-  public isInteract() {
+  public wouldLeftClickInteract() {
     return false;
   }
 }

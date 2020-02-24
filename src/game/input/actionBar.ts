@@ -1,15 +1,15 @@
 import { Vector2 } from "three";
 import { CellArgs } from "../../core/cell/cell";
 import { isInteractable } from "../../core/interactable";
-import { ActionBuild, ActionInteract } from "../../core/player/action";
+import { Action, ActionBuild, ActionDeconstruct, ActionInteract } from "../../core/player/action";
 import { Cell, Tile } from "../../core/tile";
 import Mito from "../mito/mito";
 import Keyboard from "./keyboard";
 
 export abstract class ActionBar {
-  abstract leftClick(target: Tile): void;
+  abstract leftClick(target: Tile): Action | undefined;
 
-  abstract rightClick(target: Tile): void;
+  abstract rightClick(target: Tile): Action | undefined;
 
   abstract keyDown(event: KeyboardEvent): void;
 }
@@ -71,11 +71,13 @@ export class CellBar extends ActionBar {
         position: target.pos.clone(),
         args,
       };
-      this.mito.world.player.setAction(action);
+      return action;
     }
   }
 
-  rightClick(tile: Tile) {}
+  rightClick(tile: Tile) {
+    return maybeDeconstructAction(tile);
+  }
 
   keyDown(event: KeyboardEvent) {
     if (this.shouldCapture(event)) {
@@ -96,6 +98,16 @@ export const CELL_BAR_KEYS: Record<string, number> = {
   Digit5: 4,
 };
 
+function maybeDeconstructAction(tile: Tile): ActionDeconstruct | undefined {
+  if (tile instanceof Cell && tile.isReproductive) {
+    return undefined; // disallow deleting reproductive cells
+  }
+  return {
+    type: "deconstruct",
+    position: tile.pos,
+  };
+}
+
 export class InteractBar extends ActionBar {
   constructor(public mito: Mito) {
     super();
@@ -107,18 +119,12 @@ export class InteractBar extends ActionBar {
         type: "interact",
         interactable: target,
       };
-      this.mito.world.player.setAction(action);
+      return action;
     }
   }
 
-  rightClick(tile: Tile): void {
-    if (tile instanceof Cell && tile.isReproductive) {
-      return; // disallow deleting reproductive cells
-    }
-    this.mito.world.player.setAction({
-      type: "deconstruct",
-      position: tile.pos,
-    });
+  rightClick(tile: Tile) {
+    return maybeDeconstructAction(tile);
   }
 
   keyDown(event: KeyboardEvent): void {
@@ -135,7 +141,7 @@ export class SwitchableBar extends ActionBar {
 
   constructor(public buildBar: CellBar, public interactBar: InteractBar) {
     super();
-    this.current = buildBar;
+    this.current = interactBar;
   }
 
   get other() {
@@ -151,11 +157,11 @@ export class SwitchableBar extends ActionBar {
   }
 
   leftClick(target: Tile) {
-    this.current.leftClick(target);
+    return this.current.leftClick(target);
   }
 
-  rightClick(target: Tile): void {
-    this.current.rightClick(target);
+  rightClick(target: Tile) {
+    return this.current.rightClick(target);
   }
 
   keyDown(event: KeyboardEvent) {
@@ -189,11 +195,11 @@ export class AltHeldBar extends ActionBar {
   }
 
   leftClick(target: Tile) {
-    this.barFor(target).leftClick(target);
+    return this.barFor(target).leftClick(target);
   }
 
   rightClick(target: Tile) {
-    this.barFor(target).rightClick(target);
+    return this.barFor(target).rightClick(target);
   }
 
   keyDown(event: KeyboardEvent) {
