@@ -51,7 +51,7 @@ const cellTypeRoot = new CellType(
 const cellTypeSeed = new CellType(
   "Seed",
   0,
-  new Chromosome(GeneLiving.level(2), GeneInventory.level(0), GeneSeed.level(2)),
+  new Chromosome(GeneLiving.level(2), GeneInventory.level(3), GeneObstacle.level(0), GeneSeed.level(2)),
   {
     texturePosition: new Vector2(1, 4),
   },
