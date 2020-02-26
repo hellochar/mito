@@ -7,13 +7,15 @@ import { GeneRenderer } from "./GeneRenderer";
 import "./GeneReproducerRenderer.scss";
 
 export class GeneReproducerRenderer extends GeneRenderer<Gene<ReproducerState, any>> {
-  percentMatureElement = this.mito.addWorldDOMElement(
-    () => this.target.cell,
-    () => {
-      const matured = reproducerGetPercentMatured(this.target);
-      return <div className="reproducer-percent-mature">{nf(matured * 100, 2)}%</div>;
-    }
-  );
+  percentMatureElement = this.tr.worldRenderer.renderResources
+    ? this.mito.addWorldDOMElement(
+        () => this.target.cell,
+        () => {
+          const matured = reproducerGetPercentMatured(this.target);
+          return <div className="reproducer-percent-mature">{nf(matured * 100, 2)}%</div>;
+        }
+      )
+    : null;
 
   hover() {}
 
@@ -47,6 +49,8 @@ export class GeneReproducerRenderer extends GeneRenderer<Gene<ReproducerState, a
   // }
 
   destroy() {
-    this.mito.removeWorldDOMElement(this.percentMatureElement);
+    if (this.percentMatureElement) {
+      this.mito.removeWorldDOMElement(this.percentMatureElement);
+    }
   }
 }

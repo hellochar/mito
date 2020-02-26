@@ -1,4 +1,4 @@
-import { TIME_PER_SEASON } from "core/constants";
+import { TIME_PER_DAY } from "core/constants";
 import { Tile } from "core/tile";
 import Mito from "game/mito/mito";
 import { WorldRenderer } from "game/renderers/WorldRenderer";
@@ -27,7 +27,7 @@ class VignetteCapturer {
 
   private lastCaptureTime: number = 0;
 
-  public constructor(public readonly mito: Mito, public pxPerTile = 4, public captureInterval = TIME_PER_SEASON / 27) {}
+  public constructor(public readonly mito: Mito, public pxPerTile = 32, public captureInterval = TIME_PER_DAY) {}
 
   isTimeForNewCapture() {
     return this.mito.world.time - this.lastCaptureTime > this.captureInterval;

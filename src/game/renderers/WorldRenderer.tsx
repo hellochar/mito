@@ -19,7 +19,7 @@ export class WorldRenderer extends Renderer<World> {
   // private lightEmitter: LightEmitter;
   public eventLogRenderer?: EventLogRenderer;
 
-  constructor(target: World, scene: Scene, mito: Mito, renderResources = true) {
+  constructor(target: World, scene: Scene, mito: Mito, public renderResources = true) {
     super(target, scene, mito);
 
     // must be added before all particles
@@ -51,7 +51,7 @@ export class WorldRenderer extends Renderer<World> {
     } else if (object instanceof PlayerSeed) {
       return new PlayerSeedRenderer(object, this.scene, this.mito);
     } else if (object instanceof Tile) {
-      return new InstancedTileRenderer(object, this.scene, this.mito, this.tileBatcher);
+      return new InstancedTileRenderer(object, this.scene, this.mito, this.tileBatcher, this);
     } else {
       console.error(`Couldn't find renderer for`, object);
       return null!;

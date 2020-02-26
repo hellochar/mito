@@ -16,6 +16,7 @@ import { Constructor } from "typings/constructor";
 import { MaterialInfo } from "../../../core/cell/materialInfo";
 import { InventoryRenderer } from "../InventoryRenderer";
 import { Renderer } from "../Renderer";
+import { WorldRenderer } from "../WorldRenderer";
 import { Animation, AnimationController } from "./Animation";
 import { CellEffectsRenderer } from "./CellEffectsRenderer";
 import { GeneDirectionalPushRenderer } from "./GeneDirectionalPushRenderer";
@@ -52,12 +53,15 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   private instance: BatchInstance;
 
+  worldRenderer: WorldRenderer;
+
   get materialInfo() {
     return getMaterialInfo(this.target);
   }
 
-  constructor(target: T, scene: Scene, mito: Mito, batchMesh: TileBatcher) {
+  constructor(target: T, scene: Scene, mito: Mito, batchMesh: TileBatcher, worldRenderer: WorldRenderer) {
     super(target, scene, mito);
+    this.worldRenderer = worldRenderer;
     this.instance = batchMesh.getBatchInstance(target);
     if (this.target instanceof GrowingCell) {
       this.scale.set(0.01, 0.01, 1);
