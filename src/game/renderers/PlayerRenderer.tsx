@@ -129,7 +129,7 @@ export class PlayerRenderer extends Renderer<Player> {
       return t > tNorm;
     };
     const animSendCopy = this.animSendCopy(actionLong.effect.position);
-    const animWaitEnd = animPause(1);
+    const animWaitEnd = animPause(0.5);
 
     const focusCamera: Animation = () => {
       this.mito.suggestCamera({
