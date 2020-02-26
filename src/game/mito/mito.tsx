@@ -66,7 +66,7 @@ export class Mito extends ISketch {
 
   private vignetteCapturer = new VignetteCapturer(this);
 
-  private vignettes: HTMLCanvasElement[] = [];
+  public vignettes: HTMLCanvasElement[] = [];
 
   private hackCamera?: PerspectiveCamera;
 
@@ -246,16 +246,11 @@ export class Mito extends ISketch {
     // this.world.player.dropSugar = this.keyMap.has("e");
     this.world.step(dt);
 
-    if (this.vignetteCapturer.isTimeForNewCapture()) {
-      const v = this.vignetteCapturer.capture();
-      this.vignettes.push(v);
-    }
-
     if (this.tutorialRef) {
       this.tutorialRef.setState({ time: this.world.time });
     }
 
-    const gameResult = maybeGetGameResult(this.world);
+    const gameResult = maybeGetGameResult(this);
     if (gameResult != null) {
       this.onWinLoss(gameResult);
     }
@@ -353,6 +348,11 @@ export class Mito extends ISketch {
     this.highlightedTile = this.getHighlightedTile();
     if (this.highlightedTile != null) {
       (this.worldRenderer.getOrCreateRenderer(this.highlightedTile) as InstancedTileRenderer).updateHover();
+    }
+
+    if (this.vignetteCapturer.isTimeForNewCapture()) {
+      const v = this.vignetteCapturer.capture();
+      this.vignettes.push(v);
     }
 
     this.updateCamera(this.suggestedCamera || this.defaultCameraState());

@@ -1,5 +1,6 @@
 import { Cell } from "../core/tile";
 import { World } from "../core/world/world";
+import Mito from "./mito/mito";
 
 export interface GameResult {
   status: "won" | "lost";
@@ -9,9 +10,11 @@ export interface GameResult {
    */
   mutationPointsPerEpoch: number;
   world: World;
+  vignettes?: HTMLCanvasElement[];
 }
 
-export function maybeGetGameResult(world: World): GameResult | null {
+export function maybeGetGameResult(mito: Mito): GameResult | null {
+  const { world } = mito;
   let anyCellsAlive = false || world.playerSeed != null;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   for (const cell of world.allCells()) {
@@ -27,10 +30,11 @@ export function maybeGetGameResult(world: World): GameResult | null {
   }
 
   // make a decision
-  return getDecidedGameResult(world);
+  return getDecidedGameResult(mito);
 }
 
-export function getDecidedGameResult(world: World): GameResult {
+export function getDecidedGameResult(mito: Mito): GameResult {
+  const { world, vignettes } = mito;
   const matureEarners = Array.from(world.mpEarners.entries()).filter(([f, mpEarned]) => mpEarned > 0);
   const shouldWin = matureEarners.length > 0;
 
@@ -38,6 +42,7 @@ export function getDecidedGameResult(world: World): GameResult {
     mpEarners: world.mpEarners,
     mutationPointsPerEpoch: matureEarners.map(([, mp]) => mp).reduce((a, b) => a + b, 0),
     status: shouldWin ? "won" : "lost",
+    vignettes,
     world,
   };
 }

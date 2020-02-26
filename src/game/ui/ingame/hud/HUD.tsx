@@ -121,7 +121,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   }
 
   maybeRenderCollectButton() {
-    const result = getDecidedGameResult(this.world);
+    const result = getDecidedGameResult(this.mito);
     if (result.status === "won") {
       return (
         <div className="hud-right-of-time">

@@ -11,6 +11,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
       world: mito.world,
       status: "won",
       mutationPointsPerEpoch: 2,
+      vignettes: mito.vignettes,
     });
   }, [mito]);
 
@@ -20,6 +21,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
       world: mito.world,
       status: "lost",
       mutationPointsPerEpoch: 0,
+      vignettes: mito.vignettes,
     });
   }, [mito]);
 
