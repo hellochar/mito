@@ -1,6 +1,7 @@
 import classnames from "classnames";
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
+import uuid from "uuid";
 import { getDecidedGameResult } from "../../../gameResult";
 import { PlayerSeedControlScheme } from "../../../input/ControlScheme";
 import Mito from "../../../mito/mito";
@@ -74,6 +75,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         {this.maybeRenderGenomeViewer()}
         {this.maybeRenderCollectButton()}
         {this.maybeRenderGerminateButton()}
+        {this.maybeRenderInvalidAction()}
         <div className={classnames("hud-bottom", { hidden: !showPlayerHUD })}>
           {isMaxedEl}
           <InventoryBar
@@ -91,6 +93,13 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         </div>
       </>
     );
+  }
+
+  maybeRenderInvalidAction() {
+    const invalidAction = this.mito.invalidAction;
+    if (invalidAction != null) {
+      return <InvalidActionMessage invalidAction={invalidAction} />;
+    }
   }
 
   maybeRenderGerminateButton() {
@@ -134,3 +143,16 @@ export class HUD extends React.Component<HUDProps, HUDState> {
     }
   }
 }
+
+const InvalidActionMessage: React.FC<{ invalidAction: { message: string } }> = React.memo(({ invalidAction }) => {
+  // get new id on every render (aka reference equal invalidAction)
+  // to trigger animation each time
+  const id = uuid();
+  return (
+    <div className="hud-below-center">
+      <div className="invalid-action" key={id}>
+        {invalidAction.message}
+      </div>
+    </div>
+  );
+});

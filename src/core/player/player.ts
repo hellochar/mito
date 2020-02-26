@@ -139,6 +139,8 @@ export class Player implements Steppable {
 
   public on(event: "action", cb: (action: Action) => void): void;
 
+  public on(event: "action-fail", cb: (action: Action) => void): void;
+
   public on(event: "start-long-action", cb: (action: ActionLong) => void): void;
 
   public on(event: string, cb: (...args: any[]) => void) {
@@ -189,6 +191,8 @@ export class Player implements Steppable {
     const successful = this._attemptAction(action, dt);
     if (successful) {
       this.events.emit("action", action);
+    } else {
+      this.events.emit("action-fail", action);
     }
     return successful;
   }
@@ -299,6 +303,9 @@ export class Player implements Steppable {
   }
 
   public attemptBuild(action: ActionBuild, dt: number) {
+    if (!this.canBuildAt(this.world.tileAt(action.position))) {
+      return false;
+    }
     const existingCell = this.world.cellAt(action.position.x, action.position.y);
     if (existingCell != null) {
       // don't allow building over

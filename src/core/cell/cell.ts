@@ -169,6 +169,10 @@ export class Cell extends Tile implements Interactable {
 
       if (water > 0 || sugar > 0) {
         anyInteracted = true;
+      } else if (from.isEmpty()) {
+        // if no resources moved because the source had no resources; count
+        // that as "successful"
+        anyInteracted = true;
       }
     }
     return anyInteracted;

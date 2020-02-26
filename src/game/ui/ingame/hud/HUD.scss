@@ -35,6 +35,42 @@
   }
 }
 
+.hud-below-center {
+  position: absolute;
+  bottom: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.invalid-action {
+  animation: tempIn 1.2s both;
+  color: white;
+  @include text-outline();
+  font-weight: bold;
+  font-size: 2em;
+
+  @keyframes tempIn {
+    0% {
+      opacity: 0.5;
+      transform: scale(1.5);
+    }
+
+    10% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    75% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+}
+
 .hud-right {
   position: absolute;
   right: 10px;

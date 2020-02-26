@@ -1,4 +1,5 @@
 import { sleep } from "common/promise";
+import { Action } from "core/player/action";
 import { easeSinIn } from "d3-ease";
 import { PopulationAttempt } from "game/app";
 import { ISketch, SketchAudioContext } from "game/screens/sketch/sketch";
@@ -113,6 +114,7 @@ export class Mito extends ISketch {
     this.nodePost.output = noiseNode as any;
     const { info } = attempt.targetHex;
     this.world = new World(environmentFromLevelInfo(info), info.seed, attempt.settlingSpecies);
+    this.world.player.on("action-fail", this.handlePlayerActionFail);
 
     this.camera.position.z = 10;
     this.camera.lookAt(0, 0, 0);
@@ -165,6 +167,15 @@ export class Mito extends ISketch {
       const newZoom = currZoom * scalar;
       this.userZoom = newZoom;
     },
+  };
+
+  private handlePlayerActionFail = (action: Action) => {
+    if (action.type === "interact" && this.world.player.inventory.isMaxed()) {
+      this.showInvalidAction({ message: `Inventory full!` });
+    } else if (action.type === "build") {
+      this.showInvalidAction({ message: "Can't build there!" });
+    }
+    // this.showInvalidAction({ message: `Could not ${action.type}!` });
   };
 
   private handleBeforeUnload = () => {
@@ -319,6 +330,16 @@ export class Mito extends ISketch {
     );
     await sleep(1000);
     this.removeWorldDOMElement(element);
+  }
+
+  invalidAction?: { message: string };
+
+  async showInvalidAction(invalidAction: { message: string }) {
+    this.invalidAction = invalidAction;
+    await sleep(3000);
+    if (this.invalidAction === invalidAction) {
+      this.invalidAction = undefined;
+    }
   }
 
   public animate(millisDelta: number) {
