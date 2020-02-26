@@ -19,8 +19,8 @@ export default class EventGrowFruitRenderer extends EventRendererFFPoints<EventG
         const t = s.time / duration;
 
         const { cell, resourcesUsed, a0 } = s.info;
-        const dist = map(easeCubicIn(t), 0, 1, 0.5, 0.25);
-        const angle = map(t, 0, 1, 0, Math.PI * 2) + a0;
+        const dist = map(easeCubicIn(t), 0, 1, 0.7, 0.0);
+        const angle = map(t, 0, 1, 0, Math.PI / 2) + a0;
         const size = Math.sqrt(polyUpDown(t)) * resourcesUsed;
         s.x = cell.pos.x + Math.cos(angle) * dist;
         s.y = cell.pos.y + Math.sin(angle) * dist;
@@ -30,8 +30,8 @@ export default class EventGrowFruitRenderer extends EventRendererFFPoints<EventG
       {
         size: 200,
         opacity: 0.8,
-        color: MUTATION_PURPLE,
-        map: textureFromSpritesheet(0, 4),
+        color: new Color("white"),
+        map: textureFromSpritesheet(0, 5),
       }
     );
   }
@@ -56,5 +56,3 @@ export default class EventGrowFruitRenderer extends EventRendererFFPoints<EventG
     }
   }
 }
-
-const MUTATION_PURPLE = new Color("purple");
