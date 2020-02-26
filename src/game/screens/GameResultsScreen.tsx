@@ -84,6 +84,11 @@ function GameWonScreen({ results }: GameResultsScreenProps) {
       </div>
       <h1>You {winDescription}!</h1>
       <h2>{results.mutationPointsPerEpoch} Mutation Points earned.</h2>
+      <div className="vignettes">
+        {results.vignettes?.map((v) => (
+          <img src={v.toDataURL()} alt="" />
+        ))}
+      </div>
       <MPEarnerList results={results} />
     </>
   );
@@ -105,6 +110,11 @@ function GameLostScreen({ results }: GameResultsScreenProps) {
         <i>{results.world.species.name}</i> couldn't survive!
       </h1>
       <div>You survived until {seasonDisplay(results.world.season)}!</div>
+      <div className="vignettes">
+        {results.vignettes?.map((v) => (
+          <img src={v.toDataURL()} alt="" />
+        ))}
+      </div>
       <MPEarnerList results={results} className="dark" />
     </>
   );
