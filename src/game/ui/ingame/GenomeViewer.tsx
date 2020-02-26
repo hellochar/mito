@@ -248,7 +248,7 @@ const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cell
       <div className="gene-header">
         <GeneCost cost={cost} />
         <h4>
-          {gd.blueprint.name} {gene.level + 1}
+          {gd.blueprint.name} {gene.gene.blueprint.levelCosts.length > 1 ? gene.level + 1 : ""}
           {/* <span style={{ opacity: 0.5 }}>{gene.level + 1}</span> */}
           {/* <div className="gene-level-arrows">
               <button className="up" onClick={() => gene.setLevel(level + 1)}>
