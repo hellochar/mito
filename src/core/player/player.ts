@@ -357,21 +357,21 @@ export class Player implements Steppable {
 
   public attemptDrop(action: ActionDrop, _dt: number) {
     // drop as much as you can onto the current tile
-    const currentTile = this.currentTile();
+    const target = action.target ?? this.currentTile();
     const { water: waterToDrop, sugar: sugarToDrop } = action;
-    // first, pick up the opposite of what you can from the tile to try and make space
-    currentTile.inventory.give(this.inventory, sugarToDrop, waterToDrop);
+    // // first, pick up the opposite of what you can from the tile to try and make space
+    // target.inventory.give(this.inventory, sugarToDrop, waterToDrop);
 
     // give as much as you can
-    const { water, sugar } = this.inventory.give(currentTile.inventory, waterToDrop, sugarToDrop);
+    const { water, sugar } = this.inventory.give(target.inventory, waterToDrop, sugarToDrop);
     return water > 0 || sugar > 0;
   }
 
   public attemptPickup(action: ActionPickup, dt: number) {
-    const cell = this.currentTile();
-    const inv = cell.inventory;
-    inv.give(this.inventory, action.water * dt, action.sugar * dt);
-    return true;
+    const target = action.target ?? this.currentTile();
+    const inv = target.inventory;
+    const { water, sugar } = inv.give(this.inventory, action.water * dt, action.sugar * dt);
+    return water > 0 || sugar > 0;
   }
 
   public attemptMultiple(multiple: ActionMultiple, dt: number) {

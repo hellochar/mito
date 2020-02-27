@@ -108,6 +108,26 @@ function maybeDeconstructAction(tile: Tile): ActionDeconstruct | undefined {
   };
 }
 
+export class ExchangeResourceBar extends ActionBar {
+  tools = [
+    // suck water
+    (target: Tile): Action => {
+      // target.inventory.give(this.mito.player.inventory, )
+      return {
+        type: "pickup",
+        sugar: 0,
+        water:
+      }
+    }
+  ];
+
+  private _index = 0;
+
+  constructor(public mito: Mito) {
+    super();
+  }
+}
+
 export class InteractBar extends ActionBar {
   constructor(public mito: Mito) {
     super();

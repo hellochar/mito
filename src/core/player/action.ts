@@ -1,3 +1,4 @@
+import { Tile } from "core/tile";
 import { Vector2 } from "three";
 import { CellArgs } from "../cell/cell";
 import { CellType } from "../cell/genome";
@@ -28,6 +29,7 @@ export interface ActionDrop {
   type: "drop";
   water: number;
   sugar: number;
+  target?: Tile;
 }
 
 export interface ActionPickup {
@@ -42,6 +44,8 @@ export interface ActionPickup {
    * Rate of sugar pickup per second.
    */
   sugar: number;
+
+  target?: Tile;
 }
 
 export interface ActionMultiple {

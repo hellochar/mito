@@ -35,3 +35,11 @@ export const SwitchableBarUI: React.FC<SwitchableBarUIProps> = ({ bar }) => {
 };
 
 export default SwitchableBarUI;
+
+export const DoubleBarUI: React.FC<SwitchableBarUIProps> = ({ bar }) => {
+  return (
+    <div className={classNames("double-bar")}>
+      <CellBarUI bar={bar.buildBar} disabled={bar.buildBar.mito.world.player.getBuildError()} />
+    </div>
+  );
+};
