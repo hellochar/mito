@@ -29,7 +29,7 @@ export class PlayerControlScheme implements ControlScheme {
 
   animate(_ms: number) {
     const { mito } = this;
-    if (Keyboard.isAltHeld() && this.altElement == null) {
+    if (Keyboard.shouldShowInMapPopup() && this.altElement == null) {
       this.altElement = mito.addWorldDOMElement(
         () => mito.getHighlightedTile()!,
         () => {
@@ -40,7 +40,7 @@ export class PlayerControlScheme implements ControlScheme {
           );
         }
       );
-    } else if (!Keyboard.isAltHeld() && this.altElement != null) {
+    } else if (!Keyboard.shouldShowInMapPopup() && this.altElement != null) {
       mito.removeWorldDOMElement(this.altElement);
       this.altElement = undefined;
     }

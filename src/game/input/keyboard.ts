@@ -29,6 +29,7 @@ export const Keyboard = new (class Input {
       (event.code === "KeyI" && event.altKey && event.metaKey);
     if (!isOpeningDevtoolsOnChrome) {
       event.preventDefault();
+      return false;
     }
   };
 
@@ -36,10 +37,11 @@ export const Keyboard = new (class Input {
     this.keyMap.delete(event.code);
   };
 
-  public isAltHeld() {
+  public shouldShowInMapPopup() {
     return (
       // TODO add mac cmd key
       this.keyMap.has("AltLeft") || this.keyMap.has("AltRight")
+      // this.keyMap.has("ShiftLeft") || this.keyMap.has("ShiftRight")
     );
   }
 })();

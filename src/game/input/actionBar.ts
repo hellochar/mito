@@ -187,7 +187,7 @@ export class AltHeldBar extends ActionBar {
   }
 
   barFor(target: Tile) {
-    if (target instanceof Cell || Keyboard.isAltHeld()) {
+    if (target instanceof Cell || Keyboard.shouldShowInMapPopup()) {
       return this.interactBar;
     } else {
       return this.buildBar;
