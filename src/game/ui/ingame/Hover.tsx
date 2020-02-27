@@ -1,3 +1,4 @@
+import TileHighlight from "game/tutorial/tileHighlight";
 import * as React from "react";
 import { Tile } from "../../../core/tile";
 import Mito from "../../mito/mito";
@@ -23,6 +24,7 @@ export class Hover extends React.Component<HoverProps> {
     return (
       <>
         <PointHighlight x={highlightedPosition.x} y={highlightedPosition.y} scene={this.scene} />
+        {this.maybeRenderBuildBlueprint(highlightedTile)}
         {this.maybeRenderTileHighlight(highlightedTile)}
         {/* {this.maybeRenderPath()} */}
       </>
@@ -30,6 +32,18 @@ export class Hover extends React.Component<HoverProps> {
   }
 
   public maybeRenderTileHighlight(tile?: Tile) {
+    if (tile == null) {
+      return;
+    }
+    const { mito } = this.props;
+    const showBuildBlueprint = mito.actionBar.leftClick(tile)?.type === "interact";
+    const tileHighlight = showBuildBlueprint ? (
+      <TileHighlight x={tile.pos.x} y={tile.pos.y} scene={this.props.mito.scene} />
+    ) : null;
+    return tileHighlight;
+  }
+
+  public maybeRenderBuildBlueprint(tile?: Tile) {
     if (tile == null) {
       return;
     }
