@@ -2,6 +2,7 @@ import { parse, stringify } from "query-string";
 
 const PARAMS_DEFAULT = {
   hud: true,
+  showGodUI: false,
   debugPerf: false,
   debug: process.env.NODE_ENV === "development",
 };

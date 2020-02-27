@@ -79,6 +79,9 @@ export class PlayerControlScheme implements ControlScheme {
       if (code === "KeyH") {
         params.hud = !params.hud;
       }
+      if (code === "Slash") {
+        params.showGodUI = !params.showGodUI;
+      }
     }
     mito.actionBar.keyDown(event);
   };

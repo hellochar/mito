@@ -210,7 +210,7 @@ export class Mito extends ISketch {
         <HUD mito={this} />
         {showPlayerHUD ? <Hover mito={this} /> : null}
         <div className="world-dom-components">{worldDomElementComponents}</div>
-        {params.debug ? <Debug mito={this} /> : null}
+        {params.showGodUI ? <Debug mito={this} /> : null}
         {this.instructionsOpen ? <Instructions play={() => (this.instructionsOpen = false)} /> : null}
       </>
     );
@@ -225,7 +225,7 @@ export class Mito extends ISketch {
   }
 
   maybeToggleInstructions(code: string) {
-    if (code === "Slash") {
+    if (code === "F1") {
       this.instructionsOpen = !this.instructionsOpen;
       return;
     }

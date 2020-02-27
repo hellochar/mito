@@ -48,10 +48,6 @@ export class PlayerRenderer extends Renderer<Player> {
       this.neuronMesh.handleInteracted();
       interactSound.fade(1.0, 0.0, 200);
       interactSound.rate(randFloat(0.8, 1.5));
-      // if (!interactSound.playing()) {
-      //   interactSound.play();
-      //   interactSound.rate(randFloat(0.5, 1.5));
-      // }
     } else if (action.type === "build") {
       const id = build.play();
       build.rate(randFloat(0.5, 1.0), id);

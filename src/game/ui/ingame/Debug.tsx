@@ -26,7 +26,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
   }, [mito]);
 
   return (
-    <div style={{ position: "absolute", bottom: 0, left: 0, background: "white" }}>
+    <div style={{ position: "absolute", bottom: 0, right: 0, background: "white" }}>
       <div style={{ display: "flex" }}>
         <Button color="green" onClick={doWin}>
           Win
