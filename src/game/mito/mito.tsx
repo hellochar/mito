@@ -16,7 +16,7 @@ import { Tile } from "../../core/tile";
 import { clamp, lerp, lerp2, map } from "../../math/index";
 import { drums, hookUpAudio, strings, whoosh } from "../audio";
 import { GameResult, maybeGetGameResult } from "../gameResult";
-import { CellBar, InteractBar, SwitchableBar } from "../input/actionBar";
+import { CellBar, StackedBar, ToolBar } from "../input/actionBar";
 import { ControlScheme, PlayerSeedControlScheme } from "../input/ControlScheme";
 import { params } from "../params";
 import { InstancedTileRenderer } from "../renderers/tile/InstancedTileRenderer";
@@ -37,7 +37,8 @@ export class Mito extends ISketch {
 
   public readonly world: World;
 
-  public readonly actionBar: SwitchableBar;
+  // public readonly actionBar: SwitchableBar;
+  public readonly actionBar: StackedBar;
   // public readonly actionBar: AltHeldBar;
 
   public readonly scene = configure(new Scene(), (s) => {
@@ -138,7 +139,8 @@ export class Mito extends ISketch {
     this.updateAmbientAudio();
     this.attachWindowEvents();
 
-    this.actionBar = new SwitchableBar(new CellBar(this), new InteractBar(this));
+    this.actionBar = new StackedBar(new CellBar(this), new ToolBar(this));
+    // this.actionBar = new SwitchableBar(new CellBar(this), new InteractBar(this));
     // this.actionBar = new AltHeldBar(this);
     // this.controls = new ControlScheme(this);
     this.controls = new PlayerSeedControlScheme(this);
@@ -170,7 +172,11 @@ export class Mito extends ISketch {
   };
 
   private handlePlayerActionFail = (action: Action) => {
-    if (action.type === "interact" && this.world.player.inventory.isMaxed()) {
+    if (action.type === "pickup" && this.world.player.inventory.isMaxed()) {
+      this.showInvalidAction({ message: "Inventory full!" });
+    } else if (action.type === "drop" && action.target && action.target.inventory.isMaxed()) {
+      this.showInvalidAction({ message: `${action.target.displayName} inventory full!` });
+    } else if (action.type === "interact" && this.world.player.inventory.isMaxed()) {
       this.showInvalidAction({ message: `Inventory full!` });
     } else if (action.type === "build") {
       this.showInvalidAction({ message: "Can't build there!" });

@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import * as React from "react";
-import { CellBar, SwitchableBar } from "../../../input/actionBar";
+import { CellBar, StackedBar, SwitchableBar, ToolBar } from "../../../input/actionBar";
 import { HotkeyButton } from "../HotkeyButton";
 import { TileDetails } from "../TileDetails";
 import CellBarUI from "./CellBarUI";
@@ -36,10 +36,31 @@ export const SwitchableBarUI: React.FC<SwitchableBarUIProps> = ({ bar }) => {
 
 export default SwitchableBarUI;
 
-export const DoubleBarUI: React.FC<SwitchableBarUIProps> = ({ bar }) => {
+export const StackedBarUI: React.FC<{ bar: StackedBar }> = ({ bar }) => {
   return (
     <div className={classNames("double-bar")}>
-      <CellBarUI bar={bar.buildBar} disabled={bar.buildBar.mito.world.player.getBuildError()} />
+      <div className={classNames({ active: bar.current === bar.toolBar })}>
+        <ToolBarUI bar={bar.toolBar} />
+      </div>
+      <div className={classNames({ active: bar.current === bar.buildBar })}>
+        <CellBarUI bar={bar.buildBar} disabled={bar.buildBar.mito.world.player.getBuildError()} />
+      </div>
+    </div>
+  );
+};
+
+const ToolBarUI: React.FC<{ bar: ToolBar }> = ({ bar }) => {
+  const keys = Object.keys(bar.tools);
+  return (
+    <div className="tool-bar">
+      {keys.map((key) => {
+        return (
+          <div className={classNames("tool", { selected: bar.currentTool === key })}>
+            <div className="icon-cell">{bar.tools[key].name}</div>
+            <HotkeyButton hotkey={key} />
+          </div>
+        );
+      })}
     </div>
   );
 };

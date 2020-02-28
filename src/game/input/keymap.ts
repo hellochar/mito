@@ -2,24 +2,24 @@ import { DIRECTIONS } from "../../core/directions";
 import { Action, ActionMove } from "../../core/player/action";
 
 export const ACTION_CONTINUOUS_KEYMAP: { [key: string]: Action } = {
-  Space: {
-    type: "pickup",
-    sugar: 30,
-    water: 30,
-  },
+  // Space: {
+  //   type: "pickup",
+  //   sugar: 30,
+  //   water: 30,
+  // },
 };
 
 export const ACTION_INSTANT_KEYMAP: { [key: string]: Action } = {
-  KeyQ: {
-    type: "drop",
-    sugar: 0,
-    water: 5,
-  },
-  KeyE: {
-    type: "drop",
-    sugar: 1,
-    water: 0,
-  },
+  // KeyQ: {
+  //   type: "drop",
+  //   sugar: 0,
+  //   water: 5,
+  // },
+  // KeyE: {
+  //   type: "drop",
+  //   sugar: 1,
+  //   water: 0,
+  // },
 };
 
 export const MOVEMENT_KEYS: { [key: string]: ActionMove } = {

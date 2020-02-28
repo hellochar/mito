@@ -1,3 +1,4 @@
+import { PLAYER_INTERACT_EXCHANGE_SPEED } from "core/constants";
 import { Vector2 } from "three";
 import { CellArgs } from "../../core/cell/cell";
 import { isInteractable } from "../../core/interactable";
@@ -108,23 +109,108 @@ function maybeDeconstructAction(tile: Tile): ActionDeconstruct | undefined {
   };
 }
 
-export class ExchangeResourceBar extends ActionBar {
-  tools = [
+export class ToolBar extends ActionBar {
+  tools: Record<string, (tile: Tile) => Action> = {
     // suck water
-    (target: Tile): Action => {
-      // target.inventory.give(this.mito.player.inventory, )
+    KeyQ: function SuckWater(target: Tile): Action {
       return {
         type: "pickup",
         sugar: 0,
-        water:
-      }
-    }
-  ];
+        water: PLAYER_INTERACT_EXCHANGE_SPEED,
+        target,
+      };
+    },
+    // suck sugar
+    KeyE: function SuckSugar(target: Tile): Action {
+      return {
+        type: "pickup",
+        sugar: PLAYER_INTERACT_EXCHANGE_SPEED,
+        water: 0,
+        target,
+      };
+    },
+    // drop water
+    KeyR: function DropWater(target: Tile): Action {
+      return {
+        type: "drop",
+        sugar: 0,
+        water: PLAYER_INTERACT_EXCHANGE_SPEED,
+        target,
+      };
+    },
+    // drop sugar
+    KeyF: function DropSugar(target: Tile): Action {
+      return {
+        type: "drop",
+        sugar: PLAYER_INTERACT_EXCHANGE_SPEED,
+        water: 0,
+        target,
+      };
+    },
+  };
 
-  private _index = 0;
+  public currentTool?: string;
 
   constructor(public mito: Mito) {
     super();
+  }
+
+  leftClick(target: Tile): Action | undefined {
+    if (this.currentTool) {
+      return this.tools[this.currentTool](target);
+    }
+  }
+
+  rightClick(tile: Tile): Action | undefined {
+    return maybeDeconstructAction(tile);
+  }
+
+  keyDown(event: KeyboardEvent) {
+    if (this.shouldCapture(event)) {
+      this.currentTool = event.code;
+    }
+  }
+
+  shouldCapture(event: KeyboardEvent) {
+    return !event.repeat && event.code in this.tools;
+  }
+}
+
+export class StackedBar extends ActionBar {
+  public current: CellBar | ToolBar;
+
+  constructor(public buildBar: CellBar, public toolBar: ToolBar) {
+    super();
+    this.current = toolBar;
+  }
+
+  get other() {
+    return this.current === this.buildBar ? this.toolBar : this.buildBar;
+  }
+
+  setToTools() {
+    this.current = this.toolBar;
+  }
+
+  setToBuild() {
+    this.current = this.buildBar;
+  }
+
+  leftClick(target: Tile) {
+    return this.current.leftClick(target);
+  }
+
+  rightClick(target: Tile) {
+    return this.current.rightClick(target);
+  }
+
+  keyDown(event: KeyboardEvent) {
+    if (this.buildBar.shouldCapture(event)) {
+      this.current = this.buildBar;
+    } else if (this.toolBar.shouldCapture(event)) {
+      this.current = this.toolBar;
+    }
+    this.current.keyDown(event);
   }
 }
 

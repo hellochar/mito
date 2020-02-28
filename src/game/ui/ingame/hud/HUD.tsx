@@ -8,9 +8,10 @@ import Mito from "../../../mito/mito";
 import GenomeViewer from "../GenomeViewer";
 import { HotkeyButton } from "../HotkeyButton";
 import { InventoryBar } from "../InventoryBar";
+import { TileDetails } from "../TileDetails";
 import "./HUD.scss";
 import SeasonsTracker from "./SeasonsTracker";
-import SwitchableBarUI from "./SwitchableBarUI";
+import { StackedBarUI } from "./SwitchableBarUI";
 
 export interface HUDProps {
   mito: Mito;
@@ -76,7 +77,8 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         {this.maybeRenderCollectButton()}
         {this.maybeRenderGerminateButton()}
         {this.maybeRenderInvalidAction()}
-        <div className={classnames("hud-bottom", { hidden: !showPlayerHUD })}>
+        <TileDetails tile={this.mito.getHighlightedTile()} />
+        <div className={classnames("hud-bottom-right", { hidden: !showPlayerHUD })}>
           {isMaxedEl}
           <InventoryBar
             water={this.inventory.water}
@@ -85,7 +87,8 @@ export class HUD extends React.Component<HUDProps, HUDState> {
             format="icons"
             className="player-inventory-bar"
           />
-          <SwitchableBarUI bar={this.mito.actionBar} />
+          <StackedBarUI bar={this.mito.actionBar} />
+          {/* <SwitchableBarUI bar={this.mito.actionBar} /> */}
           {/* <CellBarUI
             bar={this.mito.actionBar.buildBar}
             disabled={this.mito.world.player.getBuildError() || (Keyboard.isAltHeld() ? true : undefined)}

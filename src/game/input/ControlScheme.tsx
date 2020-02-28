@@ -4,7 +4,6 @@ import { ActionMove } from "../../core/player/action";
 import { Mito } from "../mito/mito";
 import { WorldDOMElement } from "../mito/WorldDOMElement";
 import { params } from "../params";
-import { TileDetails } from "../ui/ingame";
 import Keyboard from "./keyboard";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 
@@ -29,18 +28,27 @@ export class PlayerControlScheme implements ControlScheme {
 
   animate(_ms: number) {
     const { mito } = this;
-    if (Keyboard.shouldShowInMapPopup() && this.altElement == null) {
+    if (
+      // Keyboard.shouldShowInMapPopup() &&
+      this.altElement == null &&
+      mito.actionBar.current === mito.actionBar.toolBar
+    ) {
       this.altElement = mito.addWorldDOMElement(
         () => mito.getHighlightedTile()!,
         () => {
+          const toolBar = mito.actionBar.toolBar;
+          const tool = toolBar.tools[toolBar.currentTool!];
           return (
             <div className="tile-details-container">
-              <TileDetails tile={mito.getHighlightedTile()} />
+              {/* <TileDetails tile={mito.getHighlightedTile()} /> */}
+              <div style={{ padding: 10, background: "white", borderRadius: 5 }}>
+                {tool ? "Click to " + tool.name : null}
+              </div>
             </div>
           );
         }
       );
-    } else if (!Keyboard.shouldShowInMapPopup() && this.altElement != null) {
+    } else if (this.altElement != null && mito.actionBar.current !== mito.actionBar.toolBar) {
       mito.removeWorldDOMElement(this.altElement);
       this.altElement = undefined;
     }
@@ -130,7 +138,9 @@ export class PlayerControlScheme implements ControlScheme {
   public wouldLeftClickInteract() {
     const { mito } = this;
     const tile = mito.getHighlightedTile();
-    return tile != null && mito.actionBar.leftClick(tile)?.type === "interact";
+    // return tile != null && mito.actionBar.leftClick(tile)?.type === "interact";
+    const type = tile && mito.actionBar.leftClick(tile)?.type;
+    return type === "interact" || type === "pickup" || type === "drop";
   }
 }
 
