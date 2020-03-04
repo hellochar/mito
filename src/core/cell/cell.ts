@@ -41,7 +41,7 @@ export class Cell extends Tile implements Interactable {
 
   public chromosome: Chromosome;
 
-  public geneInstances: GeneInstance<Gene<unknown, string>>[];
+  public geneInstances: GeneInstance<Gene<any, string>>[];
 
   public inventory: Inventory;
 
