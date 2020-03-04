@@ -57,7 +57,7 @@ const ToolBarUI: React.FC<{ bar: ToolBar }> = ({ bar }) => {
         return (
           <div className={classNames("tool", { selected: bar.currentTool === key })}>
             <div className="icon-cell">{bar.tools[key].name}</div>
-            <HotkeyButton hotkey={key} />
+            <HotkeyButton hotkey={key.charAt(key.length - 1)} />
           </div>
         );
       })}

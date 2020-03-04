@@ -38,14 +38,16 @@ export class WorldRenderer extends Renderer<World> {
     const renderer = this.renderers.get(entity);
     if (renderer == null) {
       const created = this.createRendererFor(entity);
-      this.renderers.set(entity, created);
-      return created;
+      if (created) {
+        this.renderers.set(entity, created);
+        return created;
+      }
     } else {
       return renderer;
     }
   }
 
-  public createRendererFor<E extends Entity>(object: E): Renderer<Entity> {
+  public createRendererFor<E extends Entity>(object: E): Renderer<Entity> | null {
     if (object instanceof Player) {
       return new PlayerRenderer(object, this.scene, this.mito);
     } else if (object instanceof PlayerSeed) {
@@ -54,7 +56,7 @@ export class WorldRenderer extends Renderer<World> {
       return new InstancedTileRenderer(object, this.scene, this.mito, this.tileBatcher, this);
     } else {
       console.error(`Couldn't find renderer for`, object);
-      return null!;
+      return null;
     }
   }
 
@@ -88,7 +90,7 @@ export class WorldRenderer extends Renderer<World> {
     InventoryRenderer.startFrame();
     this.target.entities().forEach((entity) => {
       const renderer = this.getOrCreateRenderer(entity);
-      renderer.update();
+      renderer?.update();
     });
     InventoryRenderer.endFrame();
     this.tileBatcher.endFrame();

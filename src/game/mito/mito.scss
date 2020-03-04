@@ -302,3 +302,24 @@
     }
   }
 }
+
+.world-dom-component {
+  position: absolute;
+  z-index: 1;
+}
+
+.tile-modal {
+  background: white;
+  border-radius: 5px;
+  position: absolute;
+  bottom: 100%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  pointer-events: none;
+
+  button {
+    pointer-events: initial;
+  }
+}

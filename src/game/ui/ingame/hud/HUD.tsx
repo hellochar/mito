@@ -1,4 +1,5 @@
 import classnames from "classnames";
+import { WorldDOMComponent } from "game/mito/WorldDOMElement";
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
 import uuid from "uuid";
@@ -77,8 +78,8 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         {this.maybeRenderCollectButton()}
         {this.maybeRenderGerminateButton()}
         {this.maybeRenderInvalidAction()}
-        <TileDetails tile={this.mito.getHighlightedTile()} />
         <div className={classnames("hud-bottom-right", { hidden: !showPlayerHUD })}>
+          <TileDetails tile={this.mito.getHighlightedTile()} />
           {isMaxedEl}
           <InventoryBar
             water={this.inventory.water}
@@ -94,8 +95,120 @@ export class HUD extends React.Component<HUDProps, HUDState> {
             disabled={this.mito.world.player.getBuildError() || (Keyboard.isAltHeld() ? true : undefined)}
           /> */}
         </div>
+        {this.maybeRenderCellInspector()}
       </>
     );
+  }
+
+  private positionFn = () => {
+    return this.mito.inspectedCell ?? null;
+  };
+
+  maybeRenderCellInspector() {
+    const cell = this.mito.inspectedCell;
+    if (cell != null) {
+      return (
+        // <ReactModal
+        //   isOpen
+        //   ariaHideApp={false}
+        //   shouldCloseOnEsc
+        //   shouldCloseOnOverlayClick
+        //   onRequestClose={() => {
+        //     this.mito.inspectedCell = undefined;
+        //   }}
+        // >
+        <WorldDOMComponent mito={this.mito} positionFn={this.positionFn}>
+          <div className="tile-modal">
+            {/* <TileDetails tile={cell} /> */}
+            <div>
+              <h3>{cell.displayName}</h3>
+            </div>
+            <div className="buttons" style={{ display: "flex" }}>
+              <button
+                onClick={
+                  () => cell.inventory.give(this.player.inventory, 1, 0)
+                  // this.player.setAction({
+                  //   type: "pickup",
+                  //   sugar: 0,
+                  //   water: PLAYER_INTERACT_EXCHANGE_SPEED,
+                  //   target: cell,
+                  // })
+                }
+              >
+                +1 water
+              </button>
+              <button
+                onClick={
+                  () => this.player.inventory.give(cell.inventory, 1, 0)
+                  // this.player.setAction({
+                  //   type: "drop",
+                  //   sugar: 0,
+                  //   water: PLAYER_INTERACT_EXCHANGE_SPEED,
+                  //   target: cell,
+                  // })
+                }
+              >
+                -1 water
+              </button>
+              <button
+                onClick={
+                  () => cell.inventory.give(this.player.inventory, 0, 1)
+                  // this.player.setAction({
+                  //   type: "pickup",
+                  //   water: 0,
+                  //   sugar: PLAYER_INTERACT_EXCHANGE_SPEED,
+                  //   target: cell,
+                  // })
+                }
+              >
+                +1 sugar
+              </button>
+              <button
+                onClick={
+                  () => this.player.inventory.give(cell.inventory, 0, 1)
+                  // this.player.setAction({
+                  //   type: "drop",
+                  //   water: 0,
+                  //   sugar: PLAYER_INTERACT_EXCHANGE_SPEED,
+                  //   target: cell,
+                  // })
+                }
+              >
+                -1 sugar
+              </button>
+              <button onClick={() => this.player.setAction({ type: "deconstruct", position: cell.pos })}>
+                deconstruct
+              </button>
+            </div>
+            {/* <div>
+              {cell.geneInstances.map((inst, index) => {
+                const stateElements: JSX.Element[] = [];
+                for (const key in inst.props) {
+                  stateElements.push(
+                    <div key={key}>
+                      {key}: {JSON.stringify(inst.props[key])}
+                    </div>
+                  );
+                }
+                for (const key in inst.state) {
+                  stateElements.push(
+                    <div key={key}>
+                      {key}: {JSON.stringify(inst.state[key])}
+                    </div>
+                  );
+                }
+                return (
+                  <div style={{ marginBottom: 10 }}>
+                    {inst.blueprint.name}
+                    <div style={{ color: "grey", marginLeft: 10, fontSize: "0.8em" }}>{stateElements}</div>
+                  </div>
+                );
+              })}
+            </div> */}
+          </div>
+        </WorldDOMComponent>
+      );
+    }
   }
 
   maybeRenderInvalidAction() {

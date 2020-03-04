@@ -4,8 +4,8 @@ import {
   CircleBufferGeometry,
   DoubleSide,
   Geometry,
-  Line,
   LineBasicMaterial,
+  LineSegments,
   Mesh,
   MeshBasicMaterial,
   Object3D,
@@ -14,9 +14,10 @@ import {
 
 export const playerBrown = 0x8f673f;
 export const playerTeal = 0x5eb780;
+export const goldColor = 0xf3ddb0;
 
 const baseMesh = (() => {
-  const geometry = new CircleBufferGeometry(0.07, 20);
+  const geometry = new CircleBufferGeometry(0.03, 20);
   const material = new MeshBasicMaterial({
     color: playerTeal,
     // color: ,
@@ -27,7 +28,18 @@ const baseMesh = (() => {
 })();
 
 class Node {
+  public children: Node[] = [];
+
+  public parent?: Node;
+
+  public offsetAngle?: number;
+
   constructor(public pos: Vector2, public vel: Vector2 = new Vector2(0, 0), public scale = 1) {}
+
+  addChild(child: Node) {
+    this.children.push(child);
+    child.parent = this;
+  }
 }
 /**
  * For now: A thick line that branches out into 3 nodes.
@@ -56,13 +68,29 @@ class NeuronMesh extends Object3D {
 
   public meshes: Mesh[] = [];
 
-  public line: Line;
+  public line: LineSegments;
+
+  public leaderNode: Node;
 
   constructor(numNodes: number) {
     super();
     this.nodes = arrayRange(numNodes).map((i) => {
       return new Node(new Vector2(i / numNodes, 0));
     });
+    this.leaderNode = this.nodes[numNodes - 1];
+
+    // add side branches
+    const branchBase = this.nodes[Math.floor(numNodes * 0.7)];
+    const angle = Math.PI / 3;
+    const side1 = new Node(branchBase.pos.clone().add(new Vector2(0.2 * Math.cos(angle), 0.2 * Math.sin(angle))));
+    branchBase.addChild(side1);
+    side1.offsetAngle = angle;
+    this.nodes.push(side1);
+
+    // const side2 = new Node(branchBase.pos.clone().add(new Vector2(0.2 * Math.cos(-angle), 0.2 * Math.sin(-angle))));
+    // branchBase.addChild(side2);
+    // side2.offsetAngle = -angle;
+
     this.meshes = this.nodes.map((n) => {
       const m = baseMesh.clone();
       m.position.set(n.pos.x, n.pos.y, m.position.z);
@@ -70,8 +98,19 @@ class NeuronMesh extends Object3D {
     });
     this.add(...this.meshes);
     const lineGeo = new Geometry();
-    lineGeo.vertices.push(...this.meshes.map((m) => m.position));
-    this.line = new Line(
+    for (let i = 0; i < this.nodes.length; i++) {
+      const node = this.nodes[i];
+      if (node.parent == null) {
+        if (i > 0) {
+          lineGeo.vertices.push(this.meshes[i - 1].position, this.meshes[i].position);
+        }
+      } else {
+        const parentI = this.nodes.indexOf(node.parent);
+        lineGeo.vertices.push(this.meshes[parentI].position, this.meshes[i].position);
+      }
+    }
+    // lineGeo.vertices.push(...this.meshes.map((m) => m.position));
+    this.line = new LineSegments(
       lineGeo,
       new LineBasicMaterial({
         color: playerTeal,
@@ -117,35 +156,68 @@ class NeuronMesh extends Object3D {
     // node n is tied directly at target
     // intermediate nodes move towards their targets
     // const first = this.nodes[0];
-    const last = this.nodes[this.nodes.length - 1];
-    lerp2(last.pos, target, 0.5);
+    const leader = this.leaderNode;
+    lerp2(leader.pos, target, 0.5);
     let force = new Vector2();
-    for (let i = 1; i < this.nodes.length - 1; i++) {
+    for (let i = 0; i < this.nodes.length; i++) {
       force.set(0, 0);
 
       const node = this.nodes[i];
       const prev = this.nodes[i - 1];
       const next = this.nodes[i + 1];
 
-      // prev force
-      force.add(this.pullForce(node, prev, this.pullForceScalar));
-      force.add(this.pullForce(node, next, this.pullForceScalar));
-      force.add(this.goTowardsTargetForce(node, target, i / (this.nodes.length - 1), this.towardsTargetForce));
+      if (node.parent == null) {
+        if (prev) {
+          force.add(this.pullForce(node, prev, this.pullForceScalar));
+        }
+        if (next) {
+          force.add(this.pullForce(node, next, this.pullForceScalar));
+        }
+        force.add(this.goTowardsTargetForce(node, target, i / (this.nodes.length - 1), this.towardsTargetForce));
+      }
+
+      // // spring with children
+      // for (const child of node.children) {
+      //   force.add(this.springForce(node, child, this.pullForceScalar * 0.1, 0.2));
+      // }
+
+      // pull towards parent
+      if (node.parent) {
+        force.add(this.springForce(node, node.parent, this.pullForceScalar, 0.2));
+
+        // add rotated offset force
+        // if (node.offsetAngle != null) {
+        //   const parentDirection = node.parent.pos.clone().normalize();
+        //   const myDirection = node.pos.clone().normalize();
+        //   const angle = Math.acos(parentDirection.dot(myDirection));
+        //   const angleForce = (node.offsetAngle - angle) * 0.1;
+        //   // const angle = node.pos.angle() + node.offsetAngle;
+        //   const rotateForce = 10;
+        //   force.add(new Vector2(rotateForce * Math.cos(angleForce), rotateForce * Math.sin(angleForce)));
+        // }
+      }
+
       force.add(this.dragForce(node, this.dragForceScalar));
 
-      node.scale = lerp(node.scale, next.scale, 0.5);
+      if (next) {
+        node.scale = lerp(node.scale, next.scale, 0.5);
+      }
 
+      // final step - turn force into velocity
       node.vel.add(force.multiplyScalar(dt));
     }
 
     this.nodes.forEach((node, i) => {
+      // update positions of all nodes
       node.pos.x += node.vel.x * dt;
       node.pos.y += node.vel.y * dt;
+
+      // update mesh
       const mesh = this.meshes[i];
       mesh.position.set(node.pos.x, node.pos.y, mesh.position.z);
       mesh.scale.set(node.scale, node.scale, 1);
     });
-    last.scale = lerp(last.scale, 1, 0.5);
+    leader.scale = lerp(leader.scale, 1, 0.5);
     (this.line.geometry as Geometry).verticesNeedUpdate = true;
   }
 
@@ -173,6 +245,16 @@ class NeuronMesh extends Object3D {
     return (node: Node, other: Node, pow: number) => {
       offset.copy(node.pos).sub(other.pos);
       return offset.multiplyScalar(-pow);
+    };
+  })();
+
+  private springForce = (() => {
+    const offset = new Vector2();
+    return (node: Node, other: Node, pow: number, wantedDist: number) => {
+      offset.copy(node.pos).sub(other.pos);
+      const dist = offset.length();
+      const distOffset = wantedDist - dist;
+      return offset.setLength(distOffset * pow);
     };
   })();
 }

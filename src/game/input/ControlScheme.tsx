@@ -1,9 +1,7 @@
-import React from "react";
 import { Vector2 } from "three";
 import { ActionMove } from "../../core/player/action";
 import { Mito } from "../mito/mito";
 import { WorldDOMElement } from "../mito/WorldDOMElement";
-import { params } from "../params";
 import Keyboard from "./keyboard";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 
@@ -28,30 +26,30 @@ export class PlayerControlScheme implements ControlScheme {
 
   animate(_ms: number) {
     const { mito } = this;
-    if (
-      // Keyboard.shouldShowInMapPopup() &&
-      this.altElement == null &&
-      mito.actionBar.current === mito.actionBar.toolBar
-    ) {
-      this.altElement = mito.addWorldDOMElement(
-        () => mito.getHighlightedTile()!,
-        () => {
-          const toolBar = mito.actionBar.toolBar;
-          const tool = toolBar.tools[toolBar.currentTool!];
-          return (
-            <div className="tile-details-container">
-              {/* <TileDetails tile={mito.getHighlightedTile()} /> */}
-              <div style={{ padding: 10, background: "white", borderRadius: 5 }}>
-                {tool ? "Click to " + tool.name : null}
-              </div>
-            </div>
-          );
-        }
-      );
-    } else if (this.altElement != null && mito.actionBar.current !== mito.actionBar.toolBar) {
-      mito.removeWorldDOMElement(this.altElement);
-      this.altElement = undefined;
-    }
+    // if (
+    //   // Keyboard.shouldShowInMapPopup() &&
+    //   this.altElement == null &&
+    //   mito.actionBar.current === mito.actionBar.toolBar
+    // ) {
+    //   this.altElement = mito.addWorldDOMElement(
+    //     () => mito.getHighlightedTile()!,
+    //     () => {
+    //       const toolBar = mito.actionBar.toolBar;
+    //       const tool = toolBar.tools[toolBar.currentTool!];
+    //       return (
+    //         <div className="tile-details-container">
+    //           {/* <TileDetails tile={mito.getHighlightedTile()} /> */}
+    //           <div style={{ padding: 10, background: "white", borderRadius: 5 }}>
+    //             {tool ? "Click to " + tool.name : null}
+    //           </div>
+    //         </div>
+    //       );
+    //     }
+    //   );
+    // } else if (this.altElement != null && mito.actionBar.current !== mito.actionBar.toolBar) {
+    //   mito.removeWorldDOMElement(this.altElement);
+    //   this.altElement = undefined;
+    // }
     if (mito.instructionsOpen) {
       return;
     }
@@ -84,12 +82,6 @@ export class PlayerControlScheme implements ControlScheme {
       if (ACTION_INSTANT_KEYMAP[code]) {
         mito.world.player.setAction(ACTION_INSTANT_KEYMAP[code]);
       }
-      if (code === "KeyH") {
-        params.hud = !params.hud;
-      }
-      if (code === "Slash") {
-        params.showGodUI = !params.showGodUI;
-      }
     }
     mito.actionBar.keyDown(event);
   };
@@ -112,15 +104,22 @@ export class PlayerControlScheme implements ControlScheme {
   }
 
   public handleRightClick() {
-    const { mito } = this;
-    const tile = mito.getHighlightedTile();
-    if (tile == null) {
-      return;
-    }
-    const action = mito.actionBar.rightClick(tile);
-    if (action) {
-      mito.world.player.setAction(action);
-    }
+    // const { mito } = this;
+    // if (mito.inspectedCell != null) {
+    //   mito.inspectedCell = undefined;
+    // } else {
+    //   const tile = mito.getHighlightedTile();
+    //   if (tile == null) {
+    //     return;
+    //   }
+    //   if (tile instanceof Cell) {
+    //     mito.inspectedCell = tile;
+    //   }
+    //   // const action = mito.actionBar.rightClick(tile);
+    //   // if (action) {
+    //   //   mito.world.player.setAction(action);
+    //   // }
+    // }
   }
 
   public handleLeftClick() {

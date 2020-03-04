@@ -178,6 +178,8 @@ export class Cell extends Tile implements Interactable {
     return anyInteracted;
   }
 
+  public isDead = false;
+
   die() {
     this.world.setTileAt(this.pos, new DeadCell(this.pos, this.world));
   }

@@ -50,7 +50,7 @@ class VignetteCapturer {
     const worldRenderer = new WorldRenderer(this.mito.world, scene, this.mito, false);
     const picturesqueRenderers = picturesqueCells.map((c) => {
       const renderer = worldRenderer.createRendererFor(c);
-      renderer.update();
+      renderer?.update();
       return renderer;
     });
 
@@ -95,7 +95,7 @@ class VignetteCapturer {
     document.body.appendChild(img);
 
     picturesqueRenderers.forEach((t) => {
-      t.destroy();
+      t?.destroy();
     });
     return dest;
   }

@@ -12,7 +12,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as Nodes from "three/examples/jsm/nodes/Nodes";
 import configure from "../../common/configure";
 import { World } from "../../core";
-import { Tile } from "../../core/tile";
+import { Cell, Tile } from "../../core/tile";
 import { clamp, lerp, lerp2, map } from "../../math/index";
 import { drums, hookUpAudio, strings, whoosh } from "../audio";
 import { GameResult, maybeGetGameResult } from "../gameResult";
@@ -62,6 +62,17 @@ export class Mito extends ISketch {
   public readonly audioListener = new THREE.AudioListener();
 
   public highlightedTile?: Tile;
+
+  private _inspectedCell?: Cell;
+
+  public get inspectedCell() {
+    return this._inspectedCell;
+  }
+
+  public set inspectedCell(c: Cell | undefined) {
+    console.trace("set to", c);
+    this._inspectedCell = c;
+  }
 
   public readonly worldRenderer: WorldRenderer;
 
@@ -158,6 +169,19 @@ export class Mito extends ISketch {
     mousedown: (event: MouseEvent) => {
       this.mouseButton = event.button;
       this.mouseDown = true;
+      if (this.mouseButton === 2) {
+        if (this.inspectedCell != null) {
+          this.inspectedCell = undefined;
+        } else {
+          const tile = this.getHighlightedTile();
+          if (tile == null) {
+            return;
+          }
+          if (tile instanceof Cell) {
+            this.inspectedCell = tile;
+          }
+        }
+      }
     },
     mouseup: () => {
       this.mouseDown = false;
@@ -277,7 +301,12 @@ export class Mito extends ISketch {
     return offset;
   }
 
-  public getHighlightPosition(clientX = this.mouse.x, clientY = this.mouse.y) {
+  public getHighlightPosition() {
+    if (this.inspectedCell) {
+      return this.inspectedCell.pos;
+    }
+    const clientX = this.mouse.x,
+      clientY = this.mouse.y;
     // if (this.actionBar.current instanceof CellBar) {
     const offset = this.getPlayerInfluenceVector(clientX, clientY);
     const { x, y } = this.world.player.posFloat;
@@ -292,8 +321,8 @@ export class Mito extends ISketch {
     // }
   }
 
-  public getHighlightedTile(clientX = this.mouse.x, clientY = this.mouse.y) {
-    const p = this.getHighlightPosition(clientX, clientY);
+  public getHighlightedTile() {
+    const p = this.getHighlightPosition();
     p.round();
 
     const tile = this.world.tileAt(p.x, p.y);
@@ -345,6 +374,10 @@ export class Mito extends ISketch {
 
   public animate(millisDelta: number) {
     this.controls?.animate(millisDelta);
+
+    if (this.inspectedCell?.isDead) {
+      this.inspectedCell = undefined;
+    }
 
     // cap out at 1/3rd of a second in one frame (about 10 frames)
     const dt = Math.min(millisDelta / 1000, 1 / 3);

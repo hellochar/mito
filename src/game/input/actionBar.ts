@@ -1,4 +1,3 @@
-import { PLAYER_INTERACT_EXCHANGE_SPEED } from "core/constants";
 import { Vector2 } from "three";
 import { CellArgs } from "../../core/cell/cell";
 import { isInteractable } from "../../core/interactable";
@@ -77,7 +76,8 @@ export class CellBar extends ActionBar {
   }
 
   rightClick(tile: Tile) {
-    return maybeDeconstructAction(tile);
+    return undefined;
+    // return maybeDeconstructAction(tile);
   }
 
   keyDown(event: KeyboardEvent) {
@@ -109,43 +109,27 @@ function maybeDeconstructAction(tile: Tile): ActionDeconstruct | undefined {
   };
 }
 
+interface Tool {
+  name: string;
+  leftClick: (tile: Tile) => Action | undefined;
+  rightClick: (tile: Tile) => Action | undefined;
+}
+
 export class ToolBar extends ActionBar {
-  tools: Record<string, (tile: Tile) => Action> = {
-    // suck water
-    KeyQ: function SuckWater(target: Tile): Action {
-      return {
-        type: "pickup",
-        sugar: 0,
-        water: PLAYER_INTERACT_EXCHANGE_SPEED,
-        target,
-      };
-    },
-    // suck sugar
-    KeyE: function SuckSugar(target: Tile): Action {
-      return {
-        type: "pickup",
-        sugar: PLAYER_INTERACT_EXCHANGE_SPEED,
-        water: 0,
-        target,
-      };
-    },
-    // drop water
-    KeyR: function DropWater(target: Tile): Action {
-      return {
-        type: "drop",
-        sugar: 0,
-        water: PLAYER_INTERACT_EXCHANGE_SPEED,
-        target,
-      };
-    },
-    // drop sugar
-    KeyF: function DropSugar(target: Tile): Action {
-      return {
-        type: "drop",
-        sugar: PLAYER_INTERACT_EXCHANGE_SPEED,
-        water: 0,
-        target,
-      };
+  tools: Record<string, Tool> = {
+    KeyR: {
+      name: "Interact",
+      leftClick: (target: Tile) =>
+        isInteractable(target)
+          ? {
+              type: "interact",
+              interactable: target,
+            }
+          : undefined,
+      rightClick: (target: Tile) => ({
+        type: "deconstruct",
+        position: target.pos,
+      }),
     },
   };
 
@@ -157,12 +141,14 @@ export class ToolBar extends ActionBar {
 
   leftClick(target: Tile): Action | undefined {
     if (this.currentTool) {
-      return this.tools[this.currentTool](target);
+      return this.tools[this.currentTool].leftClick(target);
     }
   }
 
-  rightClick(tile: Tile): Action | undefined {
-    return maybeDeconstructAction(tile);
+  rightClick(target: Tile): Action | undefined {
+    if (this.currentTool) {
+      return this.tools[this.currentTool].rightClick(target);
+    }
   }
 
   keyDown(event: KeyboardEvent) {

@@ -31,11 +31,11 @@
 
 .double-bar {
   display: flex;
-  flex-direction: column;
+  // flex-direction: column;
 
-  > :not(.active) {
-    transform: scale(0.5);
-  }
+  // > :not(.active) {
+  //   transform: scale(0.5);
+  // }
 }
 
 .tool-bar {

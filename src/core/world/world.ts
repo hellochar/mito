@@ -217,6 +217,7 @@ export class World {
       cell.redistributeInventoryToNeighbors();
       this.gridCells[position.x][position.y] = null;
       this.stepStats.deleted.push(cell);
+      cell.isDead = true;
     }
     this.handleTileUpdated(position);
     return cell;

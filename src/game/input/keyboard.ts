@@ -1,3 +1,5 @@
+import { params } from "game/params";
+
 // when you press one, the other one gets removed from the keyMap
 const OPPOSITE_KEYS: Record<string, string> = {
   KeyS: "KeyW",
@@ -20,13 +22,19 @@ export const Keyboard = new (class Input {
   };
 
   private handleKeyDown = (event: KeyboardEvent) => {
-    this.keyMap.add(event.code);
+    const code = event.code;
+    this.keyMap.add(code);
     if (event.code in OPPOSITE_KEYS) {
-      this.keyMap.delete(OPPOSITE_KEYS[event.code]);
+      this.keyMap.delete(OPPOSITE_KEYS[code]);
+    }
+    if (code === "KeyH") {
+      params.hud = !params.hud;
+    }
+    if (code === "Slash") {
+      params.showGodUI = !params.showGodUI;
     }
     const isOpeningDevtoolsOnChrome =
-      (event.code === "KeyI" && event.shiftKey && event.ctrlKey) ||
-      (event.code === "KeyI" && event.altKey && event.metaKey);
+      (code === "KeyI" && event.shiftKey && event.ctrlKey) || (code === "KeyI" && event.altKey && event.metaKey);
     if (!isOpeningDevtoolsOnChrome) {
       event.preventDefault();
       return false;
