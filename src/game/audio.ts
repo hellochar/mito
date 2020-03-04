@@ -12,6 +12,7 @@ import introBounceSrc from "assets/audio/intro-bounce.mp3";
 import mitoBaseSrc from "assets/audio/mito-base.mp3";
 import mitoDrumsSrc from "assets/audio/mito-drums.mp3";
 import mitoOverworldMp3 from "assets/audio/mito-overworld.mp3";
+import mitoStartScreenMp3 from "assets/audio/mito-start.mp3";
 import mitoStringsSrc from "assets/audio/mito-strings.mp3";
 import mitoDeathMp3 from "assets/audio/mitodeath.mp3";
 import stickySoundSrc from "assets/audio/sticky.mp3";
@@ -33,6 +34,13 @@ export const mitoDeath = new Howl({
   autoplay: false,
   loop: true,
   volume: 1,
+});
+
+export const mitoStartScreen = new Howl({
+  src: mitoStartScreenMp3,
+  autoplay: false,
+  loop: true,
+  volume: 0.3,
 });
 
 export const mitoOverworld = new Howl({

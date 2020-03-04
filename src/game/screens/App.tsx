@@ -10,10 +10,12 @@ import { AppState } from "../app/state";
 import "./App.scss";
 import GameResultsScreen from "./GameResultsScreen";
 import MitoScreen from "./MitoScreen";
+import StartScreen from "./StartScreen";
 
 interface AppComponentState {
   mousePosition: { x: number; y: number };
   showTestLoseScreen?: boolean;
+  showStartScreen: boolean;
 }
 
 class AppComponent extends React.PureComponent<{}, AppComponentState> {
@@ -25,6 +27,7 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
     super(props, context);
     this.state = {
       mousePosition: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+      showStartScreen: true,
     };
   }
 
@@ -73,7 +76,10 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
     return (
       <MousePositionContext.Provider value={this.state.mousePosition}>
         <div className="App">
-          <AppScreen show={state.activePopulationAttempt == null}>
+          <AppScreen show={this.state.showStartScreen}>
+            <StartScreen onStart={() => this.setState({ showStartScreen: false })} />
+          </AppScreen>
+          <AppScreen show={state.activePopulationAttempt == null && !this.state.showStartScreen}>
             <OverWorldScreen onNextEpoch={this.handleNextEpoch} />
           </AppScreen>
           <AppScreen show={state.activePopulationAttempt != null && state.activeGameResult == null}>

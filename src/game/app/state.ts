@@ -43,7 +43,8 @@ const PopulationAttemptSchema = createSimpleSchema<PopulationAttempt>({
 
 export const AppStateSchema = createSimpleSchema<AppState>({
   overWorld: object(OverWorld),
-  activePopulationAttempt: object(PopulationAttemptSchema),
+  // no active population attempt
+  // activePopulationAttempt: object(PopulationAttemptSchema),
   // no activeGameResult
   rootSpecies: object(SpeciesSchema),
   epoch: true,

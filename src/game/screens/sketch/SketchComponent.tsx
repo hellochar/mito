@@ -1,4 +1,5 @@
 import classnames from "classnames";
+import { params } from "game/params";
 import { Howler } from "howler";
 import * as React from "react";
 import { FaVolumeOff, FaVolumeUp } from "react-icons/fa";
@@ -127,12 +128,14 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
   }
 
   private renderVolumeButton() {
-    const { volumeEnabled } = this.state;
-    return (
-      <button className="user-volume" onClick={this.handleVolumeButtonClick}>
-        {volumeEnabled ? <FaVolumeUp /> : <FaVolumeOff />}
-      </button>
-    );
+    if (params.hud) {
+      const { volumeEnabled } = this.state;
+      return (
+        <button className="user-volume" onClick={this.handleVolumeButtonClick}>
+          {volumeEnabled ? <FaVolumeUp /> : <FaVolumeOff />}
+        </button>
+      );
+    }
   }
 
   private handleVolumeButtonClick = () => {
