@@ -1,7 +1,16 @@
+import classNames from "classnames";
 import React from "react";
 import { CellType } from "../../../core/cell/genome";
 import { textureFromSpritesheet } from "../../spritesheet";
 import "./IconCell.scss";
+
+export const ActionBarItem: React.FC<React.HTMLProps<HTMLDivElement>> = ({ children, className, ...props }) => {
+  return (
+    <div className={classNames("action-bar-item", className)} {...props}>
+      {children}
+    </div>
+  );
+};
 
 const IconCell: React.FC<{ cellType: CellType; spritesheetLoaded: boolean } & React.HTMLProps<HTMLDivElement>> = ({
   children,
@@ -33,9 +42,9 @@ const IconCell: React.FC<{ cellType: CellType; spritesheetLoaded: boolean } & Re
     };
   }, [color, spritesheetLoaded, texture.image]);
   return (
-    <div {...props} className="icon-cell" style={style}>
+    <ActionBarItem {...props} className="icon-cell" style={style}>
       {children}
-    </div>
+    </ActionBarItem>
   );
 };
 export default IconCell;

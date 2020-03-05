@@ -70,7 +70,7 @@ export class Mito extends ISketch {
   }
 
   public set inspectedCell(c: Cell | undefined) {
-    console.trace("set to", c);
+    console.trace("set inspectedCell to", c);
     this._inspectedCell = c;
   }
 
@@ -257,13 +257,13 @@ export class Mito extends ISketch {
   maybeToggleInstructions(code: string) {
     if (code === "F1") {
       this.instructionsOpen = !this.instructionsOpen;
-      return;
+      return true;
     }
     if (this.instructionsOpen) {
       if (code === "Escape") {
         this.instructionsOpen = false;
+        return true;
       }
-      return;
     }
   }
 
@@ -272,8 +272,6 @@ export class Mito extends ISketch {
       return;
     }
 
-    // this.world.player.dropWater = this.keyMap.has("q");
-    // this.world.player.dropSugar = this.keyMap.has("e");
     this.world.step(dt);
 
     if (this.tutorialRef) {
@@ -292,12 +290,14 @@ export class Mito extends ISketch {
     return new THREE.Vector2((clientX / this.canvas.width) * 2 - 1, (-clientY / this.canvas.height) * 2 + 1);
   }
 
+  public readonly PLAYER_TETHER_DISTANCE = 0.9;
+
   public getPlayerInfluenceVector(clientX = this.mouse.x, clientY = this.mouse.y) {
     const cursorCameraNorm = this.getCameraNormCoordinates(clientX, clientY);
     const cursorWorld = new Vector3(cursorCameraNorm.x, cursorCameraNorm.y, 0).unproject(this.camera);
 
     const offset = new Vector2(cursorWorld.x, cursorWorld.y).sub(this.world.player.posFloat);
-    offset.clampLength(0, 0.9);
+    offset.clampLength(0, this.PLAYER_TETHER_DISTANCE);
     return offset;
   }
 
@@ -376,6 +376,12 @@ export class Mito extends ISketch {
     this.controls?.animate(millisDelta);
 
     if (this.inspectedCell?.isDead) {
+      this.inspectedCell = undefined;
+    }
+    if (
+      this.inspectedCell != null &&
+      this.inspectedCell.pos.distanceTo(this.world.player.posFloat) > this.PLAYER_TETHER_DISTANCE * 2
+    ) {
       this.inspectedCell = undefined;
     }
 

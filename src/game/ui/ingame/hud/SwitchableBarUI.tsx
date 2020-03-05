@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { ActionBarItem } from "game/ui/common/IconCell";
 import * as React from "react";
 import { CellBar, StackedBar, SwitchableBar, ToolBar } from "../../../input/actionBar";
 import { HotkeyButton } from "../HotkeyButton";
@@ -56,7 +57,7 @@ const ToolBarUI: React.FC<{ bar: ToolBar }> = ({ bar }) => {
       {keys.map((key) => {
         return (
           <div className={classNames("tool", { selected: bar.currentTool === key })}>
-            <div className="icon-cell">{bar.tools[key].name}</div>
+            <ActionBarItem className="interact-tool">{bar.tools[key].name}</ActionBarItem>
             <HotkeyButton hotkey={key.charAt(key.length - 1)} />
           </div>
         );

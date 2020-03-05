@@ -78,9 +78,14 @@ export class PlayerControlScheme implements ControlScheme {
     const { mito } = this;
     const code = event.code;
     if (!event.repeat) {
-      mito.maybeToggleInstructions(code);
+      const instructionsCapturedEvent = mito.maybeToggleInstructions(code);
+      if (instructionsCapturedEvent) {
+        return;
+      }
       if (ACTION_INSTANT_KEYMAP[code]) {
         mito.world.player.setAction(ACTION_INSTANT_KEYMAP[code]);
+      } else if (mito.inspectedCell != null && code === "Escape") {
+        mito.inspectedCell = undefined;
       }
     }
     mito.actionBar.keyDown(event);

@@ -49,4 +49,12 @@
   .tool.selected {
     transform: scale(1.25);
   }
+
+  .interact-tool {
+    background-image: url("../../../../assets/images/tether-icon.png");
+    cursor: pointer;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
 }
