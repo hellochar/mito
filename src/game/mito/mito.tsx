@@ -212,8 +212,13 @@ export class Mito extends ISketch {
     return true;
   };
 
+  private handleContextMenu = (event: MouseEvent) => {
+    event.preventDefault();
+  };
+
   private attachWindowEvents() {
     window.onbeforeunload = this.handleBeforeUnload;
+    document.addEventListener("contextmenu", this.handleContextMenu);
     (window as any).mito = this;
     (window as any).THREE = THREE;
   }
@@ -222,6 +227,7 @@ export class Mito extends ISketch {
     // settings controls to undefined calls destroy on controls
     this.controls = undefined;
 
+    document.removeEventListener("contextmenu", this.handleContextMenu);
     window.onbeforeunload = null;
   }
 

@@ -236,6 +236,11 @@
   }
 }
 
+.world-dom-component {
+  position: absolute;
+  z-index: 1;
+}
+
 .floating-text {
   color: white;
   animation: floatUp linear 1s both;
@@ -301,11 +306,6 @@
       color: yellowgreen;
     }
   }
-}
-
-.world-dom-component {
-  position: absolute;
-  z-index: 1;
 }
 
 .tile-modal {
