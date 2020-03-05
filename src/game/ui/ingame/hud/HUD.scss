@@ -141,24 +141,28 @@
   flex-direction: column;
 }
 
-.mito-inventory-maxed {
-  text-align: center;
-  position: absolute;
-  bottom: calc(100% - 100px);
-  // background: $light-gray5;
-  background: hsl(111, 70%, 27%);
-  font-weight: bold;
-  padding: 5px;
-  border-top-left-radius: 2px;
-  border-top-right-radius: 2px;
-  align-self: center;
-  transition: all 0.2s;
-  color: $white;
-  opacity: 0;
+.player-inventory-container {
+  position: relative;
 
-  &.is-maxed {
-    opacity: 1;
+  .mito-inventory-maxed {
+    position: absolute;
+    left: 50%;
     bottom: 100%;
+    transform: translate(-50%);
+    // background: $light-gray5;
+    background: hsl(111, 70%, 27%);
+    font-weight: bold;
+    padding: 5px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    align-self: center;
+    transition: all 0.2s;
+    color: $white;
+    opacity: 0;
+
+    &.is-maxed {
+      opacity: 1;
+    }
   }
 }
 

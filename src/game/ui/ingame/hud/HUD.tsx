@@ -80,14 +80,16 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         {this.maybeRenderInvalidAction()}
         <div className={classnames("hud-bottom-right", { hidden: !showPlayerHUD })}>
           <TileDetails tile={this.mito.getHighlightedTile()} />
-          {isMaxedEl}
-          <InventoryBar
-            water={this.inventory.water}
-            sugar={this.inventory.sugar}
-            capacity={this.inventory.capacity}
-            format="icons"
-            className="player-inventory-bar"
-          />
+          <div className="player-inventory-container">
+            {isMaxedEl}
+            <InventoryBar
+              water={this.inventory.water}
+              sugar={this.inventory.sugar}
+              capacity={this.inventory.capacity}
+              format="icons"
+              className="player-inventory-bar"
+            />
+          </div>
           <StackedBarUI bar={this.mito.actionBar} />
           {/* <SwitchableBarUI bar={this.mito.actionBar} /> */}
           {/* <CellBarUI
