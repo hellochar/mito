@@ -90,9 +90,12 @@ export class LightEmitter {
 
   public occluderManager = new LightOccluderManager(this.world);
 
+  static occluderManager: LightOccluderManager;
+
   // TODO don't make this based on the Renderer
   constructor(public renderer: WorldRenderer) {
     const scene = renderer.scene;
+    LightEmitter.occluderManager = this.occluderManager;
     scene.add(this.lightRays.lineSegments);
 
     scene.add(new PlaneHelper(this.planeTop, 25));
@@ -118,10 +121,10 @@ export class LightEmitter {
 
     const boundingRadius = Math.sqrt(this.world.width ** 2 + this.world.height ** 2);
     const center = this.worldBox.getCenter(new Vector3());
-    const distBetweenRays = 5;
+    const distBetweenRays = 2;
     const anglePerpendicular = angle + Math.PI / 2;
     const target = new Vector3();
-    const dStart = -boundingRadius + ((this.world.time * 0.1) % 2) * distBetweenRays;
+    const dStart = -boundingRadius + ((this.world.time * 0.5) % 2) * distBetweenRays;
     for (let d = dStart; d <= boundingRadius; d += distBetweenRays) {
       const x = center.x + d * Math.cos(anglePerpendicular);
       const y = center.y + d * Math.sin(anglePerpendicular);

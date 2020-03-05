@@ -91,7 +91,7 @@ export class LightRays {
   }
 }
 
-const RAY_LIFETIME = 0.1; // seconds
+const RAY_LIFETIME = 0.015; // seconds
 class LightRay {
   public timeRemaining: number;
 

@@ -1,5 +1,6 @@
 import React from "react";
 import GN from "std/genes/GN";
+import { LightEmitter } from "std/lightEmitter";
 import { Vector2 } from "three";
 import { Cell } from "../../core/cell/cell";
 import { Gene } from "../../core/cell/gene";
@@ -92,24 +93,25 @@ function maybePhotosynthesize(
     numSunlight: (ambientChancePerSecond / 0.025) * dt * 20,
   });
 
-  // let intersectionChancePerSecond = 0;
-  // if (cell.world.occluderManager.getIntersection(cell) != null) {
-  //   intersectionChancePerSecond = reactionChancePerSecond * sunlight * 5;
-  //   const p = cell.lightIntersection.point;
-  //   cell.world.logEvent({
-  //     type: "collect-sunlight",
-  //     leaf: cell,
-  //     air,
-  //     // the renderer creates one dot per sunlight unit.
-  //     // 0.025 normalizes chancePerSecond (which is 0.025 for photosynthesis 3),
-  //     // * 20 means photosynthesis 3 gets 20 dots per second (this is the new player experience)
-  //     numSunlight: (intersectionChancePerSecond / 0.025) * dt * 20,
-  //     point: new Vector2(p.x, p.y),
-  //   });
-  // }
-  // let chancePerSecond = ambientChancePerSecond + intersectionChancePerSecond; // * (waterToConvert / bestEfficiencyWater);
+  let intersectionChancePerSecond = 0;
+  const intersection = LightEmitter.occluderManager.getIntersection(cell);
+  if (intersection != null) {
+    intersectionChancePerSecond = reactionChancePerSecond * sunlight * 5;
+    const p = intersection.point;
+    cell.world.logEvent({
+      type: "collect-sunlight",
+      leaf: cell,
+      air,
+      // the renderer creates one dot per sunlight unit.
+      // 0.025 normalizes chancePerSecond (which is 0.025 for photosynthesis 3),
+      // * 20 means photosynthesis 3 gets 20 dots per second (this is the new player experience)
+      numSunlight: (intersectionChancePerSecond / 0.025) * dt * 20,
+      point: new Vector2(p.x, p.y),
+    });
+  }
+  let chancePerSecond = ambientChancePerSecond + intersectionChancePerSecond; // * (waterToConvert / bestEfficiencyWater);
 
-  const chancePerSecond = ambientChancePerSecond;
+  // const chancePerSecond = ambientChancePerSecond;
 
   state.averageChancePerSecond += chancePerSecond;
 

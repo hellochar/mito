@@ -1,4 +1,5 @@
 import { createSelector } from "reselect";
+import { LightEmitter } from "std/lightEmitter";
 import { Scene } from "three";
 import { Entity, Player, PlayerSeed, StepStats, World } from "../../core";
 import { Tile } from "../../core/tile";
@@ -16,7 +17,8 @@ export class WorldRenderer extends Renderer<World> {
 
   public readonly tileBatcher: TileBatcher;
 
-  // private lightEmitter: LightEmitter;
+  private lightEmitter: LightEmitter;
+
   public eventLogRenderer?: EventLogRenderer;
 
   constructor(target: World, scene: Scene, mito: Mito, public renderResources = true) {
@@ -31,7 +33,7 @@ export class WorldRenderer extends Renderer<World> {
       scene.add(InventoryRenderer.SugarParticles());
       this.eventLogRenderer = new EventLogRenderer(this);
     }
-    // this.lightEmitter = new LightEmitter(this);
+    this.lightEmitter = new LightEmitter(this);
   }
 
   public getOrCreateRenderer(entity: Entity) {
@@ -79,7 +81,7 @@ export class WorldRenderer extends Renderer<World> {
 
   update(): void {
     this.deleteDeadEntityRenderers(this.target.getLastStepStats());
-    // this.lightEmitter.update(1 / 30);
+    this.lightEmitter.update(1 / 30);
 
     // careful - event log renderers rely on state from other renderers (e.g. position
     // of water particle as it's evaporating) that requires it to update before others
