@@ -3,7 +3,7 @@ import { TileGenerator } from "../core/environment";
 import { Fountain, Rock } from "../core/tile";
 import { Clay, Sand, Silt } from "../core/tile/soil";
 import { World } from "../core/world/world";
-import { clamp, map } from "../math";
+import { clamp, map, randInt } from "../math";
 
 export type ScalarField = (pos: Vector2, world: World) => number;
 
@@ -58,7 +58,7 @@ const Level0: TileGenerator = (pos, world) => {
 
       const isFountain = simplexValue > 0.8 && y - soilLevel > 5;
       if (isFountain) {
-        return new Fountain(pos, world, 3, map(y, world.height / 2, world.height, 100, 300));
+        return new Fountain(pos, world, 3, map(y, world.height / 2, world.height, 100, 300) + randInt(-10, 10));
       }
 
       if (heightScalar * simplexValue > 1) {
@@ -67,7 +67,7 @@ const Level0: TileGenerator = (pos, world) => {
           pos,
           world,
           Math.round(3 / emitWaterScalar),
-          map(y, world.height / 2, world.height, 100, 300)
+          map(y, world.height / 2, world.height, 100, 300) + randInt(-10, 10)
         );
       } else {
         const s = new Silt(pos, world)!;

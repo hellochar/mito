@@ -27,6 +27,13 @@ export class Fountain extends Silt {
       this.waterRemaining -= 1;
       if (this.waterRemaining > 0) {
         this.cooldown = this.secondsPerWater;
+      } else {
+        const silt = new Silt(this.pos.clone(), this.world);
+        this.inventory.give(silt.inventory, this.inventory.water, this.inventory.sugar);
+
+        // replace self with a silt
+        this.world.maybeRemoveCellAt(this.pos);
+        this.world.setTileAt(this.pos, silt);
       }
     }
   }
