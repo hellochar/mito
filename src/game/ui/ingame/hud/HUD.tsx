@@ -10,6 +10,7 @@ import GenomeViewer from "../GenomeViewer";
 import { HotkeyButton } from "../HotkeyButton";
 import { InventoryBar } from "../InventoryBar";
 import { TileDetails } from "../TileDetails";
+import { CellInspector } from "./CellInspector";
 import "./HUD.scss";
 import SeasonsTracker from "./SeasonsTracker";
 import { ToolBarUI } from "./ToolBarUI";
@@ -120,94 +121,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         //   }}
         // >
         <WorldDOMComponent mito={this.mito} positionFn={this.positionFn}>
-          <div className="tile-modal">
-            {/* <TileDetails tile={cell} /> */}
-            <div>
-              <h3>{cell.displayName}</h3>
-            </div>
-            <div className="buttons" style={{ display: "flex" }}>
-              <button
-                onClick={
-                  () => cell.inventory.give(this.player.inventory, 1, 0)
-                  // this.player.setAction({
-                  //   type: "pickup",
-                  //   sugar: 0,
-                  //   water: PLAYER_INTERACT_EXCHANGE_SPEED,
-                  //   target: cell,
-                  // })
-                }
-              >
-                +1 water
-              </button>
-              <button
-                onClick={
-                  () => this.player.inventory.give(cell.inventory, 1, 0)
-                  // this.player.setAction({
-                  //   type: "drop",
-                  //   sugar: 0,
-                  //   water: PLAYER_INTERACT_EXCHANGE_SPEED,
-                  //   target: cell,
-                  // })
-                }
-              >
-                -1 water
-              </button>
-              <button
-                onClick={
-                  () => cell.inventory.give(this.player.inventory, 0, 1)
-                  // this.player.setAction({
-                  //   type: "pickup",
-                  //   water: 0,
-                  //   sugar: PLAYER_INTERACT_EXCHANGE_SPEED,
-                  //   target: cell,
-                  // })
-                }
-              >
-                +1 sugar
-              </button>
-              <button
-                onClick={
-                  () => this.player.inventory.give(cell.inventory, 0, 1)
-                  // this.player.setAction({
-                  //   type: "drop",
-                  //   water: 0,
-                  //   sugar: PLAYER_INTERACT_EXCHANGE_SPEED,
-                  //   target: cell,
-                  // })
-                }
-              >
-                -1 sugar
-              </button>
-              <button onClick={() => this.player.setAction({ type: "deconstruct", position: cell.pos })}>
-                deconstruct
-              </button>
-            </div>
-            {/* <div>
-              {cell.geneInstances.map((inst, index) => {
-                const stateElements: JSX.Element[] = [];
-                for (const key in inst.props) {
-                  stateElements.push(
-                    <div key={key}>
-                      {key}: {JSON.stringify(inst.props[key])}
-                    </div>
-                  );
-                }
-                for (const key in inst.state) {
-                  stateElements.push(
-                    <div key={key}>
-                      {key}: {JSON.stringify(inst.state[key])}
-                    </div>
-                  );
-                }
-                return (
-                  <div style={{ marginBottom: 10 }}>
-                    {inst.blueprint.name}
-                    <div style={{ color: "grey", marginLeft: 10, fontSize: "0.8em" }}>{stateElements}</div>
-                  </div>
-                );
-              })}
-            </div> */}
-          </div>
+          <CellInspector cell={cell} player={this.player} />
         </WorldDOMComponent>
       );
     }
