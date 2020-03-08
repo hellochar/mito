@@ -12,7 +12,7 @@ import { InventoryBar } from "../InventoryBar";
 import { TileDetails } from "../TileDetails";
 import "./HUD.scss";
 import SeasonsTracker from "./SeasonsTracker";
-import { StackedBarUI } from "./SwitchableBarUI";
+import { ToolBarUI } from "./ToolBarUI";
 
 export interface HUDProps {
   mito: Mito;
@@ -90,7 +90,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
               className="player-inventory-bar"
             />
           </div>
-          <StackedBarUI bar={this.mito.actionBar} />
+          <ToolBarUI bar={this.mito.actionBar} />
           {/* <SwitchableBarUI bar={this.mito.actionBar} /> */}
           {/* <CellBarUI
             bar={this.mito.actionBar.buildBar}

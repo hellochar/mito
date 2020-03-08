@@ -50,6 +50,14 @@ export class CellType {
       };
     }
   }
+
+  rotateArgDirection() {
+    const direction = this.args?.direction;
+    direction
+      ?.rotateAround(new Vector2(), -Math.PI / 4)
+      .setLength(1)
+      .round();
+  }
 }
 
 export default class Genome {
