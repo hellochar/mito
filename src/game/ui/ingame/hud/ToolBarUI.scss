@@ -1,0 +1,45 @@
+@import "../../../../variables";
+
+.tool-bar {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  pointer-events: initial;
+  position: relative;
+
+  .mito-hud-button-hotkey {
+    margin-top: 10px;
+  }
+
+  .tool-bar-items {
+    display: flex;
+    flex-direction: row;
+    transition: all 0.05s;
+  }
+
+  .tool-bar-item {
+    margin: 0 5px;
+
+    &.selected {
+      transform: scale(1.25);
+    }
+  }
+
+  .interact-tool-icon {
+    background-image: url("../../../../assets/images/tether-icon.png");
+    cursor: pointer;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+}
+
+.transport-dir-arrow {
+  background-image: url("../../../../assets/images/transport-arrow.png");
+  background-size: cover;
+  width: 80%;
+  height: 80%;
+  position: absolute;
+  top: 10%;
+  left: 10%;
+}

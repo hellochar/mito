@@ -16,8 +16,8 @@ import { Cell, Tile } from "../../core/tile";
 import { clamp, lerp, lerp2, map } from "../../math/index";
 import { drums, hookUpAudio, strings, whoosh } from "../audio";
 import { GameResult, maybeGetGameResult } from "../gameResult";
-import { CellBar, StackedBar, ToolBar } from "../input/actionBar";
 import { ControlScheme, PlayerSeedControlScheme } from "../input/ControlScheme";
+import { ToolBar } from "../input/toolBar";
 import { params } from "../params";
 import { InstancedTileRenderer } from "../renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "../renderers/WorldRenderer";
@@ -38,7 +38,7 @@ export class Mito extends ISketch {
   public readonly world: World;
 
   // public readonly actionBar: SwitchableBar;
-  public readonly actionBar: StackedBar;
+  public readonly actionBar: ToolBar;
   // public readonly actionBar: AltHeldBar;
 
   public readonly scene = configure(new Scene(), (s) => {
@@ -150,7 +150,7 @@ export class Mito extends ISketch {
     this.updateAmbientAudio();
     this.attachWindowEvents();
 
-    this.actionBar = new StackedBar(new CellBar(this), new ToolBar(this));
+    this.actionBar = new ToolBar(this);
     // this.actionBar = new SwitchableBar(new CellBar(this), new InteractBar(this));
     // this.actionBar = new AltHeldBar(this);
     // this.controls = new ControlScheme(this);

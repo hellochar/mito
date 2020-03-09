@@ -7,7 +7,7 @@ import { Gene } from "../../../core/cell/gene";
 import { GeneInstance } from "../../../core/cell/geneInstance";
 import { describeCellInteraction } from "../../../core/cell/genome";
 import { Air, Cell, Fountain, FreezeEffect, GrowingCell, Soil, Tile } from "../../../core/tile";
-import { GeneSoilAbsorption, SoilAbsorptionState } from "../../../std/genes";
+import { GeneLiving, GeneSoilAbsorption, SoilAbsorptionState } from "../../../std/genes";
 import { GenePhotosynthesis, PhotosynthesisState } from "../../../std/genes/GenePhotosynthesis";
 import { GeneFruit, GeneSeed, ReproducerState } from "../../../std/genes/GeneReproducer";
 import { InventoryBar } from "./InventoryBar";
@@ -58,8 +58,13 @@ export class TileDetails extends React.Component<TileDetailsProps> {
 
   private cellInfo(tile: Tile) {
     if (tile instanceof Cell) {
+      const secondsPerUpkeep = tile.findGene(GeneLiving)!.props.secondsPerUpkeep;
+      const usePerSecond = 1 / secondsPerUpkeep;
       return (
         <>
+          <div className="info-energy">
+            💚&nbsp;{nf(tile.energy * 100, 2)}% Energy ({nf(usePerSecond * 100, 2)}% used per second)
+          </div>
           {tile.droopY * 200 > 1 ? <div className="info-cell">{(tile.droopY * 200).toFixed(0)}% droop</div> : null}
           {this.cellEffects(tile)}
           {this.geneInfos(tile)}
@@ -154,13 +159,10 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   }
 
   private tileInfo(tile: Tile) {
-    const energyInfo =
-      tile instanceof Cell ? <span className="info-energy">💚&nbsp;{(tile.energy * 100).toFixed(0)}%</span> : null;
     return (
       <div className="info-tile">
         <div className="info-tile-row">
           <div className="info-tile-name">{tile.displayName}</div>
-          {energyInfo}
           <TemperatureInfo tile={tile} />
           <InventoryBar
             water={tile.inventory.water}

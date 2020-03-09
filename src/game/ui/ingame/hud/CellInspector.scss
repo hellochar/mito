@@ -1,0 +1,51 @@
+@import "../../../../variables";
+
+.cell-inspector {
+  background: white;
+  border-radius: 5px;
+  position: absolute;
+  bottom: 100%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+
+  .buttons {
+    display: flex;
+  }
+
+  .resources button {
+    width: 75px;
+  }
+
+  .resource-row {
+    display: flex;
+    align-items: center;
+
+    ~ .resource-row {
+      margin-top: 10px;
+    }
+  }
+
+  button {
+    pointer-events: initial;
+    white-space: nowrap;
+    margin: 0 5px;
+    padding: 10px;
+    border-radius: 2px;
+    background: $light-gray3;
+
+    &:disabled {
+      background: $light-gray5;
+      opacity: 0.4;
+      filter: grayscale(100%);
+    }
+  }
+
+  .deconstruct {
+    position: relative;
+    margin-bottom: auto;
+    background: $red3;
+    color: white;
+  }
+}

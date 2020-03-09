@@ -41,9 +41,4 @@ export class GrowingCell extends Cell {
   }
 }
 
-const cellTypeGrowingCell: CellType = {
-  chromosome: chromosomeGrowingCell,
-  geneSlots: 10,
-  name: "Growing Cell",
-  material: undefined!,
-};
+const cellTypeGrowingCell = new CellType("Growing Cell", 0, chromosomeGrowingCell);
