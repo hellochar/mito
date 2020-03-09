@@ -4,6 +4,13 @@
   font: 12px $arial-family;
 }
 
+.gene-store {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 306px);
+  margin: 20px;
+  grid-gap: 10px;
+}
+
 .genome-viewer {
   margin: 20px;
   overflow: auto;
@@ -91,55 +98,6 @@
     .gene ~ .gene {
       margin-top: 10px;
     }
-
-    .gene {
-      position: relative;
-      border-radius: 2px;
-      padding: 5px;
-      background: transparentize($sepia1, 0.7);
-      transition: all 0.1s;
-      overflow: hidden;
-
-      &.small {
-        max-height: 28px;
-      }
-
-      &.draggable {
-        cursor: grab;
-        box-shadow: 0 4px 8px rgba(64, 64, 64, 0.5);
-      }
-
-      &:hover {
-        max-height: 500px;
-        box-shadow: 15px 15px 8px 2px rgba(64, 64, 64, 0.9);
-      }
-
-      .gene-header {
-        display: flex;
-        align-items: center;
-
-        .gene-cost {
-          border-bottom-right-radius: 10px;
-          position: absolute;
-          top: 0;
-          left: 0;
-        }
-
-        h4 {
-          font-size: 1em;
-          margin-left: 30px;
-          // text-align: center;
-          margin-right: auto;
-          flex-grow: 1;
-        }
-
-        .grip-lines {
-          align-self: start;
-          // margin-left: auto;
-          color: $gray3;
-        }
-      }
-    }
   }
 
   .chromosome {
@@ -206,6 +164,55 @@
         border-style: inset;
         font-weight: bold;
       }
+    }
+  }
+}
+
+.gene {
+  position: relative;
+  border-radius: 2px;
+  padding: 5px;
+  background: rgb(194, 187, 177);
+  transition: all 0.1s;
+  overflow: hidden;
+
+  &.small {
+    max-height: 28px;
+  }
+
+  &.draggable {
+    cursor: grab;
+    box-shadow: 0 4px 8px rgba(64, 64, 64, 0.5);
+  }
+
+  &:hover {
+    max-height: 500px;
+    box-shadow: 15px 15px 8px 2px rgba(64, 64, 64, 0.9);
+  }
+
+  .gene-header {
+    display: flex;
+    align-items: center;
+
+    .gene-cost {
+      border-bottom-right-radius: 10px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    h4 {
+      font-size: 1em;
+      margin-left: 30px;
+      // text-align: center;
+      margin-right: auto;
+      flex-grow: 1;
+    }
+
+    .grip-lines {
+      align-self: start;
+      // margin-left: auto;
+      color: $gray3;
     }
   }
 }

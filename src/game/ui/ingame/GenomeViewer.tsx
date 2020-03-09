@@ -2,12 +2,14 @@ import classNames from "classnames";
 import { nf } from "common/formatters";
 import Chromosome from "core/cell/chromosome";
 import DynamicNumber from "game/ui/common/DynamicNumber";
+import { randInt } from "math";
+import { arrayRange } from "math/arrays";
 import * as React from "react";
 import { FaArrowsAltV, FaGripLines } from "react-icons/fa";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { TiThMenu } from "react-icons/ti";
 import { Color, Vector2 } from "three";
-import { GeneStaticProperties } from "../../../core/cell/gene";
+import { AllGenes, GeneStaticProperties } from "../../../core/cell/gene";
 import Genome, { CellInteraction, CellType, describeCellInteraction } from "../../../core/cell/genome";
 import { RealizedGene } from "../../../core/cell/realizedGene";
 import { spritesheetLoaded } from "../../spritesheet";
@@ -37,6 +39,8 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
     setState((s) => ({ ...s, view: "expanded" }));
   }, [setState]);
 
+  const genesUnlocked = new Set(genome.cellTypes.flatMap((c) => c.chromosome.genes.map((g) => g.gene)));
+
   return (
     <DraggedContext.Provider value={tuple}>
       <div className={classNames("genome-viewer", { dragging: state.dragged != null })}>
@@ -53,6 +57,18 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
           ))}
           <AddCellCard genome={genome} />
         </div>
+        <div>
+          {Array.from(AllGenes.entries()).map(([name, gene]) =>
+            genesUnlocked.has(gene) ? (
+              <div>
+                <b>{name}</b>
+              </div>
+            ) : (
+              <div>{name}</div>
+            )
+          )}
+        </div>
+        <GeneStore />
       </div>
     </DraggedContext.Provider>
   );
@@ -220,7 +236,7 @@ export const StaticPropertiesViewer: React.FC<GeneStaticProperties> = React.memo
   }
 );
 
-const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cellType, gene }) => {
+export const GeneViewer: React.FC<{ cellType: CellType; gene: RealizedGene }> = ({ cellType, gene }) => {
   const [state, setState] = React.useContext(DraggedContext);
   const { gene: gd } = gene;
   const handleDragStart = React.useCallback(
@@ -291,3 +307,22 @@ function GeneCost({ cost, className, ...props }: { cost: number } & React.HTMLAt
 }
 
 export default GenomeViewer;
+
+function generateRandomGenes(numGenes = 20) {
+  const geneValues = Array.from(AllGenes.values());
+  return arrayRange(numGenes).map(() => {
+    const randomGene = geneValues[randInt(0, geneValues.length - 1)];
+    return randomGene.level(randInt(0, 4));
+  });
+}
+
+const GeneStore = () => {
+  const [genes, setGenes] = React.useState(generateRandomGenes());
+  return (
+    <div className="gene-store">
+      {genes.map((gene) => (
+        <GeneViewer cellType={null!} gene={gene} />
+      ))}
+    </div>
+  );
+};
