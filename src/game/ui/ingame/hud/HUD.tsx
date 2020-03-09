@@ -91,12 +91,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
               className="player-inventory-bar"
             />
           </div>
-          <ToolBarUI bar={this.mito.actionBar} />
-          {/* <SwitchableBarUI bar={this.mito.actionBar} /> */}
-          {/* <CellBarUI
-            bar={this.mito.actionBar.buildBar}
-            disabled={this.mito.world.player.getBuildError() || (Keyboard.isAltHeld() ? true : undefined)}
-          /> */}
+          <ToolBarUI bar={this.mito.toolBar} />
         </div>
         {this.maybeRenderCellInspector()}
       </>

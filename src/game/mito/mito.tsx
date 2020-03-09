@@ -37,9 +37,7 @@ export class Mito extends ISketch {
 
   public readonly world: World;
 
-  // public readonly actionBar: SwitchableBar;
-  public readonly actionBar: ToolBar;
-  // public readonly actionBar: AltHeldBar;
+  public readonly toolBar: ToolBar;
 
   public readonly scene = configure(new Scene(), (s) => {
     s.background = new THREE.Color("black");
@@ -150,7 +148,7 @@ export class Mito extends ISketch {
     this.updateAmbientAudio();
     this.attachWindowEvents();
 
-    this.actionBar = new ToolBar(this);
+    this.toolBar = new ToolBar(this);
     // this.actionBar = new SwitchableBar(new CellBar(this), new InteractBar(this));
     // this.actionBar = new AltHeldBar(this);
     // this.controls = new ControlScheme(this);

@@ -88,7 +88,7 @@ export class PlayerControlScheme implements ControlScheme {
         mito.inspectedCell = undefined;
       }
     }
-    mito.actionBar.keyDown(event);
+    mito.toolBar.keyDown(event);
   };
 
   public keysToMovement(keys: Set<string>): ActionMove | null {
@@ -133,7 +133,7 @@ export class PlayerControlScheme implements ControlScheme {
     if (target == null) {
       return;
     }
-    const action = mito.actionBar.leftClick(target);
+    const action = mito.toolBar.leftClick(target);
     if (action) {
       mito.world.player.setAction(action);
     }
@@ -143,7 +143,7 @@ export class PlayerControlScheme implements ControlScheme {
     const { mito } = this;
     const tile = mito.getHighlightedTile();
     // return tile != null && mito.actionBar.leftClick(tile)?.type === "interact";
-    const type = tile && mito.actionBar.leftClick(tile)?.type;
+    const type = tile && mito.toolBar.leftClick(tile)?.type;
     return type === "interact" || type === "pickup" || type === "drop";
   }
 }
