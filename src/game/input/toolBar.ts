@@ -23,15 +23,11 @@ export class ToolBar {
   }
 
   leftClick(target: Tile): Action | undefined {
-    if (this.currentKey) {
-      return this.tools[this.currentKey].leftClick(target);
-    }
+    return this.currentTool.leftClick(target);
   }
 
   rightClick(target: Tile): Action | undefined {
-    if (this.currentKey) {
-      return this.tools[this.currentKey].rightClick(target);
-    }
+    return this.currentTool.rightClick(target);
   }
 
   get currentTool() {
@@ -101,26 +97,22 @@ function makeToolToBuildCellType(cellType: CellType): ToolBuild {
     name: cellType.name,
     type: "build",
     cellType,
-    leftClick(target: Tile): Action | undefined {
-      const { world } = target;
-      if (world.player.canBuildAt(target)) {
-        let args: CellArgs | undefined;
-        if (cellType.args) {
-          args = { ...cellType.args };
-        }
-
-        const action: ActionBuild = {
-          type: "build",
-          cellType,
-          position: target.pos.clone(),
-          args,
-        };
-        return action;
+    leftClick(target: Tile) {
+      let args: CellArgs | undefined;
+      if (cellType.args) {
+        args = { ...cellType.args };
       }
+
+      const action: ActionBuild = {
+        type: "build",
+        cellType,
+        position: target.pos.clone(),
+        args,
+      };
+      return action;
     },
-    rightClick(tile: Tile): Action | undefined {
+    rightClick(tile: Tile) {
       return undefined;
-      // return maybeDeconstructAction(tile);
     },
     nextConfiguration() {
       cellType.rotateArgDirection();

@@ -55,27 +55,4 @@ export class Hover extends React.Component<HoverProps> {
       ) : null;
     return buildElement;
   }
-
-  // public maybeRenderPath() {
-  //   const { autoplace, hoveredTile, scene, world } = this.props.mito;
-  //   if (hoveredTile) {
-  //     if (autoplace != null && Mito.expansionTiles.indexOf(autoplace) !== -1) {
-  //       return <PathHighlight tile={hoveredTile} scene={scene} world={world} walkable="non-obstacles" />;
-  //     }
-  //     if (autoplace === Transport) {
-  //       return <PathHighlight tile={hoveredTile} scene={scene} world={world} walkable="tissue" />;
-  //     }
-  //   }
-  // }
 }
-
-// class PathHighlight extends React.PureComponent<{ world: World, tile: Tile, scene: THREE.Scene, walkable: "tissue" | "non-obstacles" }> {
-//   render() {
-//     const path = this.props.walkable === "non-obstacles"
-//       ? findPositionsThroughNonObstacles(this.props.world, this.props.tile.pos)
-//       : findPositionsThroughTissue(this.props.world, this.props.tile.pos);
-//     return <>
-//       {path.map(([x, y]) => <TileHighlight x={x} y={y} scene={this.props.scene} />)}
-//     </>;
-//   }
-// }
