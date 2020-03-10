@@ -47,9 +47,10 @@ export class ToolBar {
   }
 
   keyDown(event: KeyboardEvent) {
-    if (this.shouldCapture(event)) {
+    if (event.code === "Escape" && this.currentKey !== "KeyQ") {
+      this.setKey("KeyQ");
+    } else if (this.shouldCapture(event)) {
       this.setKey(event.code);
-      this.currentKey = event.code;
     }
   }
 

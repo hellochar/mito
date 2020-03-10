@@ -139,6 +139,8 @@
   right: 20px;
   display: flex;
   flex-direction: column;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .player-inventory-container {
