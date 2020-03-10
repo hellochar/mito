@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React, { useRef } from "react";
 import { Vector2 } from "three";
 import uuid from "uuid";
@@ -53,11 +54,11 @@ export class WorldDOMElement {
   }
 }
 
-export const WorldDOMComponent: React.FC<{ mito: Mito; positionFn: () => Vector2 | Tile | null }> = ({
-  children,
-  mito,
-  positionFn,
-}) => {
+export const WorldDOMComponent: React.FC<{
+  className?: string;
+  mito: Mito;
+  positionFn: () => Vector2 | Tile | null;
+}> = ({ className, children, mito, positionFn }) => {
   const id = useRef(uuid());
 
   const posOrTile = positionFn();
@@ -93,7 +94,7 @@ export const WorldDOMComponent: React.FC<{ mito: Mito; positionFn: () => Vector2
   }
 
   return (
-    <div key={id.current} style={style} className="world-dom-component">
+    <div key={id.current} style={style} className={classNames("world-dom-component", className)}>
       {children}
     </div>
   );

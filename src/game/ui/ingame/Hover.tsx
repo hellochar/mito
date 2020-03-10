@@ -1,9 +1,12 @@
+import classNames from "classnames";
+import { WorldDOMComponent } from "game/mito/WorldDOMElement";
 import TileHighlight from "game/tutorial/tileHighlight";
 import * as React from "react";
 import { Tile } from "../../../core/tile";
 import Mito from "../../mito/mito";
 import BuildBlueprint from "../../tutorial/buildBlueprint";
 import PointHighlight from "../../tutorial/PointHighlight";
+import "./Hover.scss";
 
 interface HoverProps {
   mito: Mito;
@@ -49,10 +52,18 @@ export class Hover extends React.Component<HoverProps> {
     }
     const { mito } = this.props;
     const action = mito.toolBar.leftClick(tile);
-    const buildElement =
-      action != null && action.type === "build" ? (
-        <BuildBlueprint x={tile.pos.x} y={tile.pos.y} cellType={action.cellType} scene={this.props.mito.scene} />
-      ) : null;
-    return buildElement;
+    if (action != null && action.type === "build") {
+      const isBuildValid = mito.world.player.canBuildAt(tile);
+      return (
+        <>
+          <WorldDOMComponent
+            className={classNames("build-drop-shadow", { valid: isBuildValid })}
+            mito={mito}
+            positionFn={() => tile}
+          ></WorldDOMComponent>
+          <BuildBlueprint x={tile.pos.x} y={tile.pos.y} cellType={action.cellType} scene={this.props.mito.scene} />
+        </>
+      );
+    }
   }
 }

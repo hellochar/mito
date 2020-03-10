@@ -43,12 +43,7 @@ const BuildBlueprint: React.FC<TileHighlightProps> = ({ x, y, cellType, scene })
     mat.needsUpdate = true;
   }, [cellType, object.material]);
 
-  return (
-    <>
-      {/* <Animate a={(t) => object.scale.setScalar(Math.sin(t * 3.7) * 0.04 + 0.94)} /> */}
-      <SceneObject object={object} parent={scene} />
-    </>
-  );
+  return <SceneObject object={object} parent={scene} />;
 };
 
 export default BuildBlueprint;

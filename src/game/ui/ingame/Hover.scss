@@ -1,0 +1,9 @@
+@import "../../../variables";
+
+.build-drop-shadow {
+  box-shadow: 0 0 8px 4px transparentize($color: $red3, $amount: 0.2);
+
+  &.valid {
+    box-shadow: 0 0 8px white;
+  }
+}
