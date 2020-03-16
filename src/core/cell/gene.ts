@@ -27,18 +27,18 @@ export class Gene<S = any, K extends string = any> {
       typeof initialState === "function" ? (initialState as GeneInitialStateFn<S, K>) : () => ({ ...initialState });
     const gene = new Gene(blueprint, initialStateFn, step, shouldStep);
     const { name } = gene.blueprint;
-    const exists = AllGenes.has(name);
+    const exists = AllGenesByName.has(name);
     if (exists) {
       const newName = name + " " + sampleArray(plantNames);
       console.warn("A gene named", name, "already exists! Renaming this one to", newName);
       gene.blueprint.name = newName;
     }
-    AllGenes.set(gene.blueprint.name, (gene as unknown) as Gene);
+    AllGenesByName.set(gene.blueprint.name, (gene as unknown) as Gene);
     return gene;
   }
 }
 
-export const AllGenes: Map<string, Gene> = new Map();
+export const AllGenesByName: Map<string, Gene> = new Map();
 
 export const defaultProperties: GeneStaticProperties = {
   cantFreeze: false,

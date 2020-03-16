@@ -9,7 +9,7 @@ import { FaArrowsAltV, FaGripLines } from "react-icons/fa";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { TiThMenu } from "react-icons/ti";
 import { Color, Vector2 } from "three";
-import { AllGenes, GeneStaticProperties } from "../../../core/cell/gene";
+import { AllGenesByName, GeneStaticProperties } from "../../../core/cell/gene";
 import Genome, { CellInteraction, CellType, describeCellInteraction } from "../../../core/cell/genome";
 import { RealizedGene } from "../../../core/cell/realizedGene";
 import { spritesheetLoaded } from "../../spritesheet";
@@ -58,7 +58,7 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
           <AddCellCard genome={genome} />
         </div>
         <div>
-          {Array.from(AllGenes.entries()).map(([name, gene]) =>
+          {Array.from(AllGenesByName.entries()).map(([name, gene]) =>
             genesUnlocked.has(gene) ? (
               <div>
                 <b>{name}</b>
@@ -68,7 +68,6 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
             )
           )}
         </div>
-        <GeneStore />
       </div>
     </DraggedContext.Provider>
   );
@@ -309,20 +308,9 @@ function GeneCost({ cost, className, ...props }: { cost: number } & React.HTMLAt
 export default GenomeViewer;
 
 function generateRandomGenes(numGenes = 20) {
-  const geneValues = Array.from(AllGenes.values());
+  const AllGenes = Array.from(AllGenesByName.values());
   return arrayRange(numGenes).map(() => {
-    const randomGene = geneValues[randInt(0, geneValues.length - 1)];
-    return randomGene.level(randInt(0, 4));
+    const randomGene = AllGenes[randInt(0, AllGenes.length - 1)];
+    return randomGene.level(randInt(0, randomGene.blueprint.levelCosts.length - 1));
   });
 }
-
-const GeneStore = () => {
-  const [genes, setGenes] = React.useState(generateRandomGenes());
-  return (
-    <div className="gene-store">
-      {genes.map((gene) => (
-        <GeneViewer cellType={null!} gene={gene} />
-      ))}
-    </div>
-  );
-};

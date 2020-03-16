@@ -2,7 +2,7 @@ import mapRecord from "common/mapRecord";
 import { clamp } from "math";
 import { custom, serializable } from "serializr";
 import { Cell } from "../tile";
-import { AllGenes, Gene, GeneStaticProperties } from "./gene";
+import { AllGenesByName, Gene, GeneStaticProperties } from "./gene";
 import { GeneInstance } from "./geneInstance";
 
 function serializeGeneIntoName(gene: Gene): string {
@@ -10,7 +10,7 @@ function serializeGeneIntoName(gene: Gene): string {
 }
 
 function deserializeGeneFromName(name: string): Gene {
-  return AllGenes.get(name)!;
+  return AllGenesByName.get(name)!;
 }
 
 export class RealizedGene<G extends Gene = Gene> {
