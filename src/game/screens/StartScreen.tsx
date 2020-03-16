@@ -1,17 +1,15 @@
-import { mitoStartScreen } from "game/audio";
 import { Button } from "game/ui/common/Button";
 import Character from "game/ui/common/Character";
 import React, { useEffect } from "react";
 import "./StartScreen.scss";
 
 const StartScreen: React.FC<{ onStart: () => void }> = ({ onStart }) => {
-  useEffect(() => {
-    mitoStartScreen.play();
-
-    return () => {
-      mitoStartScreen.stop();
-    };
-  }, []);
+  // useEffect(() => {
+  //   mitoStartScreen.play();
+  //   return () => {
+  //     mitoStartScreen.stop();
+  //   };
+  // }, []);
   useEffect(() => {
     const listenForEnter = (event: KeyboardEvent) => {
       if (event.code === "Enter" || event.code === "Space") {

@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import { sleep } from "common/promise";
 import { Species } from "core/species";
 import { useAppReducer } from "game/app";
 import { resetGame, save } from "game/app/saveLoad";
@@ -22,9 +21,7 @@ export interface OverWorldScreenProps {
 
 const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
   useEffect(() => {
-    sleep(2000).then(() => {
-      mitoOverworld.play();
-    });
+    mitoOverworld.play();
     return () => {
       mitoOverworld.stop();
     };
