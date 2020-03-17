@@ -11,6 +11,8 @@
   transition: all 0.5s;
   // padding: 20px;
   border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
 
   @mixin primary {
     bottom: 10%;

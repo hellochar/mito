@@ -52,6 +52,18 @@
         padding: 5px;
         font-size: 48px;
       }
+
+      .unused-points {
+        background: $color-mutation;
+        color: white;
+        font-weight: bold;
+        border-radius: 100%;
+        width: 1.2em;
+        height: 1.2em;
+        position: absolute;
+        top: 0;
+        right: -5px;
+      }
     }
   }
 }
@@ -73,31 +85,5 @@
     font-size: 24px;
     border: none;
     background: none;
-  }
-}
-
-.mutation-screen-portal {
-  position: absolute;
-  top: 40px;
-  left: 40px;
-  right: 40px;
-  bottom: 40px;
-  border: 1px solid rgb(204, 204, 204);
-  background: rgb(255, 255, 255);
-  overflow: auto;
-  border-radius: 4px;
-  outline: none;
-}
-
-.species-viewer {
-  .header {
-    text-align: center;
-
-    .species-name {
-      font-size: 2em;
-      font-weight: bold;
-      font-style: italic;
-      display: inline;
-    }
   }
 }

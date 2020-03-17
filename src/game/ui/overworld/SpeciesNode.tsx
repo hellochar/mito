@@ -31,7 +31,7 @@ function SpeciesNode({ species, onMutate }: SpeciesNodeProps) {
           <div className="species-info-animation">
             <Character size="small" />
           </div>
-          <MP amount={species.freeMutationPoints} total={species.totalMutationPoints} />
+          <MP amount={species.freeMutationPoints} />
         </div>
       </LookAtMouse>
     </div>

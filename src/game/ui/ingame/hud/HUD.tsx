@@ -6,7 +6,7 @@ import uuid from "uuid";
 import { getDecidedGameResult } from "../../../gameResult";
 import { PlayerSeedControlScheme } from "../../../input/ControlScheme";
 import Mito from "../../../mito/mito";
-import GenomeViewer from "../GenomeViewer";
+import GenomeViewer from "../../GenomeViewer";
 import { HotkeyButton } from "../HotkeyButton";
 import { InventoryBar } from "../InventoryBar";
 import { TileDetails } from "../TileDetails";

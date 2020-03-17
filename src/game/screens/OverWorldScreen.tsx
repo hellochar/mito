@@ -1,11 +1,9 @@
 import classNames from "classnames";
-import { Species } from "core/species";
+import { lineage, Species } from "core/species";
 import { useAppReducer } from "game/app";
 import { resetGame, save } from "game/app/saveLoad";
 import { mitoOverworld } from "game/audio";
 import { Button } from "game/ui/common/Button";
-import MP from "game/ui/common/MP";
-import GenomeViewer from "game/ui/ingame/GenomeViewer";
 import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
 import React, { useCallback, useEffect, useState } from "react";
 import { GiFamilyTree } from "react-icons/gi";
@@ -14,6 +12,7 @@ import { HexTile } from "../../core/overworld/hexTile";
 import { EpochUI } from "../ui/overworld/EpochUI";
 import { OverWorldMap } from "../ui/overworld/map/OverWorldMap";
 import "./OverWorldScreen.scss";
+import { SpeciesViewer } from "./SpeciesViewer";
 
 export interface OverWorldScreenProps {
   onNextEpoch: () => void;
@@ -49,12 +48,19 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
     setGenomeViewerSpecies(s);
   }, []);
 
+  const [{ rootSpecies }] = useAppReducer();
+
   function maybeRenderPhylogeneticTreePanel() {
+    const unusedPoints = lineage(rootSpecies)
+      .map((x) => x.freeMutationPoints)
+      .reduce((a, b) => a + b);
+    const unusedPointsEl = unusedPoints > 0 ? <div className="unused-points">{unusedPoints}</div> : null;
     return (
       <div className={classNames("panel-left", { open: leftPanelOpen })}>
         {leftPanelOpen ? <PhylogeneticTree onMutate={handleStartMutate} /> : null}
         <button className="panel-left-handle" onClick={() => setLeftPanelOpen((open) => !open)}>
           <GiFamilyTree className="icon" />
+          {unusedPointsEl}
         </button>
       </div>
     );
@@ -109,15 +115,3 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
 };
 
 export default OverWorldScreen;
-
-const SpeciesViewer: React.FC<{ species: Species }> = ({ species }) => {
-  return (
-    <div className="species-viewer">
-      <div className="header">
-        <div className="species-name">{species.name}</div>
-        - <MP amount={species.freeMutationPoints} /> of <MP amount={species.totalMutationPoints} />
-      </div>
-      <GenomeViewer genome={species.genome} />
-    </div>
-  );
-};

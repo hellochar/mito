@@ -1,0 +1,14 @@
+@import "../../variables";
+
+.species-viewer {
+  .header {
+    text-align: center;
+
+    .species-name {
+      font-size: 2em;
+      font-weight: bold;
+      font-style: italic;
+      display: inline;
+    }
+  }
+}

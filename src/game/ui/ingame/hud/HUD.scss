@@ -135,12 +135,19 @@
 
 .hud-bottom-right {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  bottom: 0;
+  right: 0;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   pointer-events: none;
   z-index: 1;
+  transition: transform 2s 2s;
+  transform: translateX(0);
+
+  &.hidden {
+    transform: translateX(100%);
+  }
 }
 
 .player-inventory-container {
