@@ -26,7 +26,7 @@ export const GenePushWater = Gene.make(
         // push water to nearby sources
         if (tile instanceof Cell) {
           // tile.inventory.give(cell.inventory, randRound(LEAF_WATER_INTAKE_PER_SECOND * dt), 0);
-          const { water } = cell.inventory.give(tile.inventory, 1, 0);
+          cell.inventory.give(tile.inventory, 1, 0);
           // if (water > 0) {
           //   break;
           // }

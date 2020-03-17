@@ -35,7 +35,7 @@ export interface PopulationAttempt {
   settlingSpecies: Species;
 }
 
-const PopulationAttemptSchema = createSimpleSchema<PopulationAttempt>({
+export const PopulationAttemptSchema = createSimpleSchema<PopulationAttempt>({
   sourceHex: reference(HexTile),
   targetHex: reference(HexTile),
   settlingSpecies: reference(SpeciesSchema),
