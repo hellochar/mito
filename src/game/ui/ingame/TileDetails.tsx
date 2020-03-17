@@ -50,7 +50,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       return (
         <div className="interact-infos">
           {leftClickEl}
-          <div className="interact-info">Right click - deconstruct.</div>
+          <div className="interact-info">Right click - more options.</div>
         </div>
       );
     }
