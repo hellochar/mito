@@ -9,6 +9,12 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
+  // opacity: 0.2;
+  // transition: all 0.2s;
+
+  // &:hover {
+  //   opacity: 1;
+  // }
 
   .buttons {
     display: flex;

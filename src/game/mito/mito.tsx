@@ -168,17 +168,6 @@ export class Mito extends ISketch {
       this.mouseButton = event.button;
       this.mouseDown = true;
       if (this.mouseButton === 2) {
-        if (this.inspectedCell != null) {
-          this.inspectedCell = undefined;
-        } else {
-          const tile = this.getHighlightedTile();
-          if (tile == null) {
-            return;
-          }
-          if (tile instanceof Cell) {
-            this.inspectedCell = tile;
-          }
-        }
       }
     },
     mouseup: () => {

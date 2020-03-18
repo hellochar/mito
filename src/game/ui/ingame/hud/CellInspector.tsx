@@ -16,21 +16,49 @@ export const CellInspector: React.FC<{
       <div className="buttons">
         <div className="resources">
           <div className="resource-row">
-            <button disabled={cell.inventory.water === 0} onClick={() => cell.inventory.give(player.inventory, 1, 0)}>
+            <button
+              disabled={cell.inventory.water === 0}
+              onClickCapture={(e) => {
+                cell.inventory.give(player.inventory, 1, 0);
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
               Take&nbsp;
               <ResourceIcon name="water" />
             </button>
-            <button disabled={player.inventory.water === 0} onClick={() => player.inventory.give(cell.inventory, 1, 0)}>
+            <button
+              disabled={player.inventory.water === 0}
+              onClickCapture={(e) => {
+                player.inventory.give(cell.inventory, 1, 0);
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
               Give&nbsp;
               <ResourceIcon name="water" />
             </button>
           </div>
           <div className="resource-row">
-            <button disabled={cell.inventory.sugar === 0} onClick={() => cell.inventory.give(player.inventory, 0, 1)}>
+            <button
+              disabled={cell.inventory.sugar === 0}
+              onClickCapture={(e) => {
+                cell.inventory.give(player.inventory, 0, 1);
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
               Take&nbsp;
               <ResourceIcon name="sugar" />
             </button>
-            <button disabled={player.inventory.sugar === 0} onClick={() => player.inventory.give(cell.inventory, 0, 1)}>
+            <button
+              disabled={player.inventory.sugar === 0}
+              onClickCapture={(e) => {
+                player.inventory.give(cell.inventory, 0, 1);
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
               Give&nbsp;
               <ResourceIcon name="sugar" />
             </button>

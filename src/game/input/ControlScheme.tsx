@@ -1,5 +1,6 @@
+import { Cell } from "core/cell";
+import { ActionMove } from "core/player/action";
 import { Vector2 } from "three";
-import { ActionMove } from "../../core/player/action";
 import { Mito } from "../mito/mito";
 import { WorldDOMElement } from "../mito/WorldDOMElement";
 import Keyboard from "./keyboard";
@@ -18,11 +19,38 @@ export class PlayerControlScheme implements ControlScheme {
 
   public constructor(public mito: Mito) {
     window.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("mousedown", this.handleMouseDown);
   }
 
   destroy() {
     window.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener("mousedown", this.handleMouseDown);
   }
+
+  handleMouseDown = (event: MouseEvent) => {
+    if (event.target instanceof HTMLCanvasElement) {
+      if (event.button === 0) {
+        if (this.mito.inspectedCell != null) {
+          this.mito.inspectedCell = undefined;
+        } else {
+          this.handleLeftClick();
+        }
+      } else if (event.button === 2) {
+        if (this.mito.inspectedCell != null) {
+          this.mito.inspectedCell = undefined;
+        } else {
+          const tile = this.mito.getHighlightedTile();
+          if (tile == null) {
+            return;
+          }
+          if (tile instanceof Cell) {
+            this.mito.inspectedCell = tile;
+          }
+        }
+        // this.mito.inspectedCell = undefined;
+      }
+    }
+  };
 
   animate(_ms: number) {
     const { mito } = this;
@@ -62,14 +90,6 @@ export class PlayerControlScheme implements ControlScheme {
     for (const key of Keyboard.keyMap) {
       if (ACTION_CONTINUOUS_KEYMAP[key]) {
         mito.world.player.setAction(ACTION_CONTINUOUS_KEYMAP[key]);
-      }
-    }
-    if (mito.mouseDown) {
-      // left
-      if (mito.mouseButton === 0) {
-        this.handleLeftClick();
-      } else if (mito.mouseButton === 2) {
-        this.handleRightClick();
       }
     }
   }

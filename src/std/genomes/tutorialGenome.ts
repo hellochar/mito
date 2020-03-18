@@ -15,8 +15,8 @@ const cellTypeTissue = new CellType(
     color: new Color(0x30ae25),
   },
   {
-    type: "take",
-    resources: "water and sugar",
+    type: "give",
+    resources: "sugar",
   }
 );
 
