@@ -94,10 +94,6 @@
         margin-right: 5px;
       }
     }
-
-    .gene ~ .gene {
-      margin-top: 10px;
-    }
   }
 
   .chromosome {
@@ -175,6 +171,7 @@
   background: rgb(194, 187, 177);
   transition: all 0.1s;
   overflow: hidden;
+  width: 305px;
 
   &.small {
     max-height: 28px;
@@ -188,6 +185,17 @@
   &:hover {
     max-height: 500px;
     box-shadow: 15px 15px 8px 2px rgba(64, 64, 64, 0.9);
+  }
+
+  ~ .gene {
+    margin-top: 10px;
+  }
+
+  .description,
+  p {
+    @include smalltext();
+    line-height: 1.25;
+    margin: 10px 0 0;
   }
 
   .gene-header {

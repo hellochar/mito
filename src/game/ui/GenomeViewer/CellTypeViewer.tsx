@@ -4,8 +4,8 @@ import { CellInteraction, CellType } from "../../../core/cell/genome";
 import { spritesheetLoaded } from "../../spritesheet";
 import IconCell from "../common/IconCell";
 import { CellInteractionSelector } from "./CellInteractionSelector";
+import { DraggedContext } from "./DragInfo";
 import { GeneViewer } from "./GeneViewer";
-import { DraggedContext } from "./GenomeViewer";
 export const CellTypeViewer: React.FC<{
   cellType: CellType;
 }> = ({ cellType }) => {

@@ -1,6 +1,7 @@
 import { HexTile } from "core/overworld/hexTile";
 import { lineage, Species } from "core/species";
 import { GameResult } from "game/gameResult";
+import { generateRandomGenes } from "game/ui/GenomeViewer/generateRandomGenes";
 import React, { useContext } from "react";
 import { AppState, PopulationAttempt } from "./state";
 
@@ -108,6 +109,7 @@ function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAtt
     mutationPointsPerEpoch: results.mutationPointsPerEpoch,
   };
   settlingSpecies.totalMutationPoints = state.overWorld.getMaxGenePool(settlingSpecies);
+  settlingSpecies.geneOptions.push(...generateRandomGenes(3));
   if (oldSpecies) {
     // update old species mutation point pool cache
     oldSpecies.totalMutationPoints = state.overWorld.getMaxGenePool(oldSpecies);

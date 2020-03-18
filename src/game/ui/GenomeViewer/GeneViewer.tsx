@@ -3,8 +3,8 @@ import React from "react";
 import { FaGripLines } from "react-icons/fa";
 import { CellType } from "../../../core/cell/genome";
 import { RealizedGene } from "../../../core/cell/realizedGene";
+import { DraggedContext } from "./DragInfo";
 import { GeneCost } from "./GeneCost";
-import { DraggedContext } from "./GenomeViewer";
 export const GeneViewer: React.FC<{
   cellType: CellType;
   gene: RealizedGene;

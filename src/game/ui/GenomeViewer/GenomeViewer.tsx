@@ -2,24 +2,11 @@ import classNames from "classnames";
 import * as React from "react";
 import { FaArrowsAltV } from "react-icons/fa";
 import { TiThMenu } from "react-icons/ti";
-import Genome, { CellType } from "../../../core/cell/genome";
-import { RealizedGene } from "../../../core/cell/realizedGene";
+import Genome from "../../../core/cell/genome";
 import { AddCellCard } from "./AddCellCard";
 import { CellTypeViewer } from "./CellTypeViewer";
+import { DraggedContext, GenomeViewerState } from "./DragInfo";
 import "./GenomeViewer.scss";
-
-interface DragInfo {
-  gene: RealizedGene;
-  cellType: CellType;
-}
-
-interface GenomeViewerState {
-  dragged?: DragInfo;
-  view: "small" | "expanded";
-}
-
-type GenomeViewerStateTupleType = [GenomeViewerState, React.Dispatch<React.SetStateAction<GenomeViewerState>>];
-export const DraggedContext = React.createContext<GenomeViewerStateTupleType>(null!);
 
 const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
   const tuple = React.useState<GenomeViewerState>({ view: "expanded" });

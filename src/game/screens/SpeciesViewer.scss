@@ -1,6 +1,7 @@
 @import "../../variables";
 
 .species-viewer {
+  overflow: auto;
   .header {
     text-align: center;
 
@@ -10,5 +11,27 @@
       font-style: italic;
       display: inline;
     }
+  }
+}
+
+.mutation-chooser {
+  margin: 50px;
+  padding: 50px;
+  border: 3px solid $color-mutation;
+  background: $light-gray5;
+  border-radius: 5px;
+
+  h1 {
+    text-align: center;
+  }
+}
+
+.gene-options {
+  display: flex;
+  justify-content: center;
+
+  .gene {
+    margin: 10px;
+    cursor: pointer !important;
   }
 }

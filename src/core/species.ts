@@ -2,6 +2,7 @@ import Genome from "core/cell/genome";
 import { createSimpleSchema, identifier, list, object, primitive, reference } from "serializr";
 import { tutorialGenome } from "std/genomes/tutorialGenome";
 import uuid from "uuid";
+import { RealizedGene } from "./cell";
 
 export interface Species {
   genome: Genome;
@@ -11,6 +12,7 @@ export interface Species {
   totalMutationPoints: number;
   descendants: Species[];
   parent?: Species;
+  geneOptions: RealizedGene[];
 }
 
 export const SpeciesSchema = createSimpleSchema<Species>({
@@ -20,6 +22,7 @@ export const SpeciesSchema = createSimpleSchema<Species>({
   name: primitive(),
   freeMutationPoints: primitive(),
   totalMutationPoints: primitive(),
+  geneOptions: list(object(RealizedGene)),
 });
 // we can't self-reference SpeciesSchema in its instantiation; set it after
 SpeciesSchema.props.descendants = list(object(SpeciesSchema));
@@ -33,6 +36,7 @@ export function newBaseSpecies(name = "plantum originus"): Species {
     freeMutationPoints: 0,
     totalMutationPoints: 0,
     descendants: [],
+    geneOptions: [],
   };
 }
 

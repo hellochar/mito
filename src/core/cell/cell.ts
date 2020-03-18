@@ -67,14 +67,19 @@ export class Cell extends Tile implements Interactable {
     return this.staticProperties.timeToBuild;
   }
 
-  constructor(pos: Vector2, world: World, public type: CellType, public args?: CellArgs) {
+  constructor(
+    pos: Vector2,
+    world: World,
+    public type: CellType,
+    public args: CellArgs = { direction: new Vector2(1, 0) }
+  ) {
     super(pos, world);
     this.chromosome = type.chromosome;
     this.staticProperties = this.chromosome.mergeStaticProperties();
     const { inventoryCapacity, isDirectional } = this.staticProperties;
     this.inventory = new Inventory(inventoryCapacity, this);
     if (isDirectional) {
-      const dir = args!.direction!.clone();
+      const dir = args?.direction?.clone() ?? new Vector2(1, 0);
       if (isFractional(dir.x) || isFractional(dir.y)) {
         throw new Error("build transport with fractional dir " + dir.x + ", " + dir.y);
       }
