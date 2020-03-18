@@ -3,6 +3,7 @@
 .world-dom-component.build-drop-shadow {
   box-shadow: 0 0 8px 4px transparentize($color: $red3, $amount: 0.2);
   z-index: 0;
+  pointer-events: none;
 
   &.valid {
     box-shadow: 0 0 8px white;

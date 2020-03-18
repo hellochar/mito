@@ -47,7 +47,7 @@ export const GeneSeed = Gene.make<ReproducerState>(
     levelProps: {
       mpEarned: [0.5, 0.75, 1, 1.25, 1.5],
       neededResources: 100,
-      secondsToMature: 1 * TIME_PER_MONTH,
+      secondsToMature: 30,
     },
     static: {
       isReproductive: true,
