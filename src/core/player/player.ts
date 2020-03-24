@@ -1,16 +1,9 @@
 import { sleep } from "common/promise";
 import { EventEmitter } from "events";
 import { Vector2 } from "three";
-import { GeneDirectionalPush } from "../../std/genes/GeneDirectionalPush";
 import { CellArgs } from "../cell/cell";
 import { CellType } from "../cell/genome";
-import {
-  PLAYER_BASE_SPEED,
-  PLAYER_MAX_RESOURCES,
-  PLAYER_MOVED_BY_TRANSPORT_SPEED,
-  PLAYER_STARTING_SUGAR,
-  PLAYER_STARTING_WATER,
-} from "../constants";
+import { PLAYER_BASE_SPEED, PLAYER_MAX_RESOURCES, PLAYER_STARTING_SUGAR, PLAYER_STARTING_WATER } from "../constants";
 import { Steppable } from "../entity";
 import { Inventory } from "../inventory";
 import { Air, Cell, FreezeEffect, GrowingCell, Tile } from "../tile";
@@ -168,21 +161,6 @@ export class Player implements Steppable {
         }
       } else {
         this.action = undefined;
-      }
-    }
-  }
-
-  private maybeMoveWithTransports(dt: number) {
-    const tile = this.currentTile();
-    if (tile instanceof Cell) {
-      const directionalPush = tile.findGene(GeneDirectionalPush);
-      if (directionalPush != null) {
-        const pushedPos = this.posFloat
-          .clone()
-          .add(tile.args!.direction!.clone().setLength(PLAYER_MOVED_BY_TRANSPORT_SPEED * dt));
-        if (this.isWalkable(pushedPos)) {
-          this.posFloat.copy(pushedPos);
-        }
       }
     }
   }
