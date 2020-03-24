@@ -2,7 +2,6 @@ import { Cell } from "core/cell";
 import { ActionMove } from "core/player/action";
 import { Vector2 } from "three";
 import { Mito } from "../mito/mito";
-import { WorldDOMElement } from "../mito/WorldDOMElement";
 import Keyboard from "./keyboard";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 
@@ -15,8 +14,6 @@ export interface ControlScheme {
 }
 
 export class PlayerControlScheme implements ControlScheme {
-  private altElement?: WorldDOMElement;
-
   public constructor(public mito: Mito) {
     window.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("mousedown", this.handleMouseDown);
@@ -54,30 +51,6 @@ export class PlayerControlScheme implements ControlScheme {
 
   animate(_ms: number) {
     const { mito } = this;
-    // if (
-    //   // Keyboard.shouldShowInMapPopup() &&
-    //   this.altElement == null &&
-    //   mito.actionBar.current === mito.actionBar.toolBar
-    // ) {
-    //   this.altElement = mito.addWorldDOMElement(
-    //     () => mito.getHighlightedTile()!,
-    //     () => {
-    //       const toolBar = mito.actionBar.toolBar;
-    //       const tool = toolBar.tools[toolBar.currentTool!];
-    //       return (
-    //         <div className="tile-details-container">
-    //           {/* <TileDetails tile={mito.getHighlightedTile()} /> */}
-    //           <div style={{ padding: 10, background: "white", borderRadius: 5 }}>
-    //             {tool ? "Click to " + tool.name : null}
-    //           </div>
-    //         </div>
-    //       );
-    //     }
-    //   );
-    // } else if (this.altElement != null && mito.actionBar.current !== mito.actionBar.toolBar) {
-    //   mito.removeWorldDOMElement(this.altElement);
-    //   this.altElement = undefined;
-    // }
     if (mito.instructionsOpen) {
       return;
     }
