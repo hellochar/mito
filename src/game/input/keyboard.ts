@@ -8,7 +8,10 @@ const OPPOSITE_KEYS: Record<string, string> = {
   KeyD: "KeyA",
 };
 
-export const Keyboard = new (class Input {
+/**
+ * Singleton that listens to key events on window.
+ */
+export const Keyboard = new (class Keyboard {
   readonly keyMap = new Set<string>();
 
   constructor() {
@@ -44,14 +47,6 @@ export const Keyboard = new (class Input {
   private handleKeyUp = (event: KeyboardEvent) => {
     this.keyMap.delete(event.code);
   };
-
-  public shouldShowInMapPopup() {
-    return (
-      // TODO add mac cmd key
-      this.keyMap.has("AltLeft") || this.keyMap.has("AltRight")
-      // this.keyMap.has("ShiftLeft") || this.keyMap.has("ShiftRight")
-    );
-  }
 })();
 
 export default Keyboard;
