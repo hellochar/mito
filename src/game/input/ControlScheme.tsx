@@ -25,26 +25,16 @@ export class PlayerControlScheme implements ControlScheme {
   }
 
   handleMouseDown = (event: MouseEvent) => {
-    if (event.target instanceof HTMLCanvasElement) {
+    // control inspectedCell on click
+    if (event.target === this.mito.canvas) {
+      if (this.mito.inspectedCell != null) {
+        this.mito.inspectedCell = undefined;
+        return;
+      }
       if (event.button === 0) {
-        if (this.mito.inspectedCell != null) {
-          this.mito.inspectedCell = undefined;
-        } else {
-          this.handleLeftClick();
-        }
+        this.leftClick();
       } else if (event.button === 2) {
-        if (this.mito.inspectedCell != null) {
-          this.mito.inspectedCell = undefined;
-        } else {
-          const tile = this.mito.getHighlightedTile();
-          if (tile == null) {
-            return;
-          }
-          if (tile instanceof Cell) {
-            this.mito.inspectedCell = tile;
-          }
-        }
-        // this.mito.inspectedCell = undefined;
+        this.rightClick();
       }
     }
   };
@@ -54,8 +44,8 @@ export class PlayerControlScheme implements ControlScheme {
     if (mito.instructionsOpen) {
       return;
     }
-    // disable this for now so i can open interaction cell editor in genomeviewer
-    // this.canvas.focus();
+
+    // keyboard actions
     const moveAction = this.keysToMovement(Keyboard.keyMap);
     if (moveAction) {
       mito.world.player.setAction(moveAction);
@@ -64,6 +54,13 @@ export class PlayerControlScheme implements ControlScheme {
       if (ACTION_CONTINUOUS_KEYMAP[key]) {
         mito.world.player.setAction(ACTION_CONTINUOUS_KEYMAP[key]);
       }
+    }
+
+    // mouse actions
+    switch (this.mito.mouse.button) {
+      case 0:
+        this.leftClickHold();
+        break;
     }
   }
 
@@ -101,26 +98,21 @@ export class PlayerControlScheme implements ControlScheme {
     }
   }
 
-  public handleRightClick() {
-    // const { mito } = this;
-    // if (mito.inspectedCell != null) {
-    //   mito.inspectedCell = undefined;
-    // } else {
-    //   const tile = mito.getHighlightedTile();
-    //   if (tile == null) {
-    //     return;
-    //   }
-    //   if (tile instanceof Cell) {
-    //     mito.inspectedCell = tile;
-    //   }
-    //   // const action = mito.actionBar.rightClick(tile);
-    //   // if (action) {
-    //   //   mito.world.player.setAction(action);
-    //   // }
-    // }
+  public leftClick() {
+    // no-op for left-clicking
   }
 
-  public handleLeftClick() {
+  public rightClick() {
+    const tile = this.mito.getHighlightedTile();
+    if (tile == null) {
+      return;
+    }
+    if (tile instanceof Cell) {
+      this.mito.inspectedCell = tile;
+    }
+  }
+
+  public leftClickHold() {
     const { mito } = this;
     const target = mito.getHighlightedTile();
     if (target == null) {
@@ -157,12 +149,8 @@ export class PlayerSeedControlScheme implements ControlScheme {
   }
 
   animate(_ms: number): void {
-    const { mito } = this;
-    if (mito.mouseDown) {
-      // left
-      if (mito.mouseButton === 0) {
-        this.handleLeftClick();
-      }
+    if (this.mito.mouse.button === 0) {
+      this.handleLeftClick();
     }
   }
 

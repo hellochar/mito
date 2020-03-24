@@ -239,6 +239,7 @@
 .world-dom-component {
   position: absolute;
   z-index: 1;
+  pointer-events: none;
 }
 
 .floating-text {

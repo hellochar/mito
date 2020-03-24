@@ -2,6 +2,7 @@ import { sleep } from "common/promise";
 import { Action } from "core/player/action";
 import { easeSinIn } from "d3-ease";
 import { PopulationAttempt } from "game/app";
+import { Mouse } from "game/input/mouse";
 import { ISketch, SketchAudioContext } from "game/screens/sketch/sketch";
 import * as React from "react";
 import { environmentFromLevelInfo } from "std/environments";
@@ -49,11 +50,7 @@ export class Mito extends ISketch {
 
   public tutorialRef: NewPlayerTutorial | null = null;
 
-  public readonly mouse = new THREE.Vector2();
-
-  public mouseDown = false;
-
-  public mouseButton = -1;
+  public mouse = new Mouse(this.canvas);
 
   public instructionsOpen = false;
 
@@ -156,23 +153,6 @@ export class Mito extends ISketch {
   }
 
   public events = {
-    contextmenu: (event: MouseEvent) => {
-      event.preventDefault();
-      return false;
-    },
-    mousemove: (event: MouseEvent) => {
-      this.mouse.x = event.clientX!;
-      this.mouse.y = event.clientY!;
-    },
-    mousedown: (event: MouseEvent) => {
-      this.mouseButton = event.button;
-      this.mouseDown = true;
-      if (this.mouseButton === 2) {
-      }
-    },
-    mouseup: () => {
-      this.mouseDown = false;
-    },
     wheel: (e: WheelEvent) => {
       const delta = -(e.deltaX + e.deltaY) / 125 / 20;
       const currZoom = this.userZoom;
@@ -199,13 +179,8 @@ export class Mito extends ISketch {
     return true;
   };
 
-  private handleContextMenu = (event: MouseEvent) => {
-    event.preventDefault();
-  };
-
   private attachWindowEvents() {
     window.onbeforeunload = this.handleBeforeUnload;
-    document.addEventListener("contextmenu", this.handleContextMenu);
     (window as any).mito = this;
     (window as any).THREE = THREE;
   }
@@ -213,8 +188,6 @@ export class Mito extends ISketch {
   destroy() {
     // settings controls to undefined calls destroy on controls
     this.controls = undefined;
-
-    document.removeEventListener("contextmenu", this.handleContextMenu);
     window.onbeforeunload = null;
   }
 
@@ -285,7 +258,7 @@ export class Mito extends ISketch {
 
   public readonly PLAYER_TETHER_DISTANCE = 0.9;
 
-  public getPlayerInfluenceVector(clientX = this.mouse.x, clientY = this.mouse.y) {
+  public getPlayerInfluenceVector(clientX = this.mouse.position.x, clientY = this.mouse.position.y) {
     const cursorCameraNorm = this.getCameraNormCoordinates(clientX, clientY);
     const cursorWorld = new Vector3(cursorCameraNorm.x, cursorCameraNorm.y, 0).unproject(this.camera);
 
@@ -298,8 +271,8 @@ export class Mito extends ISketch {
     if (this.inspectedCell) {
       return this.inspectedCell.pos;
     }
-    const clientX = this.mouse.x,
-      clientY = this.mouse.y;
+    const clientX = this.mouse.position.x,
+      clientY = this.mouse.position.y;
     // if (this.actionBar.current instanceof CellBar) {
     const offset = this.getPlayerInfluenceVector(clientX, clientY);
     const { x, y } = this.world.player.posFloat;
@@ -424,7 +397,7 @@ export class Mito extends ISketch {
 
   defaultCameraState(): CameraState {
     if (this.world.playerSeed == null) {
-      const mouseNorm = this.getCameraNormCoordinates(this.mouse.x, this.mouse.y);
+      const mouseNorm = this.getCameraNormCoordinates(this.mouse.position.x, this.mouse.position.y);
 
       const cameraTarget = this.world.player.droopPosFloat().clone();
       cameraTarget.x += mouseNorm.x / 2;

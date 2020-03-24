@@ -1,6 +1,6 @@
 import { Inventory } from "core/inventory";
 import { Vector2 } from "three";
-import { CELL_DROOP } from "../constants";
+import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../constants";
 import { DIRECTIONS } from "../directions";
 import { Entity, step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
@@ -155,28 +155,21 @@ export class Cell extends Tile implements Interactable {
       const [waterToGive, sugarToGive] = (() => {
         switch (interaction.resources) {
           case "water":
-            return [5, 0];
+            return [1, 0];
           case "sugar":
             return [0, 1];
           case "water and sugar":
-            return [5, 1];
+            return [1, 1];
           case "sugar take water":
-            return [-5, 1];
+            return [-1, 1];
           case "water take sugar":
-            return [5, -1];
+            return [1, -1];
         }
       })();
-      // if (interaction.type === "give" && interaction.resources === "sugar") {
-      //   // special case - just take 1 sugar
-      //   from.give(to, 0, 1);
-      //   return true;
-      // }
       const { water, sugar } = from.give(
         to,
-        waterToGive,
-        sugarToGive
-        // PLAYER_INTERACT_EXCHANGE_SPEED * waterToGive * dt,
-        // PLAYER_INTERACT_EXCHANGE_SPEED * sugarToGive * dt
+        PLAYER_INTERACT_EXCHANGE_SPEED * waterToGive * dt,
+        PLAYER_INTERACT_EXCHANGE_SPEED * sugarToGive * dt
       );
 
       if (water > 0 || sugar > 0) {
