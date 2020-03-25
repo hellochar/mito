@@ -22,6 +22,10 @@ export class ToolBar {
     }
   }
 
+  isInteract() {
+    return this.currentTool === TOOL_INTERACT;
+  }
+
   leftClick(target: Tile): Action | undefined {
     return this.currentTool.leftClick(target);
   }
@@ -80,13 +84,7 @@ export interface ToolBuild extends ToolBase {
 const TOOL_INTERACT: ToolInteract = {
   name: "Interact",
   type: "interact",
-  leftClick: (target: Tile): Action | undefined =>
-    isInteractable(target)
-      ? {
-          type: "interact",
-          interactable: target,
-        }
-      : undefined,
+  leftClick: (target: Tile): Action | undefined => (isInteractable(target) ? target.interact(null!) : undefined),
   rightClick: (target: Tile): Action | undefined => ({
     type: "deconstruct",
     position: target.pos,

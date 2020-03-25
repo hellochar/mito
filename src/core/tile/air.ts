@@ -1,6 +1,5 @@
-import { Entity } from "core";
-import { PLAYER_INTERACT_EXCHANGE_SPEED } from "core/constants";
 import { Interactable } from "core/interactable";
+import { Action } from "core/player/action";
 import { Vector2 } from "three";
 import { Noise } from "../../common/perlin";
 import { map } from "../../math/index";
@@ -29,10 +28,14 @@ export class Air extends Tile implements Interactable {
     this._co2 = this.computeCo2();
   }
 
-  interact(source: Entity, dt: number): boolean {
-    // give a small bit of sugar/water to the source
-    const { water, sugar } = this.inventory.give(source.inventory, PLAYER_INTERACT_EXCHANGE_SPEED * 0.1 * dt, 0);
-    return water > 0 || sugar > 0;
+  interact(): Action {
+    return {
+      type: "pickup",
+      water: 0.1,
+      sugar: 0.1,
+      target: this,
+      continuous: true,
+    };
   }
 
   // Careful - this affects gravity speed

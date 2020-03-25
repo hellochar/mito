@@ -44,10 +44,19 @@ export class PlayerRenderer extends Renderer<Player> {
   };
 
   handleAction = (action: Action) => {
-    if (action.type === "interact") {
+    if (action.type === "pickup" || action.type === "drop") {
       this.neuronMesh.handleInteracted();
       interactSound.fade(1.0, 0.0, 200);
       interactSound.rate(randFloat(0.8, 1.5));
+      if (action.type === "drop") {
+        if (action.sugar > 0) {
+          dropSugar.play();
+        }
+        if (action.water > 0) {
+          const id = dropWater.play();
+          dropWater.fade(0.2, 0, 400, id);
+        }
+      }
     } else if (action.type === "build") {
       const id = build.play();
       build.rate(randFloat(0.5, 1.0), id);
@@ -57,14 +66,6 @@ export class PlayerRenderer extends Renderer<Player> {
     } else if (action.type === "move") {
       footsteps.fade(0.1, 0, 50);
       footsteps.rate(randFloat(0.8, 1.5));
-    } else if (action.type === "drop") {
-      if (action.sugar > 0) {
-        dropSugar.play();
-      }
-      if (action.water > 0) {
-        const id = dropWater.play();
-        dropWater.fade(0.2, 0, 400, id);
-      }
     }
   };
 

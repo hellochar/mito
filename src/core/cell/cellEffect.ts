@@ -1,6 +1,8 @@
+import { Player } from "core";
+import { ActionThaw } from "core/player/action";
 import { Constructor } from "../../typings/constructor";
 import { TIME_PER_DAY } from "../constants";
-import { Entity, StopStep } from "../entity";
+import { StopStep } from "../entity";
 import { Interactable } from "../interactable";
 import { Temperature } from "../temperature";
 import { Cell } from "./cell";
@@ -51,7 +53,14 @@ export class FreezeEffect extends CellEffect implements Interactable {
     return this.secondsToDie - this.age;
   }
 
-  interact(source: Entity, dt: number) {
+  interact(source: Player): ActionThaw {
+    return {
+      type: "thaw",
+      target: this,
+    };
+  }
+
+  thaw(_dt: number) {
     if (this.chunkCooldown <= 0) {
       this.chunkCooldown += 0.5;
       this.percentFrozen -= (15 / this.secondsToDie) * 0.5;
@@ -65,7 +74,6 @@ export class FreezeEffect extends CellEffect implements Interactable {
     }
     // this.percentFrozen -= (20 / this.secondsToDie) * dt;
     this.onFrozenChanged();
-    return true;
   }
 
   step(dt: number) {

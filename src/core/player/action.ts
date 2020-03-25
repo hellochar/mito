@@ -1,8 +1,7 @@
-import { Tile } from "core/tile";
+import { FreezeEffect, Tile } from "core/tile";
 import { Vector2 } from "three";
 import { CellArgs } from "../cell/cell";
 import { CellType } from "../cell/genome";
-import { Interactable } from "../interactable";
 
 export interface ActionMove {
   type: "move";
@@ -29,7 +28,8 @@ export interface ActionDrop {
   type: "drop";
   water: number;
   sugar: number;
-  target?: Tile;
+  target: Tile;
+  continuous?: boolean;
 }
 
 export interface ActionPickup {
@@ -45,7 +45,8 @@ export interface ActionPickup {
    */
   sugar: number;
 
-  target?: Tile;
+  target: Tile;
+  continuous?: boolean;
 }
 
 export interface ActionMultiple {
@@ -53,16 +54,16 @@ export interface ActionMultiple {
   actions: Action[];
 }
 
-export interface ActionInteract {
-  type: "interact";
-  interactable: Interactable;
-}
-
 export interface ActionLong<T extends Action = Action> {
   type: "long";
   elapsed: number;
   duration: number;
   effect: T;
+}
+
+export interface ActionThaw {
+  type: "thaw";
+  target: FreezeEffect;
 }
 
 export type Action =
@@ -73,4 +74,4 @@ export type Action =
   | ActionLong<any>
   | ActionMultiple
   | ActionPickup
-  | ActionInteract;
+  | ActionThaw;

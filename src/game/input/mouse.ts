@@ -8,17 +8,10 @@ export class Mouse {
   public button = -1;
 
   constructor(el: HTMLElement) {
-    el.addEventListener("contextmenu", this.handleContextMenu);
-
     el.addEventListener("mousedown", this.handleMouseDown);
     el.addEventListener("mousemove", this.handleMouseMove);
     el.addEventListener("mouseup", this.handleMouseUp);
   }
-
-  private handleContextMenu = (event: MouseEvent) => {
-    event.preventDefault();
-    return false;
-  };
 
   private handleMouseDown = (event: MouseEvent) => {
     this.isPressed = true;

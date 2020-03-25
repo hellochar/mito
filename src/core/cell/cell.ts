@@ -1,8 +1,10 @@
+import { Player } from "core";
 import { Inventory } from "core/inventory";
+import { Action } from "core/player/action";
 import { Vector2 } from "three";
-import { CELL_DROOP, PLAYER_INTERACT_EXCHANGE_SPEED } from "../constants";
+import { CELL_DROOP } from "../constants";
 import { DIRECTIONS } from "../directions";
-import { Entity, step } from "../entity";
+import { step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
 import { Rock } from "../tile/rock";
@@ -138,21 +140,19 @@ export class Cell extends Tile implements Interactable {
     return this.effects.find((e) => e.constructor === type);
   }
 
-  interact(source: Entity, dt: number) {
-    dt = this.tempo * dt;
-    let anyInteracted = false;
+  interact(source: Player) {
     for (const e of this.effects) {
       if (isInteractable(e)) {
-        const interacted = e.interact(source, dt);
-        anyInteracted = anyInteracted || interacted;
+        const action = e.interact(source);
+        if (action != null) {
+          return action;
+        }
       }
     }
     // Cell interaction
     const { interaction } = this.type;
     if (interaction != null) {
-      const [from, to] =
-        interaction.type === "give" ? [source.inventory, this.inventory] : [this.inventory, source.inventory];
-      const [waterToGive, sugarToGive] = (() => {
+      const [water, sugar] = (() => {
         switch (interaction.resources) {
           case "water":
             return [1, 0];
@@ -166,21 +166,14 @@ export class Cell extends Tile implements Interactable {
             return [1, -1];
         }
       })();
-      const { water, sugar } = from.give(
-        to,
-        PLAYER_INTERACT_EXCHANGE_SPEED * waterToGive * dt,
-        PLAYER_INTERACT_EXCHANGE_SPEED * sugarToGive * dt
-      );
-
-      if (water > 0 || sugar > 0) {
-        anyInteracted = true;
-      } else if (from.isEmpty()) {
-        // if no resources moved because the source had no resources; count
-        // that as "successful"
-        anyInteracted = true;
-      }
+      const action: Action = {
+        type: interaction.type === "give" ? "drop" : "pickup",
+        water,
+        sugar,
+        target: this,
+      };
+      return action;
     }
-    return anyInteracted;
   }
 
   public isDead = false;

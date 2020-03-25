@@ -1,7 +1,6 @@
-import { Entity } from "core";
-import { PLAYER_INTERACT_EXCHANGE_SPEED } from "core/constants";
 import { Interactable } from "core/interactable";
 import { Inventory } from "core/inventory";
+import { Action } from "core/player/action";
 import { canPullResources } from "core/tile/canPullResources";
 import { Tile } from "core/tile/tile";
 import { clamp, map, randRound } from "math/index";
@@ -25,10 +24,14 @@ export abstract class Soil extends Tile implements Interactable {
     // return 1;
   }
 
-  interact(source: Entity, dt: number): boolean {
-    // give a small bit of sugar/water to the source
-    const { water, sugar } = this.inventory.give(source.inventory, PLAYER_INTERACT_EXCHANGE_SPEED * 0.1 * dt, 0);
-    return water > 0 || sugar > 0;
+  interact(): Action {
+    return {
+      type: "pickup",
+      water: 0.1,
+      sugar: 0.1,
+      target: this,
+      continuous: true,
+    };
   }
 
   shouldStep(dt: number) {

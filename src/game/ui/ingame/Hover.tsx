@@ -39,7 +39,8 @@ export class Hover extends React.Component<HoverProps> {
       return;
     }
     const { mito } = this.props;
-    const showBuildBlueprint = mito.toolBar.leftClick(tile)?.type === "interact";
+    const leftClickType = mito.toolBar.leftClick(tile)?.type;
+    const showBuildBlueprint = leftClickType === "pickup" || leftClickType === "drop";
     const tileHighlight = showBuildBlueprint ? (
       <TileHighlight x={tile.pos.x} y={tile.pos.y} scene={this.props.mito.scene} />
     ) : null;

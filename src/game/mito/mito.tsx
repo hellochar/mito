@@ -167,26 +167,35 @@ export class Mito extends ISketch {
       this.showInvalidAction({ message: "Inventory full!" });
     } else if (action.type === "drop" && action.target && action.target.inventory.isMaxed()) {
       this.showInvalidAction({ message: `${action.target.displayName} inventory full!` });
-    } else if (action.type === "interact" && this.world.player.inventory.isMaxed()) {
-      this.showInvalidAction({ message: `Inventory full!` });
     } else if (action.type === "build") {
-      this.showInvalidAction({ message: "Can't build there!" });
+      const buildError = this.world.player.getBuildError();
+      if (buildError) {
+        this.showInvalidAction({ message: `Need ${buildError}!` });
+      } else {
+        this.showInvalidAction({ message: "Can't build there!" });
+      }
     }
-    // this.showInvalidAction({ message: `Could not ${action.type}!` });
   };
 
   private handleBeforeUnload = () => {
     return true;
   };
 
+  private handleContextMenu = (e: MouseEvent) => {
+    e.preventDefault();
+    return false;
+  };
+
   private attachWindowEvents() {
     window.onbeforeunload = this.handleBeforeUnload;
+    window.addEventListener("contextmenu", this.handleContextMenu);
     (window as any).mito = this;
     (window as any).THREE = THREE;
   }
 
   destroy() {
     // settings controls to undefined calls destroy on controls
+    window.removeEventListener("contextmenu", this.handleContextMenu);
     this.controls = undefined;
     window.onbeforeunload = null;
   }

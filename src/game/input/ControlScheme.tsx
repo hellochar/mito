@@ -129,7 +129,7 @@ export class PlayerControlScheme implements ControlScheme {
     const tile = mito.getHighlightedTile();
     // return tile != null && mito.actionBar.leftClick(tile)?.type === "interact";
     const type = tile && mito.toolBar.leftClick(tile)?.type;
-    return type === "interact" || type === "pickup" || type === "drop";
+    return type === "pickup" || type === "drop";
   }
 }
 

@@ -3,7 +3,13 @@ import { EventEmitter } from "events";
 import { Vector2 } from "three";
 import { CellArgs } from "../cell/cell";
 import { CellType } from "../cell/genome";
-import { PLAYER_BASE_SPEED, PLAYER_MAX_RESOURCES, PLAYER_STARTING_SUGAR, PLAYER_STARTING_WATER } from "../constants";
+import {
+  PLAYER_BASE_SPEED,
+  PLAYER_INTERACT_EXCHANGE_SPEED,
+  PLAYER_MAX_RESOURCES,
+  PLAYER_STARTING_SUGAR,
+  PLAYER_STARTING_WATER,
+} from "../constants";
 import { Steppable } from "../entity";
 import { Inventory } from "../inventory";
 import { Air, Cell, FreezeEffect, GrowingCell, Tile } from "../tile";
@@ -13,11 +19,11 @@ import {
   ActionBuild,
   ActionDeconstruct,
   ActionDrop,
-  ActionInteract,
   ActionLong,
   ActionMove,
   ActionMultiple,
   ActionPickup,
+  ActionThaw,
 } from "./action";
 
 const waterCost = 1;
@@ -167,6 +173,7 @@ export class Player implements Steppable {
 
   public attemptAction(action: Action, dt: number): boolean {
     const successful = this._attemptAction(action, dt);
+    console.log(action);
     if (successful) {
       this.events.emit("action", action);
     } else {
@@ -175,7 +182,7 @@ export class Player implements Steppable {
     return successful;
   }
 
-  private _attemptAction(action: Action, dt: number) {
+  private _attemptAction(action: Action, dt: number): boolean {
     switch (action.type) {
       case "move":
         return this.attemptMove(action, dt);
@@ -189,10 +196,10 @@ export class Player implements Steppable {
         return this.attemptPickup(action, dt);
       case "multiple":
         return this.attemptMultiple(action, dt);
-      case "interact":
-        return this.attemptInteract(action, dt);
       case "long":
         return this.attemptLong(action, dt);
+      case "thaw":
+        return this.attemptThaw(action, dt);
     }
   }
 
@@ -333,22 +340,29 @@ export class Player implements Steppable {
     return false;
   }
 
-  public attemptDrop(action: ActionDrop, _dt: number) {
+  public attemptDrop(action: ActionDrop, dt: number) {
     // drop as much as you can onto the current tile
-    const target = action.target ?? this.currentTile();
-    const { water: waterToDrop, sugar: sugarToDrop } = action;
-    // // first, pick up the opposite of what you can from the tile to try and make space
-    // target.inventory.give(this.inventory, sugarToDrop, waterToDrop);
+    const target = action.target;
+    let { water: waterToDrop, sugar: sugarToDrop } = action;
+    if (action.continuous) {
+      waterToDrop *= PLAYER_INTERACT_EXCHANGE_SPEED * dt;
+      sugarToDrop *= PLAYER_INTERACT_EXCHANGE_SPEED * dt;
+    }
 
-    // give as much as you can
     const { water, sugar } = this.inventory.give(target.inventory, waterToDrop, sugarToDrop);
     return water > 0 || sugar > 0;
   }
 
   public attemptPickup(action: ActionPickup, dt: number) {
-    const target = action.target ?? this.currentTile();
+    const target = action.target;
     const inv = target.inventory;
-    const { water, sugar } = inv.give(this.inventory, action.water * dt, action.sugar * dt);
+
+    let { water: waterToDrop, sugar: sugarToDrop } = action;
+    if (action.continuous) {
+      waterToDrop *= PLAYER_INTERACT_EXCHANGE_SPEED * dt;
+      sugarToDrop *= PLAYER_INTERACT_EXCHANGE_SPEED * dt;
+    }
+    const { water, sugar } = inv.give(this.inventory, waterToDrop, sugarToDrop);
     return water > 0 || sugar > 0;
   }
 
@@ -358,10 +372,6 @@ export class Player implements Steppable {
       allSuccess = this.attemptAction(action, dt) && allSuccess;
     }
     return allSuccess;
-  }
-
-  public attemptInteract(action: ActionInteract, dt: number) {
-    return action.interactable.interact(this, dt);
   }
 
   public attemptLong(action: ActionLong, dt: number) {
@@ -375,6 +385,12 @@ export class Player implements Steppable {
     } else {
       return false;
     }
+  }
+
+  public attemptThaw(action: ActionThaw, dt: number) {
+    const { target } = action;
+    target.thaw(dt);
+    return true;
   }
 }
 
