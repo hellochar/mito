@@ -1,5 +1,5 @@
 import { Cell } from "core/cell";
-import { ActionMove } from "core/player/action";
+import { Action, ActionMove } from "core/player/action";
 import { Vector2 } from "three";
 import { Mito } from "../mito/mito";
 import Keyboard from "./keyboard";
@@ -100,6 +100,15 @@ export class PlayerControlScheme implements ControlScheme {
 
   public leftClick() {
     // no-op for left-clicking
+    const { mito } = this;
+    const target = mito.getHighlightedTile();
+    if (target == null) {
+      return;
+    }
+    const action = mito.toolBar.leftClick(target);
+    if (action != null && !this.isActionContinuous(action)) {
+      mito.world.player.setAction(action);
+    }
   }
 
   public rightClick() {
@@ -119,7 +128,7 @@ export class PlayerControlScheme implements ControlScheme {
       return;
     }
     const action = mito.toolBar.leftClick(target);
-    if (action) {
+    if (this.isActionContinuous(action)) {
       mito.world.player.setAction(action);
     }
   }
@@ -130,6 +139,16 @@ export class PlayerControlScheme implements ControlScheme {
     // return tile != null && mito.actionBar.leftClick(tile)?.type === "interact";
     const type = tile && mito.toolBar.leftClick(tile)?.type;
     return type === "pickup" || type === "drop";
+  }
+
+  /**
+   * A continuous action should be refreshed while holding the mouse button.
+   */
+  isActionContinuous(action?: Action): action is Action {
+    if (action != null && (action.type === "pickup" || action.type === "drop")) {
+      return !!action.continuous;
+    }
+    return false;
   }
 }
 
