@@ -69,25 +69,18 @@ export class Cell extends Tile implements Interactable {
     return this.staticProperties.timeToBuild;
   }
 
-  constructor(
-    pos: Vector2,
-    world: World,
-    public type: CellType,
-    public args: CellArgs = { direction: new Vector2(1, 0) }
-  ) {
+  public args: CellArgs = {
+    direction: new Vector2(0, -1),
+  };
+
+  constructor(pos: Vector2, world: World, public type: CellType, args?: CellArgs) {
     super(pos, world);
     this.chromosome = type.chromosome;
     this.staticProperties = this.chromosome.mergeStaticProperties();
-    const { inventoryCapacity, isDirectional } = this.staticProperties;
+    const { inventoryCapacity } = this.staticProperties;
     this.inventory = new Inventory(inventoryCapacity, this);
-    if (isDirectional) {
-      const dir = args?.direction?.clone() ?? new Vector2(1, 0);
-      if (isFractional(dir.x) || isFractional(dir.y)) {
-        throw new Error("build transport with fractional dir " + dir.x + ", " + dir.y);
-      }
-      if (dir.lengthManhattan() < 1 || dir.lengthManhattan() > 3) {
-        console.error("bad dir length", dir);
-      }
+    if (args?.direction) {
+      this.args.direction!.copy(args?.direction);
     }
     this.temperatureFloat = 48;
     this.nextTemperature = this.temperatureFloat;
@@ -192,6 +185,8 @@ export class Cell extends Tile implements Interactable {
   }
 
   step(dt: number) {
+    this.validateDirection();
+
     // diffusion, darkness, gravity
     super.step(dt);
 
@@ -284,6 +279,21 @@ export class Cell extends Tile implements Interactable {
 
   stepDarkness(neighbors: Map<Vector2, Tile>) {
     return 0;
+  }
+
+  public validateDirection() {
+    const isDirectional = this.staticProperties.isDirectional;
+    if (isDirectional) {
+      const dir = this.args.direction!;
+      if (isFractional(dir.x) || isFractional(dir.y)) {
+        debugger;
+        console.error("build transport with fractional dir " + dir.x + ", " + dir.y);
+      }
+      if (dir.manhattanLength() < 1 || dir.manhattanLength() > 3) {
+        debugger;
+        console.error("bad dir length", dir);
+      }
+    }
   }
 }
 
