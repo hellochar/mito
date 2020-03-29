@@ -179,12 +179,14 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       }
     }
     this.color.copy(this.originalColor);
-    if (this.target instanceof Cell) {
-      this.color.lerp(new Color(0), 1 - this.target.energy);
+    if (this.target instanceof Cell && this.target.energy < 0.5) {
+      const amountBlack = map(this.target.energy, 0, 0.5, 1, 0);
+      this.color.lerp(BLACK, amountBlack);
     }
 
-    this.color = this.lerpColorTemperature(this.color);
-    this.color = new Color(0).lerp(this.color, map(lightAmount, 0, 1, 0.2, 1));
+    this.lerpColorTemperature(this.color);
+    // darkness overlay
+    this.color.lerp(BLACK, map(lightAmount, 0, 1, 1, 0.2));
   }
 
   private temperatureColor: Color = InstancedTileRenderer.TEMPERATURE_COLORS[Temperature.Mild];
@@ -201,11 +203,10 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     this.temperatureColor = tColor;
     this.currentLerp = lerp(this.currentLerp, targetLerp, 0.1);
     color.lerp(this.temperatureColor, this.currentLerp);
-    return color;
   }
 
   updateHover() {
-    this.geneRenderer && this.geneRenderer.hover!();
+    this.geneRenderer?.hover?.();
   }
 
   growPulseAnimation(): Animation {
@@ -291,3 +292,4 @@ const AIR_COLORSCALE = [
 ];
 
 const WHITE = new Color(1, 1, 1);
+const BLACK = new Color(0, 0, 0);

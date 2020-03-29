@@ -1,6 +1,6 @@
 import shuffle from "math/shuffle";
 import { Vector2 } from "three";
-import { map, randRound } from "../../math/index";
+import { clamp, randRound } from "../../math/index";
 import { Steppable } from "../entity";
 import { HasInventory, Inventory } from "../inventory";
 import { Temperature, temperatureFor } from "../temperature";
@@ -66,8 +66,12 @@ export abstract class Tile implements Steppable, HasInventory {
 
   abstract shouldStep(dt: number): boolean;
 
+  /**
+   * 0 = full darkness
+   * 1 = full light
+   */
   public lightAmount() {
-    return Math.sqrt(Math.min(Math.max(map(1 - this.darkness, 0, 1, 0, 1), 0), 1));
+    return Math.sqrt(clamp(1 - this.darkness, 0, 1));
   }
 
   /**
