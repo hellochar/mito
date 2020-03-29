@@ -96,6 +96,11 @@
   }
 }
 
+.vignettes {
+  display: flex;
+  overflow-x: auto;
+}
+
 .mp-earner-list {
   margin: 30px 0;
 

@@ -61,17 +61,35 @@ function ReproductiveCellResult({ cell, mpEarned }: { cell: Cell; mpEarned: numb
   }
 }
 
-function MPEarnerList({ results, className }: { results: GameResult; className?: string }) {
-  return (
-    <div className={classNames("mp-earner-list", className)}>
-      <h5>Reproductive Cells</h5>
-      <div>
-        {Array.from(results.mpEarners.entries()).map(([cell, mpEarned]) => (
-          <ReproductiveCellResult cell={cell} mpEarned={mpEarned} />
+function MPEarnerList({ mpEarners, className }: { mpEarners: Map<Cell, number>; className?: string }) {
+  if (mpEarners.size > 0) {
+    return (
+      <div className={classNames("mp-earner-list", className)}>
+        <h5>Reproductive Cells</h5>
+        <div>
+          {Array.from(mpEarners.entries()).map(([cell, mpEarned]) => (
+            <ReproductiveCellResult cell={cell} mpEarned={mpEarned} />
+          ))}
+        </div>
+      </div>
+    );
+  } else {
+    return null;
+  }
+}
+
+function VignetteList({ vignettes }: { vignettes?: HTMLCanvasElement[] | undefined }) {
+  if (vignettes) {
+    return (
+      <div className="vignettes">
+        {vignettes.map((v, i) => (
+          <img key={i} src={v.toDataURL()} alt="" />
         ))}
       </div>
-    </div>
-  );
+    );
+  } else {
+    return null;
+  }
 }
 
 function GameWonScreen({ results }: GameResultsScreenProps) {
@@ -84,12 +102,8 @@ function GameWonScreen({ results }: GameResultsScreenProps) {
       </div>
       <h1>You {winDescription}!</h1>
       <h2>{results.mutationPointsPerEpoch} Mutation Points earned.</h2>
-      <div className="vignettes">
-        {results.vignettes?.map((v) => (
-          <img src={v.toDataURL()} alt="" />
-        ))}
-      </div>
-      <MPEarnerList results={results} />
+      <VignetteList vignettes={results.vignettes} />
+      <MPEarnerList mpEarners={results.mpEarners} />
     </>
   );
 }
@@ -110,12 +124,8 @@ function GameLostScreen({ results }: GameResultsScreenProps) {
         <i>{results.world.species.name}</i> couldn't survive!
       </h1>
       <div>You survived until {seasonDisplay(results.world.season)}!</div>
-      <div className="vignettes">
-        {results.vignettes?.map((v) => (
-          <img src={v.toDataURL()} alt="" />
-        ))}
-      </div>
-      <MPEarnerList results={results} className="dark" />
+      <VignetteList vignettes={results.vignettes} />
+      <MPEarnerList mpEarners={results.mpEarners} className="dark" />
     </>
   );
 }

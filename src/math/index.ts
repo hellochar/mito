@@ -58,3 +58,7 @@ export function logistic(x: number) {
   }
   return 1 / (1 + Math.exp(-x));
 }
+
+export function roundToNearest(x: number, to: number) {
+  return Math.round(x / to) * to;
+}
