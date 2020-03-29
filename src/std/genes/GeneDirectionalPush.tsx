@@ -1,3 +1,4 @@
+import { randFloat } from "math";
 import React from "react";
 import GN from "std/genes/GN";
 import { Cell } from "../../core/cell/cell";
@@ -22,10 +23,10 @@ export const GeneDirectionalPush = Gene.make(
       isDirectional: true,
     },
   },
-  {
+  (gene, { secondsPerPush }) => ({
     didJustTransport: false,
-    cooldown: 0,
-  },
+    cooldown: randFloat(0, secondsPerPush),
+  }),
   (dt, { cell, state, props: { secondsPerPush } }) => {
     state.didJustTransport = false;
     if (state.cooldown <= 0) {
