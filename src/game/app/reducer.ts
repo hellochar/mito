@@ -14,6 +14,11 @@ export function useAppReducer(): AppReducerContextType {
 }
 
 export function reducer(state: AppState, action: AppActions): AppState {
+  if (action == null) {
+    console.error("can't reduce null action!", state, action);
+    debugger;
+    return state;
+  }
   switch (action.type) {
     case "AAUpdateSpecies":
       return {

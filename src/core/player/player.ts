@@ -1,5 +1,6 @@
 import { sleep } from "common/promise";
 import { EventEmitter } from "events";
+import { params } from "game/params";
 import { Vector2 } from "three";
 import { CellArgs } from "../cell/cell";
 import { CellType } from "../cell/genome";
@@ -173,7 +174,9 @@ export class Player implements Steppable {
 
   public attemptAction(action: Action, dt: number): boolean {
     const successful = this._attemptAction(action, dt);
-    console.log(action);
+    if (params.showGodUI) {
+      console.log(action);
+    }
     if (successful) {
       this.events.emit("action", action);
     } else {

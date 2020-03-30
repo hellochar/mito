@@ -1,6 +1,7 @@
 import { Player } from "core";
 import { Inventory } from "core/inventory";
 import { Action } from "core/player/action";
+import { params } from "game/params";
 import { Vector2 } from "three";
 import { CELL_DROOP } from "../constants";
 import { DIRECTIONS } from "../directions";
@@ -185,7 +186,9 @@ export class Cell extends Tile implements Interactable {
   }
 
   step(dt: number) {
-    this.validateDirection();
+    if (params.debug) {
+      this.validateDirection();
+    }
 
     // diffusion, darkness, gravity
     super.step(dt);
