@@ -1,3 +1,5 @@
+import { Vector2 } from "three";
+
 export * from "./random";
 
 export function lerp(a: number, b: number, x: number) {
@@ -61,4 +63,8 @@ export function logistic(x: number) {
 
 export function roundToNearest(x: number, to: number) {
   return Math.round(x / to) * to;
+}
+
+export function toVector2(v: { x: number; y: number }) {
+  return new Vector2(v.x, v.y);
 }

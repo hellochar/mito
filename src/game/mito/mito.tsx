@@ -14,7 +14,7 @@ import * as Nodes from "three/examples/jsm/nodes/Nodes";
 import configure from "../../common/configure";
 import { World } from "../../core";
 import { Cell, Tile } from "../../core/tile";
-import { clamp, lerp, lerp2, map } from "../../math/index";
+import { clamp, lerp, lerp2, map, toVector2 } from "../../math/index";
 import { drums, hookUpAudio, strings, whoosh } from "../audio";
 import { GameResult, maybeGetGameResult } from "../gameResult";
 import { ControlScheme, PlayerSeedControlScheme } from "../input/ControlScheme";
@@ -157,7 +157,7 @@ export class Mito extends ISketch {
       const delta = -(e.deltaX + e.deltaY) / 125 / 20;
       const currZoom = this.userZoom;
       const scalar = Math.pow(2, delta);
-      const newZoom = currZoom * scalar;
+      const newZoom = clamp(currZoom * scalar, 1, 3);
       this.userZoom = newZoom;
     },
   };
@@ -268,32 +268,38 @@ export class Mito extends ISketch {
   public readonly PLAYER_TETHER_DISTANCE = 0.9;
 
   public getPlayerInfluenceVector(clientX = this.mouse.position.x, clientY = this.mouse.position.y) {
-    const cursorCameraNorm = this.getCameraNormCoordinates(clientX, clientY);
-    const cursorWorld = new Vector3(cursorCameraNorm.x, cursorCameraNorm.y, 0).unproject(this.camera);
+    const cursorWorld = this.getWorldCoordinates(clientX, clientY);
 
     const offset = new Vector2(cursorWorld.x, cursorWorld.y).sub(this.world.player.posFloat);
     offset.clampLength(0, this.PLAYER_TETHER_DISTANCE);
     return offset;
   }
 
+  public getWorldCoordinates(clientX: number, clientY: number) {
+    const cursorCameraNorm = this.getCameraNormCoordinates(clientX, clientY);
+    return toVector2(new Vector3(cursorCameraNorm.x, cursorCameraNorm.y, 0).unproject(this.camera));
+  }
+
+  public getTileAtScreen(clientX: number, clientY: number) {
+    const coords = this.getWorldCoordinates(clientX, clientY);
+    coords.round();
+
+    const tile = this.world.tileAt(coords.x, coords.y);
+    if (tile != null && tile.lightAmount() > 0) {
+      return tile;
+    }
+  }
+
   public getHighlightPosition() {
     if (this.inspectedCell) {
       return this.inspectedCell.pos;
     }
-    const clientX = this.mouse.position.x,
-      clientY = this.mouse.position.y;
-    // if (this.actionBar.current instanceof CellBar) {
-    const offset = this.getPlayerInfluenceVector(clientX, clientY);
+    const offset = this.getPlayerInfluenceVector();
     const { x, y } = this.world.player.posFloat;
 
     offset.x += x;
     offset.y += y;
     return offset;
-    // } else {
-    //   const cursorCameraNorm = this.getCameraNormCoordinates(clientX, clientY);
-    //   const cursorWorld = new Vector3(cursorCameraNorm.x, cursorCameraNorm.y, 0).unproject(this.camera);
-    //   return cursorWorld;
-    // }
   }
 
   public getHighlightedTile() {
