@@ -186,7 +186,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
     this.lerpColorTemperature(this.color);
     // darkness overlay
-    this.color.lerp(BLACK, map(lightAmount, 0, 1, 1, 0.2));
+    this.color.lerp(BLACK, map(lightAmount, 0, 1, 0.8, 0));
   }
 
   private temperatureColor: Color = InstancedTileRenderer.TEMPERATURE_COLORS[Temperature.Mild];
