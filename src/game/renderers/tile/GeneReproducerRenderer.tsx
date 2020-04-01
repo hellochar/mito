@@ -7,7 +7,7 @@ import { GeneRenderer } from "./GeneRenderer";
 import "./GeneReproducerRenderer.scss";
 
 export class GeneReproducerRenderer extends GeneRenderer<Gene<ReproducerState, any>> {
-  percentMatureElement = this.tr.worldRenderer.renderResources
+  percentMatureElement = this.tileRenderer.worldRenderer.renderResources
     ? this.mito.addWorldDOMElement(
         () => this.target.cell,
         () => {
@@ -25,7 +25,7 @@ export class GeneReproducerRenderer extends GeneRenderer<Gene<ReproducerState, a
 
   updateScale() {
     const scale = map(reproducerGetPercentMatured(this.target), 0, 1, 0.2, 1);
-    this.tr.scale.set(scale, scale, 1);
+    this.tileRenderer.scale.set(scale, scale, 1);
   }
 
   //   super.update();

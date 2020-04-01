@@ -24,7 +24,7 @@ export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis>
       // this.audio.setRefDistance(2);
       // play blop sound
       this.audio.play();
-      this.tr.animation.set(this.tr.growPulseAnimation());
+      this.tileRenderer.animation.set(this.tileRenderer.growPulseAnimation());
     }
     this.lastAudioValueTracker = newAudioValueTracker;
     if (this.neighborLines.parent != null) {
@@ -34,7 +34,7 @@ export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis>
 
   hover() {
     this.scene.add(this.neighborLines);
-    this.neighborLines.position.set(this.tr.target.pos.x, this.tr.target.pos.y, 1);
+    this.neighborLines.position.set(this.tileRenderer.target.pos.x, this.tileRenderer.target.pos.y, 1);
     const lines: Vector2[] = this.target.state.activeNeighbors;
     if (lines.length !== this.neighborLines.children.length) {
       // redo neighbor lines
