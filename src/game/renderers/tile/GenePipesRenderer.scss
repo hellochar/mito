@@ -1,0 +1,62 @@
+.pipes-editor {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  position: absolute;
+  // width: 100%;
+  // height: 100%;
+  left: 5%;
+  top: 5%;
+  bottom: 5%;
+  right: 5%;
+
+  .zone-n {
+    grid-area: 1 / 2 / 2 / 3;
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .zone-w {
+    grid-area: 2 / 1 / 3 / 2;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .zone-center {
+    border: none;
+    grid-area: 2 / 2 / 3 / 3;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .zone-e {
+    grid-area: 2 / 3 / 3 / 4;
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .zone-s {
+    grid-area: 3 / 2 / 4 / 3;
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  > div {
+    pointer-events: initial;
+    cursor: pointer;
+    border-radius: 10%;
+    border: 1px solid transparentize($color: lightblue, $amount: 0.5);
+    background: transparentize(lightblue, 0.9);
+    transform: scale(1);
+    transition: all 0.05s;
+
+    &:hover {
+      transform: scale(1.1);
+      border-color: transparentize($color: gold, $amount: 0.5);
+      background: transparentize($color: white, $amount: 0.5);
+    }
+  }
+}

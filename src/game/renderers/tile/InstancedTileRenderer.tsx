@@ -10,6 +10,7 @@ import { reversed } from "math/easing";
 import { GeneSoilAbsorption } from "std/genes";
 import { GeneDirectionalPush } from "std/genes/GeneDirectionalPush";
 import { GenePhotosynthesis } from "std/genes/GenePhotosynthesis";
+import { GenePipes } from "std/genes/GenePipes";
 import { GeneFruit, GeneSeed } from "std/genes/GeneReproducer";
 import { Color, Scene, Vector2, Vector3 } from "three";
 import { Constructor } from "typings/constructor";
@@ -21,6 +22,7 @@ import { Animation, AnimationController } from "./Animation";
 import { CellEffectsRenderer } from "./CellEffectsRenderer";
 import { GeneDirectionalPushRenderer } from "./GeneDirectionalPushRenderer";
 import { GenePhotosynthesisRenderer } from "./GenePhotosynthesisRenderer";
+import { GenePipesRenderer } from "./GenePipesRenderer";
 import { GeneRenderer } from "./GeneRenderer";
 import { GeneReproducerRenderer } from "./GeneReproducerRenderer";
 import { GeneSoilAbsorptionRenderer } from "./GeneSoilAbsorptionRenderer";
@@ -95,6 +97,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       return new GeneDirectionalPushRenderer(inst, this);
     } else if (inst.isType(GeneFruit) || inst.isType(GeneSeed)) {
       return new GeneReproducerRenderer(inst, this);
+    } else if (inst.isType(GenePipes)) {
+      return new GenePipesRenderer(inst, this);
     } else {
       return;
     }
