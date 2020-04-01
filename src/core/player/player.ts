@@ -263,14 +263,6 @@ export class Player implements Steppable {
     return true;
   }
 
-  // private autopickup() {
-  //   // autopickup resources in the position as possible
-  //   const cell = this.currentTile();
-  //   if (hasInventory(cell)) {
-  //     const inv = cell.inventory;
-  //     inv.give(this.inventory, this.suckWater ? inv.water : 0, this.suckSugar ? inv.sugar : 0);
-  //   }
-  // }
   public tryConstructingNewCell(position: Vector2, cellType: CellType, args?: CellArgs) {
     position = position.clone();
     if (!this.world.isValidPosition(position.x, position.y)) {

@@ -1,9 +1,9 @@
 import { Interactable } from "core/interactable";
 import { Inventory } from "core/inventory";
 import { Action } from "core/player/action";
-import { canPullResources } from "core/tile/canPullResources";
 import { Tile } from "core/tile/tile";
 import { clamp, map, randRound } from "math/index";
+import { Air } from "./air";
 export abstract class Soil extends Tile implements Interactable {
   /**
    * Soil will aggressively hold onto water below saturation;
@@ -22,6 +22,13 @@ export abstract class Soil extends Tile implements Interactable {
     // make water move slower in deeper soil. Every depth 10, slow down gravity and fallAmount by this much
     return 1 + (this.depth - 1) / 10;
     // return 1;
+  }
+
+  /**
+   * All soils can pull from each other. Also can pull from Air.
+   */
+  canPullResources(giver: Tile) {
+    return giver instanceof Soil || giver instanceof Air;
   }
 
   interact(): Action {
@@ -72,12 +79,7 @@ export abstract class Soil extends Tile implements Interactable {
     if (freeWater > 0) {
       const fallAmount = this.fallAmount * dt;
       const lowerNeighbor = this.world.tileAt(this.pos.x, this.pos.y + 1);
-      // if (fallAmount > 0 && this.age % Math.floor(1 / fallAmount) < 1) {
-      //   if (hasInventory(lowerNeighbor) && canPullResources(lowerNeighbor, this)) {
-      //     this.inventory.give(lowerNeighbor.inventory, 1, 0);
-      //   }
-      // }
-      if (fallAmount > 0 && lowerNeighbor != null && canPullResources(lowerNeighbor, this)) {
+      if (fallAmount > 0 && lowerNeighbor != null && lowerNeighbor.canPullResources(this)) {
         const waterToGive = Math.min(randRound(fallAmount), freeWater);
         this.inventory.give(lowerNeighbor.inventory, waterToGive, 0);
       }

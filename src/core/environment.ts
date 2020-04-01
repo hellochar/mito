@@ -1,8 +1,8 @@
 import { Tile } from "core/tile";
 import { createSimpleSchema, object } from "serializr";
 import { Vector2 } from "three";
-import { World } from ".";
 import { TileGeneratorName } from "../std/tileGenerators";
+import { World } from "./world/world";
 
 export interface Environment {
   airEvaporation: number;

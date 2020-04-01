@@ -7,7 +7,6 @@ import shuffle from "../../math/shuffle";
 import Genome from "../cell/genome";
 import { DIRECTION_VALUES } from "../directions";
 import { Entity, isSteppable, step } from "../entity";
-import { hasInventory } from "../inventory";
 import { Player, PlayerSeed } from "../player/player";
 import { Season, seasonFromTime } from "../season";
 import { Species } from "../species";
@@ -176,17 +175,11 @@ export class World {
       this.mpEarners.set(tile, 0);
     }
     const oldTile = this.tileAt(x, y)!;
-    // if replacing a tile with inventory, try giving resources to neighbors of the same type
-    if (hasInventory(oldTile)) {
-      // // give resources if available to the new tile
-      // if (hasInventory(tile) && canPullResources(tile, oldTile)) {
-      //   oldTile.inventory.give(tile.inventory, oldTile.inventory.water, oldTile.inventory.sugar);
-      // }
-      oldTile.redistributeInventoryToNeighbors();
-      if (oldTile.inventory.water !== 0 || oldTile.inventory.sugar !== 0) {
-        console.warn("lost", oldTile.inventory, "resources to building");
-        oldTile.inventory.add(-oldTile.inventory.water, -oldTile.inventory.sugar);
-      }
+    // if replacing a tile, try redistributing inventory to neighbors
+    oldTile.redistributeInventoryToNeighbors();
+    if (oldTile.inventory.water !== 0 || oldTile.inventory.sugar !== 0) {
+      console.warn("lost", oldTile.inventory, "resources to building");
+      oldTile.inventory.add(-oldTile.inventory.water, -oldTile.inventory.sugar);
     }
 
     const oldCell = this.gridCells[x][y];
@@ -395,10 +388,8 @@ export class World {
     let totalWater = 0;
     let totalEnergy = 0;
     this.entities().forEach((e) => {
-      if (hasInventory(e)) {
-        totalSugar += e.inventory.sugar;
-        totalWater += e.inventory.water;
-      }
+      totalSugar += e.inventory.sugar;
+      totalWater += e.inventory.water;
       if (e instanceof Cell) {
         totalEnergy += e.energy;
       }

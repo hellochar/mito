@@ -1,7 +1,7 @@
 import { Cell } from "../cell/cell";
-import { DeadCell } from "../cell/deadCell";
 import { GrowingCell } from "../cell/growingCell";
 import { Air } from "./air";
+import { DeadCell } from "./deadCell";
 import { Fountain } from "./fountain";
 import { Rock } from "./rock";
 import { Soil } from "./soil";

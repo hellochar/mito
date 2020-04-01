@@ -2,12 +2,11 @@ import shuffle from "math/shuffle";
 import { Vector2 } from "three";
 import { clamp, randRound } from "../../math/index";
 import { Steppable } from "../entity";
-import { HasInventory, Inventory } from "../inventory";
+import { Inventory } from "../inventory";
 import { Temperature, temperatureFor } from "../temperature";
 import { World } from "../world/world";
-import { canPullResources } from "./canPullResources";
 
-export abstract class Tile implements Steppable, HasInventory {
+export abstract class Tile implements Steppable {
   displayName = "Tile";
 
   static fallAmount = 0;
@@ -67,6 +66,18 @@ export abstract class Tile implements Steppable, HasInventory {
   abstract shouldStep(dt: number): boolean;
 
   /**
+   * Can this Tile accept resources from the giver? Use this to define
+   * boundaries like "Cells can give to each other but not to Soil".
+   *
+   * By default, allow ancestor/child relationships to exchange resources
+   * with each other (e.g. Soil and Fountain).
+   */
+  canPullResources(giver: Tile): boolean {
+    const hasAncestry = this instanceof giver.constructor || giver instanceof this.constructor;
+    return hasAncestry;
+  }
+
+  /**
    * 0 = full darkness
    * 1 = full light
    */
@@ -82,7 +93,7 @@ export abstract class Tile implements Steppable, HasInventory {
     if (this.inventory.water > 0 || this.inventory.sugar > 0) {
       // push resources to nearby tiles
       const neighbors = this.world.tileNeighbors(this.pos);
-      const giveCandidates = Array.from(neighbors.values()).filter((n) => canPullResources(n, this));
+      const giveCandidates = Array.from(neighbors.values()).filter((n) => n.canPullResources(this));
       while (!this.inventory.isEmpty() && giveCandidates.length > 0) {
         shuffle(giveCandidates);
         for (let i = 0; i < giveCandidates.length; i++) {
@@ -126,7 +137,7 @@ export abstract class Tile implements Steppable, HasInventory {
 
   stepDiffusion(neighbors: Map<Vector2, Tile>, dt: number) {
     for (const tile of neighbors.values()) {
-      if (!canPullResources(this, tile)) {
+      if (!this.canPullResources(tile)) {
         continue;
       }
       // take water from neighbors that have more water than you
@@ -171,12 +182,7 @@ export abstract class Tile implements Steppable, HasInventory {
   stepGravity(dt: number) {
     const fallAmount = this.fallAmount * dt;
     const lowerNeighbor = this.world.tileAt(this.pos.x, this.pos.y + 1);
-    // if (fallAmount > 0 && this.age % Math.floor(1 / fallAmount) < 1) {
-    //   if (hasInventory(lowerNeighbor) && canPullResources(lowerNeighbor, this)) {
-    //     this.inventory.give(lowerNeighbor.inventory, 1, 0);
-    //   }
-    // }
-    if (fallAmount > 0 && lowerNeighbor != null && canPullResources(lowerNeighbor, this)) {
+    if (fallAmount > 0 && lowerNeighbor != null && lowerNeighbor.canPullResources(this)) {
       this.inventory.give(lowerNeighbor.inventory, randRound(fallAmount), 0);
     }
   }

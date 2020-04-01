@@ -181,11 +181,3 @@ export class Inventory {
     }
   }
 }
-
-export interface HasInventory {
-  inventory: Inventory;
-}
-
-export function hasInventory<T>(obj?: T): obj is HasInventory & T {
-  return obj != null && (obj as any).inventory instanceof Inventory;
-}

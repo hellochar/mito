@@ -5,7 +5,6 @@ import { Noise } from "../../common/perlin";
 import { map } from "../../math/index";
 import { Inventory } from "../inventory";
 import { World } from "../world/world";
-import { canPullResources } from "./canPullResources";
 import { Tile } from "./tile";
 export class Air extends Tile implements Interactable {
   displayName = "Air";
@@ -92,7 +91,7 @@ export class Air extends Tile implements Interactable {
   }
 
   tryDiffuse(t: Tile | null, dt: number) {
-    if (t != null && canPullResources(this, t)) {
+    if (t != null && t.canPullResources(this)) {
       if (t.inventory.water < this.inventory.water) {
         t.diffuseWater(this, dt);
         // this.diffuseWater(t, dt);

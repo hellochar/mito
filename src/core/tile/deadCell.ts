@@ -1,5 +1,6 @@
 import { Inventory } from "../inventory";
-import { Tile } from "../tile/tile";
+import { Tile } from "./tile";
+
 export class DeadCell extends Tile {
   displayName = "Dead Cell";
 

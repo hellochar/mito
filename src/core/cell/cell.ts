@@ -8,13 +8,13 @@ import { DIRECTIONS } from "../directions";
 import { step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
+import { DeadCell } from "../tile/deadCell";
 import { Rock } from "../tile/rock";
 import { Soil } from "../tile/soil";
 import { Tile } from "../tile/tile";
 import { World } from "../world/world";
 import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
 import Chromosome from "./chromosome";
-import { DeadCell } from "./deadCell";
 import { Gene, GeneStaticProperties } from "./gene";
 import { GeneInstance } from "./geneInstance";
 import { CellType, interactionSpeed } from "./genome";
@@ -70,6 +70,10 @@ export class Cell extends Tile implements Interactable {
     return this.staticProperties.timeToBuild;
   }
 
+  get darknessContrib() {
+    return 0;
+  }
+
   public args: CellArgs = {
     direction: new Vector2(0, -1),
   };
@@ -107,12 +111,15 @@ export class Cell extends Tile implements Interactable {
     }
   }
 
-  public getMovespeedMultiplier() {
-    return this.tempo;
+  /**
+   * All cells can pull from each other.
+   */
+  canPullResources(giver: Tile) {
+    return giver instanceof Cell;
   }
 
-  get darknessContrib() {
-    return 0;
+  public getMovespeedMultiplier() {
+    return this.tempo;
   }
 
   addEffect(effect: CellEffect) {
