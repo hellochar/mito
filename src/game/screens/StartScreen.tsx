@@ -3,7 +3,7 @@ import Character from "game/ui/common/Character";
 import React, { useEffect } from "react";
 import "./StartScreen.scss";
 
-const StartScreen: React.FC<{ onStart: () => void }> = ({ onStart }) => {
+const StartScreen: React.FC<{ onStart: () => void }> = React.memo(({ onStart }) => {
   // useEffect(() => {
   //   mitoStartScreen.play();
   //   return () => {
@@ -33,6 +33,6 @@ const StartScreen: React.FC<{ onStart: () => void }> = ({ onStart }) => {
       </Button>
     </div>
   );
-};
+});
 
 export default StartScreen;

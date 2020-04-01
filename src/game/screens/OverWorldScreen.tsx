@@ -18,7 +18,7 @@ export interface OverWorldScreenProps {
   onNextEpoch: () => void;
 }
 
-const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
+const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
   useEffect(() => {
     mitoOverworld.play();
     return () => {
@@ -112,6 +112,6 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
       </div>
     </div>
   );
-};
+});
 
 export default OverWorldScreen;

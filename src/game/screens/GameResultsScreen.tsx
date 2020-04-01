@@ -130,7 +130,7 @@ function GameLostScreen({ results }: GameResultsScreenProps) {
   );
 }
 
-export default function GameResultsScreen({ onDone, results }: GameResultsScreenProps) {
+const GameResultsScreen: React.FC<GameResultsScreenProps> = React.memo(({ onDone, results }) => {
   return (
     <div className={`game-results-screen ${results.status}`}>
       <div className="game-results-content">
@@ -145,4 +145,6 @@ export default function GameResultsScreen({ onDone, results }: GameResultsScreen
       </div>
     </div>
   );
-}
+});
+
+export default GameResultsScreen;

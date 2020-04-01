@@ -1,7 +1,7 @@
 import { MousePositionContext } from "common/useMousePosition";
 import { GameResult } from "game/gameResult";
 import OverWorldScreen from "game/screens/OverWorldScreen";
-import React from "react";
+import React, { memo } from "react";
 import { CSSTransition } from "react-transition-group";
 import { createSelector } from "reselect";
 import { LocalForageStateProvider } from "../app/AppStateProvider";
@@ -71,13 +71,15 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
     });
   };
 
+  handleCloseStartScreen = () => this.setState({ showStartScreen: false });
+
   render() {
     const [state] = this.context;
     return (
       <MousePositionContext.Provider value={this.state.mousePosition}>
         <div className="App">
           <AppScreen show={this.state.showStartScreen}>
-            <StartScreen onStart={() => this.setState({ showStartScreen: false })} />
+            <StartScreen onStart={this.handleCloseStartScreen} />
           </AppScreen>
           <AppScreen show={state.activePopulationAttempt == null && !this.state.showStartScreen}>
             <OverWorldScreen onNextEpoch={this.handleNextEpoch} />
@@ -105,7 +107,7 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
   );
 }
 
-const AppScreen: React.FC<{ show: boolean; children?: JSX.Element }> = ({ show, children }) => {
+const AppScreen: React.FC<{ show: boolean; children?: JSX.Element }> = memo(({ show, children }) => {
   const [state] = useAppReducer();
   return (
     <CSSTransition
@@ -118,7 +120,7 @@ const AppScreen: React.FC<{ show: boolean; children?: JSX.Element }> = ({ show, 
       {children}
     </CSSTransition>
   );
-};
+});
 
 const App = () => (
   <LocalForageStateProvider loadingComponent={<div>Loading...</div>}>
