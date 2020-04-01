@@ -2,7 +2,6 @@ import { Environment } from "core/environment";
 import { Layout, PlotData } from "plotly.js";
 import React from "react";
 import { World } from "../core";
-import { hasInventory } from "../core/inventory";
 import { newBaseSpecies } from "../core/species";
 import { Air, Fountain, Rock, Soil } from "../core/tile";
 import { Desert, Rocky, Temperate } from "../std/environments";
@@ -32,16 +31,14 @@ function runTests(environment: Environment, id: string) {
         const adjacentTiles = findBuildCandidateTiles(w, (t) => t instanceof Soil);
         let water = 0;
         for (const t of adjacentTiles) {
-          if (hasInventory(t)) {
-            water += t.inventory.water;
-          }
+          water += t.inventory.water;
         }
         return water;
       },
     }),
     new Experiment({
       countWaters: (t) => {
-        return t.reduce((w, tile) => w + (hasInventory(tile) ? tile.inventory.water : 0), 0);
+        return t.reduce((w, tile) => w + tile.inventory.water, 0);
       },
     }),
   ]);
