@@ -68,7 +68,7 @@
   }
 }
 
-.genome-viewer-modal {
+.species-viewer-modal {
   position: absolute;
   top: 40px;
   bottom: 40px;
@@ -86,5 +86,6 @@
     font-size: 24px;
     border: none;
     background: none;
+    cursor: pointer;
   }
 }

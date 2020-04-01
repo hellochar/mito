@@ -77,7 +77,7 @@ const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
         shouldCloseOnEsc
         shouldCloseOnOverlayClick
         onRequestClose={closeGenomeViewer}
-        className="genome-viewer-modal"
+        className="species-viewer-modal"
       >
         {genomeViewerSpecies != null ? (
           <>

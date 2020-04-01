@@ -18,7 +18,6 @@ function HexInfo({ playSpecies, tile, onClickPlay }: HexInfo) {
   const playButtonElement =
     height === -1 ? null : (
       <div className="play-selector">
-        <span>{playSpecies.name}</span>
         <Button color="green" className="play-button" onClick={onClickPlay}>
           Play Level
         </Button>

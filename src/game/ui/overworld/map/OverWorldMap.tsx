@@ -187,7 +187,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     });
   };
 
-  private handleWheel = (e: WheelEvent) => {
+  private handleWheel = (e: React.WheelEvent) => {
     const delta = -(e.deltaX + e.deltaY) / 125 / 10;
     const scalar = Math.pow(2, delta);
 
@@ -303,7 +303,6 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyDown);
     document.addEventListener("keyup", this.handleKeyUp);
-    document.addEventListener("wheel", this.handleWheel);
     window.addEventListener("resize", this.handleResize);
     this.rafId = Ticker.addAnimation(this.updateCamera);
   }
@@ -311,7 +310,6 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   componentWillUnmount() {
     document.removeEventListener("keydown", this.handleKeyDown);
     document.removeEventListener("keyup", this.handleKeyUp);
-    document.removeEventListener("wheel", this.handleWheel);
     window.removeEventListener("resize", this.handleResize);
     Ticker.removeAnimation(this.rafId!);
   }
@@ -353,6 +351,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
           onClick={this.handleCanvasClick}
           onMouseLeave={this.handleCanvasMouseLeave}
           onMouseMove={this.handleCanvasMouseMove}
+          onWheel={this.handleWheel}
         />
         {this.maybeRenderPopover()}
       </div>
