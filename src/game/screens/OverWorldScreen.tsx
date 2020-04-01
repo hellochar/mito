@@ -72,7 +72,7 @@ const OverWorldScreen = ({ onNextEpoch }: OverWorldScreenProps) => {
   function maybeRenderGenomeViewer() {
     return (
       <ReactModal
-        ariaHideApp
+        ariaHideApp={false}
         isOpen={genomeViewerSpecies != null}
         shouldCloseOnEsc
         shouldCloseOnOverlayClick

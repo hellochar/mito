@@ -22,10 +22,7 @@ export const SpeciesViewer: React.FC<{
 
 const MutationChooser: React.FC<{ species: Species }> = ({ species }) => {
   const { freeMutationPoints, geneOptions } = species;
-  let geneEl: JSX.Element[] = [];
-  for (const geneOption of geneOptions) {
-    geneEl.push(<GeneViewer gene={geneOption} cellType={undefined!} />);
-  }
+  const geneEl = geneOptions.map((gene, i) => <GeneViewer key={i} gene={gene} cellType={undefined!} />);
 
   const tuple = React.useState<GenomeViewerState>({ view: "expanded" });
   const [state, setState] = tuple;
