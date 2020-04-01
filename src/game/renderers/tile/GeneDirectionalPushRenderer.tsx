@@ -1,8 +1,13 @@
+import { GeneInstance } from "core/cell";
 import { easeCubicOut, easeExpOut } from "d3-ease";
+import Keyboard from "game/input/keyboard";
+import { WorldDOMElement } from "game/mito/WorldDOMElement";
 import { randFloat, roundToNearest } from "math";
+import React, { useCallback, useEffect, useState } from "react";
 import { GeneDirectionalPush } from "std/genes/GeneDirectionalPush";
 import { ArrowHelper, Vector2, Vector3 } from "three";
 import { Animation } from "./Animation";
+import "./GeneDirectionalPushRenderer.scss";
 import { GeneRenderer } from "./GeneRenderer";
 
 export class GeneDirectionalPushRenderer extends GeneRenderer<GeneDirectionalPush> {
@@ -12,14 +17,37 @@ export class GeneDirectionalPushRenderer extends GeneRenderer<GeneDirectionalPus
 
   private lastDir = new Vector2(0, 0);
 
+  private argsEditor?: WorldDOMElement;
+
   update() {
     this.updateArrow();
     this.updateArrowPosition();
+    if (this.tileRenderer.worldRenderer.renderResources) {
+      this.updateArgsEditor();
+    }
 
     if (this.target.state.didJustTransport) {
       this.tileRenderer.animation.set(this.arrowMoveAnimation());
     }
   }
+
+  updateArgsEditor() {
+    const shouldShowArgsEditor =
+      Keyboard.keyMap.has("ShiftLeft") &&
+      this.mito.getTileAtScreen(this.mito.mouse.position.x, this.mito.mouse.position.y) === this.target.cell;
+    if (shouldShowArgsEditor && this.argsEditor == null) {
+      this.argsEditor = this.mito.addWorldDOMElement(this.positionFn, this.renderFn);
+    } else if (!shouldShowArgsEditor && this.argsEditor != null) {
+      this.mito.removeWorldDOMElement(this.argsEditor);
+      this.argsEditor = undefined;
+    }
+  }
+
+  private positionFn = () => this.target.cell;
+
+  private renderFn = () => {
+    return <DirectionalPushEditor gene={this.target} />;
+  };
 
   updateArrow() {
     const dir = this.target.cell.args!.direction!;
@@ -80,5 +108,73 @@ export class GeneDirectionalPushRenderer extends GeneRenderer<GeneDirectionalPus
 
   destroy() {
     this.scene.remove(this.arrow);
+    if (this.argsEditor) {
+      this.mito.removeWorldDOMElement(this.argsEditor);
+    }
   }
+}
+
+const DirectionalPushEditor: React.FC<{ gene: GeneInstance<GeneDirectionalPush> }> = ({ gene }) => {
+  const setDirN = useCallback(() => {
+    gene.cell.args?.direction?.set(0, -1);
+  }, [gene.cell.args]);
+
+  const setDirS = useCallback(() => {
+    gene.cell.args?.direction?.set(0, 1);
+  }, [gene.cell.args]);
+
+  const setDirE = useCallback(() => {
+    gene.cell.args?.direction?.set(1, 0);
+  }, [gene.cell.args]);
+
+  const setDirW = useCallback(() => {
+    gene.cell.args?.direction?.set(-1, 0);
+  }, [gene.cell.args]);
+
+  const [wantedDirection, addEvent] = useWantedDirection();
+  useEffect(() => {
+    if (wantedDirection) {
+      gene.cell.args?.direction?.copy(wantedDirection);
+    }
+  }, [gene.cell.args, wantedDirection]);
+  const handleMouseMove = useCallback(
+    (event: React.MouseEvent) => {
+      if (event.buttons !== 0) {
+        console.log(gene.cell.toString(), event.movementX, event.movementY);
+        addEvent(event);
+      }
+    },
+    [addEvent, gene.cell]
+  );
+
+  return (
+    <div className="directional-push-editor" onMouseMove={handleMouseMove}>
+      <div className="zone-n" onClick={setDirN}></div>
+      <div className="zone-w" onClick={setDirW}></div>
+      <div className="zone-center" />
+      <div className="zone-e" onClick={setDirE}></div>
+      <div className="zone-s" onClick={setDirS}></div>
+    </div>
+  );
+};
+
+function useWantedDirection() {
+  const [latestMovements, setLatestMovements] = useState<Vector2[]>([]);
+
+  const addEvent = useCallback((event: React.MouseEvent) => {
+    const { movementX, movementY } = event;
+    const movement = new Vector2(movementX, movementY);
+    setLatestMovements((latestMovements) => [movement, ...latestMovements]);
+  }, []);
+
+  let wantedDirection: Vector2 | undefined;
+
+  const totalMovement = latestMovements.reduce((a, b) => a.add(b), new Vector2());
+  // only make a decision once total movement is large enough
+  if (totalMovement.lengthSq() > 12 * 12) {
+    const angle = totalMovement.angle();
+    const nearestAngle90 = roundToNearest(angle, Math.PI / 2);
+    wantedDirection = new Vector2(Math.round(Math.cos(nearestAngle90)), Math.round(Math.sin(nearestAngle90)));
+  }
+  return [wantedDirection, addEvent] as const;
 }

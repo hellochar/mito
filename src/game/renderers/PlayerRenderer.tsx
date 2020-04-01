@@ -1,6 +1,7 @@
 import { sleep } from "common/promise";
 import { EventOof } from "core/tile/tileEvent";
 import { easeSinInOut } from "d3-ease";
+import Keyboard from "game/input/keyboard";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { Player } from "../../core";
 import { Action, ActionBuild, ActionLong } from "../../core/player/action";
@@ -82,7 +83,8 @@ export class PlayerRenderer extends Renderer<Player> {
     this.mesh.position.set(pos.x, pos.y, 2);
 
     const dt = 1 / 60;
-    const isInteract = this.mito.controls?.wouldLeftClickInteract() ?? false;
+    const isUsingShift = Keyboard.keyMap.has("ShiftLeft");
+    const isInteract = (this.mito.controls?.wouldLeftClickInteract() ?? false) && !isUsingShift;
     const highlight = this.mito.getHighlightedTile();
     const neuronMeshTarget = isInteract ? highlight!.pos.clone().sub(pos) : ZERO;
     if (this.prevHighlightedTile !== highlight) {

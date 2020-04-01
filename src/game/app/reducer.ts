@@ -113,8 +113,12 @@ function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAtt
     species: settlingSpecies,
     mutationPointsPerEpoch: results.mutationPointsPerEpoch,
   };
+
+  // update max gene pool
   settlingSpecies.totalMutationPoints = state.overWorld.getMaxGenePool(settlingSpecies);
-  settlingSpecies.geneOptions.push(...generateRandomGenes(3));
+
+  // set new gene options for this species
+  settlingSpecies.geneOptions = generateRandomGenes(3);
   if (oldSpecies) {
     // update old species mutation point pool cache
     oldSpecies.totalMutationPoints = state.overWorld.getMaxGenePool(oldSpecies);

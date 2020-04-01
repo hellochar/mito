@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import Keyboard from "game/input/keyboard";
 import { WorldDOMComponent } from "game/mito/WorldDOMElement";
 import TileHighlight from "game/tutorial/tileHighlight";
 import * as React from "react";
@@ -19,7 +20,8 @@ export class Hover extends React.Component<HoverProps> {
 
   public render() {
     const isTakingLongAction = this.props.mito.world.player.isTakingLongAction();
-    if (isTakingLongAction) {
+    const isUsingShift = Keyboard.keyMap.has("ShiftLeft");
+    if (isTakingLongAction || isUsingShift) {
       return null;
     }
     const { highlightedTile } = this.props.mito;
