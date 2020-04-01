@@ -158,21 +158,25 @@ export abstract class Tile implements Steppable {
     // Diffusion equation by finite difference: the purpose of this equation is to eventually
     // equalize the amount of water between me and giver. The two questions are how long
     // does it take, and what function does it follow to get there? These are generally
-    // defined by the diffusionWater variable. At these low numbers we can assume
-    // near linearity.
+    // defined by the diffusionWater variable.
     const difference = giver.inventory.water - this.inventory.water;
-    if (difference > 1) {
+
+    // Make it harder for water to break into a dry tile. Emulates surface tension at the
+    // wet/dry border.
+    const isBreakingSurfaceTension = this.inventory.water > 0 || giver.inventory.water > 1;
+
+    if (difference > 0 && isBreakingSurfaceTension) {
+      // At high dt's this isn't accurate, but at these low numbers we can assume near linearity.
       const diffusionAmount = Math.min(difference * diffusionRate * dt, difference / 2);
-      giver.inventory.give(this.inventory, randRound(diffusionAmount), 0);
+      giver.inventory.give(this.inventory, diffusionAmount, 0);
     }
   }
 
-  diffuseSugar(giver: Tile, dt: number) {
+  diffuseSugar(giver: Tile, dt: number, diffusionRate = this.diffusionSugar) {
     const difference = giver.inventory.sugar - this.inventory.sugar;
     if (difference > 1) {
-      const diffusionAmount = Math.min(difference * this.diffusionSugar * dt, difference / 2);
-      // sugar diffuses continuously
-      giver.inventory.give(this.inventory, 0, randRound(diffusionAmount));
+      const diffusionAmount = Math.min(difference * diffusionRate * dt, difference / 2);
+      giver.inventory.give(this.inventory, 0, diffusionAmount);
     }
   }
 
