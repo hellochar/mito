@@ -12,7 +12,7 @@ function DynamicNumber({ value, speed = 0.5, sigFigs = 3 }: DynamicNumberProps) 
   const [v, setV] = React.useState(value);
 
   React.useEffect(() => {
-    const id = Ticker.addAnimation(() => {
+    function tickOnce() {
       setV((v) => {
         if (Math.abs(v - value) < 5e-3) {
           Ticker.removeAnimation(id);
@@ -21,7 +21,10 @@ function DynamicNumber({ value, speed = 0.5, sigFigs = 3 }: DynamicNumberProps) 
           return v * (1 - speed) + value * speed;
         }
       });
-    });
+    }
+    tickOnce();
+
+    const id = Ticker.addAnimation(tickOnce);
     return () => {
       Ticker.removeAnimation(id);
     };

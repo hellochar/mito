@@ -14,17 +14,14 @@
 
   .bar-water {
     background: $color-water;
-    transition: width 0.05s;
   }
 
   .bar-sugar {
     background: $color-sugar;
-    transition: width 0.05s;
   }
 
   .bar-empty {
     box-shadow: 0 5px 6px inset rgba(0, 0, 0, 0.25);
-    transition: width 0.05s;
   }
 
   .markers {
