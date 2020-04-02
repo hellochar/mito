@@ -5,9 +5,9 @@ import { Gene } from "../../core/cell/gene";
 export const GeneDiffuseWater = Gene.make(
   {
     name: "Diffuse Water",
-    levelCosts: [0, 1, 2, 3, 5],
+    levelCosts: [0],
     static: {
-      diffusionWater: [0.01, 0.02, 0.04, 0.08, 0.16],
+      diffusionWater: [0.08],
     },
     levelProps: {},
     description: (props, { diffusionWater }) => (

@@ -1,7 +1,7 @@
 import { HexTile } from "core/overworld/hexTile";
 import { lineage, Species } from "core/species";
 import { GameResult } from "game/gameResult";
-import { generateRandomGenes } from "game/ui/GenomeViewer/generateRandomGenes";
+import { populateGeneOptions } from "game/ui/GenomeViewer/generateRandomGenes";
 import React, { useContext } from "react";
 import { AppState, PopulationAttempt } from "./state";
 
@@ -20,6 +20,7 @@ export function reducer(state: AppState, action: AppActions): AppState {
     return state;
   }
   switch (action.type) {
+    // a dummy trigger on species mutate
     case "AAUpdateSpecies":
       return {
         ...state,
@@ -118,7 +119,7 @@ function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAtt
   settlingSpecies.totalMutationPoints = state.overWorld.getMaxGenePool(settlingSpecies);
 
   // set new gene options for this species
-  settlingSpecies.geneOptions = generateRandomGenes(3);
+  settlingSpecies.geneOptions = populateGeneOptions(settlingSpecies);
   if (oldSpecies) {
     // update old species mutation point pool cache
     oldSpecies.totalMutationPoints = state.overWorld.getMaxGenePool(oldSpecies);

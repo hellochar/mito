@@ -1,11 +1,14 @@
-import DynamicNumber from "game/ui/common/DynamicNumber";
+import classNames from "classnames";
 import React from "react";
 import { CellInteraction, CellType } from "../../../core/cell/genome";
 import { spritesheetLoaded } from "../../spritesheet";
+import DynamicNumber from "../common/DynamicNumber";
 import IconCell from "../common/IconCell";
 import { CellInteractionSelector } from "./CellInteractionSelector";
+import "./CellTypeViewer.scss";
 import { DraggedContext } from "./DragInfo";
 import { GeneViewer } from "./GeneViewer";
+
 export const CellTypeViewer: React.FC<{
   cellType: CellType;
 }> = ({ cellType }) => {
@@ -33,8 +36,9 @@ export const CellTypeViewer: React.FC<{
     },
     [cellType.interaction]
   );
+  const reproducer = cellType.isReproducer();
   return (
-    <div className="cell-type">
+    <div className={classNames("cell-type", { reproducer })}>
       <div className="cell-header">
         <IconCell cellType={cellType} spritesheetLoaded={spritesheetLoaded} />
         <div>
@@ -52,6 +56,7 @@ export const CellTypeViewer: React.FC<{
           <DynamicNumber value={chromosome.geneSlotsNet()} />
         </span>
       </div>
+      <div className="chance-to-mutate"></div>
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
         {chromosome.genes.map((g, i) => (
           <GeneViewer key={i} cellType={cellType} gene={g} />

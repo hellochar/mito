@@ -1,11 +1,28 @@
+import { RealizedGene } from "core/cell";
+import { Species } from "core/species";
 import { randInt } from "math";
-import { arrayRange } from "math/arrays";
+import shuffle from "math/shuffle";
+import { GeneDiffuseWater } from "std/genes/GeneDiffuseWater";
+import { GeneDirectionalPush } from "std/genes/GeneDirectionalPush";
+import { GenePipes } from "std/genes/GenePipes";
 import { AllGenesByName } from "../../../core/cell/gene";
 
-export function generateRandomGenes(numGenes = 20) {
+export function generateRandomGenes(numGenes = 3) {
+  // disallow same gene to spawn in one drawing
   const AllGenes = Array.from(AllGenesByName.values());
-  return arrayRange(numGenes).map(() => {
-    const randomGene = AllGenes[randInt(0, AllGenes.length - 1)];
-    return randomGene.level(randInt(0, randomGene.blueprint.levelCosts.length - 1));
-  });
+  shuffle(AllGenes);
+  const genes: RealizedGene[] = AllGenes.slice(0, numGenes).map((g) => g.level(randInt(0, g.blueprint.levelCosts.length - 1)));
+  return genes;
+}
+
+export function populateGeneOptions(species: Species) {
+  const hasTransport = species.genome.cellTypes.some((type) => type.chromosome.has(GeneDirectionalPush));
+  const hasPipes = species.genome.cellTypes.some((type) => type.chromosome.has(GenePipes));
+  const hasDiffuseWater = species.genome.cellTypes.some((type) => type.chromosome.has(GeneDiffuseWater));
+
+  if (!hasTransport && !hasPipes && !hasDiffuseWater) {
+    return [GeneDirectionalPush.level(2), GenePipes.level(2), GeneDiffuseWater.level(0)];
+  } else {
+    return generateRandomGenes(3);
+  }
 }

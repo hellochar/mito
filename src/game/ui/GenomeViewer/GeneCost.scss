@@ -1,0 +1,30 @@
+@import "../../../variables";
+
+.gene-cost {
+  font-weight: bold;
+  // border-radius: 100%;
+  // background: transparentize($color: $sepia1, $amount: 0.2);
+  // color: white;
+
+  // background: white;
+  // color: black;
+  // box-shadow: 0 2px 4px inset rgba(64, 64, 64, 0.5);
+
+  background: $turquoise1;
+  color: $white;
+  font-size: 16px;
+  width: 20px;
+  height: 20px;
+  font-family: $palatino-family;
+  display: inline-flex;
+  justify-content: center;
+
+  &.negative {
+    // background: $forest3;
+    width: 25px;
+    background: $gold5;
+    color: $black;
+    // -webkit-text-stroke: 2px black;
+    // @include text-outline();
+  }
+}

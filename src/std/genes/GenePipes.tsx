@@ -11,8 +11,10 @@ export const GenePipes = Gene.make(
     },
     description: ({ diffusionRate }) => (
       <>
-        <p>Shares resources between nearby cells with rate ${diffusionRate}.</p>
-        <p>Hold shift to configure.</p>
+        <b>Hold Shift to configure.</b>
+        <p>
+          Continuously equalize resources between nearby cells. Get <b>{diffusionRate * 100}%</b> closer every second.
+        </p>
       </>
     ),
   },

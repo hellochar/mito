@@ -78,6 +78,10 @@ export class CellType {
       .setLength(1)
       .round();
   }
+
+  isReproducer() {
+    return this.chromosome.genes.some((gene) => gene.getStaticProperties().isReproductive);
+  }
 }
 
 export default class Genome {

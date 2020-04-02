@@ -1,6 +1,8 @@
 import classNames from "classnames";
 import DynamicNumber from "game/ui/common/DynamicNumber";
 import React from "react";
+import "./GeneCost.scss";
+
 export function GeneCost({
   cost,
   className,

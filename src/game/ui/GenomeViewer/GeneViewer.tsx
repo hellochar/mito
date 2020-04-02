@@ -1,10 +1,11 @@
 import classNames from "classnames";
 import React from "react";
-import { FaGripLines } from "react-icons/fa";
 import { CellType } from "../../../core/cell/genome";
 import { RealizedGene } from "../../../core/cell/realizedGene";
 import { DraggedContext } from "./DragInfo";
 import { GeneCost } from "./GeneCost";
+import "./GeneViewer.scss";
+
 export const GeneViewer: React.FC<{
   cellType: CellType;
   gene: RealizedGene;
@@ -25,7 +26,7 @@ export const GeneViewer: React.FC<{
     [cellType, gene, setState]
   );
   const cost = gene.getCost();
-  const draggable = !(gene.gene.blueprint.name === "Living" || gene.gene.blueprint.name === "Inventory");
+  const draggable = !(gene.gene.blueprint.name === "Living");
   return (
     // <LookAtMouse zScale={8} displayBlock>
     <div
@@ -38,7 +39,7 @@ export const GeneViewer: React.FC<{
         <h4>
           {gd.blueprint.name} {gene.gene.blueprint.levelCosts.length > 1 ? gene.level + 1 : ""}
         </h4>
-        {draggable ? <FaGripLines className="grip-lines" /> : null}
+        {/* {draggable ? <FaGripLines className="grip-lines" /> : null} */}
       </div>
 
       <div className="description">{gd.blueprint.description(gene.getProps(), gene.getStaticProperties())}</div>

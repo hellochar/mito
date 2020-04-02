@@ -1,0 +1,100 @@
+@import "../../../variables";
+
+.cell-type {
+  padding: 10px;
+  width: 340px;
+  flex-shrink: 0;
+  min-height: 400px;
+  background: transparentize($color: $light-gray5, $amount: 0.1);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  ~ .cell-type {
+    margin-left: 20px;
+  }
+
+  &.reproducer {
+    border: 2px solid $color-mutation;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: -6px;
+      right: -6px;
+      top: -6px;
+      bottom: -6px;
+      border: 2px solid $color-mutation;
+      border-radius: 5px;
+      pointer-events: none;
+    }
+  }
+
+  .cell-header {
+    display: flex;
+    .icon-cell {
+      margin-right: 5px;
+    }
+  }
+
+  .chromosome {
+    margin-top: 5px;
+    flex-grow: 1;
+    // background: transparentize($sepia1, 0.9);
+    // border-radius: 2px;
+    padding: 5px;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    border-radius: 5px;
+  }
+
+  .gene-slots {
+    // font-size: 12px;
+  }
+
+  .slots-used {
+    font-weight: bold;
+    // border-radius: 5px;
+    // background: transparentize($color: $sepia1, $amount: 0.2);
+    // color: white;
+    // padding: 0.1em 0.5em;
+  }
+
+  .gene-level-arrows {
+    display: inline-flex;
+    flex-direction: column;
+    margin-left: 2px;
+    vertical-align: middle;
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      font-size: 0.5em;
+    }
+  }
+
+  .gene-level-picker {
+    display: flex;
+    margin: 5px 0 0;
+
+    button {
+      flex: 1;
+      margin: 0;
+      background: none;
+      cursor: pointer;
+      font-family: $arial-family;
+      font-size: 12px;
+      border-width: thin;
+      color: inherit;
+
+      &.selected {
+        border-style: inset;
+        font-weight: bold;
+      }
+    }
+  }
+}

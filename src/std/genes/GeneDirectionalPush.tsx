@@ -13,10 +13,11 @@ export const GeneDirectionalPush = Gene.make(
     },
     description: ({ secondsPerPush }) => (
       <>
-        <b>Directional.</b>
-        <br />
-        Every <GN value={secondsPerPush} sigFigs={2} /> seconds, directionally pull 1 Water and 1 Sugar from behind into
-        this Cell, and also push 1 Water and 1 Sugar into the directed Cell.
+        <b>Hold Shift to configure.</b>
+        <p>
+          Every <GN value={secondsPerPush} sigFigs={2} /> seconds, directionally pull 1 Water and 1 Sugar from behind
+          into this Cell, and also push 1 Water and 1 Sugar into the directed Cell.
+        </p>
       </>
     ),
     static: {

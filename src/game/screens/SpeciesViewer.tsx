@@ -1,14 +1,15 @@
 import { Species } from "core/species";
+import { useAppReducer } from "game/app";
 import MP from "game/ui/common/MP";
 import GenomeViewer from "game/ui/GenomeViewer";
 import { DraggedContext, GenomeViewerState } from "game/ui/GenomeViewer/DragInfo";
-import { generateRandomGenes } from "game/ui/GenomeViewer/generateRandomGenes";
+import { populateGeneOptions } from "game/ui/GenomeViewer/generateRandomGenes";
 import { GeneViewer } from "game/ui/GenomeViewer/GeneViewer";
 import React, { useEffect } from "react";
 import "./SpeciesViewer.scss";
 export const SpeciesViewer: React.FC<{
   species: Species;
-}> = ({ species }) => {
+}> = React.memo(({ species }) => {
   return (
     <div className="species-viewer">
       <div className="header">
@@ -18,29 +19,43 @@ export const SpeciesViewer: React.FC<{
       <GenomeViewer genome={species.genome} />
     </div>
   );
-};
+});
 
-const MutationChooser: React.FC<{ species: Species }> = ({ species }) => {
+const MutationChooser: React.FC<{ species: Species }> = React.memo(({ species }) => {
   const { freeMutationPoints, geneOptions } = species;
   const geneEl = geneOptions.map((gene, i) => <GeneViewer key={i} gene={gene} cellType={undefined!} />);
 
   const tuple = React.useState<GenomeViewerState>({ view: "expanded" });
   const [state, setState] = tuple;
+  const [, dispatch] = useAppReducer();
 
   useEffect(() => {
     if (state.dragged) {
-      // add clicked genome to
+      // HACK add clicked genome to first cell type
       species.genome.cellTypes[0].chromosome.genes.push(state.dragged.gene);
       species.freeMutationPoints -= 1;
       if (species.freeMutationPoints > 0) {
-        species.geneOptions = generateRandomGenes(3);
+        species.geneOptions = populateGeneOptions(species);
       }
       setState({
         ...state,
         dragged: undefined,
       });
+      dispatch({
+        type: "AAUpdateSpecies",
+        species,
+      });
     }
-  }, [setState, species.freeMutationPoints, species.geneOptions, species.genome.cellTypes, state, state.dragged]);
+  }, [
+    dispatch,
+    setState,
+    species,
+    species.freeMutationPoints,
+    species.geneOptions,
+    species.genome.cellTypes,
+    state,
+    state.dragged,
+  ]);
 
   return (
     <DraggedContext.Provider value={tuple}>
@@ -52,4 +67,4 @@ const MutationChooser: React.FC<{ species: Species }> = ({ species }) => {
       </div>
     </DraggedContext.Provider>
   );
-};
+});
