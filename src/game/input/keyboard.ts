@@ -33,6 +33,9 @@ export const Keyboard = new (class Keyboard {
     if (code === "KeyH") {
       params.hud = !params.hud;
     }
+    if (code === "Period") {
+      params.showFPS = !params.showFPS;
+    }
     if (code === "Slash") {
       params.showGodUI = !params.showGodUI;
     }

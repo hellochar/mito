@@ -6,6 +6,7 @@ import { PopulationAttempt } from "game/app";
 import { Mouse } from "game/input/mouse";
 import { ISketch, SketchAudioContext } from "game/screens/sketch/sketch";
 import * as React from "react";
+import Stats from "stats.js";
 import { environmentFromLevelInfo } from "std/environments";
 import VignetteCapturer from "std/vignette";
 import * as THREE from "three";
@@ -104,6 +105,8 @@ export class Mito extends ISketch {
   public nodePost: Nodes.NodePostProcessing;
 
   public ovalOutTime: Nodes.FloatNode;
+
+  public stats = new Stats();
 
   constructor(
     renderer: WebGLRenderer,
@@ -219,6 +222,7 @@ export class Mito extends ISketch {
         {showPlayerHUD ? <Hover mito={this} /> : null}
         <div className="world-dom-components">{worldDomElementComponents}</div>
         {params.showGodUI ? <Debug mito={this} /> : null}
+        {params.showFPS ? <WindowFPS mito={this} /> : null}
         {this.instructionsOpen ? <Instructions play={() => (this.instructionsOpen = false)} /> : null}
       </>
     );
@@ -357,6 +361,8 @@ export class Mito extends ISketch {
   }
 
   public animate(millisDelta: number) {
+    this.stats.end();
+    this.stats.begin();
     this.controls?.animate(millisDelta);
 
     const c = this.inspectedCell;
@@ -462,3 +468,14 @@ export class Mito extends ISketch {
 }
 
 export default Mito;
+
+const WindowFPS: React.FC<{ mito: Mito }> = ({ mito }) => {
+  React.useEffect(() => {
+    document.body.appendChild(mito.stats.dom);
+    return () => {
+      document.body.removeChild(mito.stats.dom);
+    };
+  }, [mito.stats.dom]);
+
+  return null;
+};
