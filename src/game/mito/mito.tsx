@@ -1,4 +1,5 @@
 import { sleep } from "common/promise";
+import { CancerEffect, FreezeEffect } from "core/cell";
 import { Action } from "core/player/action";
 import { easeSinIn } from "d3-ease";
 import { PopulationAttempt } from "game/app";
@@ -65,7 +66,9 @@ export class Mito extends ISketch {
   }
 
   public set inspectedCell(c: Cell | undefined) {
-    console.trace("set inspectedCell to", c);
+    if (params.showGodUI) {
+      console.trace("set inspectedCell to", c);
+    }
     this._inspectedCell = c;
   }
 
@@ -356,17 +359,14 @@ export class Mito extends ISketch {
   public animate(millisDelta: number) {
     this.controls?.animate(millisDelta);
 
-    if (this.inspectedCell?.isDead) {
-      this.inspectedCell = undefined;
-    }
-    // if (
-    //   this.inspectedCell != null &&
-    //   this.inspectedCell.pos.distanceTo(this.world.player.posFloat) > this.PLAYER_TETHER_DISTANCE * 2
-    // ) {
-    //   this.inspectedCell = undefined;
-    // }
-    if (this.inspectedCell != null && this.world.player.getAction() != null) {
-      this.inspectedCell = undefined;
+    const c = this.inspectedCell;
+    if (c != null) {
+      if (c.isDead || c.findEffectOfType(CancerEffect) || c.findEffectOfType(FreezeEffect)) {
+        this.inspectedCell = undefined;
+      }
+      if (this.world.player.getAction() != null) {
+        this.inspectedCell = undefined;
+      }
     }
 
     // cap out at 1/3rd of a second in one frame (about 10 frames)
