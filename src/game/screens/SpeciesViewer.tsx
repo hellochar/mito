@@ -9,7 +9,7 @@ import React, { useEffect } from "react";
 import "./SpeciesViewer.scss";
 export const SpeciesViewer: React.FC<{
   species: Species;
-}> = React.memo(({ species }) => {
+}> = ({ species }) => {
   return (
     <div className="species-viewer">
       <div className="header">
@@ -19,9 +19,9 @@ export const SpeciesViewer: React.FC<{
       <GenomeViewer genome={species.genome} />
     </div>
   );
-});
+};
 
-const MutationChooser: React.FC<{ species: Species }> = React.memo(({ species }) => {
+const MutationChooser: React.FC<{ species: Species }> = ({ species }) => {
   const { freeMutationPoints, geneOptions } = species;
   const geneEl = geneOptions.map((gene, i) => <GeneViewer key={i} gene={gene} cellType={undefined!} />);
 
@@ -61,10 +61,10 @@ const MutationChooser: React.FC<{ species: Species }> = React.memo(({ species })
     <DraggedContext.Provider value={tuple}>
       <div className="mutation-chooser">
         <h1>
-          <MP amount={freeMutationPoints} /> mutations left!
+          <MP amount={freeMutationPoints} /> mutations available
         </h1>
         <div className="gene-options">{geneEl}</div>
       </div>
     </DraggedContext.Provider>
   );
-});
+};

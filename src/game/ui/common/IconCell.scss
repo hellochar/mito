@@ -11,6 +11,17 @@
   color: $white;
   font-size: 12px;
   font-family: $arial-family;
+
+  &.reproducer::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 2px solid $color-mutation;
+    border-radius: 2px;
+  }
 }
 
 .icon-cell {
@@ -20,4 +31,5 @@
   background-position: center center;
   background-blend-mode: multiply;
   image-rendering: pixelated;
+  position: relative;
 }

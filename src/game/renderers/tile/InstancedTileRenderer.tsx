@@ -8,10 +8,10 @@ import Mito from "game/mito/mito";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
 import { GeneSoilAbsorption } from "std/genes";
-import { GeneDirectionalPush } from "std/genes/GeneDirectionalPush";
 import { GenePhotosynthesis } from "std/genes/GenePhotosynthesis";
 import { GenePipes } from "std/genes/GenePipes";
 import { GeneFruit, GeneSeed } from "std/genes/GeneReproducer";
+import { GeneTransport } from "std/genes/GeneTransport";
 import { Color, Scene, Vector2, Vector3 } from "three";
 import { Constructor } from "typings/constructor";
 import { MaterialInfo } from "../../../core/cell/materialInfo";
@@ -20,12 +20,12 @@ import { Renderer } from "../Renderer";
 import { WorldRenderer } from "../WorldRenderer";
 import { Animation, AnimationController } from "./Animation";
 import { CellEffectsRenderer } from "./CellEffectsRenderer";
-import { GeneDirectionalPushRenderer } from "./GeneDirectionalPushRenderer";
 import { GenePhotosynthesisRenderer } from "./GenePhotosynthesisRenderer";
 import { GenePipesRenderer } from "./GenePipesRenderer";
 import { GeneRenderer } from "./GeneRenderer";
 import { GeneReproducerRenderer } from "./GeneReproducerRenderer";
 import { GeneSoilAbsorptionRenderer } from "./GeneSoilAbsorptionRenderer";
+import { GeneTransportRenderer } from "./GeneTransportRenderer";
 import TileBatcher, { BatchInstance } from "./tileBatcher";
 
 export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
@@ -93,8 +93,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       return new GeneSoilAbsorptionRenderer(inst, this);
     } else if (inst.isType(GenePhotosynthesis)) {
       return new GenePhotosynthesisRenderer(inst, this);
-    } else if (inst.isType(GeneDirectionalPush)) {
-      return new GeneDirectionalPushRenderer(inst, this);
+    } else if (inst.isType(GeneTransport)) {
+      return new GeneTransportRenderer(inst, this);
     } else if (inst.isType(GeneFruit) || inst.isType(GeneSeed)) {
       return new GeneReproducerRenderer(inst, this);
     } else if (inst.isType(GenePipes)) {

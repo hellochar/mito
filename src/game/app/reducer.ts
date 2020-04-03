@@ -115,14 +115,11 @@ function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAtt
     mutationPointsPerEpoch: results.mutationPointsPerEpoch,
   };
 
-  // update max gene pool
-  settlingSpecies.totalMutationPoints = state.overWorld.getMaxGenePool(settlingSpecies);
-
   // set new gene options for this species
   settlingSpecies.geneOptions = populateGeneOptions(settlingSpecies);
   if (oldSpecies) {
     // update old species mutation point pool cache
-    oldSpecies.totalMutationPoints = state.overWorld.getMaxGenePool(oldSpecies);
+    oldSpecies.freeMutationPoints = Math.min(oldSpecies.freeMutationPoints, state.overWorld.getMaxGenePool(oldSpecies));
   }
 
   // bump visibility
@@ -147,7 +144,7 @@ function handleNextEpoch(state: AppState, action: AANextEpoch): AppState {
   // +1 epoch:
   // reset all species pools to max
   for (const species of lineage(state.rootSpecies)) {
-    species.freeMutationPoints = species.totalMutationPoints;
+    species.freeMutationPoints = state.overWorld.getMaxGenePool(species);
   }
   return {
     ...state,

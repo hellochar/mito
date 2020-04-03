@@ -1,0 +1,12 @@
+.rc-tooltip {
+  font-family: $arial-family;
+  font-size: 14px;
+}
+
+.rc-tooltip-inner {
+  max-width: 340px;
+
+  > div {
+    margin-bottom: 10px;
+  }
+}

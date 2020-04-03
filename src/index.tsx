@@ -1,3 +1,4 @@
+import "rc-tooltip/assets/bootstrap.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import "react-dropdown/style.css";

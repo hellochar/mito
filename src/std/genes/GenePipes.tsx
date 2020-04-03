@@ -1,4 +1,5 @@
 import { DIRECTIONS, Directions } from "core/directions";
+import { ResourceIcon } from "game/ui/common/ResourceIcon";
 import React from "react";
 import { Gene } from "../../core/cell/gene";
 
@@ -13,7 +14,8 @@ export const GenePipes = Gene.make(
       <>
         <b>Hold Shift to configure.</b>
         <p>
-          Continuously equalize resources between nearby cells. Get <b>{diffusionRate * 100}%</b> closer every second.
+          Continuously equalize <ResourceIcon name="water" />
+          <ResourceIcon name="sugar" /> between nearby cells. Get <b>{diffusionRate * 100}%</b> closer every second.
         </p>
       </>
     ),

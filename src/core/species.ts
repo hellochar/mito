@@ -9,7 +9,6 @@ export interface Species {
   id: string;
   name: string;
   freeMutationPoints: number;
-  totalMutationPoints: number;
   descendants: Species[];
   parent?: Species;
   geneOptions: RealizedGene[];
@@ -34,7 +33,6 @@ export function newBaseSpecies(name = "plantum originus"): Species {
     genome: tutorialGenome,
     name,
     freeMutationPoints: 0,
-    totalMutationPoints: 0,
     descendants: [],
     geneOptions: [],
   };

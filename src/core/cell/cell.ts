@@ -13,7 +13,7 @@ import { Rock } from "../tile/rock";
 import { Soil } from "../tile/soil";
 import { Tile } from "../tile/tile";
 import { World } from "../world/world";
-import { CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
+import { CancerEffect, CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
 import Chromosome from "./chromosome";
 import { Gene, GeneStaticProperties } from "./gene";
 import { GeneInstance } from "./geneInstance";
@@ -223,6 +223,11 @@ export class Cell extends Tile implements Interactable {
     } else {
       // cell effects and genes scale according to tempo
       dt = this.tempo * dt;
+
+      // cancer
+      if (Math.random() < this.type.getChanceToBecomeCancerous() * dt) {
+        this.addEffect(new CancerEffect());
+      }
 
       // step all cell effects (e.g.freezing)
       for (const effect of this.effects) {

@@ -43,22 +43,39 @@
     flex-grow: 1;
     // background: transparentize($sepia1, 0.9);
     // border-radius: 2px;
+    $stripe1: transparent;
+    $stripe2: transparentize($light-gray1, 0);
+    background: repeating-linear-gradient(45deg, $stripe1, $stripe1 10px, $stripe2 10px, $stripe2 20px);
+
     padding: 5px;
-    border: 2px solid transparent;
+    // border: 2px solid transparent;
     transition: all 0.2s;
     border-radius: 5px;
   }
 
   .gene-slots {
-    // font-size: 12px;
+    margin: 5px 0;
+    font-size: 16px;
+
+    .slots-used {
+      font-weight: bold;
+
+      &.is-over {
+        color: $red3;
+      }
+      // border-radius: 5px;
+      // background: transparentize($color: $sepia1, $amount: 0.2);
+      // color: white;
+      // padding: 0.1em 0.5em;
+    }
   }
 
-  .slots-used {
+  .chance-to-cancer {
+    padding: 10px 0;
+    border-radius: 2px;
     font-weight: bold;
-    // border-radius: 5px;
-    // background: transparentize($color: $sepia1, $amount: 0.2);
-    // color: white;
-    // padding: 0.1em 0.5em;
+    font-size: 16px;
+    color: $red3;
   }
 
   .gene-level-arrows {

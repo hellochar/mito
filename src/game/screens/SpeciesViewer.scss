@@ -1,5 +1,10 @@
 @import "../../variables";
 
+.species-name {
+  font-weight: bold;
+  font-style: italic;
+}
+
 .species-viewer {
   overflow: auto;
   background: $gray3;
@@ -10,8 +15,6 @@
 
     .species-name {
       font-size: 2em;
-      font-weight: bold;
-      font-style: italic;
       display: inline;
     }
   }

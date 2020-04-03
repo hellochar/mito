@@ -11,10 +11,10 @@ import {
 } from "../genes";
 import { GeneAttractsSugar } from "../genes/GeneAttractsSugar";
 import { GeneCannotFreeze } from "../genes/GeneCannotFreeze";
-import { GeneDirectionalPush } from "../genes/GeneDirectionalPush";
 import { GeneObstacle } from "../genes/GeneObstacle";
 import { GenePhotosynthesis } from "../genes/GenePhotosynthesis";
 import { GeneFruit } from "../genes/GeneReproducer";
+import { GeneTransport } from "../genes/GeneTransport";
 
 const cellTypeTissue = new CellType(
   "Tissue",
@@ -67,12 +67,7 @@ const cellTypeRoot = new CellType(
 const cellTypeTransport = new CellType(
   "Transport",
   0,
-  new Chromosome(
-    GeneLiving.level(3),
-    GeneInventory.level(3),
-    GeneDirectionalPush.level(2),
-    GeneEnergyTransfer.level(2)
-  ),
+  new Chromosome(GeneLiving.level(3), GeneInventory.level(3), GeneTransport.level(2), GeneEnergyTransfer.level(2)),
   {
     texturePosition: new Vector2(1, 1),
     color: new Color(0x30ae25),

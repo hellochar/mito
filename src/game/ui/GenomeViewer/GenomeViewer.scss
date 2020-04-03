@@ -19,7 +19,7 @@
   padding: 10px;
 
   &.dragging .chromosome {
-    border-color: $blue3;
+    border: 2px solid $blue3;
   }
 
   .view-switcher {

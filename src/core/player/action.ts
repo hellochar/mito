@@ -1,3 +1,4 @@
+import { CancerEffect } from "core/cell";
 import { FreezeEffect, Tile } from "core/tile";
 import { Vector2 } from "three";
 import { CellArgs } from "../cell/cell";
@@ -66,6 +67,11 @@ export interface ActionThaw {
   target: FreezeEffect;
 }
 
+export interface ActionRemoveCancer {
+  type: "remove-cancer";
+  target: CancerEffect;
+}
+
 export type Action =
   | ActionMove
   | ActionBuild
@@ -74,4 +80,5 @@ export type Action =
   | ActionLong<any>
   | ActionMultiple
   | ActionPickup
-  | ActionThaw;
+  | ActionThaw
+  | ActionRemoveCancer;

@@ -42,7 +42,11 @@ const IconCell: React.FC<{ cellType: CellType; spritesheetLoaded: boolean } & Re
     };
   }, [color, spritesheetLoaded, texture.image]);
   return (
-    <ActionBarItem {...props} className="icon-cell" style={style}>
+    <ActionBarItem
+      {...props}
+      className={classNames("icon-cell", { reproducer: cellType.isReproducer() })}
+      style={style}
+    >
       {children}
     </ActionBarItem>
   );

@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { sleep } from "common/promise";
 import { lineage, Species } from "core/species";
 import { useAppReducer } from "game/app";
 import { resetGame, save } from "game/app/saveLoad";
@@ -41,11 +42,10 @@ const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
     };
   }, []);
 
-  const [genomeViewerSpecies, setGenomeViewerSpecies] = useState<Species>();
+  const [viewedSpecies, setViewedSpecies] = useState<Species>();
 
   const handleStartMutate = useCallback((s: Species) => {
-    // TODO fill in
-    setGenomeViewerSpecies(s);
+    setViewedSpecies(s);
   }, []);
 
   const [{ rootSpecies }] = useAppReducer();
@@ -67,24 +67,24 @@ const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
   }
 
   const closeGenomeViewer = useCallback(() => {
-    setGenomeViewerSpecies(undefined);
+    setViewedSpecies(undefined);
   }, []);
-  function maybeRenderGenomeViewer() {
+  function maybeRenderSpeciesViewer() {
     return (
       <ReactModal
         ariaHideApp={false}
-        isOpen={genomeViewerSpecies != null}
+        isOpen={viewedSpecies != null}
         shouldCloseOnEsc
         shouldCloseOnOverlayClick
         onRequestClose={closeGenomeViewer}
         className="species-viewer-modal"
       >
-        {genomeViewerSpecies != null ? (
+        {viewedSpecies != null ? (
           <>
             <button className="close" onClick={closeGenomeViewer}>
               ✖
             </button>
-            <SpeciesViewer species={genomeViewerSpecies} />
+            <SpeciesViewer species={viewedSpecies} />
           </>
         ) : null}
       </ReactModal>
@@ -98,12 +98,21 @@ const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
 
   const [appState] = useAppReducer();
 
+  const handleOnNextEpoch = React.useCallback(() => {
+    onNextEpoch();
+    sleep(4500).then(() => {
+      // TODO add a UI to let you mutate multiple species
+      const speciesReadyToMutate = lineage(rootSpecies).filter((species) => species.freeMutationPoints > 0);
+      setViewedSpecies(speciesReadyToMutate[0]);
+    });
+  }, [onNextEpoch, rootSpecies]);
+
   return (
     <div className="overworld-screen">
       <OverWorldMap focusedHex={focusedHex} />
       {maybeRenderPhylogeneticTreePanel()}
-      {maybeRenderGenomeViewer()}
-      <EpochUI onNextEpoch={onNextEpoch} onFocusHex={handleFocusHex} />
+      {maybeRenderSpeciesViewer()}
+      <EpochUI onNextEpoch={handleOnNextEpoch} onFocusHex={handleFocusHex} />
       <div style={{ position: "absolute", right: "10px", top: "10px" }}>
         <Button onClick={() => save(appState)}>Save</Button>
       </div>

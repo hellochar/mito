@@ -18,17 +18,6 @@ export const CellInspector: React.FC<{
           <div className="resources">
             <div className="resource-row">
               <button
-                disabled={cell.inventory.water === 0}
-                onClickCapture={(e) => {
-                  cell.inventory.give(player.inventory, 1, 0);
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
-                Take&nbsp;
-                <ResourceIcon name="water" />
-              </button>
-              <button
                 disabled={player.inventory.water === 0}
                 onClickCapture={(e) => {
                   player.inventory.give(cell.inventory, 1, 0);
@@ -39,19 +28,19 @@ export const CellInspector: React.FC<{
                 Give&nbsp;
                 <ResourceIcon name="water" />
               </button>
-            </div>
-            <div className="resource-row">
               <button
-                disabled={cell.inventory.sugar === 0}
+                disabled={cell.inventory.water === 0}
                 onClickCapture={(e) => {
-                  cell.inventory.give(player.inventory, 0, 1);
+                  cell.inventory.give(player.inventory, 1, 0);
                   e.preventDefault();
                   e.stopPropagation();
                 }}
               >
                 Take&nbsp;
-                <ResourceIcon name="sugar" />
+                <ResourceIcon name="water" />
               </button>
+            </div>
+            <div className="resource-row">
               <button
                 disabled={player.inventory.sugar === 0}
                 onClickCapture={(e) => {
@@ -61,6 +50,17 @@ export const CellInspector: React.FC<{
                 }}
               >
                 Give&nbsp;
+                <ResourceIcon name="sugar" />
+              </button>
+              <button
+                disabled={cell.inventory.sugar === 0}
+                onClickCapture={(e) => {
+                  cell.inventory.give(player.inventory, 0, 1);
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                Take&nbsp;
                 <ResourceIcon name="sugar" />
               </button>
             </div>

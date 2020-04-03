@@ -359,10 +359,13 @@ export class Mito extends ISketch {
     if (this.inspectedCell?.isDead) {
       this.inspectedCell = undefined;
     }
-    if (
-      this.inspectedCell != null &&
-      this.inspectedCell.pos.distanceTo(this.world.player.posFloat) > this.PLAYER_TETHER_DISTANCE * 2
-    ) {
+    // if (
+    //   this.inspectedCell != null &&
+    //   this.inspectedCell.pos.distanceTo(this.world.player.posFloat) > this.PLAYER_TETHER_DISTANCE * 2
+    // ) {
+    //   this.inspectedCell = undefined;
+    // }
+    if (this.inspectedCell != null && this.world.player.getAction() != null) {
       this.inspectedCell = undefined;
     }
 

@@ -92,7 +92,8 @@ class VignetteCapturer {
 
     const img = new Image();
     img.src = dest.toDataURL();
-    document.body.appendChild(img);
+    // debug
+    // document.body.appendChild(img);
 
     picturesqueRenderers.forEach((t) => {
       t?.destroy();

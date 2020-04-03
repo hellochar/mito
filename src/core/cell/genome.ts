@@ -1,3 +1,4 @@
+import { clamp } from "math";
 import { createSimpleSchema, list, object, serializable } from "serializr";
 import { Vector2 } from "three";
 import { CellArgs } from "./cell";
@@ -81,6 +82,17 @@ export class CellType {
 
   isReproducer() {
     return this.chromosome.genes.some((gene) => gene.getStaticProperties().isReproductive);
+  }
+
+  getChanceToBecomeCancerous() {
+    const geneSlotsNet = this.chromosome.geneSlotsNet();
+    if (geneSlotsNet < 0) {
+      // 1.5^x * 0.0125
+      // 0.188%, 0.281%, 0.422%, 0.633%, 0.949%, 1.43%, 2.14%, 3.2%, 4.81%, 7.21%
+      return clamp(Math.pow(1.3, Math.abs(geneSlotsNet)) * 0.000225, 0, 1);
+    } else {
+      return 0;
+    }
   }
 }
 

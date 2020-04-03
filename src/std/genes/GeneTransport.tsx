@@ -1,12 +1,13 @@
+import { ResourceIcon } from "game/ui/common/ResourceIcon";
 import { randFloat } from "math";
 import React from "react";
 import GN from "std/genes/GN";
 import { Cell } from "../../core/cell/cell";
 import { Gene } from "../../core/cell/gene";
 
-export const GeneDirectionalPush = Gene.make(
+export const GeneTransport = Gene.make(
   {
-    name: "⬆ Directional Push",
+    name: "Transport",
     levelCosts: [2, 3, 4, 5, 6],
     levelProps: {
       secondsPerPush: [20, 10, 5, 3, 2],
@@ -15,8 +16,12 @@ export const GeneDirectionalPush = Gene.make(
       <>
         <b>Hold Shift to configure.</b>
         <p>
-          Every <GN value={secondsPerPush} sigFigs={2} /> seconds, directionally pull 1 Water and 1 Sugar from behind
-          into this Cell, and also push 1 Water and 1 Sugar into the directed Cell.
+          Every <GN value={secondsPerPush} sigFigs={2} /> seconds, give 1<ResourceIcon name="water" />1
+          <ResourceIcon name="sugar" /> into the directed cell.
+        </p>
+        <p>
+          Every <GN value={secondsPerPush} sigFigs={2} /> seconds, take 1
+          <ResourceIcon name="water" />1<ResourceIcon name="sugar" /> from behind.
         </p>
       </>
     ),
@@ -48,7 +53,7 @@ export const GeneDirectionalPush = Gene.make(
     state.cooldown -= dt;
   }
 );
-export type GeneDirectionalPush = typeof GeneDirectionalPush;
+export type GeneTransport = typeof GeneTransport;
 
 function push(cell: Cell, target: Cell, waterToTransport: number, sugarToTransport: number) {
   const { water, sugar } = cell.inventory.give(target.inventory, waterToTransport, sugarToTransport);

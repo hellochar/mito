@@ -11,7 +11,7 @@
 export const PLAYER_BASE_SPEED = 4.2;
 export const PLAYER_MAX_RESOURCES = 100;
 export const PLAYER_STARTING_WATER = 25;
-export const PLAYER_STARTING_SUGAR = 50;
+export const PLAYER_STARTING_SUGAR = 25;
 
 export const PLAYER_INTERACT_EXCHANGE_SPEED = 30;
 /**

@@ -4,13 +4,13 @@ import Keyboard from "game/input/keyboard";
 import { WorldDOMElement } from "game/mito/WorldDOMElement";
 import { randFloat, roundToNearest } from "math";
 import React, { useCallback, useEffect, useState } from "react";
-import { GeneDirectionalPush } from "std/genes/GeneDirectionalPush";
+import { GeneTransport } from "std/genes/GeneTransport";
 import { ArrowHelper, Vector2, Vector3 } from "three";
 import { Animation } from "./Animation";
-import "./GeneDirectionalPushRenderer.scss";
 import { GeneRenderer } from "./GeneRenderer";
+import "./GeneTransportRenderer.scss";
 
-export class GeneDirectionalPushRenderer extends GeneRenderer<GeneDirectionalPush> {
+export class GeneTransportRenderer extends GeneRenderer<GeneTransport> {
   private arrow!: ArrowHelper;
 
   private origin!: Vector2;
@@ -46,7 +46,7 @@ export class GeneDirectionalPushRenderer extends GeneRenderer<GeneDirectionalPus
   private positionFn = () => this.target.cell;
 
   private renderFn = () => {
-    return <DirectionalPushEditor gene={this.target} />;
+    return <TransportEditor gene={this.target} />;
   };
 
   updateArrow() {
@@ -114,7 +114,7 @@ export class GeneDirectionalPushRenderer extends GeneRenderer<GeneDirectionalPus
   }
 }
 
-const DirectionalPushEditor: React.FC<{ gene: GeneInstance<GeneDirectionalPush> }> = ({ gene }) => {
+const TransportEditor: React.FC<{ gene: GeneInstance<GeneTransport> }> = ({ gene }) => {
   const setDirN = useCallback(() => {
     gene.cell.args?.direction?.set(0, -1);
   }, [gene.cell.args]);

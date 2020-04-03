@@ -117,6 +117,11 @@ export class PlayerControlScheme implements ControlScheme {
       return;
     }
     if (tile instanceof Cell) {
+      // HACK stop movement
+      Keyboard.keyMap.delete("KeyW");
+      Keyboard.keyMap.delete("KeyS");
+      Keyboard.keyMap.delete("KeyA");
+      Keyboard.keyMap.delete("KeyD");
       this.mito.inspectedCell = tile;
     }
   }
@@ -145,8 +150,12 @@ export class PlayerControlScheme implements ControlScheme {
    * A continuous action should be refreshed while holding the mouse button.
    */
   isActionContinuous(action?: Action): action is Action {
-    if (action != null && (action.type === "pickup" || action.type === "drop")) {
-      return !!action.continuous;
+    if (action != null) {
+      if (action.type === "pickup" || action.type === "drop") {
+        return !!action.continuous;
+      } else if (action.type === "remove-cancer" || action.type === "thaw") {
+        return true;
+      }
     }
     return false;
   }

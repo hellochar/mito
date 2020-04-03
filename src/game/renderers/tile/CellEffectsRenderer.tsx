@@ -1,5 +1,5 @@
 import { CancerEffect } from "core/cell/cellEffect";
-import { lerp } from "math";
+import { clamp, lerp, randFloat } from "math";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, RingBufferGeometry, Scene } from "three";
 import { Cell, CellEffect, FreezeEffect } from "../../../core/tile";
 import Mito from "../../mito/mito";
@@ -95,11 +95,11 @@ class FreezeEffectRenderer extends Renderer<FreezeEffect> {
 class CancerEffectRenderer extends Renderer<CancerEffect> {
   static newMesh = (() => {
     // const g = new PlaneBufferGeometry(1, 1);
-    const g = new RingBufferGeometry(0.4, 0.5, 20, 20);
+    const g = new RingBufferGeometry(0.1, 0.5, 20, 20);
     const material = new MeshBasicMaterial({
       map: textureFromSpritesheet(0, 1),
       side: DoubleSide,
-      color: new Color("purple"),
+      color: new Color(0xff00ff),
       transparent: true,
       opacity: 0.5,
     });
@@ -109,21 +109,31 @@ class CancerEffectRenderer extends Renderer<CancerEffect> {
 
   private mesh: Mesh;
 
+  private lastTimeToDuplicate: number;
+
   constructor(target: CancerEffect, scene: Scene, mito: Mito) {
     super(target, scene, mito);
     this.mesh = CancerEffectRenderer.newMesh();
     scene.add(this.mesh);
     this.mesh.scale.set(0.01, 0.01, 1);
+    this.lastTimeToDuplicate = this.target.timeToDuplicate;
   }
 
   update() {
     const { timeToDuplicate, secondsPerDuplication } = this.target;
-    const s = (1 - timeToDuplicate / secondsPerDuplication) ** 0.5;
+    const s = clamp((1 - timeToDuplicate / secondsPerDuplication) ** 0.5, 0.05, 1);
     this.mesh.scale.x = lerp(this.mesh.scale.x, s, 0.2);
     this.mesh.scale.y = lerp(this.mesh.scale.y, s, 0.2);
     const cell = this.target.cell;
-    const pos = cell.pos;
+    let pos = cell.pos;
+    const isBeingTreated = timeToDuplicate > this.lastTimeToDuplicate;
+    if (isBeingTreated) {
+      pos = pos.clone();
+      pos.x += randFloat(-0.1, 0.1);
+      pos.y += randFloat(-0.1, 0.1);
+    }
     this.mesh.position.set(pos.x, pos.y + cell.droopY, 2);
+    this.lastTimeToDuplicate = timeToDuplicate;
   }
 
   destroy() {

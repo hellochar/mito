@@ -175,13 +175,20 @@ export class OverWorld {
   }
 
   getMaxGenePool(species: Species) {
-    let pool = 0;
+    return this.getHexesPopulatedBy(species).reduce(
+      (pool, tile) => (pool += tile.info.flora!.mutationPointsPerEpoch),
+      0
+    );
+  }
+
+  getHexesPopulatedBy(species: Species) {
+    const hexes: HexTile[] = [];
     for (const tile of this.storage) {
       const { flora } = tile.info;
       if (flora && flora.species === species) {
-        pool += flora.mutationPointsPerEpoch;
+        hexes.push(tile);
       }
     }
-    return pool;
+    return hexes;
   }
 }

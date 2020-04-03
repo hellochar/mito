@@ -182,3 +182,15 @@
   padding: 10px;
   border-radius: 2px;
 }
+
+.win-shine {
+  // TODO turn this into a shader
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 1;
+  box-shadow: inset 0 0 20px 5px transparentize($color-mutation, 0.1);
+}

@@ -89,26 +89,39 @@ export abstract class Tile implements Steppable {
    * Redistribute this tile's inventory to nearby tiles if possible, usually
    * in preparation for removing this tile.
    */
-  public redistributeInventoryToNeighbors() {
-    if (this.inventory.water > 0 || this.inventory.sugar > 0) {
+  public redistributeInventoryToNeighbors(water: number = this.inventory.water, sugar: number = this.inventory.sugar) {
+    water = clamp(water, 0, this.inventory.water);
+    sugar = clamp(sugar, 0, this.inventory.sugar);
+    if (water > 0 || sugar > 0) {
       // push resources to nearby tiles
       const neighbors = this.world.tileNeighbors(this.pos);
       const giveCandidates = Array.from(neighbors.values()).filter((n) => n.canPullResources(this));
-      while (!this.inventory.isEmpty() && giveCandidates.length > 0) {
+      let guard = 0;
+      while ((water > 0 || sugar > 0) && giveCandidates.length > 0 && guard < 100) {
         shuffle(giveCandidates);
         for (let i = 0; i < giveCandidates.length; i++) {
           const neighbor = giveCandidates[i];
-          // give 1 to this neighbor
-          this.inventory.give(neighbor.inventory, 1, 1);
-          // delete this neighbor from candidates to give
+          // give (up to 1) to this neighbor
+          const { water: waterGiven, sugar: sugarGiven } = this.inventory.give(
+            neighbor.inventory,
+            clamp(water, 0, 1),
+            clamp(sugar, 0, 1)
+          );
+          water -= waterGiven;
+          sugar -= sugarGiven;
           if (neighbor.inventory.isMaxed()) {
+            // delete this neighbor from candidates to give
             giveCandidates.splice(i, 1);
           }
-          if (this.inventory.isEmpty()) {
+          if (water === 0 && sugar === 0) {
             // we're all done
             break;
           }
         }
+        guard++;
+      }
+      if (guard >= 100) {
+        console.error("redistributeInventoryToNeighbors passed guard limit");
       }
     }
   }

@@ -77,6 +77,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         </div>
         {this.maybeRenderGenomeViewer()}
         {this.maybeRenderCollectButton()}
+        {this.maybeRenderWinShine()}
         {this.maybeRenderGerminateButton()}
         {this.maybeRenderInvalidAction()}
         <div className={classnames("hud-bottom-right", { hidden: !showPlayerHUD })}>
@@ -153,10 +154,17 @@ export class HUD extends React.Component<HUDProps, HUDState> {
       return (
         <div className="hud-right-of-time">
           <Button color="purple" onClick={() => this.mito.onWinLoss(result)}>
-            Win (+ {result.mutationPointsPerEpoch} MP)
+            Win (+ {result.mutationPointsPerEpoch} MP per epoch)
           </Button>
         </div>
       );
+    }
+  }
+
+  maybeRenderWinShine() {
+    const result = getDecidedGameResult(this.mito);
+    if (result.status === "won") {
+      return <div className="win-shine"></div>;
     }
   }
 

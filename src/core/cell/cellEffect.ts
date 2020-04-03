@@ -1,5 +1,5 @@
 import { Player } from "core";
-import { ActionThaw } from "core/player/action";
+import { ActionRemoveCancer, ActionThaw } from "core/player/action";
 import { Constructor } from "../../typings/constructor";
 import { TIME_PER_DAY } from "../constants";
 import { StopStep } from "../entity";
@@ -105,14 +105,28 @@ export class FreezeEffect extends CellEffect implements Interactable {
   }
 }
 
-export class CancerEffect extends CellEffect {
+export class CancerEffect extends CellEffect implements Interactable {
   static displayName = "Cancerous";
 
   static stacks = false;
 
-  public secondsPerDuplication = 5;
+  public secondsPerDuplication = 12;
 
-  public timeToDuplicate = 5;
+  public timeToDuplicate = this.secondsPerDuplication;
+
+  interact(source: Player): ActionRemoveCancer {
+    return {
+      type: "remove-cancer",
+      target: this,
+    };
+  }
+
+  removeCancer(dt: number) {
+    this.timeToDuplicate += 4 * dt;
+    if (this.timeToDuplicate > this.secondsPerDuplication * 1.05) {
+      this.remove();
+    }
+  }
 
   step(dt: number): void {
     this.timeToDuplicate -= dt;

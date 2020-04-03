@@ -24,6 +24,7 @@ import {
   ActionMove,
   ActionMultiple,
   ActionPickup,
+  ActionRemoveCancer,
   ActionThaw,
 } from "./action";
 
@@ -203,6 +204,8 @@ export class Player implements Steppable {
         return this.attemptLong(action, dt);
       case "thaw":
         return this.attemptThaw(action, dt);
+      case "remove-cancer":
+        return this.attemptRemoveCancer(action, dt);
     }
   }
 
@@ -385,6 +388,12 @@ export class Player implements Steppable {
   public attemptThaw(action: ActionThaw, dt: number) {
     const { target } = action;
     target.thaw(dt);
+    return true;
+  }
+
+  public attemptRemoveCancer(action: ActionRemoveCancer, dt: number) {
+    const { target } = action;
+    target.removeCancer(dt);
     return true;
   }
 }

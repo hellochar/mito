@@ -80,7 +80,7 @@ function reproducerDescription({ mpEarned, neededResources, secondsToMature }: R
         </b>{" "}
         and earn <MP amount={mpEarned} />.
       </p>
-      <p>With constant feeding, Fruit can mature in {secondsToMature} seconds.</p>
+      <p>With constant feeding, matures in {secondsToMature} seconds.</p>
     </>
   );
 }
@@ -94,6 +94,7 @@ function reproducerStep(dt: number, instance: GeneInstance<Gene<ReproducerState,
   const { committedResources, isMature } = state;
   if (!isMature) {
     commitResources(dt, cell, committedResources, neededResources, secondsToMature);
+    repelUnneededResources(dt, cell, committedResources, neededResources, secondsToMature);
     const isNowMature = reproducerGetPercentMatured(instance) === 1;
     if (isNowMature) {
       state.isMature = isNowMature;
@@ -103,26 +104,43 @@ function reproducerStep(dt: number, instance: GeneInstance<Gene<ReproducerState,
   }
 }
 
-/**
- * Return whether the reproducer is now mature.
- */
 function commitResources(
   dt: number,
   cell: Cell,
-  inventory: Inventory,
+  committed: Inventory,
   neededResources: number,
   secondsToMature: number
 ) {
   const oneSecondCommitMax = neededResources / secondsToMature;
-  const wantedWater = clamp(neededResources / 2 - inventory.water, 0, oneSecondCommitMax * dt);
-  const wantedSugar = clamp(neededResources / 2 - inventory.sugar, 0, oneSecondCommitMax * dt);
-  const { water, sugar } = cell.inventory.give(inventory, wantedWater, wantedSugar);
+  const wantedWater = clamp(neededResources / 2 - committed.water, 0, oneSecondCommitMax * dt);
+  const wantedSugar = clamp(neededResources / 2 - committed.sugar, 0, oneSecondCommitMax * dt);
+  const { water, sugar } = cell.inventory.give(committed, wantedWater, wantedSugar);
   if (water + sugar > 0) {
     cell.world.logEvent({
       type: "grow-fruit",
       cell,
       resourcesUsed: water + sugar,
     });
+  }
+}
+
+function repelUnneededResources(
+  dt: number,
+  cell: Cell,
+  committed: Inventory,
+  neededResources: number,
+  secondsToMature: number
+) {
+  const oneSecondRepelMax = neededResources / secondsToMature;
+  // if there's more water than needed in the cell's inventory, push it to neighbors
+  const hasTooMuchWater = cell.inventory.water > 0 && committed.water >= neededResources / 2;
+  const hasTooMuchSugar = cell.inventory.sugar > 0 && committed.sugar >= neededResources / 2;
+
+  const waterToRepel = hasTooMuchWater ? clamp(cell.inventory.water, 0, oneSecondRepelMax * dt) : 0;
+  const sugarToRepel = hasTooMuchSugar ? clamp(cell.inventory.sugar, 0, oneSecondRepelMax * dt) : 0;
+
+  if (waterToRepel > 0 || sugarToRepel > 0) {
+    cell.redistributeInventoryToNeighbors(waterToRepel, sugarToRepel);
   }
 }
 

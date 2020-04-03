@@ -1,4 +1,6 @@
 import classNames from "classnames";
+import { nf } from "common/formatters";
+import { TIME_PER_DAY } from "core/constants";
 import React from "react";
 import { CellInteraction, CellType } from "../../../core/cell/genome";
 import { spritesheetLoaded } from "../../spritesheet";
@@ -37,6 +39,17 @@ export const CellTypeViewer: React.FC<{
     [cellType.interaction]
   );
   const reproducer = cellType.isReproducer();
+
+  const chanceForCancer = cellType.getChanceToBecomeCancerous();
+  const cancerEl =
+    chanceForCancer > 0 ? (
+      <div className="chance-to-cancer">
+        Cell may become cancerous: {nf(chanceForCancer * 100 * TIME_PER_DAY, 3)}% per day.
+      </div>
+    ) : null;
+
+  const isGeneSlotsOver = chromosome.geneSlotsNet() < 0;
+
   return (
     <div className={classNames("cell-type", { reproducer })}>
       <div className="cell-header">
@@ -51,12 +64,12 @@ export const CellTypeViewer: React.FC<{
         </div>
       </div>
       <div className="gene-slots">
-        Gene Slots Available:{" "}
-        <span className="slots-used">
-          <DynamicNumber value={chromosome.geneSlotsNet()} />
+        Gene Slots:{" "}
+        <span className={classNames("slots-used", { "is-over": isGeneSlotsOver })}>
+          <DynamicNumber value={Math.abs(chromosome.geneSlotsNet())} /> {isGeneSlotsOver ? "over" : "under"}.
         </span>
       </div>
-      <div className="chance-to-mutate"></div>
+      {cancerEl}
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
         {chromosome.genes.map((g, i) => (
           <GeneViewer key={i} cellType={cellType} gene={g} />
