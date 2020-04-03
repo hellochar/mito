@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "./static/css/main.fbff57c1.chunk.css",
-    "main.js": "./static/js/main.79ca3b5c.chunk.js",
-    "main.js.map": "./static/js/main.79ca3b5c.chunk.js.map",
+    "main.css": "./static/css/main.906e8af6.chunk.css",
+    "main.js": "./static/js/main.ecedd4d9.chunk.js",
+    "main.js.map": "./static/js/main.ecedd4d9.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.ad0d04df.js",
     "runtime-main.js.map": "./static/js/runtime-main.ad0d04df.js.map",
-    "static/css/2.d58fcd6a.chunk.css": "./static/css/2.d58fcd6a.chunk.css",
-    "static/js/2.9dfc8460.chunk.js": "./static/js/2.9dfc8460.chunk.js",
-    "static/js/2.9dfc8460.chunk.js.map": "./static/js/2.9dfc8460.chunk.js.map",
+    "static/css/2.a8e23ac5.chunk.css": "./static/css/2.a8e23ac5.chunk.css",
+    "static/js/2.2ceb30ab.chunk.js": "./static/js/2.2ceb30ab.chunk.js",
+    "static/js/2.2ceb30ab.chunk.js.map": "./static/js/2.2ceb30ab.chunk.js.map",
     "index.html": "./index.html",
-    "precache-manifest.5dd897adc0dc2ea984812570f3a4738e.js": "./precache-manifest.5dd897adc0dc2ea984812570f3a4738e.js",
+    "precache-manifest.5fd968b1fdee026292bba3877c58933f.js": "./precache-manifest.5fd968b1fdee026292bba3877c58933f.js",
     "service-worker.js": "./service-worker.js",
-    "static/css/2.d58fcd6a.chunk.css.map": "./static/css/2.d58fcd6a.chunk.css.map",
-    "static/css/main.fbff57c1.chunk.css.map": "./static/css/main.fbff57c1.chunk.css.map",
-    "static/js/2.9dfc8460.chunk.js.LICENSE.txt": "./static/js/2.9dfc8460.chunk.js.LICENSE.txt",
+    "static/css/2.a8e23ac5.chunk.css.map": "./static/css/2.a8e23ac5.chunk.css.map",
+    "static/css/main.906e8af6.chunk.css.map": "./static/css/main.906e8af6.chunk.css.map",
+    "static/js/2.2ceb30ab.chunk.js.LICENSE.txt": "./static/js/2.2ceb30ab.chunk.js.LICENSE.txt",
     "static/media/Blop-Mark_DiAngelo-79054334.mp3": "./static/media/Blop-Mark_DiAngelo-79054334.627c0e8b.mp3",
     "static/media/build.mp3": "./static/media/build.0e2001c4.mp3",
     "static/media/build_complete.mp3": "./static/media/build_complete.9af6ac71.mp3",
@@ -40,9 +40,9 @@
   },
   "entrypoints": [
     "static/js/runtime-main.ad0d04df.js",
-    "static/css/2.d58fcd6a.chunk.css",
-    "static/js/2.9dfc8460.chunk.js",
-    "static/css/main.fbff57c1.chunk.css",
-    "static/js/main.79ca3b5c.chunk.js"
+    "static/css/2.a8e23ac5.chunk.css",
+    "static/js/2.2ceb30ab.chunk.js",
+    "static/css/main.906e8af6.chunk.css",
+    "static/js/main.ecedd4d9.chunk.js"
   ]
 }
