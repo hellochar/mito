@@ -26,7 +26,8 @@ export const GeneViewer: React.FC<{
     [cellType, gene, setState]
   );
   const cost = gene.getCost();
-  const draggable = !(gene.gene.blueprint.name === "Living");
+  // const draggable = !(gene.gene.blueprint.name === "Living");
+  const draggable = true;
   return (
     // <LookAtMouse zScale={8} displayBlock>
     <div

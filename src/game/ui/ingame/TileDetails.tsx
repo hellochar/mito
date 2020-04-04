@@ -58,13 +58,18 @@ export class TileDetails extends React.Component<TileDetailsProps> {
 
   private cellInfo(tile: Tile) {
     if (tile instanceof Cell) {
-      const secondsPerUpkeep = tile.findGene(GeneLiving)!.props.secondsPerUpkeep;
-      const secondsRemaining = tile.energy * secondsPerUpkeep;
-      return (
-        <>
+      const living = tile.findGene(GeneLiving);
+      const secondsPerUpkeep = living?.props.secondsPerUpkeep;
+      const secondsRemaining = secondsPerUpkeep != null ? tile.energy * secondsPerUpkeep : null;
+      const energyEl =
+        secondsRemaining != null ? (
           <div className="info-energy">
             💚&nbsp;{nf(tile.energy * 100, 2)}% Energy ({Math.floor(secondsRemaining)} seconds remaining)
           </div>
+        ) : null;
+      return (
+        <>
+          {energyEl}
           {tile.droopY * 200 > 1 ? <div className="info-cell">{(tile.droopY * 200).toFixed(0)}% droop</div> : null}
           {this.cellEffects(tile)}
           {this.geneInfos(tile)}
