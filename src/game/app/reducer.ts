@@ -105,6 +105,11 @@ function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAtt
   const { attempt = state.activePopulationAttempt!, results } = action;
   const { targetHex, settlingSpecies } = attempt;
 
+  const isFirstPlaythrough = state.overWorld.getStartHex().info.flora == null;
+  if (isFirstPlaythrough) {
+    gtag("event", "Beat first playthrough", { label: "mp earned", value: results.mutationPointsPerEpoch });
+  }
+
   // populate target hex
   let oldSpecies: Species | undefined = undefined;
   if (targetHex.info.flora != null) {
