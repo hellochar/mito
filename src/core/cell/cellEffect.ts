@@ -133,27 +133,23 @@ export class CancerEffect extends CellEffect implements Interactable {
     if (this.timeToDuplicate < 0) {
       const world = this.cell.world;
       const neighbors = world.tileNeighbors(this.cell.pos);
+
+      // spread to one neighbor:
+      // if that neighbor is a cell without cancer, add cancer to that neighbor
+      // if that neighbor is empty, duplicate this cell onto that neighbor
       for (const [, tile] of neighbors) {
         if (tile instanceof Cell && !tile.findEffectOfType(CancerEffect)) {
           tile.addEffect(new CancerEffect());
           break;
         } else if (tile.world.player.canBuildAt(tile)) {
           // const cell = new Cell(tile.pos, world, this.cell.type, this.cell.args);
-          const completed = tile.world.player.attemptBuild(
-            {
-              type: "build",
-              cellType: this.cell.type,
-              position: tile.pos,
-              args: this.cell.args,
-            },
-            dt
-          );
-          if (completed) {
-            break;
-          }
-          // const cell = new constructor(tile.pos, world, this.cell.type, this.cell.args);
-          // cell.addEffect(new CancerEffect());
-          // world.setTileAt(tile.pos, cell);
+
+          const newCell = new Cell(tile.pos, tile.world, this.cell.type, this.cell.args);
+          // half this cell's energy, and give it to the new cell
+          this.cell.energy /= 2;
+          newCell.energy = this.cell.energy;
+          newCell.droopY = this.cell.droopY;
+          tile.world.setTileAt(newCell.pos, newCell);
           break;
         }
       }

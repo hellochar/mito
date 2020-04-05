@@ -33,8 +33,14 @@
 
   .cell-header {
     display: flex;
+
     .icon-cell {
       margin-right: 5px;
+    }
+
+    .cell-name {
+      flex-grow: 1;
+      margin-right: 30px;
     }
   }
 
@@ -44,7 +50,7 @@
     // background: transparentize($sepia1, 0.9);
     // border-radius: 2px;
     $stripe1: transparent;
-    $stripe2: transparentize($light-gray1, 0);
+    $stripe2: $light-gray2;
     background: repeating-linear-gradient(45deg, $stripe1, $stripe1 10px, $stripe2 10px, $stripe2 20px);
 
     padding: 5px;

@@ -9,7 +9,7 @@
   border-radius: 2px;
   padding: 5px;
   background: rgb(194, 187, 177);
-  transition: all 0.1s;
+  transition: box-shadow 0.1s;
   overflow: hidden;
   width: 305px;
 
@@ -23,11 +23,9 @@
   }
 
   &:not(.draggable) {
-    // border: 1px solid $gray5 !important;
     box-shadow: none !important;
     background: none !important;
     background: $gray3 !important;
-    // background: linear-gradient(to right, $light-gray2, transparent) !important;
   }
 
   &:hover {
@@ -98,6 +96,4 @@
 .Fruit,
 .Seed {
   border: 3px solid $color-mutation !important;
-  // background-color: $color-mutation !important;
-  // color: white;
 }

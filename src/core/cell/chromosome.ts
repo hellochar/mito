@@ -43,6 +43,10 @@ export default class Chromosome {
     return this.genes.find((r) => r.gene === gene) != null;
   }
 
+  isEmpty() {
+    return this.genes.length === 0;
+  }
+
   geneSlotsUsed() {
     return this.genes
       .map((g) => g.getCost())

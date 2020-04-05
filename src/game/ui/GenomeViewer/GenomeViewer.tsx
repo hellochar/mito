@@ -8,7 +8,7 @@ import { CellTypeViewer } from "./CellTypeViewer";
 import { DraggedContext, GenomeViewerState } from "./DragInfo";
 import "./GenomeViewer.scss";
 
-const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
+const GenomeViewer: React.FC<{ genome: Genome; editable?: boolean }> = ({ genome, editable = false }) => {
   const tuple = React.useState<GenomeViewerState>({ view: "expanded" });
   const [state, setState] = tuple;
   const handleViewSmall = React.useCallback(() => {
@@ -30,7 +30,7 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
         </div>
         <div className="cell-types">
           {genome.cellTypes.map((c) => (
-            <CellTypeViewer key={c.name} cellType={c} />
+            <CellTypeViewer key={c.name} cellType={c} editable={editable} genome={genome} />
           ))}
           <AddCellCard genome={genome} />
         </div>

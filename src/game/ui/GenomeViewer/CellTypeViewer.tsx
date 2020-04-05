@@ -1,8 +1,10 @@
 import classNames from "classnames";
 import { nf } from "common/formatters";
 import { TIME_PER_DAY } from "core/constants";
-import React from "react";
-import { CellInteraction, CellType } from "../../../core/cell/genome";
+import { useAppReducer } from "game/app";
+import React, { useCallback } from "react";
+import { MdDelete } from "react-icons/md";
+import Genome, { CellInteraction, CellType } from "../../../core/cell/genome";
 import { spritesheetLoaded } from "../../spritesheet";
 import DynamicNumber from "../common/DynamicNumber";
 import IconCell from "../common/IconCell";
@@ -10,10 +12,13 @@ import { CellInteractionSelector } from "./CellInteractionSelector";
 import "./CellTypeViewer.scss";
 import { DraggedContext } from "./DragInfo";
 import { GeneViewer } from "./GeneViewer";
+import MoreOptionsPopover from "./MoreOptionsPopover";
 
 export const CellTypeViewer: React.FC<{
+  genome: Genome;
   cellType: CellType;
-}> = ({ cellType }) => {
+  editable?: boolean;
+}> = ({ genome, cellType, editable = false }) => {
   const { chromosome, name } = cellType;
   const [state, setState] = React.useContext(DraggedContext);
   const handleDrop = React.useCallback(
@@ -54,7 +59,7 @@ export const CellTypeViewer: React.FC<{
     <div className={classNames("cell-type", { reproducer })}>
       <div className="cell-header">
         <IconCell cellType={cellType} spritesheetLoaded={spritesheetLoaded} />
-        <div>
+        <div className="cell-name">
           <h2>{name}</h2>
           <CellInteractionSelector
             key={cellType.name}
@@ -62,6 +67,7 @@ export const CellTypeViewer: React.FC<{
             setInteraction={handleSetInteraction}
           />
         </div>
+        {editable ? <CellActionsPopover cellType={cellType} genome={genome} /> : null}
       </div>
       <div className="gene-slots">
         Gene Slots:{" "}
@@ -71,10 +77,38 @@ export const CellTypeViewer: React.FC<{
       </div>
       {cancerEl}
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
-        {chromosome.genes.map((g, i) => (
-          <GeneViewer key={i} cellType={cellType} gene={g} />
+        {chromosome.genes.map((gene, i) => (
+          <GeneViewer
+            key={`${i},${gene.gene.blueprint.name},${gene.level}`}
+            cellType={cellType}
+            gene={gene}
+            editable={editable}
+          />
         ))}
       </div>
     </div>
+  );
+};
+
+const CellActionsPopover: React.FC<{
+  cellType: CellType;
+  genome: Genome;
+}> = ({ cellType, genome }) => {
+  const [, dispatch] = useAppReducer();
+  const deleteCellType = useCallback(() => {
+    const index = genome.cellTypes.indexOf(cellType);
+    genome.cellTypes.splice(index, 1);
+    dispatch({ type: "AAUpdateSpecies" });
+  }, [cellType, dispatch, genome.cellTypes]);
+
+  const chromosomeEmpty = cellType.chromosome.isEmpty();
+
+  return (
+    <MoreOptionsPopover>
+      <button onClick={deleteCellType} className="delete" disabled={!chromosomeEmpty}>
+        <MdDelete />
+        {chromosomeEmpty ? "Delete" : "Delete (Remove all genes first)"}
+      </button>
+    </MoreOptionsPopover>
   );
 };

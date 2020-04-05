@@ -1,0 +1,32 @@
+@import "../../../variables";
+
+.more-options {
+  display: flex;
+  flex-direction: column;
+  border-radius: 2px;
+  background: $black;
+  padding: 10px;
+
+  button {
+    color: white;
+    background: none;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    text-align: left;
+    @include center-children();
+    @include grow-on-hover();
+
+    &:disabled {
+      color: $gray1;
+    }
+
+    ~ button {
+      border-top: 1px solid white;
+    }
+  }
+}
+
+.more-options-icon {
+  cursor: pointer;
+}

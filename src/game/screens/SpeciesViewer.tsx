@@ -1,5 +1,6 @@
 import { Species } from "core/species";
 import { useAppReducer } from "game/app";
+import LookAtMouse from "game/ui/common/LookAtMouse";
 import MP from "game/ui/common/MP";
 import GenomeViewer from "game/ui/GenomeViewer";
 import { DraggedContext, GenomeViewerState } from "game/ui/GenomeViewer/DragInfo";
@@ -16,14 +17,18 @@ export const SpeciesViewer: React.FC<{
         <div className="species-name">{species.name}</div>
       </div>
       {species.freeMutationPoints > 0 ? <MutationChooser species={species} /> : null}
-      <GenomeViewer genome={species.genome} />
+      <GenomeViewer genome={species.genome} editable={true} />
     </div>
   );
 };
 
 const MutationChooser: React.FC<{ species: Species }> = ({ species }) => {
   const { freeMutationPoints, geneOptions } = species;
-  const geneEl = geneOptions.map((gene, i) => <GeneViewer key={i} gene={gene} cellType={undefined!} />);
+  const geneEl = geneOptions.map((gene, i) => (
+    <LookAtMouse zScale={8} displayBlock>
+      <GeneViewer key={i} gene={gene} cellType={undefined!} draggable />
+    </LookAtMouse>
+  ));
 
   const tuple = React.useState<GenomeViewerState>({ view: "expanded" });
   const [state, setState] = tuple;

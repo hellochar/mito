@@ -60,7 +60,7 @@ export type AppActions =
 
 export interface AAUpdateSpecies {
   type: "AAUpdateSpecies";
-  species: Species;
+  species?: Species;
 }
 
 export interface AAStartPopulationAttempt {
