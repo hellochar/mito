@@ -1,5 +1,6 @@
 import { Inventory } from "core/inventory";
 import MP from "game/ui/common/MP";
+import { ResourceIcon } from "game/ui/common/ResourceIcon";
 import { clamp } from "math";
 import React from "react";
 import { Cell } from "../../core/cell/cell";
@@ -71,7 +72,9 @@ function reproducerDescription({ mpEarned, neededResources, secondsToMature }: R
     <>
       <p>Reproducer.</p>
       <p>
-        Consumes {neededResources / 2} Water and {neededResources / 2} Sugar on this Cell to reach Maturity.{" "}
+        Consumes {neededResources / 2}
+        <ResourceIcon name="water" /> and {neededResources / 2}
+        <ResourceIcon name="sugar" /> on this Cell to reach Maturity.{" "}
       </p>
       <p>
         On Maturity,{" "}

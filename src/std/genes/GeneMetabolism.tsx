@@ -1,3 +1,4 @@
+import { ResourceIcon } from "game/ui/common/ResourceIcon";
 import React from "react";
 import GN from "std/genes/GN";
 import { Cell } from "../../core/cell/cell";
@@ -13,7 +14,7 @@ export const GeneMetabolism = Gene.make(
     description: ({ energyPerSugar }) => (
       <>
         <p>
-          Convert 1 Sugar into <GN value={energyPerSugar * 100} sigFigs={3} />% energy.
+          Convert 1<ResourceIcon name="sugar" /> into <GN value={energyPerSugar * 100} sigFigs={3} />% energy.
         </p>
         <p>Starts below 95% energy. Restores {EAT_ENERGY_PER_SECOND * 100}% energy per second.</p>
       </>

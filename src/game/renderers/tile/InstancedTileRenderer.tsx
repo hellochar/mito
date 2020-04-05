@@ -159,7 +159,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   updateScale() {
     if (this.target instanceof GrowingCell) {
-      const s = this.target.percentMatured;
+      const s = map(this.target.percentMatured, 0, 1, 0.1, 1);
       lerp2(this.scale, { x: s, y: s }, 0.5);
     } else if (this.target instanceof Cell && this.target.isReproductive) {
       // Do nothing; GeneRenderer sets scale for you

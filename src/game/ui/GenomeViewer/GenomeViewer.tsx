@@ -32,7 +32,7 @@ const GenomeViewer: React.FC<{ genome: Genome; editable?: boolean }> = ({ genome
           {genome.cellTypes.map((c) => (
             <CellTypeViewer key={c.name} cellType={c} editable={editable} genome={genome} />
           ))}
-          <AddCellCard genome={genome} />
+          {editable ? <AddCellCard genome={genome} /> : null}
         </div>
       </div>
     </DraggedContext.Provider>

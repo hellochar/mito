@@ -1,3 +1,4 @@
+import { ResourceIcon } from "game/ui/common/ResourceIcon";
 import React from "react";
 import GN from "std/genes/GN";
 import { Vector2 } from "three";
@@ -22,8 +23,13 @@ export const GenePhotosynthesis = Gene.make<PhotosynthesisState>(
     },
     description: ({ reactionChancePerSecond }) => (
       <>
-        Each neighboring Air provides a <GN value={reactionChancePerSecond * 100} sigFigs={3} />% chance per second,
-        scaled with sunlight, to convert up to 2 Water into 1 Sugar.
+        <p>
+          Converts 2<ResourceIcon name="water" /> into 1<ResourceIcon name="sugar" />.
+        </p>
+        <p>
+          Each neighboring Air provides a <GN value={reactionChancePerSecond * 100} sigFigs={3} />% chance per second,
+          scaled with sunlight.
+        </p>
       </>
     ),
   },

@@ -1,3 +1,4 @@
+import { GeneScaffolding } from "std/genes/GeneScaffolding";
 import { Color, Vector2 } from "three";
 import Chromosome from "../../core/cell/chromosome";
 import Genome, { CellType } from "../../core/cell/genome";
@@ -23,7 +24,7 @@ const cellTypeTissue = new CellType(
 const cellTypeLeaf = new CellType(
   "Leaf",
   0,
-  new Chromosome(GeneLiving.level(2), GeneInventory.level(3), GeneObstacle.level(0), GenePhotosynthesis.level(1)),
+  new Chromosome(GeneLiving.level(2), GeneObstacle.level(0), GeneInventory.level(3), GenePhotosynthesis.level(1)),
   {
     color: new Color("white"),
     texturePosition: new Vector2(2, 1),
@@ -37,7 +38,13 @@ const cellTypeLeaf = new CellType(
 const cellTypeRoot = new CellType(
   "Root",
   0,
-  new Chromosome(GeneLiving.level(2), GeneInventory.level(4), GeneObstacle.level(0), GeneSoilAbsorption.level(2)),
+  new Chromosome(
+    GeneLiving.level(2),
+    GeneScaffolding.level(1),
+    GeneInventory.level(4),
+    // GeneObstacle.level(0),
+    GeneSoilAbsorption.level(2)
+  ),
   {
     color: new Color("white"),
     texturePosition: new Vector2(3, 1),
@@ -51,7 +58,7 @@ const cellTypeRoot = new CellType(
 const cellTypeSeed = new CellType(
   "Seed",
   0,
-  new Chromosome(GeneLiving.level(2), GeneInventory.level(3), GeneObstacle.level(0), GeneSeed.level(2)),
+  new Chromosome(GeneLiving.level(2), GeneObstacle.level(0), GeneInventory.level(3), GeneSeed.level(2)),
   {
     texturePosition: new Vector2(1, 4),
   },

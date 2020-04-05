@@ -1,9 +1,10 @@
+import { Cell } from "core/cell";
+import { Soil } from "core/tile";
+import { ResourceIcon } from "game/ui/common/ResourceIcon";
 import React from "react";
 import GN from "std/genes/GN";
 import { Vector2 } from "three";
-import { Cell } from "../../core/cell/cell";
 import { Gene } from "../../core/cell/gene";
-import { Soil } from "../../core/tile/soil";
 
 export interface SoilAbsorptionState {
   cooldown: number;
@@ -20,7 +21,7 @@ export const GeneSoilAbsorption = Gene.make<SoilAbsorptionState>(
     },
     description: ({ secondsPerAbsorb }) => (
       <>
-        Absorb 1 water every <GN value={secondsPerAbsorb} /> seconds from neighboring Soil.
+        Absorb 1<ResourceIcon name="water" /> every <GN value={secondsPerAbsorb} /> seconds from neighboring Soil.
       </>
     ),
   },
