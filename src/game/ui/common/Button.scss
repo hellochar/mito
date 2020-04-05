@@ -5,6 +5,7 @@
 }
 
 .button {
+  @include grow-on-hover();
   width: 100%;
   padding: 10px;
   font-size: 24px;
@@ -16,18 +17,6 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  transition: all 0.2s;
-
-  &:not(:disabled) {
-    &:hover {
-      transform: scale(1.1);
-      z-index: 1;
-    }
-
-    &:active {
-      transform: scale(1.1) translate(2px, 2px);
-    }
-  }
 
   &.purple {
     background: $color-mutation;

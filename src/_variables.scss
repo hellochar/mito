@@ -148,3 +148,24 @@ $sepia5: #c99765 !default;
 @mixin text-outline($size: 1px, $color: $black) {
   text-shadow: -$size -$size 0 $color, $size -$size 0 $color, -$size $size 0 $color, $size $size 0 $color;
 }
+
+@mixin center-children() {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin grow-on-hover() {
+  transition: all 0.2s;
+
+  &:not(:disabled) {
+    &:hover {
+      transform: scale(1.1);
+      z-index: 1;
+    }
+
+    &:active {
+      transform: scale(1.1) translate(2px, 2px);
+    }
+  }
+}

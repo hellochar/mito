@@ -65,7 +65,7 @@
     "uuid": "^3.3.3"
   },
   "scripts": {
-    "predeploy": "npm run build",
+    "predeploy": "yarn build",
     "deploy": "gh-pages -d build",
     "start-electron": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
     "start": "react-scripts start",

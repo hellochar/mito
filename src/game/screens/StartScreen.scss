@@ -13,7 +13,6 @@
   h1 {
     font-size: 120px;
     margin: 120px auto 60px;
-    color: $black;
     position: relative;
 
     .mito-i {
@@ -23,11 +22,43 @@
     }
   }
 
-  button {
-    width: 50%;
-    font-size: 40px;
-    padding: 20px;
+  .game-version {
     position: absolute;
-    bottom: 200px;
+    bottom: 10px;
+    right: 10px;
+    color: $white;
+    font: 16px $arial-family;
+    opacity: 0.8;
+  }
+
+  .bottom-area {
+    position: absolute;
+    bottom: 150px;
+    text-align: center;
+
+    button {
+      width: 50vw;
+      font-size: 40px;
+      padding: 20px;
+      margin-bottom: 50px;
+    }
+
+    .discord {
+      @include center-children();
+      display: inline-flex;
+      border-radius: 100%;
+      color: #7289da; // discord blue
+      // fill in the center
+      width: 40px;
+      height: 40px;
+      background: white;
+      @include grow-on-hover();
+
+      svg {
+        width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+      }
+    }
   }
 }
