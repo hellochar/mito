@@ -19,7 +19,7 @@ export const GenePhotosynthesis = Gene.make<PhotosynthesisState>(
     name: "Photosynthesis",
     levelCosts: [3, 6, 9, 12, 15],
     levelProps: {
-      reactionChancePerSecond: [0.00625, 0.0125, 0.025, 0.05, 0.1],
+      reactionChancePerSecond: [0.0125, 0.025, 0.05, 0.1, 0.2],
     },
     description: ({ reactionChancePerSecond }) => (
       <>
@@ -88,15 +88,17 @@ function maybePhotosynthesize(
 
   const ambientChancePerSecond = reactionChancePerSecond * sunlight;
   // this.sunlightCollected += chance * dt;
-  cell.world.logEvent({
-    type: "collect-sunlight",
-    leaf: cell,
-    air,
-    // the renderer creates one dot per sunlight unit.
-    // 0.025 normalizes chancePerSecond (which is 0.025 for photosynthesis 3),
-    // * 20 means photosynthesis 3 gets 20 dots per second (this is the new player experience)
-    numSunlight: (ambientChancePerSecond / 0.025) * dt * 20,
-  });
+  if (waterToConvert > 0 && ambientChancePerSecond > 0) {
+    cell.world.logEvent({
+      type: "collect-sunlight",
+      leaf: cell,
+      air,
+      // the renderer creates one dot per sunlight unit.
+      // 0.05 normalizes chancePerSecond (which is 0.075 for photosynthesis 3),
+      // * 5 means photosynthesis 3 gets 5 dots per second per air (this is the new player experience)
+      numSunlight: (ambientChancePerSecond / 0.05) * dt * 5,
+    });
+  }
 
   // let intersectionChancePerSecond = 0;
   // if (cell.world.occluderManager.getIntersection(cell) != null) {

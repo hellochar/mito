@@ -117,11 +117,15 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         //   }}
         // >
         <WorldDOMComponent mito={this.mito} positionFn={this.positionFn}>
-          <CellInspector cell={cell} player={this.player} />
+          <CellInspector cell={cell} player={this.player} onDone={this.handleCellInspectorDone} />
         </WorldDOMComponent>
       );
     }
   }
+
+  private handleCellInspectorDone = () => {
+    this.mito.inspectedCell = undefined;
+  };
 
   maybeRenderInvalidAction() {
     const invalidAction = this.mito.invalidAction;

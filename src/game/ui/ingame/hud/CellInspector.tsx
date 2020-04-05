@@ -7,7 +7,8 @@ import "./CellInspector.scss";
 export const CellInspector: React.FC<{
   cell: Cell;
   player: Player;
-}> = ({ cell, player }) => {
+  onDone: () => void;
+}> = ({ cell, player, onDone }) => {
   return (
     <>
       <div className="cell-inspector left">
@@ -20,9 +21,10 @@ export const CellInspector: React.FC<{
               <button
                 disabled={player.inventory.water === 0}
                 onClickCapture={(e) => {
-                  player.inventory.give(cell.inventory, 1, 0);
+                  player.inventory.give(cell.inventory, cell.inventory.space(), 0);
                   e.preventDefault();
                   e.stopPropagation();
+                  onDone();
                 }}
               >
                 Give&nbsp;
@@ -31,9 +33,10 @@ export const CellInspector: React.FC<{
               <button
                 disabled={cell.inventory.water === 0}
                 onClickCapture={(e) => {
-                  cell.inventory.give(player.inventory, 1, 0);
+                  cell.inventory.give(player.inventory, cell.inventory.water, 0);
                   e.preventDefault();
                   e.stopPropagation();
+                  onDone();
                 }}
               >
                 Take&nbsp;
@@ -44,9 +47,10 @@ export const CellInspector: React.FC<{
               <button
                 disabled={player.inventory.sugar === 0}
                 onClickCapture={(e) => {
-                  player.inventory.give(cell.inventory, 0, 1);
+                  player.inventory.give(cell.inventory, 0, cell.inventory.space());
                   e.preventDefault();
                   e.stopPropagation();
+                  onDone();
                 }}
               >
                 Give&nbsp;
@@ -55,9 +59,10 @@ export const CellInspector: React.FC<{
               <button
                 disabled={cell.inventory.sugar === 0}
                 onClickCapture={(e) => {
-                  cell.inventory.give(player.inventory, 0, 1);
+                  cell.inventory.give(player.inventory, 0, cell.inventory.sugar);
                   e.preventDefault();
                   e.stopPropagation();
+                  onDone();
                 }}
               >
                 Take&nbsp;

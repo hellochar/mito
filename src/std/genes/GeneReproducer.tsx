@@ -6,7 +6,7 @@ import React from "react";
 import { Cell } from "../../core/cell/cell";
 import { Gene } from "../../core/cell/gene";
 import { GeneInstance } from "../../core/cell/geneInstance";
-import { TIME_PER_MONTH } from "../../core/constants";
+import { TIME_PER_DAY, TIME_PER_MONTH } from "../../core/constants";
 
 export interface ReproducerState {
   timeMatured?: number;
@@ -47,8 +47,8 @@ export const GeneSeed = Gene.make<ReproducerState>(
     levelCosts: [6, 8, 10, 12, 14],
     levelProps: {
       mpEarned: [0.5, 0.75, 1, 1.25, 1.5],
-      neededResources: 100,
-      secondsToMature: 30,
+      neededResources: 200,
+      secondsToMature: TIME_PER_DAY / 2,
     },
     static: {
       isReproductive: true,

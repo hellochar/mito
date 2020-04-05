@@ -28,3 +28,7 @@ export function randFloat(min: number, max: number) {
 export function randInt(inclusiveMin: number, inclusiveMax: number) {
   return Math.floor(randFloat(inclusiveMin, inclusiveMax + 1));
 }
+
+export function randElement<T>(arr: T[]) {
+  return arr[randInt(0, arr.length - 1)];
+}

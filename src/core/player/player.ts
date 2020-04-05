@@ -356,8 +356,8 @@ export class Player implements Steppable {
     }
     action.elapsed += dt;
     if (action.elapsed > action.duration) {
-      this.attemptAction(action.effect, dt);
-      return true;
+      const result = this.attemptAction(action.effect, dt);
+      return result;
     } else {
       return false;
     }

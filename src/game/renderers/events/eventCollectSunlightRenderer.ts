@@ -1,9 +1,10 @@
 import { EventCollectSunlight } from "core/tile/tileEvent";
 import { textureFromSpritesheet } from "game/spritesheet";
-import { randFloat } from "math";
+import { clamp, randElement, randFloat } from "math";
 import { polyEarlyUpDown } from "math/easing";
 import { Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
+import { InstancedTileRenderer } from "../tile/InstancedTileRenderer";
 import { WorldRenderer } from "../WorldRenderer";
 import { EventRenderer } from "./eventRenderer";
 
@@ -22,14 +23,14 @@ export default class EventCollectSunlightRenderer extends EventRenderer<EventCol
         if (s.time > duration) {
           return false;
         }
-        const t = s.time / duration;
+        const t = clamp(s.time / duration, 0, 1);
         s.alpha = polyEarlyUpDown(t);
         s.size = polyEarlyUpDown(t);
       },
       {
         color: new Color("white"),
-        opacity: 0.95,
-        size: 25,
+        opacity: 0.8,
+        size: 35,
         map: textureFromSpritesheet(0, 4),
       }
     );
@@ -43,17 +44,25 @@ export default class EventCollectSunlightRenderer extends EventRenderer<EventCol
       if (numSunlight < 1 && numSunlight < Math.random()) {
         return;
       }
-      const x = point == null ? leaf.pos.x + (Math.random() - 0.5) : point.x + randFloat(-0.1, 0.1);
-      const y = point == null ? leaf.pos.y + (Math.random() - 0.5) : point.y + randFloat(-0.1, 0.1);
+
+      let x = point == null ? leaf.pos.x + (Math.random() - 0.5) * 0.05 : point.x + randFloat(-0.1, 0.1);
+      let y = point == null ? leaf.pos.y + (Math.random() - 0.5) * 0.05 : point.y + randFloat(-0.1, 0.1);
+      const itr = this.worldRenderer.renderers.get(leaf) as InstancedTileRenderer;
+      if (itr) {
+        const randWaterPosition = randElement(itr.inventoryRenderer.waters);
+        x += randWaterPosition.x;
+        y += randWaterPosition.y;
+      }
       this.ffPoints.fire({
         x,
         y,
         z: 10,
-        size: 1,
-        alpha: 1,
+        size: 0,
+        alpha: 0,
         info: 0,
         // stagger with the shouldUpdate of Tile so they look more continuous
-        time: Math.random() * (1 / 10),
+        // time: Math.random() * (1 / 10),
+        time: 0,
       });
       numSunlight--;
     }

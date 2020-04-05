@@ -2,7 +2,7 @@ import { EventGrowFruit } from "core/tile/tileEvent";
 import { easeCubicIn } from "d3-ease";
 import { textureFromSpritesheet } from "game/spritesheet";
 import { map } from "math";
-import { polyUpDown } from "math/easing";
+import { polyUpDown, smoothstep } from "math/easing";
 import { Color } from "three";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
 import { WorldRenderer } from "../WorldRenderer";
@@ -10,7 +10,7 @@ import { EventRendererFFPoints } from "./eventRendererFFPoints";
 
 export default class EventGrowFruitRenderer extends EventRendererFFPoints<EventGrowFruit> {
   static makePoints() {
-    const duration = 1.0;
+    const duration = 2.5;
     return new FireAndForgetPoints(
       (s) => {
         if (s.time > duration) {
@@ -19,8 +19,8 @@ export default class EventGrowFruitRenderer extends EventRendererFFPoints<EventG
         const t = s.time / duration;
 
         const { cell, resourcesUsed, a0 } = s.info;
-        const dist = map(easeCubicIn(t), 0, 1, 0.7, 0.0);
-        const angle = map(t, 0, 1, 0, Math.PI / 2) + a0;
+        const dist = map(easeCubicIn(t), 0, 1, 1.2, 0.5);
+        const angle = map(smoothstep(t), 0, 1, 0, Math.PI * 1.5) + a0;
         const size = Math.sqrt(polyUpDown(t)) * resourcesUsed;
         s.x = cell.pos.x + Math.cos(angle) * dist;
         s.y = cell.pos.y + Math.sin(angle) * dist;
@@ -28,10 +28,10 @@ export default class EventGrowFruitRenderer extends EventRendererFFPoints<EventG
         s.r = angle;
       },
       {
-        size: 200,
+        size: 80,
         opacity: 0.8,
-        color: new Color("white"),
-        map: textureFromSpritesheet(0, 5),
+        color: new Color("purple"),
+        map: textureFromSpritesheet(0, 4),
       }
     );
   }
