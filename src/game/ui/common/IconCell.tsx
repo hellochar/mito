@@ -1,8 +1,10 @@
 import classNames from "classnames";
+import Keyboard from "game/input/keyboard";
 import React from "react";
 import { CellType } from "../../../core/cell/genome";
 import { textureFromSpritesheet } from "../../spritesheet";
 import "./IconCell.scss";
+import { ResourceIcon } from "./ResourceIcon";
 
 export const ActionBarItem: React.FC<React.HTMLProps<HTMLDivElement>> = ({ children, className, ...props }) => {
   return (
@@ -19,6 +21,16 @@ const IconCell: React.FC<{ cellType: CellType; spritesheetLoaded: boolean } & Re
   ...props
 }) => {
   const { material } = cellType;
+  const { costSugar, costWater, timeToBuild } = cellType.chromosome.getStaticProperties();
+  const costEl = (
+    <div className="cost-to-build-info">
+      {costWater}
+      <ResourceIcon name="water" />
+      {costSugar}
+      <ResourceIcon name="sugar" />
+    </div>
+  );
+  const timeEl = timeToBuild > 1 ? <div className="time-to-build-info">{timeToBuild} sec</div> : null;
   const color = (material.color && material.color.getStyle()) || "transparent";
   const texture = textureFromSpritesheet(material.texturePosition.x, material.texturePosition.y, color);
   const style: React.CSSProperties = React.useMemo(() => {
@@ -41,6 +53,14 @@ const IconCell: React.FC<{ cellType: CellType; spritesheetLoaded: boolean } & Re
       backgroundImage,
     };
   }, [color, spritesheetLoaded, texture.image]);
+
+  const costsEl = Keyboard.keyMap.has("ShiftLeft") ? (
+    <div className="costs">
+      {timeEl}
+      {costEl}
+    </div>
+  ) : null;
+
   return (
     <ActionBarItem
       {...props}
@@ -48,6 +68,7 @@ const IconCell: React.FC<{ cellType: CellType; spritesheetLoaded: boolean } & Re
       style={style}
     >
       {children}
+      {costsEl}
     </ActionBarItem>
   );
 };

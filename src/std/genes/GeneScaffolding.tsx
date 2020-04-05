@@ -4,10 +4,10 @@ import GN from "./GN";
 export const GeneScaffolding = Gene.make(
   {
     name: "Scaffolding",
-    levelCosts: [-2, -3, -4, -5, -8],
+    levelCosts: [-2, -3, -4, -5, -10],
     levelProps: {},
     static: {
-      timeToBuild: [5, 10, 15, 25, 30],
+      timeToBuild: [3, 4, 5, 6, 11],
     },
     description: (_, { timeToBuild }) => (
       <>

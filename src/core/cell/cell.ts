@@ -81,7 +81,7 @@ export class Cell extends Tile implements Interactable {
   constructor(pos: Vector2, world: World, public type: CellType, args?: CellArgs) {
     super(pos, world);
     this.chromosome = type.chromosome;
-    this.staticProperties = this.chromosome.mergeStaticProperties();
+    this.staticProperties = this.chromosome.getStaticProperties();
     const { inventoryCapacity } = this.staticProperties;
     this.inventory = new Inventory(inventoryCapacity, this);
     if (args?.direction) {

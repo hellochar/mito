@@ -167,6 +167,9 @@ export abstract class Tile implements Steppable {
     }
   }
 
+  /**
+   * This cell gets water. Take water from the giver.
+   */
   diffuseWater(giver: Tile, dt: number, diffusionRate = this.diffusionWater) {
     // Diffusion equation by finite difference: the purpose of this equation is to eventually
     // equalize the amount of water between me and giver. The two questions are how long

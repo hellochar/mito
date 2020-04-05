@@ -38,13 +38,7 @@ const cellTypeLeaf = new CellType(
 const cellTypeRoot = new CellType(
   "Root",
   0,
-  new Chromosome(
-    GeneLiving.level(2),
-    GeneScaffolding.level(1),
-    GeneInventory.level(4),
-    // GeneObstacle.level(0),
-    GeneSoilAbsorption.level(2)
-  ),
+  new Chromosome(GeneLiving.level(2), GeneScaffolding.level(1), GeneInventory.level(4), GeneSoilAbsorption.level(2)),
   {
     color: new Color("white"),
     texturePosition: new Vector2(3, 1),

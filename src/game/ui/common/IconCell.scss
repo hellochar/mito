@@ -32,4 +32,10 @@
   background-blend-mode: multiply;
   image-rendering: pixelated;
   position: relative;
+
+  .costs {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
 }

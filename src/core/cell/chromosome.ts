@@ -19,7 +19,7 @@ export default class Chromosome {
   /**
    * Booleans overwrite each other; numbers add together.
    */
-  public mergeStaticProperties() {
+  public getStaticProperties() {
     const finalProps = { ...defaultProperties };
     for (const g of this.genes) {
       // TODO beware of clobbering

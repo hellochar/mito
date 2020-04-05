@@ -45,6 +45,8 @@ export const defaultProperties: GeneStaticProperties = {
   isReproductive: false,
   isObstacle: false,
   inventoryCapacity: 0,
+  costSugar: 1,
+  costWater: 1,
   diffusionWater: 0,
   diffusionSugar: 0,
   timeToBuild: CELL_BUILD_TIME,
@@ -57,6 +59,8 @@ export type GeneStaticProperties = {
   isDirectional: boolean;
   isObstacle: boolean;
   inventoryCapacity: number;
+  costSugar: number;
+  costWater: number;
   diffusionWater: number;
   diffusionSugar: number;
   timeToBuild: number;

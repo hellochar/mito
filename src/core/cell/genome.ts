@@ -65,7 +65,7 @@ export class CellType {
     this.chromosome = chromosome!;
     this.material = material!;
     this.interaction = interaction;
-    if (chromosome?.mergeStaticProperties().isDirectional) {
+    if (chromosome?.getStaticProperties().isDirectional) {
       this.args = {
         direction: new Vector2(0, -1),
       };

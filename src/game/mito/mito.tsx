@@ -168,18 +168,15 @@ export class Mito extends ISketch {
     },
   };
 
-  private handlePlayerActionFail = (action: Action) => {
+  private handlePlayerActionFail = (action: Action, reason?: string) => {
+    if (reason != null) {
+      this.showInvalidAction({ message: reason });
+      return;
+    }
     if (action.type === "pickup" && this.world.player.inventory.isMaxed()) {
       this.showInvalidAction({ message: "Inventory full!" });
     } else if (action.type === "drop" && action.target && action.target.inventory.isMaxed()) {
       this.showInvalidAction({ message: `${action.target.displayName} inventory full!` });
-    } else if (action.type === "build") {
-      const buildError = this.world.player.getBuildError();
-      if (buildError) {
-        this.showInvalidAction({ message: `Need ${buildError}!` });
-      } else {
-        this.showInvalidAction({ message: "Can't build there!" });
-      }
     }
   };
 

@@ -2,8 +2,6 @@ import { sleep } from "common/promise";
 import { EventEmitter } from "events";
 import { params } from "game/params";
 import { Vector2 } from "three";
-import { CellArgs } from "../cell/cell";
-import { CellType } from "../cell/genome";
 import {
   PLAYER_BASE_SPEED,
   PLAYER_INTERACT_EXCHANGE_SPEED,
@@ -27,9 +25,6 @@ import {
   ActionRemoveCancer,
   ActionThaw,
 } from "./action";
-
-const waterCost = 1;
-const sugarCost = 1;
 
 export class Player implements Steppable {
   public inventory = new Inventory(PLAYER_MAX_RESOURCES, this, PLAYER_STARTING_WATER, PLAYER_STARTING_SUGAR);
@@ -71,7 +66,7 @@ export class Player implements Steppable {
         };
       }
     } else {
-      if (action.type === "build" && action.cellType.chromosome.mergeStaticProperties().isReproductive) {
+      if (action.type === "build" && action.cellType.chromosome.getStaticProperties().isReproductive) {
         this.action = {
           type: "long",
           duration: 4.5,
@@ -123,24 +118,9 @@ export class Player implements Steppable {
     }
   }
 
-  getBuildError(): "water" | "sugar" | "water and sugar" | undefined {
-    const needWater = this.inventory.water < waterCost;
-    const needSugar = this.inventory.sugar < sugarCost;
-
-    if (needWater && needSugar) {
-      return "water and sugar";
-    } else if (needWater && !needSugar) {
-      return "water";
-    } else if (needSugar && !needWater) {
-      return "sugar";
-    } else {
-      return;
-    }
-  }
-
   public on(event: "action", cb: (action: Action) => void): void;
 
-  public on(event: "action-fail", cb: (action: Action) => void): void;
+  public on(event: "action-fail", cb: (action: Action, reason?: string) => void): void;
 
   public on(event: "start-long-action", cb: (action: ActionLong) => void): void;
 
@@ -162,9 +142,9 @@ export class Player implements Steppable {
       }
     }
     if (this.action != null) {
-      const successful = this.attemptAction(this.action, dt);
+      const result = this.attemptAction(this.action, dt);
       if (this.action.type === "long") {
-        if (successful) {
+        if (result === true) {
           this.action = undefined;
         }
       } else {
@@ -173,20 +153,20 @@ export class Player implements Steppable {
     }
   }
 
-  public attemptAction(action: Action, dt: number): boolean {
-    const successful = this._attemptAction(action, dt);
+  public attemptAction(action: Action, dt: number): boolean | string {
+    const result = this._attemptAction(action, dt);
     if (params.showGodUI) {
       console.log(action);
     }
-    if (successful) {
+    if (result === true) {
       this.events.emit("action", action);
     } else {
-      this.events.emit("action-fail", action);
+      this.events.emit("action-fail", action, result === false ? undefined : result);
     }
-    return successful;
+    return result;
   }
 
-  private _attemptAction(action: Action, dt: number): boolean {
+  private _attemptAction(action: Action, dt: number): boolean | string {
     switch (action.type) {
       case "move":
         return this.attemptMove(action, dt);
@@ -266,25 +246,6 @@ export class Player implements Steppable {
     return true;
   }
 
-  public tryConstructingNewCell(position: Vector2, cellType: CellType, args?: CellArgs) {
-    position = position.clone();
-    if (!this.world.isValidPosition(position.x, position.y)) {
-      // out of bounds/out of map
-      return;
-    }
-    // disallow building over existing cells
-    if (this.world.cellAt(position) != null) {
-      return;
-    }
-    if (this.getBuildError() == null) {
-      this.inventory.add(-waterCost, -sugarCost);
-      const newTile = new Cell(position, this.world, cellType, args);
-      return newTile;
-    } else {
-      return undefined;
-    }
-  }
-
   public attemptBuild(action: ActionBuild, dt: number) {
     if (!this.canBuildAt(this.world.tileAt(action.position))) {
       return false;
@@ -294,13 +255,28 @@ export class Player implements Steppable {
       // don't allow building over
       return false;
     }
-    const matureCell = this.tryConstructingNewCell(action.position, action.cellType, action.args);
+
+    const { costSugar, costWater } = action.cellType.chromosome.getStaticProperties();
+
+    const needWater = this.inventory.water < costWater;
+    const needSugar = this.inventory.sugar < costSugar;
+
+    if (needWater && needSugar) {
+      return "Need water and sugar!";
+    } else if (needWater && !needSugar) {
+      return "Need water!";
+    } else if (needSugar && !needWater) {
+      return "Need sugar!";
+    }
+
+    this.inventory.add(-costWater, -costSugar);
+    const matureCell = new Cell(action.position, this.world, action.cellType, action.args);
     if (matureCell == null) {
       return false;
     }
 
     let cell: Cell;
-    if (action.cellType.chromosome.mergeStaticProperties().timeToBuild) {
+    if (action.cellType.chromosome.getStaticProperties().timeToBuild) {
       // special - drop a sugar when you grow, to cover for the sugar
       // this.attemptDrop(
       //   {
@@ -324,9 +300,11 @@ export class Player implements Steppable {
     if (!action.position.equals(this.pos) || action.force) {
       const cell = this.world.maybeRemoveCellAt(action.position);
       if (cell != null) {
-        // refund the resources back
-        const refund = cell.energy;
-        this.inventory.add(refund * waterCost, refund * sugarCost);
+        if (cell instanceof GrowingCell) {
+          // refund the resources back
+          const { costSugar, costWater } = cell.completedCell.type.chromosome.getStaticProperties();
+          this.inventory.add(costWater, costSugar);
+        }
 
         // maybeRemoveCellAt has already tried redistributing inventory to neighbors,
         // but if it couldn't do that, as a last ditch, give resources directly to
@@ -367,7 +345,7 @@ export class Player implements Steppable {
   public attemptMultiple(multiple: ActionMultiple, dt: number) {
     let allSuccess = true;
     for (const action of multiple.actions) {
-      allSuccess = this.attemptAction(action, dt) && allSuccess;
+      allSuccess = this.attemptAction(action, dt) === true && allSuccess;
     }
     return allSuccess;
   }
