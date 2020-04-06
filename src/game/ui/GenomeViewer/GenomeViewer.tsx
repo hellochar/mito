@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { useAppReducer } from "game/app";
 import * as React from "react";
 import { FaArrowsAltV } from "react-icons/fa";
 import { TiThMenu } from "react-icons/ti";
@@ -10,6 +11,8 @@ import "./GenomeViewer.scss";
 
 const GenomeViewer: React.FC<{ genome: Genome; editable?: boolean }> = ({ genome, editable = false }) => {
   const tuple = React.useState<GenomeViewerState>({ view: "expanded" });
+  // HACK listen to app state changes for when a cell gets deleted
+  useAppReducer();
   const [state, setState] = tuple;
   const handleViewSmall = React.useCallback(() => {
     setState((s) => ({ ...s, view: "small" }));

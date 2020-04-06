@@ -142,18 +142,14 @@ export class Player implements Steppable {
       }
     }
     if (this.action != null) {
-      const result = this.attemptAction(this.action, dt);
-      if (this.action.type === "long") {
-        if (result === true) {
-          this.action = undefined;
-        }
-      } else {
+      this.attemptAction(this.action, dt);
+      if (this.action.type !== "long") {
         this.action = undefined;
       }
     }
   }
 
-  public attemptAction(action: Action, dt: number): boolean | string {
+  public attemptAction(action: Action, dt: number) {
     const result = this._attemptAction(action, dt);
     if (params.showGodUI) {
       console.log(action);
@@ -246,14 +242,15 @@ export class Player implements Steppable {
     return true;
   }
 
-  public attemptBuild(action: ActionBuild, dt: number) {
-    if (!this.canBuildAt(this.world.tileAt(action.position))) {
-      return false;
+  public canBuild(action: ActionBuild): true | string {
+    const existingTile = this.world.tileAt(action.position);
+    if (!this.canBuildAt(existingTile)) {
+      return `Can't build over ${existingTile!.displayName}!`;
     }
     const existingCell = this.world.cellAt(action.position.x, action.position.y);
     if (existingCell != null) {
       // don't allow building over
-      return false;
+      return `Deconstruct ${existingCell.displayName} first!`;
     }
 
     const { costSugar, costWater } = action.cellType.chromosome.getStaticProperties();
@@ -269,11 +266,18 @@ export class Player implements Steppable {
       return "Need sugar!";
     }
 
+    return true;
+  }
+
+  public attemptBuild(action: ActionBuild, dt: number) {
+    const canBuild = this.canBuild(action);
+    if (canBuild !== true) {
+      return canBuild;
+    }
+
+    const { costSugar, costWater } = action.cellType.chromosome.getStaticProperties();
     this.inventory.add(-costWater, -costSugar);
     const matureCell = new Cell(action.position, this.world, action.cellType, action.args);
-    if (matureCell == null) {
-      return false;
-    }
 
     let cell: Cell;
     if (action.cellType.chromosome.getStaticProperties().timeToBuild) {
@@ -350,12 +354,24 @@ export class Player implements Steppable {
     return allSuccess;
   }
 
+  /**
+   * long actions are reponsible for unsetting themselves.
+   */
   public attemptLong(action: ActionLong, dt: number) {
     if (action.elapsed === 0) {
+      // verify builds
+      if (action.effect.type === "build") {
+        const canBuild = this.canBuild(action.effect);
+        if (canBuild !== true) {
+          this.action = undefined;
+          return canBuild;
+        }
+      }
       this.events.emit("start-long-action", action);
     }
     action.elapsed += dt;
     if (action.elapsed > action.duration) {
+      this.action = undefined;
       const result = this.attemptAction(action.effect, dt);
       return result;
     } else {

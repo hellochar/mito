@@ -78,12 +78,7 @@ export const CellTypeViewer: React.FC<{
       {cancerEl}
       <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
         {chromosome.genes.map((gene, i) => (
-          <GeneViewer
-            key={`${i},${gene.gene.blueprint.name},${gene.level}`}
-            cellType={cellType}
-            gene={gene}
-            editable={editable}
-          />
+          <GeneViewer key={gene.uuid} cellType={cellType} gene={gene} editable={editable} />
         ))}
       </div>
     </div>

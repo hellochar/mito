@@ -1,3 +1,4 @@
+import devlog from "common/devlog";
 import { sleep } from "common/promise";
 import { OverWorld } from "core/overworld/overWorld";
 import { newBaseSpecies } from "core/species";
@@ -30,8 +31,12 @@ export function handleTransitionEndMiddleware(
 ): React.Reducer<AppState, AppActions> {
   function handleTransitionEnd(state: AppState, action: AATransitionEnd): AppState {
     const { transition, ...stateWithoutTransition } = state;
-    const newState = reducer(stateWithoutTransition, transition!);
-    return newState;
+    if (transition) {
+      return reducer(stateWithoutTransition, transition);
+    } else {
+      devlog("handled transition end with no transition specified!");
+      return state;
+    }
   }
 
   return (state, action) => {

@@ -1,6 +1,7 @@
 import mapRecord from "common/mapRecord";
 import { clamp } from "math";
-import { custom, serializable } from "serializr";
+import { custom, identifier, serializable } from "serializr";
+import uuid from "uuid";
 import { Cell } from "../tile";
 import { AllGenesByName, Gene, GeneStaticProperties } from "./gene";
 import { GeneInstance } from "./geneInstance";
@@ -19,6 +20,9 @@ export class RealizedGene<G extends Gene = Gene> {
 
   @serializable
   public level!: number;
+
+  @serializable(identifier())
+  public readonly uuid = uuid();
 
   public constructor(gene?: G, level?: number) {
     this.gene = gene!;

@@ -2,7 +2,7 @@
 import { nf } from "common/formatters";
 import * as React from "react";
 import { GiDustCloud } from "react-icons/gi";
-import { CellEffectConstructor } from "../../../core/cell/cellEffect";
+import { CancerEffect, CellEffectConstructor } from "../../../core/cell/cellEffect";
 import { Gene } from "../../../core/cell/gene";
 import { GeneInstance } from "../../../core/cell/geneInstance";
 import { describeCellInteraction } from "../../../core/cell/genome";
@@ -189,13 +189,15 @@ export class TileDetails extends React.Component<TileDetailsProps> {
         .map((e) => {
           const name = (e.constructor as CellEffectConstructor).displayName;
           if (e instanceof FreezeEffect) {
-            return `${(e.percentFrozen * 100).toFixed(0)}% ${name}`;
+            return `${nf(e.percentFrozen * 100, 2)}% ${name}!`;
+          } else if (e instanceof CancerEffect) {
+            return `${name}! ${nf(e.timeToDuplicate, 2)}s until spread.`;
           } else {
             return name;
           }
         })
         .join(", ");
-      return <div className="info-cell">{descriptors}</div>;
+      return <div className="info-cell-effects">{descriptors}</div>;
     } else {
       return null;
     }

@@ -98,7 +98,7 @@ function reproducerStep(dt: number, instance: GeneInstance<Gene<ReproducerState,
   if (!isMature) {
     commitResources(dt, cell, committedResources, neededResources, secondsToMature);
     repelUnneededResources(dt, cell, committedResources, neededResources, secondsToMature);
-    const isNowMature = reproducerGetPercentMatured(instance) === 1;
+    const isNowMature = reproducerGetPercentMatured(instance) >= 1;
     if (isNowMature) {
       state.isMature = isNowMature;
       state.timeMatured = cell.world.time;
