@@ -5,6 +5,7 @@
   "private": true,
   "main": "./indexElectron.js",
   "dependencies": {
+    "@blueprintjs/core": "^3.24.0",
     "@rehooks/component-size": "^1.0.3",
     "@rooks/use-boundingclientrect-ref": "^3.4.0",
     "@rooks/use-mouse": "^3.4.0",

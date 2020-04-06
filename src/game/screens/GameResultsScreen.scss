@@ -96,9 +96,18 @@
   }
 }
 
-.vignettes {
-  display: flex;
-  overflow-x: auto;
+.vignette-viewer {
+  .bp3-slider-label {
+    white-space: nowrap;
+  }
+
+  .current-vignette {
+    @include center-children(flex);
+
+    img {
+      flex-grow: 0;
+    }
+  }
 }
 
 .mp-earner-list {

@@ -149,8 +149,8 @@ $sepia5: #c99765 !default;
   text-shadow: -$size -$size 0 $color, $size -$size 0 $color, -$size $size 0 $color, $size $size 0 $color;
 }
 
-@mixin center-children() {
-  display: inline-flex;
+@mixin center-children($display: inline-flex) {
+  display: $display;
   justify-content: center;
   align-items: center;
 }

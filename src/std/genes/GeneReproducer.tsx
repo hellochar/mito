@@ -32,7 +32,7 @@ export const GeneFruit = Gene.make<ReproducerState>(
   },
   (gene, props, cell) => ({
     isMature: false,
-    committedResources: new Inventory(props.neededResources, cell),
+    committedResources: new Inventory(props.neededResources + 1e-12, cell),
   }),
   (dt, instance) => {
     reproducerStep(dt, instance);
@@ -150,5 +150,5 @@ function repelUnneededResources(
 export function reproducerGetPercentMatured(g: GeneInstance<Gene<ReproducerState, any>>) {
   const r = g.state.committedResources;
   // add 1 buffer for fp errors
-  return clamp((r.sugar + r.water) / (r.capacity - 1), 0, 1);
+  return (r.sugar + r.water) / (r.capacity - 1e-12);
 }

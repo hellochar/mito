@@ -1,3 +1,4 @@
+import { Slider } from "@blueprintjs/core";
 import fruitSrc from "assets/images/fruit.png";
 import classNames from "classnames";
 import MP from "game/ui/common/MP";
@@ -79,12 +80,23 @@ function MPEarnerList({ mpEarners, className }: { mpEarners: Map<Cell, number>; 
 }
 
 function VignetteList({ vignettes }: { vignettes?: HTMLCanvasElement[] | undefined }) {
+  const [index, setIndex] = React.useState(0);
   if (vignettes) {
     return (
-      <div className="vignettes">
-        {vignettes.map((v, i) => (
-          <img key={i} src={v.toDataURL()} alt="" />
-        ))}
+      <div className="vignette-viewer">
+        <Slider
+          className="slider"
+          value={index}
+          min={0}
+          stepSize={1}
+          max={vignettes.length - 1}
+          onChange={setIndex}
+          showTrackFill={false}
+          labelRenderer={(val) => `Day ${val + 1}`}
+        />
+        <div className="current-vignette">
+          <img src={vignettes[index].toDataURL()} alt="" />
+        </div>
       </div>
     );
   } else {

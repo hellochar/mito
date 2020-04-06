@@ -1,3 +1,5 @@
+import "@blueprintjs/core/lib/css/blueprint.css";
+// import "@blueprintjs/icons/lib/css/blueprint.css";
 import "rc-tooltip/assets/bootstrap.css";
 import React from "react";
 import ReactDOM from "react-dom";
