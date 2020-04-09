@@ -6,7 +6,7 @@ import { resetGame, save } from "game/app/saveLoad";
 import { mitoOverworld } from "game/audio";
 import { Button } from "game/ui/common/Button";
 import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { GiFamilyTree } from "react-icons/gi";
 import ReactModal from "react-modal";
 import { HexTile } from "../../core/overworld/hexTile";
@@ -50,12 +50,16 @@ const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
 
   const [{ rootSpecies, epoch }] = useAppReducer();
 
+  const onMountEpoch = useRef(epoch);
+
   useEffect(() => {
-    sleep(4500).then(() => {
-      // TODO add a UI to let you mutate multiple species
-      const speciesReadyToMutate = lineage(rootSpecies).filter((species) => species.freeMutationPoints > 0);
-      setViewedSpecies(speciesReadyToMutate[0].id);
-    });
+    if (epoch !== onMountEpoch.current) {
+      sleep(4500).then(() => {
+        // TODO add a UI to let you mutate multiple species
+        const speciesReadyToMutate = lineage(rootSpecies).filter((species) => species.freeMutationPoints > 0);
+        setViewedSpecies(speciesReadyToMutate[0].id);
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [epoch]);
 

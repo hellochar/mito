@@ -2,6 +2,7 @@ import classnames from "classnames";
 import { WorldDOMComponent } from "game/mito/WorldDOMElement";
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
+import { DragDropContext } from "react-beautiful-dnd";
 import uuid from "uuid";
 import { getDecidedGameResult } from "../../../gameResult";
 import { PlayerSeedControlScheme } from "../../../input/ControlScheme";
@@ -176,11 +177,16 @@ export class HUD extends React.Component<HUDProps, HUDState> {
     if (this.state.genomeViewerOpen) {
       return (
         <div className="hud-top">
-          <GenomeViewer genome={this.mito.world.genome} />
+          <DragDropContext onDragEnd={this.handleDragEnd}>
+            <GenomeViewer genome={this.mito.world.genome} />
+          </DragDropContext>
         </div>
       );
     }
   }
+
+  // no-op
+  private handleDragEnd = () => {};
 }
 
 const InvalidActionMessage: React.FC<{ invalidAction: { message: string } }> = React.memo(({ invalidAction }) => {
