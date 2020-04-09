@@ -1,3 +1,4 @@
+import { randomName } from "common/randomName";
 import { identifier, object, serializable } from "serializr";
 import uuid from "uuid";
 import { LevelInfo, LevelInfoSchema } from "./levelInfo";
@@ -8,10 +9,26 @@ export class HexTile {
   @serializable(identifier())
   private uuid = uuid();
 
+  @serializable
+  private _displayName?: string;
+
+  public get displayName() {
+    // existing saves that don't have a displayName
+    // will get one
+    if (this._displayName == null) {
+      if (this.info.height < 0) {
+        this._displayName = "Deep Water";
+      } else {
+        this._displayName = randomName();
+      }
+    }
+    return this._displayName;
+  }
+
   @serializable(object(LevelInfoSchema))
   info: LevelInfo = {
     seed: Math.random() * Number.MAX_SAFE_INTEGER,
-    height: 0,
+    height: -1,
     rainfall: "medium",
     soilType: "average",
     temperature: "temperate",

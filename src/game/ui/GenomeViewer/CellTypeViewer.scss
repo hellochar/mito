@@ -80,43 +80,6 @@
       // padding: 0.1em 0.5em;
     }
   }
-
-  .gene-level-arrows {
-    display: inline-flex;
-    flex-direction: column;
-    margin-left: 2px;
-    vertical-align: middle;
-
-    button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      margin: 0;
-      font-size: 0.5em;
-    }
-  }
-
-  .gene-level-picker {
-    display: flex;
-    margin: 5px 0 0;
-
-    button {
-      flex: 1;
-      margin: 0;
-      background: none;
-      cursor: pointer;
-      font-family: $arial-family;
-      font-size: 12px;
-      border-width: thin;
-      color: inherit;
-
-      &.selected {
-        border-style: inset;
-        font-weight: bold;
-      }
-    }
-  }
 }
 
 .bp3-popover.gene-slots-popover {

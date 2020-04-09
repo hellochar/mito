@@ -24,20 +24,21 @@ function HexInfo({ playSpecies, tile, onClickPlay }: HexInfo) {
       </div>
     );
 
-  const header =
+  const body =
     flora != null ? (
-      <div>
-        <h1>
-          Inhabited by <i>{flora.species.name}</i>
-        </h1>
+      <>
+        <p>
+          Inhabited by{" "}
+          <b>
+            <i>{flora.species.name}</i>
+          </b>
+        </p>
         <p>
           <MP amount={flora.mutationPointsPerEpoch} /> per epoch
         </p>
-      </div>
-    ) : tile.isHabitable ? (
-      <h1>Uninhabited</h1>
-    ) : (
-      <h1>Uninhabitable (Deep Water)</h1>
+      </>
+    ) : tile.isHabitable ? null : (
+      <p style={{ color: "red" }}>Uninhabitable</p>
     );
 
   const stringifyInfo = { ...tile.info };
@@ -51,7 +52,8 @@ function HexInfo({ playSpecies, tile, onClickPlay }: HexInfo) {
 
   return (
     <div className="hex-info-container">
-      {header}
+      <div className="header">{tile.displayName}</div>
+      <div className="body">{body}</div>
       {expand}
       {playButtonElement}
     </div>
