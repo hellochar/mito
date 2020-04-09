@@ -1,5 +1,4 @@
 import { randElement, randInt } from "math";
-import { arrayRange } from "math/arrays";
 import capitalize from "./capitalize";
 
 // taken from https://github.com/chancejs/chancejs/blob/63db6b8aab83513afa5a8269c8dcde6b300a9cf7/chance.js
@@ -115,5 +114,3 @@ function addRandomLandscape(name: string) {
 export function randomName() {
   return addRandomLandscape(capitalize(word()));
 }
-
-arrayRange(100).forEach(() => console.log(randomName()));

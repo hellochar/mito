@@ -6,6 +6,9 @@ import { LevelInfo, LevelInfoSchema } from "./levelInfo";
 const C = Math.sqrt(3) / 2;
 
 export class HexTile {
+  @serializable
+  private version = 1;
+
   @serializable(identifier())
   private uuid = uuid();
 
