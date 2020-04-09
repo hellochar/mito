@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 import "react-dropdown/style.css";
 import { HashRouter } from "react-router-dom";
 import Routes from "Routes";
+import DndTest from "tests/DndTest";
 import "./addThreeJsModelSchemas";
 import "./index.scss";
 import * as serviceWorker from "./serviceWorker";
@@ -15,10 +16,14 @@ function requireAll(r: any) {
 }
 requireAll((require as any).context("./std/genes/", true, /Gene.*\.tsx?$/));
 
-ReactDOM.render(
+const e = (
   <HashRouter>
     <Routes />
-  </HashRouter>,
+  </HashRouter>
+);
+
+ReactDOM.render(
+  <DndTest />,
 
   document.getElementById("root")
 );
