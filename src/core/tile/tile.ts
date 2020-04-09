@@ -97,7 +97,7 @@ export abstract class Tile implements Steppable {
       const neighbors = this.world.tileNeighbors(this.pos);
       const giveCandidates = Array.from(neighbors.values()).filter((n) => n.canPullResources(this));
       let guard = 0;
-      while ((water > 0 || sugar > 0) && giveCandidates.length > 0 && guard < 100) {
+      while ((water > 0 || sugar > 0) && giveCandidates.length > 0 && guard < 20) {
         shuffle(giveCandidates);
         for (let i = 0; i < giveCandidates.length; i++) {
           const neighbor = giveCandidates[i];

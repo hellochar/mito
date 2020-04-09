@@ -81,7 +81,7 @@ function MPEarnerList({ mpEarners, className }: { mpEarners: Map<Cell, number>; 
 
 function VignetteList({ vignettes }: { vignettes?: HTMLCanvasElement[] | undefined }) {
   const [index, setIndex] = React.useState(0);
-  if (vignettes) {
+  if (vignettes && vignettes.length > 0) {
     return (
       <div className="vignette-viewer">
         <Slider
