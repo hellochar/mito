@@ -1,4 +1,8 @@
 import classNames from "classnames";
+import { RealizedGene } from "core/cell";
+import Genome, { CellType } from "core/cell/genome";
+import { newBaseSpecies } from "core/species";
+import { populateGeneOptions } from "game/ui/GenomeViewer/generateRandomGenes";
 import produce from "immer";
 import React, { useCallback, useState } from "react";
 import {
@@ -10,29 +14,22 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
+import { FaTrash } from "react-icons/fa";
 
-type Cell = { readonly name: string; readonly genes: number[] };
-export type Genome = Cell[];
-const defaultState: Genome = [
-  {
-    name: "cell1",
-    genes: [1, 2, 3],
-  },
-  {
-    name: "cell2",
-    genes: [4, 5],
-  },
-];
+const defaultState = newBaseSpecies();
+defaultState.geneOptions = populateGeneOptions(defaultState);
 
-function droppableIdToCell(state: Genome, droppableId: string): Cell {
-  return state.find(({ name }) => name === droppableId)!;
+function droppableIdToCell(state: Genome, droppableId: string): CellType | undefined {
+  return state.cellTypes.find(({ name }) => name === droppableId);
 }
 
-function cellToDroppableId(cell: Cell): string {
+function cellToDroppableId(cell: CellType): string {
   return cell.name;
 }
 
 const DndTest = () => {
+  const [state, setState] = useState(defaultState);
+
   const onDragEnd = useCallback((result: DropResult, provided: ResponderProvided) => {
     console.log("onDragEnd", result, provided);
     if (result.destination) {
@@ -40,15 +37,28 @@ const DndTest = () => {
       const { index: destinationIndex, droppableId } = result.destination;
       setState((state) =>
         produce(state, (draft) => {
-          // successful drag; move the gene
-          const sourceCell = droppableIdToCell(draft, result.source.droppableId);
-          const destinationCell = droppableIdToCell(draft, droppableId);
+          let gene: RealizedGene | undefined;
 
-          // delete and get gene from source cell
-          const [gene] = sourceCell.genes.splice(sourceIndex, 1);
+          if (result.source.droppableId === "gene-options") {
+            gene = draft.geneOptions[sourceIndex];
+            // delete gene options
+            draft.geneOptions = [];
+          } else {
+            // successful drag; move the gene
+            const sourceCell = droppableIdToCell(draft.genome, result.source.droppableId);
+            // delete and get gene from source cell
+            gene = sourceCell?.chromosome.genes.splice(sourceIndex, 1)[0];
+          }
 
-          // put gene in destination cell
-          destinationCell.genes.splice(destinationIndex, 0, gene);
+          if (droppableId === "trash") {
+            // thrown in the trash, do nothing.
+          } else {
+            const destinationCell = droppableIdToCell(draft.genome, droppableId);
+            // put gene in destination cell
+            if (gene != null) {
+              destinationCell?.chromosome.genes.splice(destinationIndex, 0, gene);
+            }
+          }
         })
       );
     }
@@ -62,19 +72,40 @@ const DndTest = () => {
     console.log("onDragUpdate", initial, provided);
   }, []);
 
-  const [state, setState] = useState(defaultState);
+  const debug = false;
 
   return (
     <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart} onDragUpdate={onDragUpdate}>
-      <div className="all-cells">
-        {state.map((cell) => (
+      <Droppable droppableId="gene-options" isDropDisabled direction="horizontal">
+        {(provided, snapshot) => (
+          <div className="gene-options" ref={provided.innerRef} {...provided.droppableProps}>
+            {state.geneOptions.map((gene, index) => (
+              <Draggable key={gene.uuid} index={index} draggableId={`draggable-${gene.uuid}`}>
+                {(provided, snapshot, rubric) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    className="draggable"
+                  >
+                    {gene.toString()}
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+      <div className={classNames("all-cells", { debug })}>
+        {state.genome.cellTypes.map((cell) => (
           <Droppable key={cell.name} droppableId={cellToDroppableId(cell)}>
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef} className={classNames("droppable")}>
                 {cell.name}
-                <pre>{JSON.stringify(snapshot, null, 2)}</pre>
-                {cell.genes.map((gene, index) => (
-                  <Draggable key={gene} draggableId={`draggable-${gene}`} index={index}>
+                {debug ? <pre>{JSON.stringify(snapshot, null, 2)}</pre> : null}
+                {cell.chromosome.genes.map((gene, index) => (
+                  <Draggable key={gene.uuid} draggableId={`draggable-${gene.uuid}`} index={index}>
                     {(provided, snapshot, rubric) => (
                       <div
                         ref={provided.innerRef}
@@ -82,9 +113,13 @@ const DndTest = () => {
                         {...provided.dragHandleProps}
                         className={classNames("draggable")}
                       >
-                        Draggable {gene}
-                        <pre>{JSON.stringify(snapshot, null, 2)}</pre>
-                        <pre>{JSON.stringify(rubric, null, 2)}</pre>
+                        {gene.toString()}
+                        {debug ? (
+                          <>
+                            <pre>{JSON.stringify(snapshot, null, 2)}</pre>
+                            <pre>{JSON.stringify(rubric, null, 2)}</pre>
+                          </>
+                        ) : null}
                       </div>
                     )}
                   </Draggable>
@@ -95,6 +130,18 @@ const DndTest = () => {
           </Droppable>
         ))}
       </div>
+      <Droppable droppableId="trash">
+        {(provided, snapshot) => (
+          <div
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            className={classNames("trash", { hovered: snapshot.isDraggingOver })}
+          >
+            <FaTrash />
+            {/* {provided.placeholder} */}
+          </div>
+        )}
+      </Droppable>
     </DragDropContext>
   );
 };

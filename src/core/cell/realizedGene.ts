@@ -53,4 +53,8 @@ export class RealizedGene<G extends Gene = Gene> {
   public newInstance(cell: Cell): GeneInstance<G> {
     return new GeneInstance(this.gene, this.getProps(), cell);
   }
+
+  toString() {
+    return `RealizedGene(${this.gene.blueprint.name} ${this.level} [${this.uuid}])`;
+  }
 }

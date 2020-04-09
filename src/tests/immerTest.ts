@@ -1,8 +1,7 @@
 import produce from "immer";
-import { Genome } from "./DndTest";
 
 function immerTest() {
-  const state0: Genome = [
+  const state0 = [
     {
       name: "cell1",
       genes: [1, 2, 3],
