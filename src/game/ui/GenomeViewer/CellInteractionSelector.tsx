@@ -23,7 +23,8 @@ export const CellInteractionSelector: React.FC<{
       ? undefined
       : possibleInteractions.findIndex((i) => interaction.resources === i.resources && interaction.type === i.type);
   const interactionEl = (
-    <select className="interaction-select" onChange={handleSelect} value={selectValue}>
+    // <select className="interaction-select" onChange={handleSelect} value={selectValue}>
+    <select className="interaction-select" onChange={handleSelect} defaultValue={String(selectValue)}>
       <option value={undefined}>do nothing</option>
       {possibleInteractions.map((interaction, index) => {
         return (

@@ -20,7 +20,7 @@ export const RealizedGeneViewer: React.FC<{
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={classNames("gene", view, gd.blueprint.name.replace(" ", ""), { draggable })}
+          className={classNames("gene", view, gd.blueprint.name.replace(" ", ""), { draggable, provider: cost < 0 })}
         >
           <div className="gene-header">
             <GeneCost cost={cost} />

@@ -5,10 +5,11 @@
 }
 
 .gene {
+  $background: rgb(194, 187, 177);
   position: relative;
   border-radius: 2px;
   padding: 5px;
-  background: rgb(194, 187, 177);
+  background: $background;
   transition: box-shadow 0.1s;
   overflow: hidden;
   width: 305px;
@@ -20,6 +21,11 @@
   &.draggable {
     cursor: grab;
     box-shadow: 0 4px 8px rgba(64, 64, 64, 0.5);
+  }
+
+  &.provider {
+    background: invert($color: $background);
+    color: white;
   }
 
   &:not(.draggable) {
