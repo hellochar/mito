@@ -2,7 +2,8 @@ import classNames from "classnames";
 import { nf } from "common/formatters";
 import { TIME_PER_DAY } from "core/constants";
 import { useAppReducer } from "game/app";
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
+import { Droppable } from "react-beautiful-dnd";
 import { MdDelete } from "react-icons/md";
 import Genome, { CellInteraction, CellType } from "../../../core/cell/genome";
 import { spritesheetLoaded } from "../../spritesheet";
@@ -10,33 +11,17 @@ import DynamicNumber from "../common/DynamicNumber";
 import IconCell from "../common/IconCell";
 import { CellInteractionSelector } from "./CellInteractionSelector";
 import "./CellTypeViewer.scss";
-import { DraggedContext } from "./DragInfo";
-import { GeneViewer } from "./GeneViewer";
+import { cellToDroppableId } from "./droppableId";
+import { GenomeViewerContext } from "./genomeViewerState";
 import MoreOptionsPopover from "./MoreOptionsPopover";
+import { RealizedGeneViewer } from "./RealizedGeneViewer";
 
 export const CellTypeViewer: React.FC<{
   genome: Genome;
   cellType: CellType;
   editable?: boolean;
 }> = ({ genome, cellType, editable = false }) => {
-  const { chromosome, name } = cellType;
-  const [state, setState] = React.useContext(DraggedContext);
-  const handleDrop = React.useCallback(
-    (event: React.DragEvent) => {
-      event.preventDefault();
-      if (state.dragged != null) {
-        const { gene, cellType: leavingCellType } = state.dragged;
-        leavingCellType.chromosome.genes = leavingCellType.chromosome.genes.filter((g) => g !== gene);
-        cellType.chromosome.genes.push(gene);
-        setState((s) => ({ ...s, dragged: undefined }));
-      }
-    },
-    [cellType.chromosome.genes, state.dragged, setState]
-  );
-  const handleDragOver = React.useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  }, []);
+  const { name } = cellType;
   const handleSetInteraction = React.useCallback(
     (i: CellInteraction | undefined) => {
       cellType.interaction = i;
@@ -45,6 +30,25 @@ export const CellTypeViewer: React.FC<{
   );
   const reproducer = cellType.isReproducer();
 
+  return (
+    <div className={classNames("cell-type", { reproducer })}>
+      <div className="cell-header">
+        <IconCell cellType={cellType} spritesheetLoaded={spritesheetLoaded} />
+        <div className="cell-name">
+          <h2>{name}</h2>
+          <CellInteractionSelector interaction={cellType.interaction} setInteraction={handleSetInteraction} />
+        </div>
+        {editable ? <CellActionsPopover cellType={cellType} genome={genome} /> : null}
+      </div>
+      <ChromosomeViewer cellType={cellType} />
+    </div>
+  );
+};
+
+const ChromosomeViewer = ({ cellType }: { cellType: CellType }) => {
+  const { editable, view, isDragging } = useContext(GenomeViewerContext);
+  const { chromosome } = cellType;
+  const { genes } = chromosome;
   const chanceForCancer = cellType.getChanceToBecomeCancerous();
   const cancerEl =
     chanceForCancer > 0 ? (
@@ -56,19 +60,7 @@ export const CellTypeViewer: React.FC<{
   const isGeneSlotsOver = chromosome.geneSlotsNet() < 0;
 
   return (
-    <div className={classNames("cell-type", { reproducer })}>
-      <div className="cell-header">
-        <IconCell cellType={cellType} spritesheetLoaded={spritesheetLoaded} />
-        <div className="cell-name">
-          <h2>{name}</h2>
-          <CellInteractionSelector
-            key={cellType.name}
-            interaction={cellType.interaction}
-            setInteraction={handleSetInteraction}
-          />
-        </div>
-        {editable ? <CellActionsPopover cellType={cellType} genome={genome} /> : null}
-      </div>
+    <>
       <div className="gene-slots">
         Gene Slots:{" "}
         <span className={classNames("slots-used", { "is-over": isGeneSlotsOver })}>
@@ -76,12 +68,21 @@ export const CellTypeViewer: React.FC<{
         </span>
       </div>
       {cancerEl}
-      <div className="chromosome" onDragOver={handleDragOver} onDrop={handleDrop}>
-        {chromosome.genes.map((gene, i) => (
-          <GeneViewer key={gene.uuid} cellType={cellType} gene={gene} editable={editable} />
-        ))}
-      </div>
-    </div>
+      <Droppable key={cellType.name} droppableId={cellToDroppableId(cellType)}>
+        {(provided, snapshot) => (
+          <div
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            className={classNames("chromosome", { dragging: isDragging })}
+          >
+            {genes.map((gene, i) => (
+              <RealizedGeneViewer index={i} key={gene.uuid} gene={gene} draggable={editable} view={view} />
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </>
   );
 };
 

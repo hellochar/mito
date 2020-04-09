@@ -1,35 +1,33 @@
 import classNames from "classnames";
-import { useAppReducer } from "game/app";
-import * as React from "react";
+import React from "react";
 import { FaArrowsAltV } from "react-icons/fa";
 import { TiThMenu } from "react-icons/ti";
 import Genome from "../../../core/cell/genome";
 import { AddCellCard } from "./AddCellCard";
 import { CellTypeViewer } from "./CellTypeViewer";
-import { DraggedContext, GenomeViewerState } from "./DragInfo";
 import "./GenomeViewer.scss";
+import { GenomeViewerContext } from "./genomeViewerState";
 
-const GenomeViewer: React.FC<{ genome: Genome; editable?: boolean }> = ({ genome, editable = false }) => {
-  const tuple = React.useState<GenomeViewerState>({ view: "expanded" });
-  // HACK listen to app state changes for when a cell gets deleted
-  useAppReducer();
-  const [state, setState] = tuple;
+const GenomeViewer: React.FC<{ genome: Genome; editable?: boolean; isDragging?: boolean }> = ({
+  genome,
+  editable = false,
+  isDragging = false,
+}) => {
+  const [view, setView] = React.useState<"small" | "expanded">("expanded");
+  const contextValue = React.useMemo(() => ({ view, editable, isDragging }), [editable, isDragging, view]);
   const handleViewSmall = React.useCallback(() => {
-    setState((s) => ({ ...s, view: "small" }));
-  }, [setState]);
+    setView("small");
+  }, []);
   const handleViewExpanded = React.useCallback(() => {
-    setState((s) => ({ ...s, view: "expanded" }));
-  }, [setState]);
+    setView("expanded");
+  }, []);
 
   return (
-    <DraggedContext.Provider value={tuple}>
-      <div className={classNames("genome-viewer", { dragging: state.dragged != null })}>
+    <GenomeViewerContext.Provider value={contextValue}>
+      <div className={classNames("genome-viewer", { dragging: isDragging })}>
         <div className="view-switcher">
-          <TiThMenu onClick={handleViewSmall} className={classNames("", { active: state.view === "small" })} />
-          <FaArrowsAltV
-            onClick={handleViewExpanded}
-            className={classNames("", { active: state.view === "expanded" })}
-          />
+          <TiThMenu onClick={handleViewSmall} className={classNames({ active: view === "small" })} />
+          <FaArrowsAltV onClick={handleViewExpanded} className={classNames({ active: view === "expanded" })} />
         </div>
         <div className="cell-types">
           {genome.cellTypes.map((c) => (
@@ -38,7 +36,7 @@ const GenomeViewer: React.FC<{ genome: Genome; editable?: boolean }> = ({ genome
           {editable ? <AddCellCard genome={genome} /> : null}
         </div>
       </div>
-    </DraggedContext.Provider>
+    </GenomeViewerContext.Provider>
   );
 };
 

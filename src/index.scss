@@ -3,65 +3,6 @@
 @import "./variables";
 @import "./rc-tooltip.scss";
 
-.droppable {
-  margin: 20px;
-  padding: 20px;
-  border-radius: 5px;
-  border: 1px solid red;
-  background: yellow;
-  width: 300px;
-  position: relative;
-
-  > pre {
-    position: absolute;
-    right: 100%;
-    background: lightgreen;
-    max-width: 300px;
-  }
-}
-
-.trash {
-  padding: 20px;
-  background: $indigo5;
-  display: inline-block;
-
-  &.hovered {
-    background: $violet1;
-  }
-}
-
-.gene-options {
-  padding: 20px;
-  border-radius: 5px;
-  background: $gray1;
-  display: inline-flex;
-}
-
-.all-cells {
-  display: flex;
-
-  &.debug {
-    .droppable {
-      margin: 20px 300px;
-    }
-  }
-}
-
-.draggable {
-  border-radius: 5px;
-  border: 1px solid lightblue;
-  background: lightskyblue;
-  height: 100px;
-  width: 260px;
-
-  > pre {
-    position: absolute;
-    left: 100%;
-    background: green;
-    max-width: 300px;
-  }
-}
-
 * {
   box-sizing: border-box;
 }

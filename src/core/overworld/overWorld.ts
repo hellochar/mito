@@ -185,7 +185,7 @@ export class OverWorld {
     const hexes: HexTile[] = [];
     for (const tile of this.storage) {
       const { flora } = tile.info;
-      if (flora && flora.species === species) {
+      if (flora && flora.species.id === species.id) {
         hexes.push(tile);
       }
     }

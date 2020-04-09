@@ -18,14 +18,80 @@
       display: inline;
     }
   }
+
+  .trash {
+    $icon-size: 16px;
+    $padding: 20px;
+    padding: $padding;
+    background: $light-gray5;
+    display: inline-block;
+    // position: absolute;
+    position: fixed;
+    left: 50%;
+    bottom: 60px;
+    // border: 2px solid $red3;
+    // border-radius: 2px;
+    border-radius: $padding + $icon-size / 2;
+    transition: background-color 0.2s, border-radius 0.2s;
+    margin: 0 10px;
+    min-width: $padding * 2 + $icon-size;
+    min-height: $padding * 2 + $icon-size;
+    z-index: 1;
+    box-shadow: 0 4px 8px rgba(64, 64, 64, 0.9);
+    animation: popIn2 0.5s ease both;
+
+    @keyframes popIn2 {
+      from {
+        transform: translateX(-50%) scale(0.75);
+        opacity: 0;
+      }
+
+      80% {
+        transform: translateX(-50%) scale(1.25);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    svg {
+      width: $icon-size;
+      height: $icon-size;
+      position: absolute;
+    }
+
+    &.hovered {
+      background: $red3;
+      // border-radius: 2px;
+    }
+  }
 }
 
 .mutation-chooser {
-  margin: 50px;
-  padding: 50px;
-  border: 1px solid $gray5;
-  background: $light-gray5;
-  border-radius: 5px;
+  // margin: 50px;
+  padding: 20px;
+  // border: 1px solid $gray5;
+  // background: $light-gray5;
+  // border-radius: 5px;
+  background: linear-gradient(221deg, #9d45d9, #c396e1, #be60ff, #b63dfb);
+  background-size: 400% 400%;
+
+  animation: swirly 5s ease infinite;
+
+  @keyframes swirly {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
 
   h1 {
     text-align: center;
@@ -38,6 +104,5 @@
 
   .gene {
     margin: 10px;
-    cursor: pointer !important;
   }
 }

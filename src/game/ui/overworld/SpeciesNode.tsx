@@ -1,4 +1,3 @@
-import LookAtMouse from "game/ui/common/LookAtMouse";
 import React, { useCallback } from "react";
 import { Species } from "../../../core/species";
 import Character from "../common/Character";
@@ -25,15 +24,15 @@ function SpeciesNode({ species, onMutate }: SpeciesNodeProps) {
   return (
     <div className="species-node">
       {descendants}
-      <LookAtMouse zScale={5} onClick={handleClick}>
-        <div className="species-info">
-          <div className="species-info-name">{species.name}</div>
-          <div className="species-info-animation">
-            <Character size="small" />
-          </div>
-          <MP amount={species.freeMutationPoints} />
+      {/* <LookAtMouse zScale={5} onClick={handleClick}> */}
+      <div className="species-info" onClick={handleClick}>
+        <div className="species-info-name">{species.name}</div>
+        <div className="species-info-animation">
+          <Character size="small" />
         </div>
-      </LookAtMouse>
+        <MP amount={species.freeMutationPoints} />
+      </div>
+      {/* </LookAtMouse> */}
     </div>
   );
 }

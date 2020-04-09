@@ -2,6 +2,7 @@ import { HexTile } from "core/overworld/hexTile";
 import { lineage, Species } from "core/species";
 import { GameResult } from "game/gameResult";
 import { populateGeneOptions } from "game/ui/GenomeViewer/generateRandomGenes";
+import produce from "immer";
 import React, { useContext } from "react";
 import { AppState, PopulationAttempt } from "./state";
 
@@ -21,13 +22,7 @@ export function reducer(state: AppState, action: AppActions): AppState {
   switch (action.type) {
     // a dummy trigger on species mutate
     case "AAUpdateSpecies":
-      return {
-        ...state,
-        // species: {
-        //   ...state.species,
-        //   [action.species.id]: action.species,
-        // },
-      };
+      return handleUpdateSpecies(state, action);
     case "AAStartPopulationAttempt":
       return handleStartPopulationAttempt(state, action);
     case "AAPopulationAttemptSuccess":
@@ -60,6 +55,37 @@ export type AppActions =
 export interface AAUpdateSpecies {
   type: "AAUpdateSpecies";
   species?: Species;
+}
+
+function findAndSetSpeciesRecursive(parent: Species, newSpecies: Species): boolean {
+  const index = parent.descendants.findIndex((s) => s.id === newSpecies.id);
+  if (index !== -1) {
+    parent.descendants[index] = newSpecies;
+    return true;
+  }
+  let returned = false;
+  for (const child of parent.descendants) {
+    returned = findAndSetSpeciesRecursive(child, newSpecies) || returned;
+    if (returned) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function handleUpdateSpecies(state: AppState, action: AAUpdateSpecies): AppState {
+  if (action.species) {
+    return {
+      ...state,
+      rootSpecies: action.species,
+    };
+    // return produce(state, (draft) => {
+    //   const newSpecies = action.species!;
+    //   findAndSetSpeciesRecursive(draft.rootSpecies, newSpecies);
+    // });
+  } else {
+    return { ...state };
+  }
 }
 
 export interface AAStartPopulationAttempt {
@@ -101,43 +127,40 @@ export interface AAPopulationAttemptSuccess {
 }
 
 function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAttemptSuccess): AppState {
-  const { attempt = state.activePopulationAttempt!, results } = action;
-  const { targetHex, settlingSpecies } = attempt;
+  return produce(state, (state: AppState) => {
+    const { attempt = state.activePopulationAttempt!, results } = action;
+    const { targetHex, settlingSpecies } = attempt;
 
-  const isFirstPlaythrough = state.overWorld.getStartHex().info.flora == null;
-  if (isFirstPlaythrough) {
-    gtag("event", "Beat first playthrough", { label: "mp earned", value: results.mutationPointsPerEpoch });
-  }
+    const isFirstPlaythrough = state.overWorld.getStartHex().info.flora == null;
+    if (isFirstPlaythrough) {
+      gtag("event", "Beat first playthrough", { label: "mp earned", value: results.mutationPointsPerEpoch });
+    }
 
-  // populate target hex
-  let oldSpecies: Species | undefined = undefined;
-  if (targetHex.info.flora != null) {
-    oldSpecies = targetHex.info.flora.species;
-  }
-  targetHex.info.flora = {
-    species: settlingSpecies,
-    mutationPointsPerEpoch: results.mutationPointsPerEpoch,
-  };
+    // populate target hex
+    let oldSpecies: Species | undefined = undefined;
+    if (targetHex.info.flora != null) {
+      oldSpecies = targetHex.info.flora.species;
+    }
+    targetHex.info.flora = {
+      species: settlingSpecies,
+      mutationPointsPerEpoch: results.mutationPointsPerEpoch,
+    };
 
-  // set new gene options for this species
-  settlingSpecies.geneOptions = populateGeneOptions(settlingSpecies);
-  if (oldSpecies) {
-    // update old species mutation point pool cache
-    oldSpecies.freeMutationPoints = Math.min(oldSpecies.freeMutationPoints, state.overWorld.getMaxGenePool(oldSpecies));
-  }
+    // set new gene options for this species
+    settlingSpecies.geneOptions = populateGeneOptions(settlingSpecies);
+    if (oldSpecies) {
+      // update old species mutation point pool cache
+      oldSpecies.freeMutationPoints = Math.min(
+        oldSpecies.freeMutationPoints,
+        state.overWorld.getMaxGenePool(oldSpecies)
+      );
+    }
 
-  // bump visibility
-  for (const n of state.overWorld.hexNeighbors(targetHex)) {
-    n && (n.info.visible = true);
-  }
-
-  // things we changed:
-  // sourceHex
-  // targetHex
-  // oldSpecies
-  // settlingSpecies
-  // targetHex.neighbors
-  return { ...state };
+    // bump visibility
+    for (const n of state.overWorld.hexNeighbors(targetHex)) {
+      n && (n.info.visible = true);
+    }
+  });
 }
 
 export interface AANextEpoch {
@@ -145,15 +168,17 @@ export interface AANextEpoch {
 }
 
 function handleNextEpoch(state: AppState, action: AANextEpoch): AppState {
-  // +1 epoch:
-  // reset all species pools to max
-  for (const species of lineage(state.rootSpecies)) {
-    species.freeMutationPoints = state.overWorld.getMaxGenePool(species);
-  }
-  return {
-    ...state,
-    epoch: state.epoch + 1,
-  };
+  return produce(state, (draft) => {
+    // +1 epoch:
+    // reset all species pools to max
+    for (const species of lineage(draft.rootSpecies)) {
+      species.freeMutationPoints = draft.overWorld.getMaxGenePool(species);
+      if (species.freeMutationPoints > 0) {
+        species.geneOptions = populateGeneOptions(species);
+      }
+    }
+    draft.epoch += 1;
+  });
 }
 
 export interface AAGetGameResult {

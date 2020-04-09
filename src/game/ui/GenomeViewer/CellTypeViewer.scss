@@ -5,7 +5,7 @@
   width: 340px;
   flex-shrink: 0;
   min-height: 400px;
-  background: transparentize($color: $light-gray5, $amount: 0.1);
+  background: $light-gray4;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
@@ -57,6 +57,11 @@
     // border: 2px solid transparent;
     transition: all 0.2s;
     border-radius: 5px;
+    border: 2px solid $light-gray4;
+
+    &.dragging {
+      border-color: $blue3;
+    }
   }
 
   .gene-slots {
