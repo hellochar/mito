@@ -1,3 +1,4 @@
+import { Tooltip } from "@blueprintjs/core";
 import classNames from "classnames";
 import { nf } from "common/formatters";
 import { TIME_PER_DAY } from "core/constants";
@@ -55,19 +56,27 @@ const ChromosomeViewer = ({ cellType }: { cellType: CellType }) => {
       <div className="chance-to-cancer">
         Cell may become cancerous: {nf(chanceForCancer * 100 * TIME_PER_DAY, 3)}% per day.
       </div>
-    ) : null;
-
+    ) : (
+      undefined
+    );
   const isGeneSlotsOver = chromosome.geneSlotsNet() < 0;
+  const tooltipContent = (
+    <>
+      Once you go over on your gene slots, negative effects will start accruing on your cell.
+      {cancerEl}
+    </>
+  );
 
   return (
     <>
-      <div className="gene-slots">
-        Gene Slots:{" "}
-        <span className={classNames("slots-used", { "is-over": isGeneSlotsOver })}>
-          <DynamicNumber value={Math.abs(chromosome.geneSlotsNet())} /> {isGeneSlotsOver ? "over" : "under"}.
-        </span>
-      </div>
-      {cancerEl}
+      <Tooltip content={tooltipContent} position="top" popoverClassName="gene-slots-popover" hoverOpenDelay={250}>
+        <div className="gene-slots">
+          Gene Slots:{" "}
+          <span className={classNames("slots-used", { "is-over": isGeneSlotsOver })}>
+            <DynamicNumber value={Math.abs(chromosome.geneSlotsNet())} /> {isGeneSlotsOver ? "over" : "under"}.
+          </span>
+        </div>
+      </Tooltip>
       <Droppable key={cellType.name} droppableId={cellToDroppableId(cellType)}>
         {(provided, snapshot) => (
           <div

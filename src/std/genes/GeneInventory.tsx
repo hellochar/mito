@@ -1,3 +1,4 @@
+import { ResourceIcon } from "game/ui/common/ResourceIcon";
 import React from "react";
 import GN from "std/genes/GN";
 import { Gene } from "../../core/cell/gene";
@@ -11,7 +12,8 @@ export const GeneInventory = Gene.make(
     },
     description: (_, { inventoryCapacity }) => (
       <>
-        Capacity <GN value={inventoryCapacity!} />.
+        Allows cell to hold <ResourceIcon name="water" />
+        <ResourceIcon name="sugar" />. Capacity +<GN value={inventoryCapacity!} />.
       </>
     ),
   },

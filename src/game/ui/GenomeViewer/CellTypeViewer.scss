@@ -81,14 +81,6 @@
     }
   }
 
-  .chance-to-cancer {
-    padding: 10px 0;
-    border-radius: 2px;
-    font-weight: bold;
-    font-size: 16px;
-    color: $red3;
-  }
-
   .gene-level-arrows {
     display: inline-flex;
     flex-direction: column;
@@ -124,5 +116,27 @@
         font-weight: bold;
       }
     }
+  }
+}
+
+.bp3-popover.gene-slots-popover {
+  max-width: 340px;
+
+  .bp3-popover-arrow-fill {
+    fill: $white;
+  }
+
+  .bp3-popover-content {
+    background: $white;
+    color: $black;
+    // color: $red3;
+  }
+
+  .chance-to-cancer {
+    padding: 10px 0;
+    border-radius: 2px;
+    font-weight: bold;
+    font-size: 16px;
+    color: $red3;
   }
 }
