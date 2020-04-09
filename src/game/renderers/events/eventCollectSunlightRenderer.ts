@@ -49,9 +49,9 @@ export default class EventCollectSunlightRenderer extends EventRenderer<EventCol
       let y = point == null ? leaf.pos.y + (Math.random() - 0.5) * 0.05 : point.y + randFloat(-0.1, 0.1);
       const itr = this.worldRenderer.renderers.get(leaf) as InstancedTileRenderer;
       if (itr) {
-        const randWaterPosition = randElement(itr.inventoryRenderer.waters);
-        x += randWaterPosition.x;
-        y += randWaterPosition.y;
+        const randWaterPosition = itr.inventoryRenderer ? randElement(itr.inventoryRenderer.waters) : undefined;
+        x += randWaterPosition?.x ?? 0;
+        y += randWaterPosition?.y ?? 0;
       }
       this.ffPoints.fire({
         x,

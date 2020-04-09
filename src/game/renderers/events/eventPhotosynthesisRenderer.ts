@@ -36,9 +36,9 @@ export default class EventPhotosynthesisRenderer extends EventRendererFFPoints<E
 
   handle(event: EventPhotosynthesis) {
     const tileRenderer = this.worldRenderer.renderers.get(event.cell) as InstancedTileRenderer | null;
-    const stableWater = tileRenderer && tileRenderer.inventoryRenderer.getStableWater();
-    const dX = (stableWater && stableWater.x) || 0;
-    const dY = (stableWater && stableWater.y) || 0;
+    const stableWater = tileRenderer?.inventoryRenderer?.getStableWater();
+    const dX = stableWater?.x ?? 0;
+    const dY = stableWater?.y ?? 0;
     this.ffPoints.fire({
       x: event.cell.pos.x + dX,
       y: event.cell.pos.y + dY,

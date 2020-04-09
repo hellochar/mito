@@ -1,3 +1,4 @@
+import devlog from "common/devlog";
 import { sleep } from "common/promise";
 import { CancerEffect, FreezeEffect } from "core/cell";
 import { Action } from "core/player/action";
@@ -384,6 +385,7 @@ export class Mito extends ISketch {
 
     if (this.vignetteCapturer.isTimeForNewCapture()) {
       const v = this.vignetteCapturer.capture();
+      devlog("captured", v);
       this.vignettes.push(v);
     }
 

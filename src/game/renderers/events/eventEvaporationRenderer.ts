@@ -1,6 +1,6 @@
 import { EventEvaporation } from "core/tile/tileEvent";
 import { FireAndForgetPoints } from "../fireAndForgetPoints";
-import { InventoryRenderer } from "../InventoryRenderer";
+import { WATER_POINTS_PARAMS } from "../InventoryRenderer";
 import { InstancedTileRenderer } from "../tile/InstancedTileRenderer";
 import { WorldRenderer } from "../WorldRenderer";
 import { EventRendererFFPoints } from "./eventRendererFFPoints";
@@ -22,7 +22,7 @@ export default class EventEvaporationRenderer extends EventRendererFFPoints<Even
         s.alpha = alpha;
         s.size = size;
       },
-      { ...InventoryRenderer.WaterParticles().params }
+      { ...WATER_POINTS_PARAMS }
     );
   }
 
@@ -35,9 +35,9 @@ export default class EventEvaporationRenderer extends EventRendererFFPoints<Even
       return;
     }
     const tileRenderer = this.worldRenderer.renderers.get(event.tile) as InstancedTileRenderer | null;
-    const stableWater = tileRenderer && tileRenderer.inventoryRenderer.getStableWater();
-    const dX = (stableWater && stableWater.x) || 0;
-    const dY = (stableWater && stableWater.y) || 0;
+    const stableWater = tileRenderer?.inventoryRenderer?.getStableWater();
+    const dX = stableWater?.x ?? 0;
+    const dY = stableWater?.y ?? 0;
     this.ffPoints.fire({
       x: event.tile.pos.x + dX,
       y: event.tile.pos.y + dY,

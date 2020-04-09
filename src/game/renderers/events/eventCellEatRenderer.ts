@@ -53,9 +53,9 @@ export default class EventCellEatRenderer extends EventRendererFFPoints<EventCel
       this.audio.gain.gain.setTargetAtTime(0, this.audio.context.currentTime + 1, 0.1);
     }
     const tileRenderer = this.worldRenderer.renderers.get(who) as InstancedTileRenderer | null;
-    const activeSugar = tileRenderer && tileRenderer.inventoryRenderer.getActiveSugar();
-    const dX = (activeSugar && activeSugar.x) || 0;
-    const dY = (activeSugar && activeSugar.y) || 0;
+    const activeSugar = tileRenderer?.inventoryRenderer?.getActiveSugar();
+    const dX = activeSugar?.x ?? 0;
+    const dY = activeSugar?.y ?? 0;
     this.ffPoints.fire({
       x: who.pos.x + dX,
       y: who.pos.y + dY,

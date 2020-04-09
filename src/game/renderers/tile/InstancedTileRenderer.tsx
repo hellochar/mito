@@ -39,7 +39,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   private static readonly ONE = Object.freeze(new Vector2(1, 1));
 
-  public inventoryRenderer: InventoryRenderer;
+  public inventoryRenderer?: InventoryRenderer;
 
   private originalColor: Color;
 
@@ -70,8 +70,15 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
 
     this.originalColor = (this.materialInfo.color || WHITE).clone();
-    this.inventoryRenderer = new InventoryRenderer(this.target.inventory, this.scene, this.mito);
-    this.inventoryRenderer.animationOffset = (this.target.pos.x + this.target.pos.y) / 2;
+    if (worldRenderer.inventoryPoints) {
+      this.inventoryRenderer = new InventoryRenderer(
+        this.target.inventory,
+        this.scene,
+        this.mito,
+        worldRenderer.inventoryPoints
+      );
+      this.inventoryRenderer.animationOffset = (this.target.pos.x + this.target.pos.y) / 2;
+    }
     if (this.target instanceof Cell) {
       // if it takes no time to build, start it off small just for show
       if (this.target.timeToBuild === 0) {
@@ -151,10 +158,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   updateInventory() {
-    if (this.inventoryRenderer != null) {
-      // will not render without an update
-      this.inventoryRenderer.update();
-    }
+    // will not render without an update
+    this.inventoryRenderer?.update();
   }
 
   updateScale() {
@@ -235,13 +240,9 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   destroy() {
     this.instance.destroy();
     // this.scene.remove(this.mesh);
-    if (this.inventoryRenderer != null) {
-      this.inventoryRenderer.destroy();
-    }
-    if (this.cellEffectsRenderer != null) {
-      this.cellEffectsRenderer.destroy();
-    }
-    this.geneRenderer && this.geneRenderer.destroy();
+    this.inventoryRenderer?.destroy();
+    this.cellEffectsRenderer?.destroy();
+    this.geneRenderer?.destroy();
   }
 }
 

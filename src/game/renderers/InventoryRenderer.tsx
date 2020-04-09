@@ -1,11 +1,10 @@
 import Ticker from "std/ticker";
 import { Color, Scene, Vector2 } from "three";
-import lazy from "../../common/lazy";
 import { Inventory } from "../../core/inventory";
 import { map } from "../../math";
 import { Mito } from "../mito/mito";
 import { textureFromSpritesheet } from "../spritesheet";
-import { CommittablePoints } from "./committablePoints";
+import { CommittablePoints, CommittablePointsParameters } from "./committablePoints";
 import { Renderer } from "./Renderer";
 
 // default
@@ -22,37 +21,37 @@ const graphics = {
 //   particleRepelStrength: 0.0005,
 // };
 
+export const WATER_POINTS_PARAMS: CommittablePointsParameters = {
+  color: new Color("rgb(9, 12, 255)"),
+  size: graphics.particleSize,
+  opacity: 0.75,
+};
+
+export const SUGAR_POINTS_PARAMS: CommittablePointsParameters = {
+  color: new Color("yellow"),
+  size: 85,
+  opacity: 0.9,
+  map: textureFromSpritesheet(2, 2, "transparent"),
+};
+
+export class InventoryPoints {
+  public waters = new CommittablePoints(10000, WATER_POINTS_PARAMS);
+
+  public sugars = new CommittablePoints(10000, SUGAR_POINTS_PARAMS);
+
+  public startFrame() {
+    this.waters.startFrame();
+    this.sugars.startFrame();
+  }
+
+  public endFrame() {
+    this.waters.endFrame();
+    this.sugars.endFrame();
+  }
+}
+
 // we represent Resources as dots of certain colors.
 export class InventoryRenderer extends Renderer<Inventory> {
-  static WaterParticles = lazy(
-    () =>
-      new CommittablePoints(10000, {
-        color: new Color("rgb(9, 12, 255)"),
-        size: graphics.particleSize,
-        opacity: 0.75,
-      })
-  );
-
-  static SugarParticles = lazy(
-    () =>
-      new CommittablePoints(10000, {
-        color: new Color("yellow"),
-        size: 85,
-        opacity: 0.9,
-        map: textureFromSpritesheet(2, 2, "transparent"),
-      })
-  );
-
-  static startFrame() {
-    InventoryRenderer.WaterParticles().startFrame();
-    InventoryRenderer.SugarParticles().startFrame();
-  }
-
-  static endFrame() {
-    InventoryRenderer.WaterParticles().endFrame();
-    InventoryRenderer.SugarParticles().endFrame();
-  }
-
   public animationOffset = 0;
 
   public waters: Vector2[] = [];
@@ -63,7 +62,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
 
   private stableWater?: Vector2;
 
-  constructor(target: Inventory, scene: Scene, mito: Mito) {
+  constructor(target: Inventory, scene: Scene, mito: Mito, public particlePoints: InventoryPoints) {
     super(target, scene, mito);
     target.on("get", this.handleGetResources);
     target.on("give", this.handleGiveResources);
@@ -213,12 +212,8 @@ export class InventoryRenderer extends Renderer<Inventory> {
 
   update() {
     this.simulateResourcePositions();
-    this.commitParticles(
-      InventoryRenderer.WaterParticles(),
-      this.target.water * graphics.particlesPerWater,
-      this.waters
-    );
-    this.commitParticles(InventoryRenderer.SugarParticles(), this.target.sugar, this.sugars);
+    this.commitParticles(this.particlePoints.waters, this.target.water * graphics.particlesPerWater, this.waters);
+    this.commitParticles(this.particlePoints.sugars, this.target.sugar, this.sugars);
     this.activeSugar = this.sugars[this.sugars.length - 1];
     this.stableWater = this.waters[0];
   }

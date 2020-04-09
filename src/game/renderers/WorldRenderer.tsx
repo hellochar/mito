@@ -4,7 +4,7 @@ import { Entity, Player, PlayerSeed, StepStats, World } from "../../core";
 import { Tile } from "../../core/tile";
 import Mito from "../mito/mito";
 import { EventLogRenderer } from "./events/eventLogRenderer";
-import { InventoryRenderer } from "./InventoryRenderer";
+import { InventoryPoints } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";
 import { PlayerSeedRenderer } from "./PlayerSeedRenderer";
 import { Renderer } from "./Renderer";
@@ -19,6 +19,8 @@ export class WorldRenderer extends Renderer<World> {
   // private lightEmitter: LightEmitter;
   public eventLogRenderer?: EventLogRenderer;
 
+  public inventoryPoints?: InventoryPoints;
+
   constructor(target: World, scene: Scene, mito: Mito, public renderResources = true) {
     super(target, scene, mito);
 
@@ -26,10 +28,11 @@ export class WorldRenderer extends Renderer<World> {
     this.tileBatcher = new TileBatcher(this.target);
     scene.add(this.tileBatcher.mesh);
 
+    this.inventoryPoints = new InventoryPoints();
+    scene.add(this.inventoryPoints.waters);
+    scene.add(this.inventoryPoints.sugars);
+    this.eventLogRenderer = new EventLogRenderer(this);
     if (renderResources) {
-      scene.add(InventoryRenderer.WaterParticles());
-      scene.add(InventoryRenderer.SugarParticles());
-      this.eventLogRenderer = new EventLogRenderer(this);
     }
     // this.lightEmitter = new LightEmitter(this);
   }
@@ -87,12 +90,12 @@ export class WorldRenderer extends Renderer<World> {
       this.eventLogRenderer.update();
     }
 
-    InventoryRenderer.startFrame();
+    this.inventoryPoints?.startFrame();
     this.target.entities().forEach((entity) => {
       const renderer = this.getOrCreateRenderer(entity);
       renderer?.update();
     });
-    InventoryRenderer.endFrame();
+    this.inventoryPoints?.endFrame();
     this.tileBatcher.endFrame();
   }
 

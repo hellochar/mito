@@ -112,36 +112,38 @@ void main() {
 }
 `;
 
-const TileShaderMaterial = new RawShaderMaterial({
-  uniforms: {
-    spriteSheet: { value: SPRITESHEET() },
-  },
-  transparent: true,
-  vertexShader,
-  fragmentShader,
-  side: DoubleSide,
-});
+function newTileShaderMaterial() {
+  return new RawShaderMaterial({
+    uniforms: {
+      spriteSheet: { value: SPRITESHEET() },
+    },
+    transparent: true,
+    vertexShader,
+    fragmentShader,
+    side: DoubleSide,
+  });
+}
+
+function newTileBatcherGeometry() {
+  const referenceGeometry = new PlaneBufferGeometry(1, 1);
+  const geometry = new InstancedBufferGeometry();
+  // this copies:
+  // [0, 2, 1, 2, 3, 1]
+  // index has a specific and somewhat cryptic data storage format
+  // it's a flattened array of size three elements
+  // each three adjacent numbers gets interpreted as one triangle
+  // each individual number's value is an *index* into a "virtual
+  // vertex array" that's defined the attributes array.
+  geometry.index = referenceGeometry.index;
+  // this copies:
+  // position: BufferAttribute, 4 items, size 3
+  // normal: BufferAttribute, 4 items, size 3
+  // uv: BufferAttribute, 4 items, size 2
+  geometry.attributes = referenceGeometry.attributes;
+  return geometry;
+}
 
 class TileBatcher {
-  private static newGeometry() {
-    const referenceGeometry = new PlaneBufferGeometry(1, 1);
-    const geometry = new InstancedBufferGeometry();
-    // this copies:
-    // [0, 2, 1, 2, 3, 1]
-    // index has a specific and somewhat cryptic data storage format
-    // it's a flattened array of size three elements
-    // each three adjacent numbers gets interpreted as one triangle
-    // each individual number's value is an *index* into a "virtual
-    // vertex array" that's defined the attributes array.
-    geometry.index = referenceGeometry.index;
-    // this copies:
-    // position: BufferAttribute, 4 items, size 3
-    // normal: BufferAttribute, 4 items, size 3
-    // uv: BufferAttribute, 4 items, size 2
-    geometry.attributes = referenceGeometry.attributes;
-    return geometry;
-  }
-
   geometry!: InstancedBufferGeometry;
 
   public maxTiles = this.world.height * this.world.width * 2;
@@ -159,8 +161,8 @@ class TileBatcher {
   public readonly mesh: Mesh;
 
   constructor(public world: World) {
-    this.geometry = TileBatcher.newGeometry();
-    this.mesh = new Mesh(this.geometry, TileShaderMaterial);
+    this.geometry = newTileBatcherGeometry();
+    this.mesh = new Mesh(this.geometry, newTileShaderMaterial());
     this.mesh.name = "TileBatcher Mesh";
     this.mesh.frustumCulled = false;
     this.mesh.matrixAutoUpdate = false;
