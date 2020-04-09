@@ -24,13 +24,11 @@
     $padding: 20px;
     padding: $padding;
     background: $light-gray5;
-    display: inline-block;
-    // position: absolute;
-    position: fixed;
-    left: 50%;
-    bottom: 60px;
-    // border: 2px solid $red3;
-    // border-radius: 2px;
+    // display: inline-block;
+    position: absolute;
+    // position: fixed;
+    // left: 50%;
+    // bottom: 60px;
     border-radius: $padding + $icon-size / 2;
     transition: background-color 0.2s, border-radius 0.2s;
     margin: 0 10px;
@@ -38,24 +36,24 @@
     min-height: $padding * 2 + $icon-size;
     z-index: 1;
     box-shadow: 0 4px 8px rgba(64, 64, 64, 0.9);
-    animation: popIn2 0.5s ease both;
+    // animation: popIn2 0.5s ease both;
 
-    @keyframes popIn2 {
-      from {
-        transform: translateX(-50%) scale(0.75);
-        opacity: 0;
-      }
+    // @keyframes popIn2 {
+    //   from {
+    //     transform: translateX(-50%) scale(0.75);
+    //     opacity: 0;
+    //   }
 
-      80% {
-        transform: translateX(-50%) scale(1.25);
-        opacity: 1;
-      }
+    //   80% {
+    //     transform: translateX(-50%) scale(1.25);
+    //     opacity: 1;
+    //   }
 
-      to {
-        transform: translateX(-50%) scale(1);
-        opacity: 1;
-      }
-    }
+    //   to {
+    //     transform: translateX(-50%) scale(1);
+    //     opacity: 1;
+    //   }
+    // }
 
     svg {
       width: $icon-size;

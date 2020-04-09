@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import configure from "common/configure";
 import { RealizedGene } from "core/cell";
 import { lineage, Species } from "core/species";
 import { useAppReducer } from "game/app";
@@ -114,7 +115,7 @@ const DeleteGeneDroppable = () => {
         <div
           {...provided.droppableProps}
           ref={provided.innerRef}
-          className={classNames("trash", { hovered: snapshot.isDraggingOver })}
+          className={classNames("trash", { hovered: snapshot.isDraggingOver, foo: configure(snapshot, console.log) })}
         >
           <FaTrash />
           {/* <RealizedGeneViewer gene={tutorialGenome.cellTypes[0].chromosome.genes[0]} index={0} /> */}
