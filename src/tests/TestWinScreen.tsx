@@ -13,10 +13,7 @@ export function mockFruit(world: World, percent: number, timeMatured?: number) {
   const cellTypeFruit = standardGenome.cellTypes[4];
   const cell = new Cell(new Vector2(0, 0), world, cellTypeFruit);
   const fruit = cell.findGene(GeneFruit)!;
-  fruit.state.committedResources.add(
-    (fruit.props.neededResources * percent) / 2,
-    (fruit.props.neededResources * percent) / 2
-  );
+  fruit.state.energyRecieved = fruit.props.neededResources * percent;
   fruit.state.timeMatured = timeMatured;
   fruit.state.isMature = percent === 1;
   return cell;

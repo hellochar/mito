@@ -39,8 +39,8 @@ export const Temperate: Environment = {
   airEvaporation: 0.3,
   climate: {
     timeBetweenRainfall: 40,
-    rainDuration: 2,
-    waterPerSecond: 100,
+    rainDuration: 3,
+    waterPerSecond: 200,
   },
   secondsToEvaporate: 166,
   floorCo2: 0.5,

@@ -119,12 +119,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     const { state, props } = instance;
     return (
       <div>
-        <div>
-          {nf(state.committedResources.water, 3)}/{props.neededResources / 2} water consumed.
-        </div>
-        <div>
-          {nf(state.committedResources.sugar, 3)}/{props.neededResources / 2} sugar consumed.
-        </div>
+        {nf(state.energyRecieved, 3)}/{props.neededEnergy} energy absorbed.
       </div>
     );
   }

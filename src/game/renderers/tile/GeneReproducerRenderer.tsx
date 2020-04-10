@@ -1,4 +1,3 @@
-import { nf } from "common/formatters";
 import { Gene } from "core/cell/gene";
 import { map } from "math";
 import React from "react";
@@ -12,7 +11,7 @@ export class GeneReproducerRenderer extends GeneRenderer<Gene<ReproducerState, a
         () => this.target.cell,
         () => {
           const matured = reproducerGetPercentMatured(this.target);
-          return <div className="reproducer-percent-mature">{nf(matured * 100, 2)}%</div>;
+          return <div className="reproducer-percent-mature">{(matured * 100).toFixed(1)}%</div>;
         }
       )
     : null;

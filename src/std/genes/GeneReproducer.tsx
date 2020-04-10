@@ -1,17 +1,15 @@
-import { Inventory } from "core/inventory";
+import { nf } from "common/formatters";
 import MP from "game/ui/common/MP";
-import { ResourceIcon } from "game/ui/common/ResourceIcon";
 import { clamp } from "math";
 import React from "react";
 import { Cell } from "../../core/cell/cell";
 import { Gene } from "../../core/cell/gene";
 import { GeneInstance } from "../../core/cell/geneInstance";
-import { TIME_PER_DAY, TIME_PER_MONTH } from "../../core/constants";
 
 export interface ReproducerState {
   timeMatured?: number;
   isMature: boolean;
-  committedResources: Inventory;
+  energyRecieved: number;
 }
 
 export const GeneFruit = Gene.make<ReproducerState>(
@@ -20,8 +18,7 @@ export const GeneFruit = Gene.make<ReproducerState>(
     levelCosts: [10, 15, 20, 25, 30],
     levelProps: {
       mpEarned: [3, 4, 5, 6, 7],
-      neededResources: 500,
-      secondsToMature: 2 * TIME_PER_MONTH,
+      neededEnergy: 300,
     },
     static: {
       isReproductive: true,
@@ -30,9 +27,9 @@ export const GeneFruit = Gene.make<ReproducerState>(
     },
     description: reproducerDescription,
   },
-  (gene, props, cell) => ({
+  () => ({
     isMature: false,
-    committedResources: new Inventory(props.neededResources + 1e-12, cell),
+    energyRecieved: 0,
   }),
   (dt, instance) => {
     reproducerStep(dt, instance);
@@ -47,8 +44,7 @@ export const GeneSeed = Gene.make<ReproducerState>(
     levelCosts: [6, 8, 10, 12, 14],
     levelProps: {
       mpEarned: [0.5, 0.75, 1, 1.25, 1.5],
-      neededResources: 200,
-      secondsToMature: TIME_PER_DAY / 2,
+      neededEnergy: 100,
     },
     static: {
       isReproductive: true,
@@ -56,9 +52,9 @@ export const GeneSeed = Gene.make<ReproducerState>(
     },
     description: reproducerDescription,
   },
-  (gene, props, cell) => ({
+  () => ({
     isMature: false,
-    committedResources: new Inventory(props.neededResources, cell),
+    energyRecieved: 0,
   }),
   (dt, instance) => {
     reproducerStep(dt, instance);
@@ -67,23 +63,25 @@ export const GeneSeed = Gene.make<ReproducerState>(
 
 export type GeneSeed = typeof GeneSeed;
 
-function reproducerDescription({ mpEarned, neededResources, secondsToMature }: Record<string, number>) {
+const ENERGY_TRANSFER_PER_SECOND = 0.25;
+// const NEIGHBOR_ENERGY_THRESHOLD = 0.5;
+
+function reproducerDescription({ mpEarned, neededEnergy }: Record<string, number>) {
   return (
     <>
       <p>Reproducer.</p>
+      <p>Greedily absorbs energy from neighbors to mature.</p>
       <p>
-        Consumes {neededResources / 2}
-        <ResourceIcon name="water" /> and {neededResources / 2}
-        <ResourceIcon name="sugar" /> on this Cell to reach Maturity.{" "}
+        Need {neededEnergy} total energy. Each neighboring Cell contributes 1 energy every{" "}
+        <b>{nf(1 / ENERGY_TRANSFER_PER_SECOND, 1)}</b> seconds.
       </p>
       <p>
-        On Maturity,{" "}
+        On maturation,{" "}
         <b>
           achieve <span className="reproduction">Survival</span>
         </b>{" "}
         and earn <MP amount={mpEarned} />.
       </p>
-      <p>With constant feeding, matures in {secondsToMature} seconds.</p>
     </>
   );
 }
@@ -92,12 +90,11 @@ function reproducerStep(dt: number, instance: GeneInstance<Gene<ReproducerState,
   const {
     cell,
     state,
-    props: { mpEarned, neededResources, secondsToMature },
+    props: { mpEarned, neededEnergy },
   } = instance;
-  const { committedResources, isMature } = state;
+  const { isMature } = state;
   if (!isMature) {
-    commitResources(dt, cell, committedResources, neededResources, secondsToMature);
-    repelUnneededResources(dt, cell, committedResources, neededResources, secondsToMature);
+    commitEnergy(dt, cell, state, neededEnergy);
     const isNowMature = reproducerGetPercentMatured(instance) >= 1;
     if (isNowMature) {
       state.isMature = isNowMature;
@@ -107,48 +104,36 @@ function reproducerStep(dt: number, instance: GeneInstance<Gene<ReproducerState,
   }
 }
 
-function commitResources(
-  dt: number,
-  cell: Cell,
-  committed: Inventory,
-  neededResources: number,
-  secondsToMature: number
-) {
-  const oneSecondCommitMax = neededResources / secondsToMature;
-  const wantedWater = clamp(neededResources / 2 - committed.water, 0, oneSecondCommitMax * dt);
-  const wantedSugar = clamp(neededResources / 2 - committed.sugar, 0, oneSecondCommitMax * dt);
-  const { water, sugar } = cell.inventory.give(committed, wantedWater, wantedSugar);
-  if (water + sugar > 0) {
-    cell.world.logEvent({
+function commitEnergy(dt: number, seed: Cell, state: ReproducerState, neededEnergy: number) {
+  let energyLeftToTake = neededEnergy - state.energyRecieved;
+  let energyRecieved = 0;
+  const tileNeighbors = seed.world.tileNeighbors(seed.pos);
+  for (const [, neighbor] of tileNeighbors) {
+    if (neighbor.pos.manhattanDistanceTo(seed.pos) > 1 || !(neighbor instanceof Cell)) continue;
+
+    if (energyLeftToTake > 0) {
+      const energyToTake = clamp(neighbor.energy, 0, ENERGY_TRANSFER_PER_SECOND * dt);
+      state.energyRecieved += energyToTake;
+      neighbor.energy -= energyToTake;
+
+      energyLeftToTake -= energyToTake;
+      energyRecieved += energyToTake;
+
+      seed.world.logEvent({ type: "cell-transfer-energy", from: neighbor, to: seed, amount: energyToTake });
+    }
+  }
+
+  if (energyRecieved > 0) {
+    seed.world.logEvent({
       type: "grow-fruit",
-      cell,
-      resourcesUsed: water + sugar,
+      cell: seed,
+      resourcesUsed: energyRecieved * 20,
     });
   }
 }
 
-function repelUnneededResources(
-  dt: number,
-  cell: Cell,
-  committed: Inventory,
-  neededResources: number,
-  secondsToMature: number
-) {
-  const oneSecondRepelMax = neededResources / secondsToMature;
-  // if there's more water than needed in the cell's inventory, push it to neighbors
-  const hasTooMuchWater = cell.inventory.water > 0 && committed.water >= neededResources / 2;
-  const hasTooMuchSugar = cell.inventory.sugar > 0 && committed.sugar >= neededResources / 2;
-
-  const waterToRepel = hasTooMuchWater ? clamp(cell.inventory.water, 0, oneSecondRepelMax * dt) : 0;
-  const sugarToRepel = hasTooMuchSugar ? clamp(cell.inventory.sugar, 0, oneSecondRepelMax * dt) : 0;
-
-  if (waterToRepel > 0 || sugarToRepel > 0) {
-    cell.redistributeInventoryToNeighbors(waterToRepel, sugarToRepel);
-  }
-}
-
 export function reproducerGetPercentMatured(g: GeneInstance<Gene<ReproducerState, any>>) {
-  const r = g.state.committedResources;
-  // add 1 buffer for fp errors
-  return (r.sugar + r.water) / (r.capacity - 1e-12);
+  const { energyRecieved } = g.state;
+  const neededEnergy = g.props.neededEnergy;
+  return energyRecieved / (neededEnergy - 1e-12);
 }
