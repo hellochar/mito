@@ -104,3 +104,17 @@
     margin: 10px;
   }
 }
+
+.unused-genes {
+  background: $light-gray4;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+
+  .unused-genes-droppable {
+    @include droppable();
+    border-radius: 2px;
+    display: flex;
+    min-height: 100px;
+  }
+}

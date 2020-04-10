@@ -14,6 +14,10 @@ import { DragDropContext, Droppable, DropResult, ResponderProvided } from "react
 import { FaTrash } from "react-icons/fa";
 import "./SpeciesViewer.scss";
 
+const ID_TRASH = "trash";
+const ID_GENE_OPTIONS = "gene-options";
+const ID_GENES_UNUSED = "genes-unused";
+
 export const SpeciesViewer: React.FC<{
   speciesId: string;
 }> = ({ speciesId }) => {
@@ -29,7 +33,7 @@ export const SpeciesViewer: React.FC<{
         const newSpecies = produce(species, (draft) => {
           let gene: RealizedGene | undefined;
 
-          if (result.source.droppableId === "gene-options") {
+          if (result.source.droppableId === ID_GENE_OPTIONS) {
             gene = draft.geneOptions[sourceIndex];
 
             // delete gene options
@@ -39,6 +43,8 @@ export const SpeciesViewer: React.FC<{
             } else {
               draft.geneOptions = [];
             }
+          } else if (result.source.droppableId === ID_GENES_UNUSED) {
+            gene = draft.genome.unusedGenes.splice(sourceIndex, 1)[0];
           } else {
             // successful drag; move the gene
             const sourceCell = droppableIdToCell(draft.genome, result.source.droppableId);
@@ -46,12 +52,14 @@ export const SpeciesViewer: React.FC<{
             gene = sourceCell?.chromosome.genes.splice(sourceIndex, 1)[0];
           }
 
-          if (droppableId === "trash") {
-            // thrown in the trash, do nothing.
-          } else {
-            const destinationCell = droppableIdToCell(draft.genome, droppableId);
-            // put gene in destination cell
-            if (gene != null) {
+          if (gene != null) {
+            if (droppableId === ID_TRASH) {
+              // thrown in the trash, do nothing.
+            } else if (droppableId === ID_GENES_UNUSED) {
+              draft.genome.unusedGenes.splice(destinationIndex, 0, gene);
+            } else {
+              const destinationCell = droppableIdToCell(draft.genome, droppableId);
+              // put gene in destination cell
               destinationCell?.chromosome.genes.splice(destinationIndex, 0, gene);
             }
           }
@@ -80,6 +88,7 @@ export const SpeciesViewer: React.FC<{
         {species.freeMutationPoints > 0 ? <MutationChooser species={species} /> : null}
         {isDragging ? <DeleteGeneDroppable /> : null}
         <GenomeViewer genome={species.genome} editable isDragging={isDragging} />
+        <UnusedGeneArea genes={species.genome.unusedGenes} isDragging={isDragging} />
       </div>
     </DragDropContext>
   );
@@ -92,7 +101,7 @@ const MutationChooser: React.FC<{ species: Species }> = ({ species }) => {
       <h1>
         <MP amount={freeMutationPoints} /> mutations available
       </h1>
-      <Droppable droppableId="gene-options" isDropDisabled direction="horizontal">
+      <Droppable droppableId={ID_GENE_OPTIONS} isDropDisabled direction="horizontal">
         {(provided, snapshot) => (
           <div className="gene-options" ref={provided.innerRef} {...provided.droppableProps}>
             {geneOptions.map((gene, index) => (
@@ -110,7 +119,7 @@ const MutationChooser: React.FC<{ species: Species }> = ({ species }) => {
 
 const DeleteGeneDroppable = () => {
   return (
-    <Droppable droppableId="trash">
+    <Droppable droppableId={ID_TRASH}>
       {(provided, snapshot) => (
         <div
           {...provided.droppableProps}
@@ -123,5 +132,27 @@ const DeleteGeneDroppable = () => {
         </div>
       )}
     </Droppable>
+  );
+};
+
+const UnusedGeneArea = ({ genes, isDragging }: { genes: RealizedGene[]; isDragging: boolean }) => {
+  return (
+    <div className="unused-genes">
+      <h1>Unused {genes.length}/5</h1>
+      <Droppable droppableId={ID_GENES_UNUSED} direction="horizontal" isDropDisabled={genes.length >= 5}>
+        {(provided, snapshot) => (
+          <div
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            className={classNames("unused-genes-droppable", { dragging: isDragging })}
+          >
+            {genes.map((gene, index) => (
+              <RealizedGeneViewer index={index} key={gene.uuid} gene={gene} draggable view="small" />
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </div>
   );
 };

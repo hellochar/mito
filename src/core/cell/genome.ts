@@ -105,7 +105,7 @@ export default class Genome {
 
   constructor(cellTypes?: CellType[], unusedGenes?: RealizedGene[]) {
     this.cellTypes = cellTypes!;
-    this.unusedGenes = unusedGenes!;
+    this.unusedGenes = unusedGenes ?? [];
   }
 }
 
