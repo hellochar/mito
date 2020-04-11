@@ -1,6 +1,7 @@
 export * from "../tile/deadCell";
 export * from "./cell";
 export * from "./cellEffect";
+export * from "./cellProperties";
 export * from "./chromosome";
 export * from "./gene";
 export * from "./geneInstance";

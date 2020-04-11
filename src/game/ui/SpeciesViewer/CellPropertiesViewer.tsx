@@ -1,7 +1,7 @@
 import { nf } from "common/formatters";
 import React from "react";
-import { GeneStaticProperties } from "../../../core/cell/gene";
-export const StaticPropertiesViewer: React.FC<GeneStaticProperties> = React.memo(
+import { CellProperties } from "../../../core/cell/cellProperties";
+export const CellPropertiesViewer: React.FC<CellProperties> = React.memo(
   ({ diffusionWater, diffusionSugar, inventoryCapacity, isDirectional, isObstacle, isReproductive }) => {
     return (
       <div className="static-properties">

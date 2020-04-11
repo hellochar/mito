@@ -19,7 +19,7 @@ export class GrowingCell extends Cell {
 
   constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Vector2) {
     super(pos, world, cellTypeGrowingCell);
-    this.timeToMaturity = completedCell.type.chromosome.getStaticProperties().timeToBuild;
+    this.timeToMaturity = completedCell.type.chromosome.getProperties().timeToBuild;
   }
 
   step(dt: number) {

@@ -66,7 +66,7 @@ export class CellType {
     this.chromosome = chromosome!;
     this.material = material!;
     this.interaction = interaction;
-    if (chromosome?.getStaticProperties().isDirectional) {
+    if (chromosome?.getProperties().isDirectional) {
       this.args = {
         direction: new Vector2(0, -1),
       };
@@ -82,7 +82,7 @@ export class CellType {
   }
 
   isReproducer() {
-    return this.chromosome.genes.some((gene) => gene.getStaticProperties().isReproductive);
+    return this.chromosome.genes.some((gene) => gene.getProperties().isReproductive);
   }
 
   /**

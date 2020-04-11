@@ -3,7 +3,8 @@ import { clamp } from "math";
 import { custom, identifier, serializable } from "serializr";
 import uuid from "uuid";
 import { Cell } from "../tile";
-import { AllGenesByName, Gene, GeneStaticProperties } from "./gene";
+import { CellProperties } from "./cellProperties";
+import { AllGenesByName, Gene } from "./gene";
 import { GeneInstance } from "./geneInstance";
 
 function serializeGeneIntoName(gene: Gene): string {
@@ -31,11 +32,9 @@ export class RealizedGene<G extends Gene = Gene> {
     }
   }
 
-  getStaticProperties() {
+  getProperties() {
     const staticBlueprint = this.gene.blueprint.static || {};
-    return mapRecord(staticBlueprint, (arr) => (Array.isArray(arr) ? arr[this.level] : arr)) as Partial<
-      GeneStaticProperties
-    >;
+    return mapRecord(staticBlueprint, (arr) => (Array.isArray(arr) ? arr[this.level] : arr)) as Partial<CellProperties>;
   }
 
   public getProps() {

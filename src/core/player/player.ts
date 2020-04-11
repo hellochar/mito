@@ -66,7 +66,7 @@ export class Player implements Steppable {
         };
       }
     } else {
-      if (action.type === "build" && action.cellType.chromosome.getStaticProperties().isReproductive) {
+      if (action.type === "build" && action.cellType.chromosome.getProperties().isReproductive) {
         this.action = {
           type: "long",
           duration: 4.5,
@@ -253,7 +253,7 @@ export class Player implements Steppable {
       return `Deconstruct ${existingCell.displayName} first!`;
     }
 
-    const { costSugar, costWater } = action.cellType.chromosome.getStaticProperties();
+    const { costSugar, costWater } = action.cellType.chromosome.getProperties();
 
     const needWater = this.inventory.water < costWater;
     const needSugar = this.inventory.sugar < costSugar;
@@ -275,12 +275,12 @@ export class Player implements Steppable {
       return canBuild;
     }
 
-    const { costSugar, costWater } = action.cellType.chromosome.getStaticProperties();
+    const { costSugar, costWater } = action.cellType.chromosome.getProperties();
     this.inventory.add(-costWater, -costSugar);
     const matureCell = new Cell(action.position, this.world, action.cellType, action.args);
 
     let cell: Cell;
-    if (action.cellType.chromosome.getStaticProperties().timeToBuild) {
+    if (action.cellType.chromosome.getProperties().timeToBuild) {
       // special - drop a sugar when you grow, to cover for the sugar
       // this.attemptDrop(
       //   {
@@ -306,7 +306,7 @@ export class Player implements Steppable {
       if (cell != null) {
         if (cell instanceof GrowingCell) {
           // refund the resources back
-          const { costSugar, costWater } = cell.completedCell.type.chromosome.getStaticProperties();
+          const { costSugar, costWater } = cell.completedCell.type.chromosome.getProperties();
           this.inventory.add(costWater, costSugar);
         }
 

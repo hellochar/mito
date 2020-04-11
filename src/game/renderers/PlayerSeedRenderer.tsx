@@ -19,7 +19,7 @@ export class PlayerSeedRenderer extends Renderer<PlayerSeed> {
   constructor(target: PlayerSeed, scene: Scene, mito: Mito) {
     super(target, scene, mito);
     const reproducerCellType = target.world.genome.cellTypes.find(
-      (cellType) => cellType.chromosome.getStaticProperties().isReproductive
+      (cellType) => cellType.chromosome.getProperties().isReproductive
     )!;
     const material = reproducerCellType.material;
     this.mesh = newMesh(material);

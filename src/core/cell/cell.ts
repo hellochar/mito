@@ -14,8 +14,9 @@ import { Soil } from "../tile/soil";
 import { Tile } from "../tile/tile";
 import { World } from "../world/world";
 import { CancerEffect, CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
+import { CellProperties } from "./cellProperties";
 import Chromosome from "./chromosome";
-import { Gene, GeneStaticProperties } from "./gene";
+import { Gene } from "./gene";
 import { GeneInstance } from "./geneInstance";
 import { CellType, interactionSpeed } from "./genome";
 
@@ -48,26 +49,26 @@ export class Cell extends Tile implements Interactable {
 
   public inventory: Inventory;
 
-  public readonly staticProperties: GeneStaticProperties;
+  public readonly properties: CellProperties;
 
   get isObstacle() {
-    return this.staticProperties.isObstacle;
+    return this.properties.isObstacle;
   }
 
   get isReproductive() {
-    return this.staticProperties.isReproductive;
+    return this.properties.isReproductive;
   }
 
   get diffusionWater() {
-    return this.staticProperties.diffusionWater;
+    return this.properties.diffusionWater;
   }
 
   get diffusionSugar() {
-    return this.staticProperties.diffusionSugar;
+    return this.properties.diffusionSugar;
   }
 
   get timeToBuild() {
-    return this.staticProperties.timeToBuild;
+    return this.properties.timeToBuild;
   }
 
   get darknessContrib() {
@@ -81,8 +82,8 @@ export class Cell extends Tile implements Interactable {
   constructor(pos: Vector2, world: World, public type: CellType, args?: CellArgs) {
     super(pos, world);
     this.chromosome = type.chromosome;
-    this.staticProperties = this.chromosome.getStaticProperties();
-    const { inventoryCapacity } = this.staticProperties;
+    this.properties = this.chromosome.getProperties();
+    const { inventoryCapacity } = this.properties;
     this.inventory = new Inventory(inventoryCapacity, this);
     if (args?.direction) {
       this.args.direction!.copy(args?.direction);
@@ -130,7 +131,7 @@ export class Cell extends Tile implements Interactable {
         return;
       }
     }
-    if (this.staticProperties.cantFreeze && effect instanceof FreezeEffect) {
+    if (this.properties.cantFreeze && effect instanceof FreezeEffect) {
       return;
     }
     effect.attachTo(this);
@@ -297,7 +298,7 @@ export class Cell extends Tile implements Interactable {
   }
 
   public validateDirection() {
-    const isDirectional = this.staticProperties.isDirectional;
+    const isDirectional = this.properties.isDirectional;
     if (isDirectional) {
       const dir = this.args.direction!;
       if (isFractional(dir.x) || isFractional(dir.y)) {
