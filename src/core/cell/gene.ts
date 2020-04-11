@@ -48,6 +48,9 @@ export interface GeneBlueprint<K extends string> {
   levelCosts: number[];
   levelProps: PropBlueprint<K>;
   static?: CellPropertiesBlueprint;
+  /**
+   * Dynamic properties get computed at the start of each cell's step.
+   */
   dynamic?(cell: Cell, properties: CellProperties): CellProperties;
   requirements?: Gene[];
 }

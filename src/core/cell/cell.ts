@@ -49,7 +49,12 @@ export class Cell extends Tile implements Interactable {
 
   public inventory: Inventory;
 
-  public readonly properties: CellProperties;
+  public readonly staticProperties: CellProperties;
+
+  /**
+   * Should compute at the start of every step.
+   */
+  private properties: CellProperties;
 
   get isObstacle() {
     return this.properties.isObstacle;
@@ -68,7 +73,7 @@ export class Cell extends Tile implements Interactable {
   }
 
   get timeToBuild() {
-    return this.dynamicProperties().timeToBuild;
+    return this.properties.timeToBuild;
   }
 
   get tempo() {
@@ -86,7 +91,8 @@ export class Cell extends Tile implements Interactable {
   constructor(pos: Vector2, world: World, public type: CellType, args?: CellArgs) {
     super(pos, world);
     this.chromosome = type.chromosome;
-    this.properties = this.chromosome.getProperties();
+    this.staticProperties = this.chromosome.computeStaticProperties();
+    this.properties = this.computeDynamicProperties();
     const { inventoryCapacity } = this.properties;
     this.inventory = new Inventory(inventoryCapacity, this);
     if (args?.direction) {
@@ -119,8 +125,15 @@ export class Cell extends Tile implements Interactable {
     }
   }
 
-  private dynamicProperties() {
-    return this.chromosome.getDynamicProperties(this);
+  /**
+   * Be careful, this can be expensive! This is cached by dynamicProperties.
+   */
+  private computeDynamicProperties() {
+    let properties = { ...this.staticProperties };
+    for (const g of this.chromosome.genes) {
+      properties = g.getDynamicProperties(this, properties) ?? properties;
+    }
+    return properties;
   }
 
   /**
@@ -208,6 +221,7 @@ export class Cell extends Tile implements Interactable {
     if (params.debug) {
       this.validateDirection();
     }
+    this.properties = this.computeDynamicProperties();
 
     // diffusion, darkness, gravity
     super.step(dt);
@@ -255,7 +269,6 @@ export class Cell extends Tile implements Interactable {
     const neighbors = this.world.tileNeighbors(this.pos);
     const neighborTemperatures = Array.from(neighbors.values()).map((t) => t.temperatureFloat);
     this.nextTemperature = nextTemperature(this.temperatureFloat, neighborTemperatures, dt);
-    // if we're cold, try to naturally heat ourselves
     if (this.temperatureFloat <= 32) {
       const chanceToFreeze = (this.temperature === Temperature.Cold ? 0.03 : 0.3) * dt;
       if (Math.random() < chanceToFreeze) {

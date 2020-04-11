@@ -1,15 +1,29 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import { nf } from "common/formatters";
+import {
+  CancerEffect,
+  Cell,
+  CellEffectConstructor,
+  describeCellInteraction,
+  FreezeEffect,
+  Gene,
+  GeneInstance,
+  GrowingCell,
+} from "core/cell";
+import { Air, Fountain, Soil, Tile } from "core/tile";
+import Keyboard from "game/input/keyboard";
 import * as React from "react";
 import { GiDustCloud } from "react-icons/gi";
-import { CancerEffect, CellEffectConstructor } from "../../../core/cell/cellEffect";
-import { Gene } from "../../../core/cell/gene";
-import { GeneInstance } from "../../../core/cell/geneInstance";
-import { describeCellInteraction } from "../../../core/cell/genome";
-import { Air, Cell, Fountain, FreezeEffect, GrowingCell, Soil, Tile } from "../../../core/tile";
-import { GeneLiving, GeneSoilAbsorption, SoilAbsorptionState } from "../../../std/genes";
-import { GenePhotosynthesis, PhotosynthesisState } from "../../../std/genes/GenePhotosynthesis";
-import { GeneFruit, GeneSeed, ReproducerState } from "../../../std/genes/GeneReproducer";
+import {
+  GeneFruit,
+  GeneLiving,
+  GenePhotosynthesis,
+  GeneSeed,
+  GeneSoilAbsorption,
+  PhotosynthesisState,
+  ReproducerState,
+  SoilAbsorptionState,
+} from "std/genes";
 import { InventoryBar } from "./InventoryBar";
 import TemperatureInfo from "./TemperatureInfo";
 import "./TileDetails.scss";
@@ -70,6 +84,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       return (
         <>
           {energyEl}
+          {Keyboard.keyMap.has("ShiftLeft") ? <>Alive for {Math.floor(tile.age)} seconds.</> : null}
           {tile.droopY * 200 > 1 ? <div className="info-cell">{(tile.droopY * 200).toFixed(0)}% droop</div> : null}
           {this.cellEffects(tile)}
           {this.geneInfos(tile)}

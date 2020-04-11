@@ -34,7 +34,7 @@ export const RealizedGeneViewer: React.FC<{
             <GeneCost cost={cost} />
           </div>
 
-          <div className="description">{gd.blueprint.description(gene.getProps(), gene.getProperties())}</div>
+          <div className="description">{gd.blueprint.description(gene.getProps(), gene.getStaticProperties())}</div>
         </div>
       )}
     </Draggable>

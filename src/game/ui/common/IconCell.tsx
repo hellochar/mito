@@ -21,7 +21,7 @@ const IconCell: React.FC<{ cellType: CellType; spritesheetLoaded: boolean } & Re
   ...props
 }) => {
   const { material } = cellType;
-  const { costSugar, costWater, timeToBuild } = cellType.chromosome.getProperties();
+  const { costSugar, costWater, timeToBuild } = cellType.chromosome.computeStaticProperties();
   const costEl = (
     <div className="cost-to-build-info">
       {costWater}

@@ -32,7 +32,7 @@ export class RealizedGene<G extends Gene = Gene> {
     }
   }
 
-  getProperties() {
+  getStaticProperties() {
     const staticBlueprint = this.gene.blueprint.static || {};
     return mapRecord(staticBlueprint, (arr) => (Array.isArray(arr) ? arr[this.level] : arr)) as Partial<CellProperties>;
   }

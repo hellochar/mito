@@ -1,15 +1,10 @@
 import { list, object, serializable } from "serializr";
-import { GeneInventory, GeneLiving } from "std/genes";
 import { Cell } from "../tile";
-import { CellProperties, defaultCellProperties } from "./cellProperties";
+import { defaultCellProperties } from "./cellProperties";
 import { Gene } from "./gene";
 import { RealizedGene } from "./realizedGene";
 
 export default class Chromosome {
-  static basic(): Chromosome {
-    return new Chromosome(GeneLiving.level(2), GeneInventory.level(2));
-  }
-
   @serializable(list(object(RealizedGene)))
   public genes: RealizedGene[];
 
@@ -20,11 +15,11 @@ export default class Chromosome {
   /**
    * Values overwrite each other by default; numbers add together.
    */
-  public getProperties() {
+  public computeStaticProperties() {
     const properties = defaultCellProperties();
     for (const g of this.genes) {
       // TODO beware of clobbering
-      for (const [k, v] of Object.entries(g.getProperties())) {
+      for (const [k, v] of Object.entries(g.getStaticProperties())) {
         if (k === "tempo") {
           properties[k] *= v as number;
         } else if (typeof v === "number") {
@@ -33,14 +28,6 @@ export default class Chromosome {
           properties[k] = v;
         }
       }
-    }
-    return properties;
-  }
-
-  public getDynamicProperties(cell: Cell): CellProperties {
-    let properties = this.getProperties();
-    for (const g of this.genes) {
-      properties = g.getDynamicProperties(cell, properties) ?? properties;
     }
     return properties;
   }
