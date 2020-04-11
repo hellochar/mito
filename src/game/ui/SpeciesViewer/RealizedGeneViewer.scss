@@ -36,6 +36,18 @@
     color: white;
   }
 
+  &.invalid {
+    &::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      box-shadow: 0 0 0 2px inset $red3;
+    }
+  }
+
   &:not(.draggable) {
     box-shadow: none !important;
   }

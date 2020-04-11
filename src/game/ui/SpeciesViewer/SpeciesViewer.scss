@@ -65,8 +65,10 @@
 
   .view-switcher {
     display: flex;
+    position: absolute;
+    top: 20px;
+    left: 10px;
     font-size: 30px;
-    margin: 10px 2px;
 
     svg {
       cursor: pointer;
@@ -123,6 +125,11 @@
   border-radius: 5px;
   margin: 10px;
   padding: 10px;
+
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
 
   .unused-genes-droppable {
     @include droppable();

@@ -15,10 +15,13 @@ export class ToolBar {
   public currentKey: string = "KeyQ";
 
   constructor(public mito: Mito) {
-    for (const index in mito.world.genome.cellTypes) {
-      const cellType = mito.world.genome.cellTypes[index];
-      const digitKey = ToolBar.DIGIT_KEYS[index];
-      this.tools[digitKey] = makeToolToBuildCellType(cellType);
+    const validCellTypes = mito.world.genome.cellTypes.filter((c) => c.getDuplicateGenes().size === 0);
+    for (const index in validCellTypes) {
+      const cellType = validCellTypes[index];
+      if (cellType.getDuplicateGenes().size === 0) {
+        const digitKey = ToolBar.DIGIT_KEYS[index];
+        this.tools[digitKey] = makeToolToBuildCellType(cellType);
+      }
     }
   }
 

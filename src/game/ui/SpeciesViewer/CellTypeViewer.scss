@@ -44,13 +44,6 @@
     }
   }
 
-  .chromosome {
-    @include droppable();
-    flex-grow: 1;
-    margin-top: 5px;
-    border-radius: 5px;
-  }
-
   .gene-slots {
     margin: 5px 0;
     font-size: 16px;
@@ -67,11 +60,59 @@
       // padding: 0.1em 0.5em;
     }
   }
+
+  .invalid-alert-text {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: $white;
+    border-radius: 2px;
+    border: 4px solid $red3;
+    box-shadow: 0 4px 8px rgba(64, 64, 64, 0.9);
+    color: $red3;
+    white-space: nowrap;
+    padding: 10px;
+  }
+
+  .invalid-alert {
+    position: absolute;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    top: -20px;
+    left: calc(50% - 20px);
+    border-radius: 100%;
+    background-color: $red3;
+    box-shadow: 0 4px 8px rgba(64, 64, 64, 0.9);
+
+    svg {
+      font-size: 20px;
+      color: white;
+    }
+  }
+
+  .chromosome {
+    @include droppable();
+    flex-grow: 1;
+    margin-top: 5px;
+    border-radius: 5px;
+    position: relative;
+
+    &.invalid {
+      border: 2px solid $red3 !important;
+
+      .gene:not(.invalid):not(:hover) {
+        opacity: 0.2;
+      }
+    }
+  }
 }
 
-.bp3-popover.gene-slots-popover {
+.bp3-popover {
   max-width: 340px;
-
   .bp3-popover-arrow-fill {
     fill: $white;
   }
@@ -81,12 +122,12 @@
     color: $black;
     // color: $red3;
   }
+}
 
-  .chance-to-cancer {
-    padding: 10px 0;
-    border-radius: 2px;
-    font-weight: bold;
-    font-size: 16px;
-    color: $red3;
-  }
+.chance-to-cancer {
+  padding: 10px 0;
+  border-radius: 2px;
+  font-weight: bold;
+  font-size: 16px;
+  color: $red3;
 }

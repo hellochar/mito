@@ -8,9 +8,10 @@ import "./RealizedGeneViewer.scss";
 export const RealizedGeneViewer: React.FC<{
   gene: RealizedGene;
   index: number;
+  invalid?: boolean;
   draggable?: boolean;
   view?: "small" | "expanded";
-}> = ({ index, gene, draggable = true, view = "expanded" }) => {
+}> = ({ index, gene, draggable = true, view = "expanded", invalid = false }) => {
   const { gene: gd } = gene;
   const cost = gene.getCost();
   return (
@@ -20,7 +21,11 @@ export const RealizedGeneViewer: React.FC<{
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={classNames("gene", view, gd.blueprint.name.replace(" ", ""), { draggable, provider: cost < 0 })}
+          className={classNames("gene", view, gd.blueprint.name.replace(" ", ""), {
+            draggable,
+            invalid,
+            provider: cost < 0,
+          })}
         >
           <div className="gene-header">
             <h4>

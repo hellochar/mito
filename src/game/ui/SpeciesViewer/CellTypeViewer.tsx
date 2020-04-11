@@ -78,6 +78,15 @@ const ChromosomeViewer = ({ cellType }: { cellType: CellType }) => {
     </>
   );
 
+  const duplicateGenes = cellType.getDuplicateGenes();
+  const validationEl =
+    duplicateGenes.size > 0 ? (
+      <div className="invalid-alert-text">Cannot have duplicate genes.</div>
+    ) : // <Tooltip content="Cannot have duplicate genes. Cell will not build." className="invalid-alert">
+    // <MdError />
+    // </Tooltip>
+    null;
+
   // const isDropDisabled = shouldDisableDrag(cellType, viewerState);
 
   return (
@@ -95,10 +104,18 @@ const ChromosomeViewer = ({ cellType }: { cellType: CellType }) => {
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
-            className={classNames("chromosome", { dragging: isDragging })}
+            className={classNames("chromosome", { dragging: isDragging, invalid: duplicateGenes.size > 0 })}
           >
+            {validationEl}
             {genes.map((gene, i) => (
-              <RealizedGeneViewer index={i} key={gene.uuid} gene={gene} draggable={editable} view={view} />
+              <RealizedGeneViewer
+                index={i}
+                key={gene.uuid}
+                gene={gene}
+                draggable={editable}
+                view={view}
+                invalid={duplicateGenes.has(gene)}
+              />
             ))}
             {provided.placeholder}
           </div>

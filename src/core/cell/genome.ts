@@ -1,3 +1,4 @@
+import { groupBy, toPairs } from "lodash";
 import { clamp } from "math";
 import { createSimpleSchema, list, object, serializable } from "serializr";
 import { Vector2 } from "three";
@@ -82,6 +83,16 @@ export class CellType {
 
   isReproducer() {
     return this.chromosome.genes.some((gene) => gene.getStaticProperties().isReproductive);
+  }
+
+  /**
+   * Get all duplicate genes that are on this genome.
+   */
+  getDuplicateGenes() {
+    const genesByType = toPairs(groupBy(this.chromosome.genes, (rg) => rg.gene.blueprint.name));
+    const duplicateGenesPairs = genesByType.filter(([, genes]) => genes.length > 1);
+    const duplicateGenesSet = new Set(duplicateGenesPairs.flatMap(([, genes]) => genes));
+    return duplicateGenesSet;
   }
 
   getChanceToBecomeCancerous() {
