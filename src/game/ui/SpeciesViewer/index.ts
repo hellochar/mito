@@ -1,3 +1,3 @@
-import GenomeViewer from "./GenomeViewer";
+import SpeciesViewer from "./SpeciesViewer";
 
-export default GenomeViewer;
+export default SpeciesViewer;

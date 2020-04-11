@@ -4,98 +4,75 @@ import { RealizedGene } from "core/cell";
 import { lineage, Species } from "core/species";
 import { useAppReducer } from "game/app";
 import MP from "game/ui/common/MP";
-import GenomeViewer from "game/ui/SpeciesViewer";
-import { droppableIdToCell } from "game/ui/SpeciesViewer/droppableId";
-import { populateGeneOptions } from "game/ui/SpeciesViewer/generateRandomGenes";
-import { RealizedGeneViewer } from "game/ui/SpeciesViewer/RealizedGeneViewer";
-import produce from "immer";
 import React, { useCallback, useState } from "react";
-import { DragDropContext, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
-import { FaTrash } from "react-icons/fa";
+import { BeforeCapture, DragDropContext, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
+import { FaArrowsAltV, FaTrash } from "react-icons/fa";
+import { TiThMenu } from "react-icons/ti";
+import GenomeViewer from "./GenomeViewer";
+import { RealizedGeneViewer } from "./RealizedGeneViewer";
 import "./SpeciesViewer.scss";
+import speciesViewerDragEnd, { ID_GENES_UNUSED, ID_GENE_OPTIONS, ID_TRASH } from "./speciesViewerDragEnd";
+import { ViewerContext } from "./viewerState";
 
-const ID_TRASH = "trash";
-const ID_GENE_OPTIONS = "gene-options";
-const ID_GENES_UNUSED = "genes-unused";
-
-export const SpeciesViewer: React.FC<{
+const SpeciesViewer: React.FC<{
   speciesId: string;
-}> = ({ speciesId }) => {
+  editable?: boolean;
+}> = ({ speciesId, editable = false }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [view, setView] = React.useState<"small" | "expanded">("expanded");
   const [state, dispatch] = useAppReducer();
   const species = lineage(state.rootSpecies).find((s) => s.id === speciesId)!;
+
+  const viewerState = React.useMemo(() => ({ species, view, editable, isDragging }), [
+    editable,
+    isDragging,
+    species,
+    view,
+  ]);
+
   const handleDragEnd = useCallback(
     (result: DropResult, provided: ResponderProvided) => {
       console.log("onDragEnd", result, provided);
       setIsDragging(false);
-      if (result.destination) {
-        const sourceIndex = result.source.index;
-        const { index: destinationIndex, droppableId } = result.destination;
-        const newSpecies = produce(species, (draft) => {
-          let gene: RealizedGene | undefined;
-
-          if (result.source.droppableId === ID_GENE_OPTIONS) {
-            gene = draft.geneOptions[sourceIndex];
-
-            // delete gene options
-            draft.freeMutationPoints -= 1;
-            if (draft.freeMutationPoints > 0) {
-              draft.geneOptions = populateGeneOptions(draft);
-            } else {
-              draft.geneOptions = [];
-            }
-          } else if (result.source.droppableId === ID_GENES_UNUSED) {
-            gene = draft.genome.unusedGenes.splice(sourceIndex, 1)[0];
-          } else {
-            // successful drag; move the gene
-            const sourceCell = droppableIdToCell(draft.genome, result.source.droppableId);
-            // delete and get gene from source cell
-            gene = sourceCell?.chromosome.genes.splice(sourceIndex, 1)[0];
-          }
-
-          if (gene != null) {
-            if (droppableId === ID_TRASH) {
-              // thrown in the trash, do nothing.
-            } else if (droppableId === ID_GENES_UNUSED) {
-              draft.genome.unusedGenes.splice(destinationIndex, 0, gene);
-            } else {
-              const destinationCell = droppableIdToCell(draft.genome, droppableId);
-              // put gene in destination cell
-              destinationCell?.chromosome.genes.splice(destinationIndex, 0, gene);
-            }
-          }
-        });
-        dispatch({
-          type: "AAUpdateSpecies",
-          species: newSpecies,
-        });
-      }
+      speciesViewerDragEnd(result, provided, species, dispatch);
     },
     [dispatch, species]
   );
 
-  const [isDragging, setIsDragging] = useState(false);
-
-  const handleBeforeCapture = useCallback(() => {
+  const handleBeforeCapture = useCallback((before: BeforeCapture) => {
     setIsDragging(true);
+  }, []);
+  const handleViewSmall = useCallback(() => {
+    setView("small");
+  }, []);
+  const handleViewExpanded = useCallback(() => {
+    setView("expanded");
   }, []);
 
   return (
     <DragDropContext onDragEnd={handleDragEnd} onBeforeCapture={handleBeforeCapture}>
-      <div className="species-viewer">
-        <div className="header">
+      <ViewerContext.Provider value={viewerState}>
+        <div className="species-viewer">
           <div className="species-name">{species.name}</div>
+          <div className="view-switcher">
+            <TiThMenu onClick={handleViewSmall} className={classNames({ active: view === "small" })} />
+            <FaArrowsAltV onClick={handleViewExpanded} className={classNames({ active: view === "expanded" })} />
+          </div>
+          {species.freeMutationPoints > 0 && editable ? <MutationChooser species={species} /> : null}
+          {isDragging ? <DeleteGeneDroppable /> : null}
+          <GenomeViewer genome={species.genome} />
+          <UnusedGeneArea genes={species.genome.unusedGenes} />
         </div>
-        {species.freeMutationPoints > 0 ? <MutationChooser species={species} /> : null}
-        {isDragging ? <DeleteGeneDroppable /> : null}
-        <GenomeViewer genome={species.genome} editable isDragging={isDragging} />
-        <UnusedGeneArea genes={species.genome.unusedGenes} isDragging={isDragging} />
-      </div>
+      </ViewerContext.Provider>
     </DragDropContext>
   );
 };
 
+export default SpeciesViewer;
+
 const MutationChooser: React.FC<{ species: Species }> = ({ species }) => {
   const { freeMutationPoints, geneOptions } = species;
+  const { view } = React.useContext(ViewerContext);
   return (
     <div className="mutation-chooser">
       <h1>
@@ -106,7 +83,7 @@ const MutationChooser: React.FC<{ species: Species }> = ({ species }) => {
           <div className="gene-options" ref={provided.innerRef} {...provided.droppableProps}>
             {geneOptions.map((gene, index) => (
               // <LookAtMouse zScale={8} displayBlock>
-              <RealizedGeneViewer index={index} key={gene.uuid} gene={gene} draggable />
+              <RealizedGeneViewer index={index} key={gene.uuid} gene={gene} draggable view={view} />
               // </LookAtMouse>
             ))}
             {provided.placeholder}
@@ -135,7 +112,8 @@ const DeleteGeneDroppable = () => {
   );
 };
 
-const UnusedGeneArea = ({ genes, isDragging }: { genes: RealizedGene[]; isDragging: boolean }) => {
+const UnusedGeneArea = ({ genes }: { genes: RealizedGene[] }) => {
+  const { isDragging, view } = React.useContext(ViewerContext);
   return (
     <div className="unused-genes">
       <h1>Unused {genes.length}/5</h1>
@@ -147,7 +125,7 @@ const UnusedGeneArea = ({ genes, isDragging }: { genes: RealizedGene[]; isDraggi
             className={classNames("unused-genes-droppable", { dragging: isDragging })}
           >
             {genes.map((gene, index) => (
-              <RealizedGeneViewer index={index} key={gene.uuid} gene={gene} draggable view="small" />
+              <RealizedGeneViewer index={index} key={gene.uuid} gene={gene} draggable view={view} />
             ))}
             {provided.placeholder}
           </div>

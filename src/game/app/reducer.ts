@@ -57,22 +57,6 @@ export interface AAUpdateSpecies {
   species?: Species;
 }
 
-function findAndSetSpeciesRecursive(parent: Species, newSpecies: Species): boolean {
-  const index = parent.descendants.findIndex((s) => s.id === newSpecies.id);
-  if (index !== -1) {
-    parent.descendants[index] = newSpecies;
-    return true;
-  }
-  let returned = false;
-  for (const child of parent.descendants) {
-    returned = findAndSetSpeciesRecursive(child, newSpecies) || returned;
-    if (returned) {
-      return true;
-    }
-  }
-  return false;
-}
-
 function handleUpdateSpecies(state: AppState, action: AAUpdateSpecies): AppState {
   if (action.species) {
     return {

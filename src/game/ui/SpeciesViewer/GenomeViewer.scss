@@ -17,27 +17,7 @@
   text-align: left;
   background: $gray3;
   padding: 10px;
-
-  .view-switcher {
-    display: flex;
-    font-size: 30px;
-    margin-bottom: 10px;
-
-    svg {
-      cursor: pointer;
-      box-sizing: border-box;
-      padding: 5px;
-
-      &.active {
-        box-shadow: 0 0 2px 2px inset $dark-gray5;
-        border-radius: 2px;
-      }
-    }
-  }
-
-  .cell-types {
-    display: flex;
-  }
+  display: flex;
 
   .add-cell-card {
     padding: 10px;

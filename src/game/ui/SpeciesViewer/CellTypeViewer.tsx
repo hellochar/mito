@@ -13,9 +13,9 @@ import IconCell from "../common/IconCell";
 import { CellInteractionSelector } from "./CellInteractionSelector";
 import "./CellTypeViewer.scss";
 import { cellToDroppableId } from "./droppableId";
-import { GenomeViewerContext } from "./genomeViewerState";
 import MoreOptionsPopover from "./MoreOptionsPopover";
 import { RealizedGeneViewer } from "./RealizedGeneViewer";
+import { ViewerContext } from "./viewerState";
 
 export const CellTypeViewer: React.FC<{
   genome: Genome;
@@ -46,8 +46,19 @@ export const CellTypeViewer: React.FC<{
   );
 };
 
+// function shouldDisableDrag(droppableCell: CellType, viewerState: ViewerState) {
+//   const draggedGene = getDraggedGene(viewerState);
+
+//   if (draggedGene == null) {
+//     return false;
+//   } else {
+//     return droppableCell.chromosome.has(draggedGene.gene);
+//   }
+// }
+
 const ChromosomeViewer = ({ cellType }: { cellType: CellType }) => {
-  const { editable, view, isDragging } = useContext(GenomeViewerContext);
+  const viewerState = useContext(ViewerContext);
+  const { editable, view, isDragging } = viewerState;
   const { chromosome } = cellType;
   const { genes } = chromosome;
   const chanceForCancer = cellType.getChanceToBecomeCancerous();
@@ -66,6 +77,8 @@ const ChromosomeViewer = ({ cellType }: { cellType: CellType }) => {
       {cancerEl}
     </>
   );
+
+  // const isDropDisabled = shouldDisableDrag(cellType, viewerState);
 
   return (
     <>

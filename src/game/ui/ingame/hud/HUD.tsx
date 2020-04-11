@@ -7,7 +7,7 @@ import uuid from "uuid";
 import { getDecidedGameResult } from "../../../gameResult";
 import { PlayerSeedControlScheme } from "../../../input/ControlScheme";
 import Mito from "../../../mito/mito";
-import GenomeViewer from "../../SpeciesViewer";
+import SpeciesViewer from "../../SpeciesViewer";
 import { HotkeyButton } from "../HotkeyButton";
 import { InventoryBar } from "../InventoryBar";
 import { TileDetails } from "../TileDetails";
@@ -76,7 +76,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         <div className={classnames("hud-top-center", { hidden: !showPlayerHUD })}>
           <SeasonsTracker time={this.world.time} season={this.world.season} />
         </div>
-        {this.maybeRenderGenomeViewer()}
+        {this.maybeRenderSpeciesViewer()}
         {this.maybeRenderCollectButton()}
         {this.maybeRenderWinShine()}
         {this.maybeRenderGerminateButton()}
@@ -173,12 +173,12 @@ export class HUD extends React.Component<HUDProps, HUDState> {
     }
   }
 
-  maybeRenderGenomeViewer() {
+  maybeRenderSpeciesViewer() {
     if (this.state.genomeViewerOpen) {
       return (
         <div className="hud-top">
           <DragDropContext onDragEnd={this.handleDragEnd}>
-            <GenomeViewer genome={this.mito.world.genome} />
+            <SpeciesViewer speciesId={this.mito.world.species.id} />
           </DragDropContext>
         </div>
       );

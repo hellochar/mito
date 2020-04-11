@@ -12,7 +12,7 @@ import ReactModal from "react-modal";
 import { HexTile } from "../../core/overworld/hexTile";
 import { EpochUI } from "../ui/overworld/EpochUI";
 import { OverWorldMap } from "../ui/overworld/map/OverWorldMap";
-import { SpeciesViewer } from "../ui/SpeciesViewer/SpeciesViewer";
+import SpeciesViewer from "../ui/SpeciesViewer";
 import "./OverWorldScreen.scss";
 
 export interface OverWorldScreenProps {
@@ -96,7 +96,7 @@ const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
           <button className="close" onClick={closeGenomeViewer}>
             ✖
           </button>
-          <SpeciesViewer speciesId={viewedSpecies} />
+          <SpeciesViewer speciesId={viewedSpecies} editable />
         </>
       ) : null}
     </ReactModal>

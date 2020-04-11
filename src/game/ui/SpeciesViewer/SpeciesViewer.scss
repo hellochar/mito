@@ -9,14 +9,10 @@
   overflow: auto;
   background: $gray3;
 
-  .header {
+  .species-name {
+    font-size: 2em;
     text-align: center;
     margin: 20px 0;
-
-    .species-name {
-      font-size: 2em;
-      display: inline;
-    }
   }
 
   .trash {
@@ -64,6 +60,23 @@
     &.hovered {
       background: $red3;
       // border-radius: 2px;
+    }
+  }
+
+  .view-switcher {
+    display: flex;
+    font-size: 30px;
+    margin: 10px 2px;
+
+    svg {
+      cursor: pointer;
+      box-sizing: border-box;
+      padding: 5px;
+
+      &.active {
+        box-shadow: 0 0 2px 2px inset $dark-gray5;
+        border-radius: 2px;
+      }
     }
   }
 }
