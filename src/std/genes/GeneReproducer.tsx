@@ -41,9 +41,9 @@ export type GeneFruit = typeof GeneFruit;
 export const GeneSeed = Gene.make<ReproducerState>(
   {
     name: "Seed",
-    levelCosts: [6, 8, 10, 12, 14],
+    levelCosts: [10, 12, 14, 16, 18],
     levelProps: {
-      mpEarned: [0.5, 0.75, 1, 1.25, 1.5],
+      mpEarned: [1, 1.25, 1.5, 1.75, 2],
       neededEnergy: 100,
     },
     static: {
@@ -64,13 +64,13 @@ export const GeneSeed = Gene.make<ReproducerState>(
 export type GeneSeed = typeof GeneSeed;
 
 const ENERGY_TRANSFER_PER_SECOND = 0.25;
-// const NEIGHBOR_ENERGY_THRESHOLD = 0.5;
+const NEIGHBOR_ENERGY_THRESHOLD = 0.5;
 
 function reproducerDescription({ mpEarned, neededEnergy }: Record<string, number>) {
   return (
     <>
       <p>Reproducer.</p>
-      <p>Greedily absorbs energy from neighbors to mature.</p>
+      <p>Absorbs energy from neighbors to mature.</p>
       <p>
         Need {neededEnergy} total energy. Each neighboring Cell contributes 1 energy every{" "}
         <b>{nf(1 / ENERGY_TRANSFER_PER_SECOND, 1)}</b> seconds.
@@ -111,7 +111,7 @@ function commitEnergy(dt: number, seed: Cell, state: ReproducerState, neededEner
   for (const [, neighbor] of tileNeighbors) {
     if (neighbor.pos.manhattanDistanceTo(seed.pos) > 1 || !(neighbor instanceof Cell)) continue;
 
-    if (energyLeftToTake > 0) {
+    if (neighbor.energy > NEIGHBOR_ENERGY_THRESHOLD && energyLeftToTake > 0) {
       const energyToTake = clamp(neighbor.energy, 0, ENERGY_TRANSFER_PER_SECOND * dt);
       state.energyRecieved += energyToTake;
       neighbor.energy -= energyToTake;

@@ -1,7 +1,7 @@
 import { HexTile } from "core/overworld/hexTile";
 import { lineage, Species } from "core/species";
 import { GameResult } from "game/gameResult";
-import { populateGeneOptions } from "game/ui/GenomeViewer/generateRandomGenes";
+import { populateGeneOptions } from "game/ui/SpeciesViewer/generateRandomGenes";
 import produce from "immer";
 import React, { useContext } from "react";
 import { AppState, PopulationAttempt } from "./state";

@@ -12,8 +12,8 @@ import ReactModal from "react-modal";
 import { HexTile } from "../../core/overworld/hexTile";
 import { EpochUI } from "../ui/overworld/EpochUI";
 import { OverWorldMap } from "../ui/overworld/map/OverWorldMap";
+import { SpeciesViewer } from "../ui/SpeciesViewer/SpeciesViewer";
 import "./OverWorldScreen.scss";
-import { SpeciesViewer } from "./SpeciesViewer";
 
 export interface OverWorldScreenProps {
   onNextEpoch: () => void;

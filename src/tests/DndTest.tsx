@@ -1,5 +1,5 @@
 import { newBaseSpecies } from "core/species";
-import { populateGeneOptions } from "game/ui/GenomeViewer/generateRandomGenes";
+import { populateGeneOptions } from "game/ui/SpeciesViewer/generateRandomGenes";
 
 const defaultState = newBaseSpecies();
 defaultState.geneOptions = populateGeneOptions(defaultState);

@@ -49,17 +49,8 @@ const cellTypeRoot = new CellType(
   }
 );
 
-const cellTypeSeed = new CellType(
-  "Seed",
-  0,
-  new Chromosome(GeneLiving.level(2), GeneObstacle.level(0), GeneInventory.level(3), GeneSeed.level(2)),
-  {
-    texturePosition: new Vector2(1, 4),
-  },
-  {
-    type: "give",
-    resources: "water and sugar",
-  }
-);
+const cellTypeSeed = new CellType("Seed", 0, new Chromosome(GeneLiving.level(2), GeneSeed.level(0)), {
+  texturePosition: new Vector2(1, 4),
+});
 
 export const tutorialGenome = new Genome([cellTypeTissue, cellTypeLeaf, cellTypeRoot, cellTypeSeed]);
