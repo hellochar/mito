@@ -81,7 +81,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     if (this.target instanceof Cell) {
       // if it takes no time to build, start it off small just for show
-      if (this.target.timeToBuild === 0) {
+      if (this.target.timeToBuild <= 0) {
         this.scale.set(0.01, 0.01, 1);
       }
       this.cellEffectsRenderer = new CellEffectsRenderer(this.target, this.scene, this.mito);
@@ -164,7 +164,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   updateScale() {
     if (this.target instanceof GrowingCell) {
-      const s = map(this.target.percentMatured, 0, 1, 0.1, 1);
+      const s = map(this.target.percentGrown, 0, 1, 0.1, 1);
       lerp2(this.scale, { x: s, y: s }, 0.5);
     } else if (this.target instanceof Cell && this.target.isReproductive) {
       // Do nothing; GeneRenderer sets scale for you
@@ -219,10 +219,10 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   growPulseAnimation(): Animation {
-    const duration = 0.5;
+    const duration = 0.5 * (this.target instanceof Cell ? this.target.tempo : 1);
     const ease = reversed(easeCubic);
     return (t) => {
-      const tNorm = clamp((t / duration) * ((this.target as any).tempo || 1), 0, 1);
+      const tNorm = clamp(t / duration, 0, 1);
       const scale = map(ease(tNorm), 0, 1, 1, 1.3);
       this.scale.setScalar(scale);
       return tNorm >= 1;

@@ -6,11 +6,24 @@ export type CellProperties = {
   isDirectional: boolean;
   isObstacle: boolean;
   inventoryCapacity: number;
+  /**
+   * Sugar cost to build.
+   */
   costSugar: number;
+  /**
+   * Water cost to build.
+   */
   costWater: number;
   diffusionWater: number;
   diffusionSugar: number;
+  /**
+   * Seconds it take to build.
+   */
   timeToBuild: number;
+  /**
+   * How fast Genes and Effects happen on the cell.
+   */
+  tempo: number;
   [k: string]: number | boolean;
 };
 
@@ -24,6 +37,7 @@ export function defaultCellProperties(): CellProperties {
     costWater: 1,
     diffusionWater: 0,
     diffusionSugar: 0,
+    tempo: 1,
     timeToBuild: CELL_BUILD_TIME,
     isDirectional: false,
   };

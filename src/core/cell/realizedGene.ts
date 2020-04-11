@@ -37,6 +37,10 @@ export class RealizedGene<G extends Gene = Gene> {
     return mapRecord(staticBlueprint, (arr) => (Array.isArray(arr) ? arr[this.level] : arr)) as Partial<CellProperties>;
   }
 
+  getDynamicProperties(cell: Cell, properties: CellProperties) {
+    return this.gene.blueprint.dynamic?.(cell, properties);
+  }
+
   public getProps() {
     return mapRecord(this.gene.blueprint.levelProps, (val) => (typeof val === "number" ? val : val[this.level]));
   }

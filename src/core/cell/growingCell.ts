@@ -11,22 +11,22 @@ import { CellType } from "./genome";
 const chromosomeGrowingCell = new Chromosome(GeneLiving.level(2), GeneObstacle.level(0));
 
 export class GrowingCell extends Cell {
-  public percentMatured = 0;
+  public percentGrown = 0;
 
-  public timeToMaturity: number;
+  public timeToGrow: number;
 
   silent?: boolean;
 
   constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Vector2) {
     super(pos, world, cellTypeGrowingCell);
-    this.timeToMaturity = completedCell.type.chromosome.getProperties().timeToBuild;
+    this.timeToGrow = completedCell.timeToBuild;
   }
 
   step(dt: number) {
     super.step(dt);
-    this.percentMatured += (this.tempo * dt) / this.timeToMaturity;
+    this.percentGrown += (this.tempo * dt) / this.timeToGrow;
     this.completedCell.pos.copy(this.pos);
-    if (this.percentMatured >= 1) {
+    if (this.percentGrown >= 1) {
       this.world.maybeRemoveCellAt(this.pos);
       this.completedCell.energy = this.energy;
       for (const effect of this.effects) {

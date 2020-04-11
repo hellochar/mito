@@ -1,7 +1,7 @@
 import { list, object, serializable } from "serializr";
 import { GeneInventory, GeneLiving } from "std/genes";
 import { Cell } from "../tile";
-import { defaultCellProperties } from "./cellProperties";
+import { CellProperties, defaultCellProperties } from "./cellProperties";
 import { Gene } from "./gene";
 import { RealizedGene } from "./realizedGene";
 
@@ -18,19 +18,29 @@ export default class Chromosome {
   }
 
   /**
-   * Booleans overwrite each other; numbers add together.
+   * Values overwrite each other by default; numbers add together.
    */
   public getProperties() {
     const properties = defaultCellProperties();
     for (const g of this.genes) {
       // TODO beware of clobbering
       for (const [k, v] of Object.entries(g.getProperties())) {
-        if (typeof v === "boolean") {
-          properties[k] = v;
+        if (k === "tempo") {
+          properties[k] *= v as number;
         } else if (typeof v === "number") {
           properties[k] = (properties[k] as number) + v;
+        } else if (v != null) {
+          properties[k] = v;
         }
       }
+    }
+    return properties;
+  }
+
+  public getDynamicProperties(cell: Cell): CellProperties {
+    let properties = this.getProperties();
+    for (const g of this.genes) {
+      properties = g.getDynamicProperties(cell, properties) ?? properties;
     }
     return properties;
   }

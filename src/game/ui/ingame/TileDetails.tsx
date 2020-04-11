@@ -200,7 +200,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
 
   private growingCellInfo(tile: Tile) {
     if (tile instanceof GrowingCell) {
-      return <div className="info-growing-cell">{nf(tile.percentMatured * 100, 2)}% mature</div>;
+      return <div className="info-growing-cell">{nf(tile.percentGrown * 100, 2)}% grown.</div>;
     }
   }
 }

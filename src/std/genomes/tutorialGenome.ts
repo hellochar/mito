@@ -1,16 +1,29 @@
-import { GeneScaffolding } from "std/genes/GeneScaffolding";
 import { Color, Vector2 } from "three";
 import Chromosome from "../../core/cell/chromosome";
 import Genome, { CellType } from "../../core/cell/genome";
-import { GeneEnergyTransfer, GeneInventory, GeneLiving, GeneMetabolism, GeneSoilAbsorption } from "../genes";
-import { GeneObstacle } from "../genes/GeneObstacle";
-import { GenePhotosynthesis } from "../genes/GenePhotosynthesis";
-import { GeneSeed } from "../genes/GeneReproducer";
+import {
+  GeneAiryExpansion,
+  GeneEnergyTransfer,
+  GeneInventory,
+  GeneLiving,
+  GeneMetabolism,
+  GeneObstacle,
+  GenePhotosynthesis,
+  GeneScaffolding,
+  GeneSeed,
+  GeneSoilAbsorption,
+} from "../genes";
 
 const cellTypeTissue = new CellType(
   "Tissue",
   0,
-  new Chromosome(GeneLiving.level(2), GeneInventory.level(3), GeneMetabolism.level(2), GeneEnergyTransfer.level(1)),
+  new Chromosome(
+    GeneLiving.level(2),
+    GeneInventory.level(3),
+    GeneMetabolism.level(2),
+    GeneEnergyTransfer.level(1),
+    GeneAiryExpansion.level(0)
+  ),
   {
     texturePosition: new Vector2(1, 1),
     color: new Color(0x30ae25),

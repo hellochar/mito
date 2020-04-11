@@ -17,13 +17,15 @@ export class Gene<S = any, K extends string = any> {
 
   static make<S = any, K extends string = string>(
     blueprint: GeneBlueprint<K>,
-    initialState: GeneInitialStateFn<S, K> | S,
-    step: GeneStepFn<S, K>,
-    shouldStep: GeneShouldStepFn<S, K> = defaultShouldStepFn
+    initialState?: GeneInitialStateFn<S, K> | S,
+    step?: GeneStepFn<S, K>,
+    shouldStep: GeneShouldStepFn<S, K> = step != null ? alwaysStep : neverStep
   ) {
     const initialStateFn =
-      typeof initialState === "function" ? (initialState as GeneInitialStateFn<S, K>) : () => ({ ...initialState });
-    const gene = new Gene(blueprint, initialStateFn, step, shouldStep);
+      typeof initialState === "function"
+        ? (initialState as GeneInitialStateFn<S, K>)
+        : () => ({ ...(initialState ?? ({} as S)) });
+    const gene = new Gene<S, K>(blueprint, initialStateFn, step ?? (stepNoOP as GeneStepFn<S, K>), shouldStep);
     const { name } = gene.blueprint;
     const exists = AllGenesByName.has(name);
     if (exists) {
@@ -45,11 +47,12 @@ export interface GeneBlueprint<K extends string> {
   description: (props: RealizedProps<K>, sProps: Partial<CellProperties>) => React.ReactNode;
   levelCosts: number[];
   levelProps: PropBlueprint<K>;
-  static?: GenePropertiesBlueprint;
+  static?: CellPropertiesBlueprint;
+  dynamic?(cell: Cell, properties: CellProperties): CellProperties;
   requirements?: Gene[];
 }
 
-export type GenePropertiesBlueprint = {
+export type CellPropertiesBlueprint = {
   [K in keyof CellProperties]?: CellProperties[K] | Array<CellProperties[K]>;
 };
 
@@ -60,6 +63,12 @@ export type GeneStepFn<S, K extends string> = (dt: number, instance: GeneInstanc
 
 export type GeneShouldStepFn<S, K extends string> = (dt: number, instance: GeneInstance<Gene<S, K>>) => boolean;
 
-export const defaultShouldStepFn: GeneShouldStepFn<any, any> = (dt) => {
+const stepNoOP: GeneStepFn<any, any> = () => {};
+
+export const alwaysStep: GeneShouldStepFn<any, any> = (dt) => {
+  return true;
+};
+
+export const neverStep: GeneShouldStepFn<any, any> = (dt) => {
   return true;
 };

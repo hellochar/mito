@@ -68,7 +68,11 @@ export class Cell extends Tile implements Interactable {
   }
 
   get timeToBuild() {
-    return this.properties.timeToBuild;
+    return this.dynamicProperties().timeToBuild;
+  }
+
+  get tempo() {
+    return this.properties.tempo * this.temperatureTempo;
   }
 
   get darknessContrib() {
@@ -94,7 +98,10 @@ export class Cell extends Tile implements Interactable {
     this.geneInstances = this.chromosome.newGeneInstances(this);
   }
 
-  protected get tempo() {
+  /**
+   * Temperature speed multiplier.
+   */
+  protected get temperatureTempo() {
     if (this.temperatureFloat <= 0) {
       // 50% slower - 1 / 2;
       return 1 / 2;
@@ -112,6 +119,10 @@ export class Cell extends Tile implements Interactable {
     }
   }
 
+  private dynamicProperties() {
+    return this.chromosome.getDynamicProperties(this);
+  }
+
   /**
    * All cells can pull from each other.
    */
@@ -120,7 +131,7 @@ export class Cell extends Tile implements Interactable {
   }
 
   public getMovespeedMultiplier() {
-    return this.tempo;
+    return this.temperatureTempo;
   }
 
   addEffect(effect: CellEffect) {
