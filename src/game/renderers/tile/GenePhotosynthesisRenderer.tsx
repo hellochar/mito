@@ -1,14 +1,15 @@
+import configure from "common/configure";
 import { blopBuffer, distScalar } from "game/audio";
 import { GenePhotosynthesis } from "std/genes/GenePhotosynthesis";
 import { Audio, Object3D, Vector2, Vector3 } from "three";
 import { GeneRenderer } from "./GeneRenderer";
 import makeLine from "./makeLine";
 export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis> {
-  private audio = (() => {
-    const audio = new Audio(this.mito.audioListener);
-    blopBuffer.then((buffer) => audio.setBuffer(buffer));
-    return audio;
-  })();
+  private audio = this.tileRenderer.worldRenderer.renderResources
+    ? configure(new Audio(this.mito.audioListener), (audio) => {
+        blopBuffer.then((buffer) => audio.setBuffer(buffer));
+      })
+    : undefined;
 
   private lastAudioValueTracker = 0;
 
@@ -20,10 +21,10 @@ export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis>
     if (newAudioValueTracker > this.lastAudioValueTracker) {
       const baseVolume = this.target.state.sugarConverted * this.target.state.sugarConverted;
       const volume = distScalar(this.target.cell, this.mito.world.player) * baseVolume;
-      this.audio.setVolume(volume);
+      this.audio?.setVolume(volume);
       // this.audio.setRefDistance(2);
       // play blop sound
-      this.audio.play();
+      this.audio?.play();
       this.tileRenderer.animation.set(this.tileRenderer.growPulseAnimation());
     }
     this.lastAudioValueTracker = newAudioValueTracker;
@@ -50,9 +51,7 @@ export class GenePhotosynthesisRenderer extends GeneRenderer<GenePhotosynthesis>
 
   destroy() {
     this.scene.remove(this.neighborLines);
-    if (this.audio != null) {
-      this.audio.disconnect();
-    }
+    this.audio?.disconnect();
   }
 }
 

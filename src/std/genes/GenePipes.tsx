@@ -1,7 +1,8 @@
 import { DIRECTIONS, Directions } from "core/directions";
-import { ResourceIcon } from "game/ui/common/ResourceIcon";
 import React from "react";
 import { Gene } from "../../core/cell/gene";
+import GN from "./GN";
+import RI from "./RI";
 
 export const GenePipes = Gene.make(
   {
@@ -14,8 +15,10 @@ export const GenePipes = Gene.make(
       <>
         <b>Hold Shift to configure.</b>
         <p>
-          Continuously equalize <ResourceIcon name="water" />
-          <ResourceIcon name="sugar" /> between nearby cells. Get <b>{diffusionRate * 100}%</b> closer every second.
+          Continuously equalize <RI w /> <RI s /> between connected cells.
+        </p>
+        <p>
+          On average, exchange 1 sugar and 1 water every <GN value={1 / diffusionRate} sigFigs={3} /> seconds.
         </p>
       </>
     ),

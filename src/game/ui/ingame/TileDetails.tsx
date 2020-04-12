@@ -17,6 +17,7 @@ import { GiDustCloud } from "react-icons/gi";
 import {
   GeneFruit,
   GeneLiving,
+  GeneOsmosis,
   GenePhotosynthesis,
   GeneSeed,
   GeneSoilAbsorption,
@@ -103,6 +104,8 @@ export class TileDetails extends React.Component<TileDetailsProps> {
             return <React.Fragment key={index}>{this.photosynthesisInfo(gene.state)}</React.Fragment>;
           } else if (gene.isType(GeneFruit) || gene.isType(GeneSeed)) {
             return <React.Fragment key={index}>{this.reproducerInfo(gene)}</React.Fragment>;
+          } else if (gene.isType(GeneOsmosis)) {
+            return <React.Fragment key={index}>{this.osmosisInfo(gene.state)}</React.Fragment>;
           } else {
             return null;
           }
@@ -118,6 +121,10 @@ export class TileDetails extends React.Component<TileDetailsProps> {
         <div>{state.totalSucked.toFixed(1)} total water absorbed so far.</div>
       </div>
     );
+  }
+
+  private osmosisInfo({ isOsmosising }: any) {
+    return isOsmosising ? <div className="info-osmosis">Osmotic</div> : null;
   }
 
   private photosynthesisInfo(state: PhotosynthesisState) {

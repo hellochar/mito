@@ -113,7 +113,7 @@ const DeleteGeneDroppable = () => {
 };
 
 const UnusedGeneArea = ({ genes }: { genes: RealizedGene[] }) => {
-  const { isDragging, view } = React.useContext(ViewerContext);
+  const { isDragging, view, editable } = React.useContext(ViewerContext);
   return (
     <div className="unused-genes">
       <h1>Unused {genes.length}/5</h1>
@@ -125,7 +125,7 @@ const UnusedGeneArea = ({ genes }: { genes: RealizedGene[] }) => {
             className={classNames("unused-genes-droppable", { dragging: isDragging })}
           >
             {genes.map((gene, index) => (
-              <RealizedGeneViewer index={index} key={gene.uuid} gene={gene} draggable view={view} />
+              <RealizedGeneViewer index={index} key={gene.uuid} gene={gene} draggable={editable} view={view} />
             ))}
             {provided.placeholder}
           </div>

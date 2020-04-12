@@ -12,6 +12,7 @@ export * from "./GeneLiving";
 export * from "./GeneMetabolism";
 export * from "./GeneNetworkEffect";
 export * from "./GeneObstacle";
+export * from "./GeneOsmosis";
 export * from "./GenePhotosynthesis";
 export * from "./GenePipes";
 export * from "./GenePushWater";

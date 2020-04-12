@@ -159,16 +159,16 @@ export class InventoryRenderer extends Renderer<Inventory> {
     const numWaters = this.waters.length;
     const numResources = numWaters + this.sugars.length;
     for (let i = 0; i < numResources; i++) {
-      const r = i < numWaters ? this.waters[i] : this.sugars[i - numWaters];
+      const resource = i < numWaters ? this.waters[i] : this.sugars[i - numWaters];
       let vx = 0,
         vy = 0;
 
       const angle = Ticker.now / 3000 + this.animationOffset;
       vx += Math.cos(angle) * 0.02;
 
-      const goTowardsCenterStrength = 0.1 + r.length() * 0.1;
-      vx += -r.x * goTowardsCenterStrength;
-      vy += -r.y * goTowardsCenterStrength;
+      const goTowardsCenterStrength = 0.1 + resource.length() * 0.1;
+      vx += -resource.x * goTowardsCenterStrength;
+      vy += -resource.y * goTowardsCenterStrength;
 
       // vx += -((r.x * 2) ** 1) * 0.2;
       // vy += -((r.y * 2) ** 3) * 0.1;
@@ -176,8 +176,8 @@ export class InventoryRenderer extends Renderer<Inventory> {
       if (player.pos.equals(this.target.carrier.pos)) {
         const playerX = player.posFloat.x - player.pos.x;
         const playerY = player.posFloat.y - player.pos.y;
-        const offsetX = r.x - playerX;
-        const offsetY = r.y - playerY;
+        const offsetX = resource.x - playerX;
+        const offsetY = resource.y - playerY;
         const mag2 = offsetX * offsetX + offsetY * offsetY;
         const avoidPlayerStrength = Math.max(Math.min(map(mag2, 0, 1, 3, -5), 3), 0);
         const accelerationX = offsetX * avoidPlayerStrength * 0.2;
@@ -186,26 +186,30 @@ export class InventoryRenderer extends Renderer<Inventory> {
         vy += accelerationY;
       }
       for (let j = 0; j < numResources; j++) {
-        const l = j < numWaters ? this.waters[j] : this.sugars[j - numWaters];
-        if (r === l) {
+        const otherResource = j < numWaters ? this.waters[j] : this.sugars[j - numWaters];
+        if (resource === otherResource) {
           break;
         }
-        const dx = r.x - l.x;
-        const dy = r.y - l.y;
+        const dx = resource.x - otherResource.x;
+        const dy = resource.y - otherResource.y;
         const lengthSq = dx * dx + dy * dy;
         if (lengthSq > 0) {
-          const isFractional = j < numWaters ? j === this.waters.length - 1 : j - numWaters === this.sugars.length - 1;
+          // is the other resource a fractional resource
+          // true if j is at the last index of the waters, and there is a fractional water,
+          // or if j is at the last index of the sugars, and there is a fractional sugar
+          const fraction = j < numWaters ? this.target.water % 1 : this.target.sugar % 1;
+          const isAtLastResourceOfType = j === numWaters || j === numResources;
+          const isOtherResourceFractional = isAtLastResourceOfType && fraction !== 0;
           let strength = graphics.particleRepelStrength / lengthSq; // + graphics.particleRepelStrength / Math.sqrt(lengthSq);
-          if (isFractional) {
-            const fraction = j < numWaters ? this.target.water % 1 : this.target.sugar % 1;
+          if (isOtherResourceFractional) {
             strength *= fraction;
           }
           vx += dx * strength;
           vy += dy * strength;
         }
       }
-      r.x += vx;
-      r.y += vy;
+      resource.x += vx;
+      resource.y += vy;
       // r.x *= 0.9;
     }
   }

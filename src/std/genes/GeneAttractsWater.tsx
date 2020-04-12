@@ -1,7 +1,9 @@
+import { randFloat } from "math";
 import React from "react";
 import GN from "std/genes/GN";
-import { Cell } from "../../core/cell/cell";
+import { takeFromOneNeighborCell } from "std/geneUtil";
 import { Gene } from "../../core/cell/gene";
+import RI from "./RI";
 
 export const GeneAttractsWater = Gene.make(
   {
@@ -12,26 +14,16 @@ export const GeneAttractsWater = Gene.make(
     },
     description: ({ secondsPerPull }) => (
       <>
-        Every <GN value={secondsPerPull} sigFigs={2} /> seconds, take 1 Water from any neighboring Cell.
+        Every <GN value={secondsPerPull} sigFigs={2} /> seconds, take 1<RI w /> from any neighboring Cell.
       </>
     ),
   },
-  {
-    cooldown: 0,
-  },
+  (gene, props) => ({
+    cooldown: randFloat(0, props.secondsPerPull),
+  }),
   (dt, { cell, state, props: { secondsPerPull } }) => {
-    const neighbors = cell.world.tileNeighbors(cell.pos);
     if (state.cooldown <= 0) {
-      for (const [, tile] of neighbors) {
-        // pull water from nearby sources
-        if (tile instanceof Cell) {
-          // tile.inventory.give(cell.inventory, randRound(LEAF_WATER_INTAKE_PER_SECOND * dt), 0);
-          const { water } = tile.inventory.give(cell.inventory, 1, 0);
-          if (water > 0) {
-            break;
-          }
-        }
-      }
+      takeFromOneNeighborCell(cell, 1, 0);
       state.cooldown += secondsPerPull;
     }
     state.cooldown -= dt;

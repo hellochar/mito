@@ -1,7 +1,8 @@
 import React from "react";
 import GN from "std/genes/GN";
-import { Cell } from "../../core/cell/cell";
+import { takeFromOneNeighborCell } from "std/geneUtil";
 import { Gene } from "../../core/cell/gene";
+import RI from "./RI";
 
 export const GeneAttractsSugar = Gene.make(
   {
@@ -12,7 +13,7 @@ export const GeneAttractsSugar = Gene.make(
     },
     description: ({ secondsPerPull }) => (
       <>
-        Every <GN value={secondsPerPull} sigFigs={2} /> seconds, take 1 sugar from any neighboring Cell.
+        Every <GN value={secondsPerPull} sigFigs={2} /> seconds, take 1<RI s /> from any neighboring Cell.
       </>
     ),
   },
@@ -20,17 +21,8 @@ export const GeneAttractsSugar = Gene.make(
     cooldown: 0,
   },
   (dt, { cell, state, props: { secondsPerPull } }) => {
-    const neighbors = cell.world.tileNeighbors(cell.pos);
     if (state.cooldown <= 0) {
-      for (const [, tile] of neighbors) {
-        // pull water from nearby sources
-        if (tile instanceof Cell) {
-          const { water } = tile.inventory.give(cell.inventory, 0, 1);
-          if (water > 0) {
-            break;
-          }
-        }
-      }
+      takeFromOneNeighborCell(cell, 0, 1);
       state.cooldown += secondsPerPull;
     }
     state.cooldown -= dt;

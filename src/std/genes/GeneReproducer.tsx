@@ -111,7 +111,7 @@ function commitEnergy(dt: number, seed: Cell, state: ReproducerState, neededEner
   for (const [, neighbor] of tileNeighbors) {
     if (neighbor.pos.manhattanDistanceTo(seed.pos) > 1 || !(neighbor instanceof Cell)) continue;
 
-    if (neighbor.energy > NEIGHBOR_ENERGY_THRESHOLD && energyLeftToTake > 0) {
+    if (neighbor.energy > NEIGHBOR_ENERGY_THRESHOLD && energyLeftToTake > 0 && !neighbor.isReproductive) {
       const energyToTake = clamp(neighbor.energy, 0, ENERGY_TRANSFER_PER_SECOND * dt);
       state.energyRecieved += energyToTake;
       neighbor.energy -= energyToTake;

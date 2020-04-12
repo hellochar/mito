@@ -23,3 +23,55 @@
     transition: filter 2s;
   }
 }
+
+.app-error {
+  background: $black;
+  color: $white;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  h1 {
+    font-size: 40px;
+    text-align: center;
+    position: relative;
+    top: 50vh;
+    transform: translate(0, -50%);
+  }
+
+  .bottom {
+    @include center-children();
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 200px;
+    width: 100%;
+    p {
+      margin-top: 200px;
+      text-align: center;
+    }
+
+    .instructions {
+      @include center-children();
+      margin: 20px auto;
+
+      .copy {
+        flex-grow: 0;
+        width: 250px;
+      }
+
+      .arrow-right {
+        font-size: 40px;
+        margin: 0 50px;
+      }
+    }
+  }
+
+  textarea {
+    position: absolute;
+    top: 100vh;
+  }
+}

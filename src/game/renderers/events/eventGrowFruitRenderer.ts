@@ -19,8 +19,8 @@ export default class EventGrowFruitRenderer extends EventRendererFFPoints<EventG
         const t = s.time / duration;
 
         const { cell, resourcesUsed, a0 } = s.info;
-        const dist = map(easeCubicIn(t), 0, 1, 1.2, 0.5);
-        const angle = map(smoothstep(t), 0, 1, 0, Math.PI * 1.5) + a0;
+        const dist = map(easeCubicIn(t), 0, 1, 1.0, 0.2);
+        const angle = map(smoothstep(t), 0, 1, 0, Math.PI * 0.2) + a0;
         const size = Math.sqrt(polyUpDown(t)) * resourcesUsed;
         s.x = cell.pos.x + Math.cos(angle) * dist;
         s.y = cell.pos.y + Math.sin(angle) * dist;
@@ -43,16 +43,14 @@ export default class EventGrowFruitRenderer extends EventRendererFFPoints<EventG
   handle(event: EventGrowFruit) {
     const { cell } = event;
 
-    for (let i = 0; i < 4; i++) {
-      this.ffPoints.fire({
-        x: cell.pos.x,
-        y: cell.pos.y,
-        z: 1,
-        alpha: 1,
-        info: { ...event, a0: Math.random() * Math.PI * 2 },
-        size: 0,
-        time: 0,
-      });
-    }
+    this.ffPoints.fire({
+      x: cell.pos.x,
+      y: cell.pos.y,
+      z: 1,
+      alpha: 1,
+      info: { ...event, a0: Math.random() * Math.PI * 2 },
+      size: 0,
+      time: 0,
+    });
   }
 }

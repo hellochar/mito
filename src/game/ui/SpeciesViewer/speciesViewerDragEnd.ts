@@ -38,6 +38,7 @@ function speciesViewerDragEnd(
     const { index: destinationIndex, droppableId } = result.destination;
     const newSpecies = produce(species, (draft) => {
       let gene: RealizedGene | undefined;
+      let shouldRepopulateGeneOptions = false;
 
       if (result.source.droppableId === ID_GENE_OPTIONS) {
         gene = draft.geneOptions[sourceIndex];
@@ -45,7 +46,7 @@ function speciesViewerDragEnd(
         // delete gene options
         draft.freeMutationPoints -= 1;
         if (draft.freeMutationPoints > 0) {
-          draft.geneOptions = populateGeneOptions(draft);
+          shouldRepopulateGeneOptions = true;
         } else {
           draft.geneOptions = [];
         }
@@ -68,6 +69,9 @@ function speciesViewerDragEnd(
           // put gene in destination cell
           destinationCell?.chromosome.genes.splice(destinationIndex, 0, gene);
         }
+      }
+      if (shouldRepopulateGeneOptions) {
+        draft.geneOptions = populateGeneOptions(draft);
       }
     });
     dispatch({

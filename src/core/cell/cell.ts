@@ -301,12 +301,12 @@ export class Cell extends Tile implements Interactable {
     if (this.energy < 0.5) {
       this.droopY += droopAmount;
     }
-    for (const cell of [below, belowLeft, belowRight]) {
-      if (cell instanceof Rock || cell instanceof Soil) {
+    for (const tile of [below, belowLeft, belowRight]) {
+      if (tile instanceof Rock || tile instanceof Soil) {
         this.droopY = Math.min(this.droopY, 0);
         return;
-      } else if (cell instanceof Cell) {
-        this.droopY = Math.min(this.droopY, cell.droopY);
+      } else if (tile instanceof Cell) {
+        this.droopY = Math.min(this.droopY, tile.droopY);
         return;
       }
     }

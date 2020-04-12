@@ -111,11 +111,14 @@ export interface AAPopulationAttemptSuccess {
 }
 
 function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAttemptSuccess): AppState {
-  return produce(state, (state: AppState) => {
-    const { attempt = state.activePopulationAttempt!, results } = action;
-    const { targetHex, settlingSpecies } = attempt;
+  return produce(state, (draft: AppState) => {
+    const { attempt = draft.activePopulationAttempt!, results } = action;
+    const { settlingSpecies } = attempt;
 
-    const isFirstPlaythrough = state.overWorld.getStartHex().info.flora == null;
+    // cannot access target hex directly since it points to the old state, must use the draft
+    const targetHex = draft.overWorld.hexAt(attempt.targetHex.i, attempt.targetHex.j)!;
+
+    const isFirstPlaythrough = draft.overWorld.getStartHex().info.flora == null;
     if (isFirstPlaythrough) {
       gtag("event", "Beat first playthrough", { label: "mp earned", value: results.mutationPointsPerEpoch });
     }
@@ -130,18 +133,16 @@ function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAtt
       mutationPointsPerEpoch: results.mutationPointsPerEpoch,
     };
 
-    // set new gene options for this species
-    settlingSpecies.geneOptions = populateGeneOptions(settlingSpecies);
     if (oldSpecies) {
       // update old species mutation point pool cache
       oldSpecies.freeMutationPoints = Math.min(
         oldSpecies.freeMutationPoints,
-        state.overWorld.getMaxGenePool(oldSpecies)
+        draft.overWorld.getMaxGenePool(oldSpecies)
       );
     }
 
     // bump visibility
-    for (const n of state.overWorld.hexNeighbors(targetHex)) {
+    for (const n of draft.overWorld.hexNeighbors(targetHex)) {
       n && (n.info.visible = true);
     }
   });
