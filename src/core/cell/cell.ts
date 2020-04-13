@@ -90,14 +90,16 @@ export class Cell extends Tile implements Interactable {
     super(pos, world);
     this.chromosome = type.chromosome;
     this.staticProperties = this.chromosome.computeStaticProperties();
-    this.properties = this.computeDynamicProperties();
-    const { inventoryCapacity } = this.properties;
+    const { inventoryCapacity } = this.staticProperties;
     this.inventory = new Inventory(inventoryCapacity, this);
     if (args?.direction) {
       this.args.direction!.copy(args?.direction);
     }
     this.temperatureFloat = 48;
     this.nextTemperature = this.temperatureFloat;
+
+    // careful - ordering matters here (e.g. this.inventory shouldn't be null)
+    this.properties = this.computeDynamicProperties();
 
     this.geneInstances = this.chromosome.newGeneInstances(this);
   }
