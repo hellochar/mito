@@ -1,6 +1,7 @@
 export * from "./GeneAiryExpansion";
 export * from "./GeneAttractsSugar";
 export * from "./GeneAttractsWater";
+export * from "./GeneBark";
 export * from "./GeneCannotFreeze";
 export * from "./GeneCostly";
 export * from "./GeneDiffuseSugar";

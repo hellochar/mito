@@ -5,6 +5,8 @@ export class Rock extends Tile {
 
   isObstacle = true;
 
+  isStructuralSupport = true;
+
   inventory = new Inventory(0, this);
 
   get darknessContrib() {

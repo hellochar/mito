@@ -17,6 +17,8 @@ export abstract class Tile implements Steppable {
 
   public temperatureFloat: number;
 
+  public isStructuralSupport = false;
+
   public dtSinceLastStepped = 0;
 
   public abstract inventory: Inventory;

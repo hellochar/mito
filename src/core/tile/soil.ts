@@ -18,6 +18,8 @@ export abstract class Soil extends Tile implements Interactable {
 
   isObstacle = false;
 
+  isStructuralSupport = true;
+
   get depthDiffusionFactor() {
     // make water move slower in deeper soil. Every depth 10, slow down gravity and fallAmount by this much
     return 1 + (this.depth - 1) / 10;

@@ -9,8 +9,6 @@ import { step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
 import { nextTemperature, Temperature } from "../temperature";
 import { DeadCell } from "../tile/deadCell";
-import { Rock } from "../tile/rock";
-import { Soil } from "../tile/soil";
 import { Tile } from "../tile/tile";
 import { World } from "../world/world";
 import { CancerEffect, CellEffect, CellEffectConstructor, FreezeEffect } from "./cellEffect";
@@ -298,11 +296,8 @@ export class Cell extends Tile implements Interactable {
     const aboveRight = tileNeighbors.get(DIRECTIONS.ne)!;
     const droopAmount = CELL_DROOP;
     this.droopY += droopAmount;
-    if (this.energy < 0.5) {
-      this.droopY += droopAmount;
-    }
     for (const tile of [below, belowLeft, belowRight]) {
-      if (tile instanceof Rock || tile instanceof Soil) {
+      if (tile.isStructuralSupport) {
         this.droopY = Math.min(this.droopY, 0);
         return;
       } else if (tile instanceof Cell) {

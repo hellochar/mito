@@ -4,6 +4,8 @@ import { Tile } from "./tile";
 export class DeadCell extends Tile {
   displayName = "Dead Cell";
 
+  isStructuralSupport = true;
+
   isObstacle = false;
 
   inventory = new Inventory(0, this);
