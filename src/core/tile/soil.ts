@@ -33,7 +33,7 @@ export abstract class Soil extends Tile implements Interactable {
     return giver instanceof Soil || giver instanceof Air;
   }
 
-  interact(): Action {
+  interact(): Action | undefined {
     return {
       type: "pickup",
       water: 0.1,

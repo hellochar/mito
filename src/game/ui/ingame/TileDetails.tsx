@@ -79,7 +79,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       const energyEl =
         secondsRemaining != null ? (
           <div className="info-energy">
-            💚&nbsp;{nf(tile.energy * 100, 2)}% Energy ({Math.floor(secondsRemaining)} seconds remaining)
+            💚&nbsp;{nf(tile.energy * 100, 3)}% Energy ({Math.floor(secondsRemaining)} seconds remaining)
           </div>
         ) : null;
       return (

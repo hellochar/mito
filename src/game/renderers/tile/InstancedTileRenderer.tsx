@@ -2,6 +2,7 @@ import { arrayProxy } from "common/arrayProxy";
 import { GeneInstance } from "core/cell/geneInstance";
 import { Temperature } from "core/temperature";
 import { Air, Cell, DeadCell, Fountain, GrowingCell, Rock, Tile } from "core/tile";
+import { BarrenLand } from "core/tile/BarrenLand";
 import { Clay, Sand, Silt } from "core/tile/soil";
 import { easeCubic } from "d3-ease";
 import Mito from "game/mito/mito";
@@ -264,6 +265,10 @@ const materialInfoMapping = (() => {
   materials.set(Clay, {
     texturePosition: new Vector2(1, 0),
     color: siltColor.clone().multiplyScalar(1 / 1.5),
+  });
+  materials.set(BarrenLand, {
+    texturePosition: new Vector2(4, 0),
+    color: new Color("rgb(193, 159, 92)"),
   });
   materials.set(Fountain, {
     color: new Color("white"),

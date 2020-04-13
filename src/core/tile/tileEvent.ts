@@ -20,7 +20,7 @@ export interface EventEvaporation {
 }
 export interface EventCellTransferEnergy {
   type: "cell-transfer-energy";
-  from: Cell;
+  from: Tile;
   to: Cell;
   /**
    * Max is probably 0.5, min 0.01
@@ -29,7 +29,7 @@ export interface EventCellTransferEnergy {
 }
 export interface EventCellEat {
   type: "cell-eat";
-  who: Cell;
+  who: Tile;
 }
 
 export interface EventPhotosynthesis {

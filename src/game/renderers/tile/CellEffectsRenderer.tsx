@@ -99,11 +99,10 @@ class CancerEffectRenderer extends Renderer<CancerEffect> {
     const material = new MeshBasicMaterial({
       map: textureFromSpritesheet(0, 1),
       side: DoubleSide,
-      color: new Color(0xff00ff),
-      transparent: true,
-      opacity: 0.5,
+      color: new Color(0xbe29ec),
     });
     const mesh = new Mesh(g, material);
+    mesh.position.z = 3;
     return () => mesh.clone();
   })();
 
