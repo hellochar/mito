@@ -33,6 +33,8 @@
   font-weight: bold;
   color: white;
   animation: fadeInOut 5s 4s ease both;
+  pointer-events: none;
+  white-space: nowrap;
 
   @keyframes fadeInOut {
     from {
@@ -63,6 +65,7 @@
   left: 50%;
   transform: translateX(-50%);
   transition: transform 2s 2s;
+  pointer-events: none;
 
   &.hidden {
     visibility: hidden;
@@ -76,6 +79,37 @@
   left: 50%;
   transform: translateX(-50%);
   pointer-events: none;
+}
+
+.paused {
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  font-size: 40px;
+  color: white;
+}
+
+.paused-popover {
+  .tile-details {
+    pointer-events: initial;
+  }
+}
+
+.mouse-position {
+  position: absolute;
+  width: 0;
+  height: 0;
+
+  .click-to-inspect {
+    color: white;
+    pointer-events: none;
+    transform: translate(-50%, calc(-100% - 10px));
+    display: inline-block;
+    position: absolute;
+    white-space: nowrap;
+  }
 }
 
 .invalid-action {
@@ -182,6 +216,16 @@
 
   &.hidden {
     transform: translateX(100%);
+  }
+
+  .tile-details {
+    margin-bottom: 20px;
+    pointer-events: none;
+
+    // still allow hovering over the individual tooltip items.
+    .bp3-popover-target {
+      pointer-events: initial;
+    }
   }
 }
 

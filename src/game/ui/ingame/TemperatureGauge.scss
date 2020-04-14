@@ -1,0 +1,39 @@
+@import "../../../variables";
+
+.temperature-gauge {
+  $size: 30px;
+  $marker-thickness: 2.5px;
+  margin: 0 10px;
+  display: inline-block;
+  // overflow: hidden;
+  position: relative;
+
+  .temperature-scale {
+    height: $marker-thickness;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: 0 center;
+    border-left: $size/4 solid transparent;
+    border-radius: $marker-thickness / 2;
+  }
+
+  .temperature-pointer {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: 0 center;
+    height: $marker-thickness;
+    border-left: $size / 4 * 1.25 solid $black;
+  }
+
+  .temperature-label {
+    position: absolute;
+    bottom: 1px;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    font-family: $arial-family;
+    font-size: $size * 0.38;
+    font-weight: bold;
+  }
+}

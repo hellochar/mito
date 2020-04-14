@@ -83,7 +83,7 @@ export const SkySoil: Environment = {
   },
   secondsToEvaporate: 33,
   floorCo2: 1,
-  temperaturePerSeason: [27, 62, 36, 15],
+  temperaturePerSeason: [18, 62, 36, 15],
   fill: "SkySoil",
 };
 

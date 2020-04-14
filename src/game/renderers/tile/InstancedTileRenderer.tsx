@@ -8,11 +8,7 @@ import { easeCubic } from "d3-ease";
 import Mito from "game/mito/mito";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
-import { GeneSoilAbsorption } from "std/genes";
-import { GenePhotosynthesis } from "std/genes/GenePhotosynthesis";
-import { GenePipes } from "std/genes/GenePipes";
-import { GeneFruit, GeneSeed } from "std/genes/GeneReproducer";
-import { GeneTransport } from "std/genes/GeneTransport";
+import { GeneFruit, GenePhotosynthesis, GenePipes, GeneSeed, GeneSoilAbsorption, GeneTransport } from "std/genes";
 import { Color, Scene, Vector2, Vector3 } from "three";
 import { Constructor } from "typings/constructor";
 import { MaterialInfo } from "../../../core/cell/materialInfo";
@@ -35,7 +31,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     [Temperature.Hot]: new Color("orange").lerp(new Color("white"), 0.5),
     [Temperature.Mild]: new Color("white"),
     [Temperature.Cold]: new Color("lightblue").lerp(new Color("white"), 0.5),
-    [Temperature.Freezing]: new Color("lightblue"),
+    [Temperature.Freezing]: new Color("rgb(43, 34, 126)"),
   } as Record<Temperature, Color>;
 
   private static readonly ONE = Object.freeze(new Vector2(1, 1));
@@ -128,6 +124,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     this.instance.commitTexturePosition(this.materialInfo.texturePosition);
     this.instance.commitColor(this.color);
+    this.instance.commitTemperature(this.target.temperatureFloat);
     // const dist = this.target.pos.distanceTo(this.mito.world.player.pos);
     // const timeAlive = this.target.age;
     // const alpha = clamp(easeCubicIn(timeAlive * 3 - dist), 0, 1);
@@ -203,7 +200,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   private currentLerp = 0;
 
-  lerpColorTemperature(color: Color) {
+  private lerpColorTemperature(color: Color) {
     const { temperature } = this.target;
     let tColor = InstancedTileRenderer.TEMPERATURE_COLORS[temperature];
     if (tColor !== this.temperatureColor) {

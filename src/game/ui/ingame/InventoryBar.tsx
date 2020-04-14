@@ -41,7 +41,7 @@ export const InventoryBar: React.FC<{
       </>
     ) : (
       <>
-        {water > 0 ? (
+        {water > 0 || (water === 0 && sugar === 0) ? (
           <span className="text water">
             {sugar > 0 ? <ResourceIcon name="water" /> : null} <DynamicNumber speed={0.5} value={water} />
           </span>

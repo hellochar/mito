@@ -2,7 +2,7 @@ import { Interactable } from "core/interactable";
 import { Inventory } from "core/inventory";
 import { Action } from "core/player/action";
 import { Tile } from "core/tile/tile";
-import { clamp, map, randRound } from "math/index";
+import { clamp, lerp, map, randRound } from "math/index";
 import { Air } from "./air";
 export abstract class Soil extends Tile implements Interactable {
   /**
@@ -86,6 +86,11 @@ export abstract class Soil extends Tile implements Interactable {
         this.inventory.give(lowerNeighbor.inventory, waterToGive, 0);
       }
     }
+  }
+
+  stepTemperature(_dt: number) {
+    const outsideTemperature = this.world.weather.getCurrentTemperature();
+    this.temperatureFloat = lerp(outsideTemperature, 50, clamp(map(this.depth - 1, 0, 8, 0, 1), 0, 1));
   }
 }
 

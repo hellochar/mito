@@ -39,11 +39,12 @@ attribute vec2 uv;
 
 // attributes we provide
 // these are constant per instance
-attribute vec3 instancedTileCenter;
-attribute vec3 instancedTileScale;
-attribute vec3 instancedTileColor;
-attribute vec2 instancedTexturePosition;
-attribute float instancedAlpha;
+attribute vec3 centers;
+attribute vec3 scales;
+attribute vec3 colors;
+attribute vec2 texturePositions;
+attribute float alphas;
+attribute float temperatures;
 
 // things we pass onto fragment
 varying vec3 vTileCenter;
@@ -51,17 +52,19 @@ varying vec3 vColor;
 varying vec2 vUv;
 varying vec2 vTexturePosition;
 varying float vAlpha;
+varying float vTemperature;
 
 // based on https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_instancing_billboards.html
 void main() {
-  vTileCenter = instancedTileCenter;
-  vColor = instancedTileColor;
+  vTileCenter = centers;
+  vColor = colors;
   vUv = uv;
-  vTexturePosition = instancedTexturePosition;
-  vAlpha = instancedAlpha;
+  vTexturePosition = texturePositions;
+  vAlpha = alphas;
+  vTemperature = temperatures;
 
-  vec4 mvPosition = modelViewMatrix * vec4(instancedTileCenter, 1.);
-  mvPosition.xyz += position * instancedTileScale;
+  vec4 mvPosition = modelViewMatrix * vec4(centers, 1.);
+  mvPosition.xyz += position * scales;
   // mvPosition.xyz += position;
   gl_Position = projectionMatrix * mvPosition;
 }
@@ -79,6 +82,7 @@ varying vec3 vColor;
 varying vec2 vUv;
 varying vec2 vTexturePosition;
 varying float vAlpha;
+varying float vTemperature;
 
 const vec2 spritesheetSize = vec2(256., 256.);
 uniform sampler2D spriteSheet;
@@ -89,6 +93,18 @@ float myRound(float x) {
 
 float random(float x) {
   return fract(sin(x * .43));
+}
+
+vec3 applyTemperature(vec3 color) {
+  return color;
+
+  // TODO add heat, maybe rework this to look better
+
+  // vec3 colorFreezing = vec3(12., 54., 89.) / 255.;
+  // vec3 colorCold = vec3(214., 235., 242.) / 255.;
+  // float amtFreezing = (1. - step(0., vTemperature));
+  // float amtCold = (1. - step(32., vTemperature)) * step(0., vTemperature);
+  // return mix(mix(color, colorCold, amtCold * 0.5), colorFreezing, amtFreezing * 0.5);
 }
 
 // uv - [0,1]x[0,1] - our local sprite (16x16) UV coords
@@ -108,7 +124,7 @@ vec2 getCorrectUv(vec2 uv, vec2 texturePosition, vec2 textureSize) {
 void main() {
   vec2 correctUv = getCorrectUv(vUv, vTexturePosition, spritesheetSize);
   vec4 textureColor = texture2D(spriteSheet, correctUv);
-  gl_FragColor = vec4(textureColor.rgb * vColor, textureColor.a * vAlpha);
+  gl_FragColor = vec4(applyTemperature(textureColor.rgb * vColor), textureColor.a * vAlpha);
 }
 `;
 
@@ -144,39 +160,43 @@ function newTileBatcherGeometry() {
 }
 
 class TileBatcher {
-  geometry!: InstancedBufferGeometry;
+  private geometry = newTileBatcherGeometry();
 
-  public maxTiles = this.world.height * this.world.width * 2;
+  public readonly maxTiles = this.world.height * this.world.width * 2;
 
-  centers = new InstancedBufferAttribute(new Float32Array(3 * this.maxTiles), 3, false, 1);
+  centers = this.attr(3);
 
-  colors = new InstancedBufferAttribute(new Float32Array(3 * this.maxTiles), 3, false, 1);
+  colors = this.attr(3);
 
-  scales = new InstancedBufferAttribute(new Float32Array(3 * this.maxTiles), 3, false, 1);
+  scales = this.attr(3);
 
-  texturePositions = new InstancedBufferAttribute(new Float32Array(2 * this.maxTiles), 2, false, 1);
+  texturePositions = this.attr(2);
 
-  alphas = new InstancedBufferAttribute(new Float32Array(this.maxTiles).fill(1), 1, false, 1);
+  alphas = this.attr(1, 1);
+
+  temperatures = this.attr(1, 1);
+
+  private attr(dim: number, fill = 0) {
+    const attr = new InstancedBufferAttribute(new Float32Array(this.maxTiles * dim).fill(fill), dim, false, 1);
+    attr.setUsage(DynamicDrawUsage);
+    return attr;
+  }
 
   public readonly mesh: Mesh;
 
   constructor(public world: World) {
-    this.geometry = newTileBatcherGeometry();
     this.mesh = new Mesh(this.geometry, newTileShaderMaterial());
     this.mesh.name = "TileBatcher Mesh";
     this.mesh.frustumCulled = false;
     this.mesh.matrixAutoUpdate = false;
     this.mesh.updateMatrixWorld();
-    this.centers.setUsage(DynamicDrawUsage);
-    this.colors.setUsage(DynamicDrawUsage);
-    this.scales.setUsage(DynamicDrawUsage);
-    this.texturePositions.setUsage(DynamicDrawUsage);
-    this.alphas.setUsage(DynamicDrawUsage);
-    this.geometry.setAttribute("instancedTileCenter", this.centers);
-    this.geometry.setAttribute("instancedTileColor", this.colors);
-    this.geometry.setAttribute("instancedTileScale", this.scales);
-    this.geometry.setAttribute("instancedTexturePosition", this.texturePositions);
-    this.geometry.setAttribute("instancedAlpha", this.alphas);
+
+    for (const prop in this) {
+      const v = this[prop];
+      if (v instanceof InstancedBufferAttribute) {
+        this.geometry.setAttribute(prop, v);
+      }
+    }
   }
 
   private instances = new Map<string, BatchInstance>();
@@ -201,11 +221,12 @@ class TileBatcher {
   }
 
   endFrame() {
-    this.centers.needsUpdate = true;
-    this.colors.needsUpdate = true;
-    this.scales.needsUpdate = true;
-    this.texturePositions.needsUpdate = true;
-    this.alphas.needsUpdate = true;
+    for (const prop in this) {
+      const v = this[prop];
+      if (v instanceof InstancedBufferAttribute) {
+        v.needsUpdate = true;
+      }
+    }
   }
 }
 
@@ -239,6 +260,13 @@ export class BatchInstance {
       console.error("freed tileBatcher still in use!");
     }
     this.batcher.colors.setXYZ(this.index, color.r, color.g, color.b);
+  }
+
+  commitTemperature(temperature: number) {
+    if (!this.owner) {
+      console.error("freed tileBatcher still in use!");
+    }
+    this.batcher.temperatures.setX(this.index, temperature);
   }
 
   commitCenter(x: number, y: number, z: number) {

@@ -24,11 +24,15 @@ export class Hover extends React.Component<HoverProps> {
     if (isTakingLongAction || isUsingShift) {
       return null;
     }
-    const { highlightedTile } = this.props.mito;
-    const highlightedPosition = this.props.mito.getHighlightPosition();
+    let { highlightedPosition, highlightedTile } = this.props.mito;
+    if (this.props.mito.isPaused) {
+      highlightedTile = this.props.mito.getTileAtScreen();
+    }
     return (
       <>
-        <PointHighlight x={highlightedPosition.x} y={highlightedPosition.y} scene={this.scene} />
+        {highlightedPosition ? (
+          <PointHighlight x={highlightedPosition.x} y={highlightedPosition.y} scene={this.scene} />
+        ) : null}
         {this.maybeRenderBuildBlueprint(highlightedTile)}
         {this.maybeRenderTileHighlight(highlightedTile)}
         {/* {this.maybeRenderPath()} */}
@@ -50,10 +54,10 @@ export class Hover extends React.Component<HoverProps> {
   }
 
   public maybeRenderBuildBlueprint(tile?: Tile) {
-    if (tile == null) {
+    const { mito } = this.props;
+    if (tile == null || mito.isPaused) {
       return;
     }
-    const { mito } = this.props;
     const action = mito.toolBar.leftClick(tile);
     if (action != null && action.type === "build") {
       const isBuildValid = mito.world.player.canBuildAt(tile);

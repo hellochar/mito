@@ -3,8 +3,6 @@
 .tile-details {
   width: 340px;
   margin-left: auto;
-  margin-bottom: 20px;
-  pointer-events: initial;
   // width: 100%;
   // min-height: 120px;
   text-align: left;
@@ -13,9 +11,12 @@
   background: rgba(255, 255, 255, 0.9);
   border-radius: 2px;
   // background: transparentize($gray1, 0.2);
-  pointer-events: none;
   flex-direction: column;
   white-space: nowrap;
+
+  .bp3-popover-target {
+    cursor: pointer;
+  }
 
   .info-tile {
     // border
@@ -44,44 +45,6 @@
   .info-tile-name {
     display: inline-block;
     font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-  }
-
-  .info-tile-temperature {
-    $size: 30px;
-    $marker-thickness: 2.5px;
-    margin: 0 10px;
-    display: inline-block;
-    overflow: hidden;
-    position: relative;
-
-    .temperature-scale {
-      height: $marker-thickness;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform-origin: 0 center;
-      border-left: $size/4 solid transparent;
-      border-radius: $marker-thickness / 2;
-    }
-
-    .temperature-pointer {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform-origin: 0 center;
-      height: $marker-thickness;
-      border-left: $size / 4 * 1.25 solid $black;
-    }
-
-    .temperature-label {
-      position: absolute;
-      bottom: 1px;
-      left: 48%;
-      transform: translateX(-50%);
-      font-family: $arial-family;
-      font-size: $size * 0.28;
-      font-weight: bold;
-    }
   }
 
   .info-air {

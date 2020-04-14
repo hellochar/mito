@@ -61,6 +61,8 @@ export class Mito extends ISketch {
 
   public highlightedTile?: Tile;
 
+  public highlightedPosition?: Vector2;
+
   private _inspectedCell?: Cell;
 
   public get inspectedCell() {
@@ -108,6 +110,10 @@ export class Mito extends ISketch {
   public ovalOutTime: Nodes.FloatNode;
 
   public stats = new Stats();
+
+  public isPaused = false;
+
+  public pausedInspectedTile?: Tile;
 
   constructor(
     renderer: WebGLRenderer,
@@ -285,7 +291,7 @@ export class Mito extends ISketch {
     return toVector2(new Vector3(cursorCameraNorm.x, cursorCameraNorm.y, 0).unproject(this.camera));
   }
 
-  public getTileAtScreen(clientX: number, clientY: number) {
+  public getTileAtScreen(clientX: number = this.mouse.position.x, clientY: number = this.mouse.position.y) {
     const coords = this.getWorldCoordinates(clientX, clientY);
     coords.round();
 
@@ -295,7 +301,7 @@ export class Mito extends ISketch {
     }
   }
 
-  public getHighlightPosition() {
+  private computeHighlightedPosition() {
     if (this.inspectedCell) {
       return this.inspectedCell.pos;
     }
@@ -307,8 +313,8 @@ export class Mito extends ISketch {
     return offset;
   }
 
-  public getHighlightedTile() {
-    const p = this.getHighlightPosition();
+  private computeHighlightedTile() {
+    const p = this.computeHighlightedPosition();
     p.round();
 
     const tile = this.world.tileAt(p.x, p.y);
@@ -375,12 +381,17 @@ export class Mito extends ISketch {
 
     // cap out at 1/3rd of a second in one frame (about 10 frames)
     const dt = Math.min(millisDelta / 1000, 1 / 3);
-    this.worldStep(dt);
-    this.worldRenderer.update();
+    if (!this.isPaused) {
+      this.worldStep(dt);
+      this.worldRenderer.update();
+      this.updateCamera(this.suggestedCamera || this.defaultCameraState());
+      this.pausedInspectedTile = undefined;
 
-    this.highlightedTile = this.getHighlightedTile();
-    if (this.highlightedTile != null) {
-      (this.worldRenderer.getOrCreateRenderer(this.highlightedTile) as InstancedTileRenderer).updateHover();
+      this.highlightedPosition = this.computeHighlightedPosition();
+      this.highlightedTile = this.computeHighlightedTile();
+      if (this.highlightedTile != null) {
+        (this.worldRenderer.getOrCreateRenderer(this.highlightedTile) as InstancedTileRenderer).updateHover();
+      }
     }
 
     if (this.vignetteCapturer.isTimeForNewCapture()) {
@@ -388,8 +399,6 @@ export class Mito extends ISketch {
       devlog("captured", v);
       this.vignettes.push(v);
     }
-
-    this.updateCamera(this.suggestedCamera || this.defaultCameraState());
 
     this.suggestedCamera = undefined;
 

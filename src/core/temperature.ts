@@ -29,5 +29,5 @@ export function nextTemperature(currentTemperature: number, neighborTemperatures
   }
   averageTemperature /= neighborTemperatures.length + 1;
   // TODO maybe use proper dt-scaling lerp
-  return lerp(currentTemperature, averageTemperature, Math.min(6 * dt, 1));
+  return lerp(currentTemperature, averageTemperature, dt / 12);
 }

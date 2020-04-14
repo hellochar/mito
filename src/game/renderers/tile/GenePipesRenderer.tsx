@@ -64,9 +64,7 @@ export class GenePipesRenderer extends GeneRenderer<GenePipes> {
   }
 
   updateArgsEditor() {
-    const shouldShowArgsEditor =
-      Keyboard.keyMap.has("ShiftLeft") &&
-      this.mito.getTileAtScreen(this.mito.mouse.position.x, this.mito.mouse.position.y) === this.target.cell;
+    const shouldShowArgsEditor = Keyboard.keyMap.has("ShiftLeft") && this.mito.getTileAtScreen() === this.target.cell;
     if (shouldShowArgsEditor && this.argsEditor == null) {
       this.argsEditor = this.mito.addWorldDOMElement(this.positionFn, this.renderFn);
     } else if (!shouldShowArgsEditor && this.argsEditor != null) {

@@ -118,7 +118,7 @@ function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAtt
     // cannot access target hex directly since it points to the old state, must use the draft
     const targetHex = draft.overWorld.hexAt(attempt.targetHex.i, attempt.targetHex.j)!;
 
-    const isFirstPlaythrough = draft.overWorld.getStartHex().info.flora == null;
+    const isFirstPlaythrough = attempt.sourceHex == null;
     if (isFirstPlaythrough) {
       gtag("event", "Beat first playthrough", { label: "mp earned", value: results.mutationPointsPerEpoch });
     }

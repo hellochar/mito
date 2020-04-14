@@ -85,7 +85,7 @@ export class PlayerRenderer extends Renderer<Player> {
     const dt = 1 / 60;
     const isUsingShift = Keyboard.keyMap.has("ShiftLeft");
     const isInteract = (this.mito.controls?.wouldLeftClickInteract() ?? false) && !isUsingShift;
-    const highlight = this.mito.getHighlightedTile();
+    const highlight = this.mito.highlightedTile;
     const neuronMeshTarget = isInteract ? highlight!.pos.clone().sub(pos) : ZERO;
     if (this.prevHighlightedTile !== highlight) {
       const id = sticky.play();

@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
+import { Tooltip } from "@blueprintjs/core";
 import { nf } from "common/formatters";
 import {
   CancerEffect,
@@ -13,7 +14,6 @@ import {
 import { Air, Fountain, Soil, Tile } from "core/tile";
 import Keyboard from "game/input/keyboard";
 import * as React from "react";
-import { GiDustCloud } from "react-icons/gi";
 import {
   GeneFruit,
   GeneLiving,
@@ -26,7 +26,7 @@ import {
   SoilAbsorptionState,
 } from "std/genes";
 import { InventoryBar } from "./InventoryBar";
-import TemperatureInfo from "./TemperatureInfo";
+import TemperatureGauge from "./TemperatureGauge";
 import "./TileDetails.scss";
 
 interface TileDetailsProps {
@@ -76,12 +76,14 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       const living = tile.findGene(GeneLiving);
       const secondsPerUpkeep = living?.props.secondsPerUpkeep;
       const secondsRemaining = secondsPerUpkeep != null ? tile.energy * secondsPerUpkeep : null;
-      const energyEl =
-        secondsRemaining != null ? (
+      const secondsRemainingEl = secondsRemaining ? <>({Math.floor(secondsRemaining)} seconds remaining)</> : null;
+      const energyEl = (
+        <Tooltip content={"Energy keeps your cell alive, and is used for cell operations."}>
           <div className="info-energy">
-            💚&nbsp;{nf(tile.energy * 100, 3)}% Energy ({Math.floor(secondsRemaining)} seconds remaining)
+            💚&nbsp;{nf(tile.energy * 100, 3)}% Energy {secondsRemainingEl}
           </div>
-        ) : null;
+        </Tooltip>
+      );
       return (
         <>
           {energyEl}
@@ -150,10 +152,14 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     if (tile instanceof Air) {
       return (
         <div className="info-air">
-          <div>☀️ {nf(tile.sunlight() * 100, 2)}%</div>
-          <div>
-            <GiDustCloud /> {nf((1 - tile.co2()) * 100, 2)}%
-          </div>
+          <Tooltip content={"Sunlight increases photosynthesis rate, and is affected by shadowing."}>
+            <div>☀️ {nf(tile.sunlight() * 100, 2)}%</div>
+          </Tooltip>
+          {/* <Tooltip content="Air quality ">
+            <div>
+              <GiDustCloud /> {nf((1 - tile.co2()) * 100, 2)}%
+            </div>
+          </Tooltip> */}
         </div>
       );
     }
@@ -163,7 +169,13 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     if (tile instanceof Soil) {
       return (
         <div className="info-soil">
-          <div>Depth {tile.depth}.</div>
+          <Tooltip
+            content={
+              "Deeper soil restricts water movement, is harder to see through, and is less affected by the outside temperature."
+            }
+          >
+            <div>Depth {tile.depth}.</div>
+          </Tooltip>
         </div>
       );
     }
@@ -185,15 +197,17 @@ export class TileDetails extends React.Component<TileDetailsProps> {
       <div className="info-tile">
         <div className="info-tile-row">
           <div className="info-tile-name">{tile.displayName}</div>
-          <TemperatureInfo tile={tile} />
-          <InventoryBar
-            water={tile.inventory.water}
-            sugar={tile.inventory.sugar}
-            capacity={tile.inventory.capacity}
-            format="icons"
-            colored={false}
-            capacityBasedWidth
-          />
+          <TemperatureGauge tile={tile} />
+          <Tooltip content="Inventory is how much water and sugar this Tile can hold.">
+            <InventoryBar
+              water={tile.inventory.water}
+              sugar={tile.inventory.sugar}
+              capacity={tile.inventory.capacity}
+              format="icons"
+              colored={false}
+              capacityBasedWidth
+            />
+          </Tooltip>
         </div>
       </div>
     );

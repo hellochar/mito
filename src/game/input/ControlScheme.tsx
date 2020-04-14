@@ -27,6 +27,14 @@ export class PlayerControlScheme implements ControlScheme {
   handleMouseDown = (event: MouseEvent) => {
     // control inspectedCell on click
     if (event.target === this.mito.canvas) {
+      if (this.mito.isPaused) {
+        if (event.button === 0) {
+          this.mito.pausedInspectedTile = this.mito.getTileAtScreen();
+        } else if (event.button === 2) {
+          this.mito.pausedInspectedTile = undefined;
+        }
+        return;
+      }
       if (this.mito.inspectedCell != null) {
         this.mito.inspectedCell = undefined;
         return;
@@ -68,6 +76,10 @@ export class PlayerControlScheme implements ControlScheme {
     const { mito } = this;
     const code = event.code;
     if (!event.repeat) {
+      if (code === "Space") {
+        mito.isPaused = !mito.isPaused;
+        return;
+      }
       const instructionsCapturedEvent = mito.maybeToggleInstructions(code);
       if (instructionsCapturedEvent) {
         return;
@@ -101,7 +113,7 @@ export class PlayerControlScheme implements ControlScheme {
   public leftClick() {
     // no-op for left-clicking
     const { mito } = this;
-    const target = mito.getHighlightedTile();
+    const target = mito.highlightedTile;
     if (target == null) {
       return;
     }
@@ -112,7 +124,7 @@ export class PlayerControlScheme implements ControlScheme {
   }
 
   public rightClick() {
-    const tile = this.mito.getHighlightedTile();
+    const tile = this.mito.highlightedTile;
     if (tile == null) {
       return;
     }
@@ -128,7 +140,7 @@ export class PlayerControlScheme implements ControlScheme {
 
   public leftClickHold() {
     const { mito } = this;
-    const target = mito.getHighlightedTile();
+    const target = mito.highlightedTile;
     if (target == null) {
       return;
     }
@@ -140,7 +152,7 @@ export class PlayerControlScheme implements ControlScheme {
 
   public wouldLeftClickInteract() {
     const { mito } = this;
-    const tile = mito.getHighlightedTile();
+    const tile = mito.highlightedTile;
     // return tile != null && mito.actionBar.leftClick(tile)?.type === "interact";
     const type = tile && mito.toolBar.leftClick(tile)?.type;
     return type === "pickup" || type === "drop";
@@ -190,9 +202,11 @@ export class PlayerSeedControlScheme implements ControlScheme {
   }
 
   public handleLeftClick(): void {
-    const clickedPos = this.mito.getHighlightPosition().round();
-    if (this.mito.world.playerSeed!.pos.distanceTo(clickedPos) < 0.5) {
-      this.popOut();
+    if (this.mito.highlightedPosition) {
+      const clickedPos = this.mito.highlightedPosition.round();
+      if (this.mito.world.playerSeed!.pos.distanceTo(clickedPos) < 0.5) {
+        this.popOut();
+      }
     }
   }
 
