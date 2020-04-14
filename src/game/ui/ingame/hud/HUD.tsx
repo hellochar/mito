@@ -73,6 +73,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
     const showPlayerHUD = this.world.playerSeed == null;
     return (
       <>
+        <div className="hex-title">{this.mito.attempt.targetHex.displayName}</div>
         <div className={classnames("hud-top-center", { hidden: !showPlayerHUD })}>
           <SeasonsTracker time={this.world.time} season={this.world.season} />
         </div>

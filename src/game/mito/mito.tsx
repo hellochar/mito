@@ -112,7 +112,7 @@ export class Mito extends ISketch {
   constructor(
     renderer: WebGLRenderer,
     context: SketchAudioContext,
-    attempt: PopulationAttempt,
+    public attempt: PopulationAttempt,
     public onWinLoss: (result: GameResult) => void
   ) {
     super(renderer, context);

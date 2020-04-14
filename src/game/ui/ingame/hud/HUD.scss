@@ -24,6 +24,39 @@
   overflow: auto;
 }
 
+.hex-title {
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  transform: translate(-50%);
+  font-size: 80px;
+  font-weight: bold;
+  color: white;
+  animation: fadeInOut 5s 4s ease both;
+
+  @keyframes fadeInOut {
+    from {
+      opacity: 0;
+      filter: blur(10px);
+    }
+
+    20% {
+      opacity: 1;
+      filter: blur(0);
+    }
+
+    80% {
+      opacity: 1;
+      filter: blur(0);
+    }
+
+    to {
+      opacity: 0%;
+      filter: blur(10px);
+    }
+  }
+}
+
 .hud-top-center {
   position: absolute;
   top: 0;
