@@ -131,17 +131,32 @@ vec2 rotateAround ( in vec2 v, in vec2 center, in float angle ) {
   return r;
 }
 
+float zeroToOne(float x) {
+    return step(0., x) * (1. - step(1., x));
+}
+
+float inSquare(vec2 v) {
+  float xMult = zeroToOne(v.x);
+  float yMult = zeroToOne(v.y);
+  return xMult * yMult;
+}
+
 void main() {
   gl_FragColor = vec4( color, 1. );
+  float alpha = vAlpha;
 
   #ifdef USE_MAP
     vec2 uv = gl_PointCoord;
 
     // flip vRotation to account for flipped y viewport
-    uv = clamp(rotateAround(uv, vec2(0.5), -vRotation), vec2(0.), vec2(1.));
+    uv = rotateAround(uv, vec2(0.5), -vRotation); //, vec2(0.), vec2(1.));
+
+    // if we're out of the UV clamped edge, set alpha to 0
+    alpha *= inSquare(uv);
+
     vec4 mapTexel = texture2D( map, uv );
     gl_FragColor *= mapTexelToLinear( mapTexel );
   #endif
-  gl_FragColor.a *= opacity * vAlpha;
+  gl_FragColor.a *= opacity * alpha;
 }
 `;

@@ -33,7 +33,7 @@ export const GeneMetabolism = Gene.make(
 );
 export type GeneMetabolism = typeof GeneMetabolism;
 
-const EAT_ENERGY_PER_SECOND = 0.25;
+const EAT_ENERGY_PER_SECOND = 0.333;
 
 function getMaxEnergyToEat(cell: Cell, dt: number) {
   const hunger = 1 - cell.energy;

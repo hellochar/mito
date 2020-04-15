@@ -82,3 +82,15 @@ export type Action =
   | ActionPickup
   | ActionThaw
   | ActionRemoveCancer;
+
+/**
+ * A continuous action should be re-set every frame while holding the mouse button.
+ */
+export function isContinuous(action: Action) {
+  if (action.type === "pickup" || action.type === "drop") {
+    return !!action.continuous;
+  } else if (action.type === "remove-cancer" || action.type === "thaw") {
+    return true;
+  }
+  return false;
+}

@@ -11,5 +11,5 @@ export class BarrenLand extends Tile {
     return dt > 0.2;
   }
 
-  public inventory = new Inventory(0, this);
+  public inventory = new Inventory(1, this);
 }

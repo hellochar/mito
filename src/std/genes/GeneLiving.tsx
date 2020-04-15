@@ -6,7 +6,7 @@ export const GeneLiving = Gene.make(
     name: "Living",
     levelCosts: [-6, -8, -10, -12, -15],
     levelProps: {
-      secondsPerUpkeep: [720, 600, 480, 240, 120],
+      secondsPerUpkeep: [540, 450, 360, 240, 120],
     },
     description: ({ secondsPerUpkeep }) => (
       <>

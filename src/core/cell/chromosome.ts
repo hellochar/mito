@@ -29,6 +29,7 @@ export default class Chromosome {
         }
       }
     }
+    properties.timeToBuild = Math.max(properties.timeToBuild, 0);
     return properties;
   }
 

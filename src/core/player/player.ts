@@ -280,7 +280,7 @@ export class Player implements Steppable {
     const matureCell = new Cell(action.position, this.world, action.cellType, action.args);
 
     let cell: Cell;
-    if (action.cellType.chromosome.computeStaticProperties().timeToBuild) {
+    if (action.cellType.chromosome.computeStaticProperties().timeToBuild > 0) {
       // special - drop a sugar when you grow, to cover for the sugar
       // this.attemptDrop(
       //   {

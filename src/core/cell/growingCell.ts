@@ -19,7 +19,7 @@ export class GrowingCell extends Cell {
 
   constructor(pos: Vector2, world: World, public completedCell: Cell, public start: Vector2) {
     super(pos, world, cellTypeGrowingCell);
-    this.timeToGrow = completedCell.timeToBuild;
+    this.timeToGrow = Math.max(completedCell.timeToBuild, 0.00001);
   }
 
   step(dt: number) {

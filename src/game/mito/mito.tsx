@@ -1,7 +1,7 @@
 import devlog from "common/devlog";
 import { sleep } from "common/promise";
 import { CancerEffect, FreezeEffect } from "core/cell";
-import { Action } from "core/player/action";
+import { Action, isContinuous } from "core/player/action";
 import { easeSinIn } from "d3-ease";
 import { PopulationAttempt } from "game/app";
 import { Mouse } from "game/input/mouse";
@@ -175,15 +175,25 @@ export class Mito extends ISketch {
     },
   };
 
-  private handlePlayerActionFail = (action: Action, reason?: string) => {
-    if (reason != null) {
-      this.showInvalidAction({ message: reason });
-      return;
+  private handlePlayerActionFail = (action: Action, message?: string) => {
+    if (message == null) {
+      if (action.type === "pickup" && this.world.player.inventory.isMaxed()) {
+        message = "Inventory full!";
+      }
+      // else if (action.type === "drop" && action.target && action.target.inventory.isMaxed()) {
+      //   message = `${action.target.displayName} inventory full!`;
+      // }
     }
-    if (action.type === "pickup" && this.world.player.inventory.isMaxed()) {
-      this.showInvalidAction({ message: "Inventory full!" });
-    } else if (action.type === "drop" && action.target && action.target.inventory.isMaxed()) {
-      this.showInvalidAction({ message: `${action.target.displayName} inventory full!` });
+
+    if (message != null) {
+      if (isContinuous(action)) {
+        // only show an error if it's not the exact same error that already exists
+        if (this.invalidAction?.message !== message) {
+          this.showInvalidAction({ message });
+        }
+      } else {
+        this.showInvalidAction({ message });
+      }
     }
   };
 

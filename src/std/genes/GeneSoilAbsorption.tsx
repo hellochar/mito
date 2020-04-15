@@ -17,11 +17,11 @@ export const GeneSoilAbsorption = Gene.make<SoilAbsorptionState>(
     name: "Soil Absorption",
     levelCosts: [4, 6, 8, 10, 12],
     levelProps: {
-      secondsPerAbsorb: [20, 10, 5, 3, 2],
+      secondsPerAbsorb: [60, 30, 15, 9, 6],
     },
     description: ({ secondsPerAbsorb }) => (
       <>
-        Absorb 1<ResourceIcon name="water" /> every <GN value={secondsPerAbsorb} /> seconds from neighboring Soil.
+        Absorb 1<ResourceIcon name="water" /> every <GN value={secondsPerAbsorb} /> seconds from every neighboring Soil.
       </>
     ),
   },
@@ -39,18 +39,12 @@ export type GeneSoilAbsorption = typeof GeneSoilAbsorption;
 
 function absorbWater(activeNeighbors: Vector2[], cell: Cell) {
   const neighbors = cell.world.tileNeighbors(cell.pos);
-  let doneOnce = false;
   let totalSucked = 0;
   for (const [dir, tile] of neighbors) {
     if (tile instanceof Soil) {
       activeNeighbors.push(dir);
-      if (!doneOnce) {
-        const { water } = tile.inventory.give(cell.inventory, 1, 0);
-        totalSucked += water;
-        if (water > 0) {
-          doneOnce = true;
-        }
-      }
+      const { water } = tile.inventory.give(cell.inventory, 1, 0);
+      totalSucked += water;
     }
   }
   return totalSucked;

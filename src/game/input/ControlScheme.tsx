@@ -1,5 +1,5 @@
 import { Cell } from "core/cell";
-import { Action, ActionMove } from "core/player/action";
+import { ActionMove, isContinuous } from "core/player/action";
 import { Vector2 } from "three";
 import { Mito } from "../mito/mito";
 import Keyboard from "./keyboard";
@@ -118,7 +118,7 @@ export class PlayerControlScheme implements ControlScheme {
       return;
     }
     const action = mito.toolBar.leftClick(target);
-    if (action != null && !this.isActionContinuous(action)) {
+    if (action != null && !isContinuous(action)) {
       mito.world.player.setAction(action);
     }
   }
@@ -145,7 +145,7 @@ export class PlayerControlScheme implements ControlScheme {
       return;
     }
     const action = mito.toolBar.leftClick(target);
-    if (this.isActionContinuous(action)) {
+    if (action != null && isContinuous(action)) {
       mito.world.player.setAction(action);
     }
   }
@@ -156,20 +156,6 @@ export class PlayerControlScheme implements ControlScheme {
     // return tile != null && mito.actionBar.leftClick(tile)?.type === "interact";
     const type = tile && mito.toolBar.leftClick(tile)?.type;
     return type === "pickup" || type === "drop";
-  }
-
-  /**
-   * A continuous action should be refreshed while holding the mouse button.
-   */
-  isActionContinuous(action?: Action): action is Action {
-    if (action != null) {
-      if (action.type === "pickup" || action.type === "drop") {
-        return !!action.continuous;
-      } else if (action.type === "remove-cancer" || action.type === "thaw") {
-        return true;
-      }
-    }
-    return false;
   }
 }
 
