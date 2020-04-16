@@ -193,6 +193,19 @@ export interface AAGameResultDone {
 }
 
 function handleGameResultDone(state: AppState, action: AAGameResultDone): AppState {
+  const { activeGameResult } = state;
+  const activePopulationAttempt = state.activePopulationAttempt!;
+  // lost the tutorial level
+  if (activeGameResult?.status === "lost" && activePopulationAttempt.sourceHex == null) {
+    return {
+      ...state,
+      activeGameResult: undefined,
+      // shallow clone; re-creates the level
+      activePopulationAttempt: {
+        ...activePopulationAttempt,
+      },
+    };
+  }
   return {
     ...state,
     activePopulationAttempt: undefined,

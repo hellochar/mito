@@ -1,6 +1,7 @@
 import { Slider } from "@blueprintjs/core";
 import fruitSrc from "assets/images/fruit.png";
 import classNames from "classnames";
+import { PopulationAttempt } from "game/app";
 import MP from "game/ui/common/MP";
 import { map } from "math";
 import * as React from "react";
@@ -17,6 +18,7 @@ import "./GameResultsScreen.scss";
 interface GameResultsScreenProps {
   onDone: () => void;
   results: GameResult;
+  attempt?: PopulationAttempt;
 }
 
 function FruitResult({ fruit, mpEarned }: { fruit: GeneInstance<GeneFruit>; mpEarned: number }) {
@@ -142,17 +144,16 @@ function GameLostScreen({ results }: GameResultsScreenProps) {
   );
 }
 
-const GameResultsScreen: React.FC<GameResultsScreenProps> = React.memo(({ onDone, results }) => {
+const GameResultsScreen: React.FC<GameResultsScreenProps> = React.memo((props) => {
+  const { onDone, results, attempt } = props;
+  const primaryButtonText =
+    attempt != null && attempt.sourceHex == null && results.status === "lost" ? "Retry" : "Continue";
   return (
     <div className={`game-results-screen ${results.status}`}>
       <div className="game-results-content">
-        {results.status === "won" ? (
-          <GameWonScreen onDone={onDone} results={results} />
-        ) : (
-          <GameLostScreen onDone={onDone} results={results} />
-        )}
+        {results.status === "won" ? <GameWonScreen {...props} /> : <GameLostScreen {...props} />}
         <button className="done-button" onClick={onDone}>
-          Continue →
+          {primaryButtonText} →
         </button>
       </div>
     </div>

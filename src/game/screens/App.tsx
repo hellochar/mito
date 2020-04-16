@@ -105,7 +105,11 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
         </AppScreen>
         <AppScreen show={state.activeGameResult != null}>
           {state.activeGameResult ? (
-            <GameResultsScreen results={state.activeGameResult} onDone={this.handleResultsDone} />
+            <GameResultsScreen
+              attempt={state.activePopulationAttempt}
+              results={state.activeGameResult}
+              onDone={this.handleResultsDone}
+            />
           ) : (
             // HACK AppScreen *needs* one element; I think there's one single tick where
             // AppScreen is still rendering its children even when it shouldn't.
