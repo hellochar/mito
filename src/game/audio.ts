@@ -144,7 +144,7 @@ export function hookUpAudio(ctx: SketchAudioContext) {
   }
   mito = makeUnitFromAudioAsset(ctx, mitoBaseSrc);
   mito.audio.oncanplaythrough = oneMoreLoaded;
-  mito.gain.gain.value = 0.5;
+  mito.gain.gain.value = 0.25;
 
   strings = makeUnitFromAudioAsset(ctx, mitoStringsSrc);
   strings.audio.oncanplaythrough = oneMoreLoaded;

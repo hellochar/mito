@@ -1,4 +1,5 @@
 import { Environment } from "core/environment";
+import { EventEmitter } from "events";
 import { gridRange } from "math/arrays";
 import { TileGenerators } from "std/tileGenerators";
 import { Vector2 } from "three";
@@ -38,6 +39,8 @@ export class World {
   public readonly player: Player;
 
   public playerSeed?: PlayerSeed;
+
+  private events = new EventEmitter();
 
   private readonly gridEnvironment: Tile[][];
 
@@ -107,6 +110,16 @@ export class World {
       tileCell && tileCell.step(0);
     });
     this.weather.step(0);
+  }
+
+  public on(event: "step", cb: (action: StepStats) => void): void;
+
+  public on(event: string, cb: (...args: any[]) => void) {
+    this.events.on(event, cb);
+  }
+
+  public off(event: string, cb: (...args: any[]) => void) {
+    this.events.off(event, cb);
   }
 
   public removePlayerSeed() {
@@ -341,6 +354,7 @@ export class World {
     this.frame++;
     this.time += dt;
     this.fillCachedEntities();
+    this.events.emit("step", this.stepStats);
     return this.stepStats;
     // this.checkResources();
   }

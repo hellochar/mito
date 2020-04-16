@@ -76,6 +76,10 @@ export class Mito extends ISketch {
     this._inspectedCell = c;
   }
 
+  get isFirstPlaythrough() {
+    return this.attempt.sourceHex == null;
+  }
+
   public readonly worldRenderer: WorldRenderer;
 
   private vignetteCapturer = new VignetteCapturer(this);

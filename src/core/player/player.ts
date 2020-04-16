@@ -128,6 +128,10 @@ export class Player implements Steppable {
     this.events.on(event, cb);
   }
 
+  public off(event: string, cb: (...args: any[]) => void) {
+    this.events.off(event, cb);
+  }
+
   public step(dt: number) {
     // this.maybeMoveWithTransports(dt);
     if (!this.isWalkable(this.currentTile())) {

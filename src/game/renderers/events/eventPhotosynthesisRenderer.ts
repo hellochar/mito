@@ -18,7 +18,7 @@ export default class EventPhotosynthesisRenderer extends EventRendererFFPoints<E
         const t = s.time / duration;
 
         s.alpha = polyUpDown(t) ** (1 / 4);
-        s.size = ((1 - t) ** 1 / 2) * 2 * s.info.amount;
+        s.size = ((1 - t) ** 1 / 2) * 2 * s.info.sugarMade;
         s.r = t * s.time;
       },
       {

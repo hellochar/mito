@@ -35,7 +35,7 @@ export interface EventCellEat {
 export interface EventPhotosynthesis {
   type: "photosynthesis";
   cell: Cell;
-  amount: number;
+  sugarMade: number;
 }
 
 export interface EventThawIce {

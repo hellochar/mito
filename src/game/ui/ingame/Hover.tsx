@@ -3,6 +3,7 @@ import Keyboard from "game/input/keyboard";
 import { WorldDOMComponent } from "game/mito/WorldDOMElement";
 import TileHighlight from "game/tutorial/tileHighlight";
 import * as React from "react";
+import { findBuildCandidateTiles } from "std/worldUtils";
 import { Tile } from "../../../core/tile";
 import Mito from "../../mito/mito";
 import BuildBlueprint from "../../tutorial/buildBlueprint";
@@ -35,6 +36,7 @@ export class Hover extends React.Component<HoverProps> {
         ) : null}
         {this.maybeRenderBuildBlueprint(highlightedTile)}
         {this.maybeRenderTileHighlight(highlightedTile)}
+        {this.maybeRenderTutorialBuildHighlights(highlightedTile)}
         {/* {this.maybeRenderPath()} */}
       </>
     );
@@ -71,6 +73,28 @@ export class Hover extends React.Component<HoverProps> {
           <BuildBlueprint x={tile.pos.x} y={tile.pos.y} cellType={action.cellType} scene={this.props.mito.scene} />
         </>
       );
+    }
+  }
+
+  maybeRenderTutorialBuildHighlights(tile?: Tile) {
+    const { mito } = this.props;
+    if (tile == null || mito.isPaused || !mito.isFirstPlaythrough) {
+      return;
+    }
+    const action = mito.toolBar.leftClick(tile);
+    if (action != null && action.type === "build") {
+      const buildCandidateHighlights: JSX.Element[] = [];
+      for (const candidate of findBuildCandidateTiles(this.props.mito.world)) {
+        buildCandidateHighlights.push(
+          <TileHighlight
+            key={candidate.pos.x + "," + candidate.pos.y}
+            x={candidate.pos.x}
+            y={candidate.pos.y}
+            scene={this.scene}
+          />
+        );
+      }
+      return buildCandidateHighlights;
     }
   }
 }

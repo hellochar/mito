@@ -1,5 +1,5 @@
 import { Entity } from "../entity";
-import { TileEvent, TileEventType } from "../tile/tileEvent";
+import { EventPhotosynthesis, TileEvent, TileEventType } from "../tile/tileEvent";
 export class StepStats {
   public events: TileEventLog = {
     "cell-eat": [],
@@ -21,4 +21,6 @@ export class StepStats {
 
 export type TileEventLog = {
   [K in TileEventType]: TileEvent[];
+} & {
+  photosynthesis: EventPhotosynthesis[];
 };

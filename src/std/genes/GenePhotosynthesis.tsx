@@ -122,14 +122,14 @@ function maybePhotosynthesize(
   state.averageChancePerSecond += chancePerSecond;
 
   if (Math.random() < chancePerSecond * dt && waterToConvert > 0) {
-    const sugarConverted = waterToConvert * conversionRate;
-    cell.inventory.add(-waterToConvert, sugarConverted);
-    state.sugarConverted += sugarConverted;
-    state.totalSugarProduced += sugarConverted;
+    const sugarMade = waterToConvert * conversionRate;
+    cell.inventory.add(-waterToConvert, sugarMade);
+    state.sugarConverted += sugarMade;
+    state.totalSugarProduced += sugarMade;
     cell.world.logEvent({
       type: "photosynthesis",
       cell,
-      amount: sugarConverted,
+      sugarMade,
     });
   }
 }

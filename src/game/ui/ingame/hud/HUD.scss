@@ -271,3 +271,110 @@
   z-index: 1;
   box-shadow: inset 0 0 20px 5px transparentize($color-mutation, 0.1);
 }
+
+.hud-left {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  // 4s after seed germinates, show tutorial UI
+  animation: 0.2s ease-in 4s both comeIn;
+
+  @keyframes comeIn {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .instruction {
+    margin: 10px 0;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    position: relative;
+    white-space: nowrap;
+    height: 32px;
+    width: 265px;
+    padding: 0 5px;
+
+    .background-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      transition: width 0.2s;
+      background-color: rgba(255, 255, 255, 0.5);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .mito-hud-button {
+      display: inline;
+      margin: 0 4px;
+
+      .mito-hud-button-hotkey {
+        color: $black;
+      }
+    }
+
+    .next {
+      display: inline;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    &.active,
+    &:hover {
+      font-size: 2em;
+    }
+    &:not(.active):not(:hover) {
+      opacity: 0.2;
+    }
+
+    &.first {
+      // appears 4s, lasts 5s, meaning this should only animate at 9s
+      animation: 0.2s ease 9s both fromCenterOfScreen;
+      @keyframes fromCenterOfScreen {
+        from {
+          transform: translate(50vw, 15vh) translate(-50%, -50%);
+        }
+
+        to {
+          transform: translate(0);
+        }
+      }
+    }
+
+    &:not(.first) {
+      // coordinate to show up after first instruction goes to left.
+      animation: 0.2s ease 9s backwards fadeFromTransparent;
+      @keyframes fadeFromTransparent {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 0.2;
+        }
+      }
+    }
+
+    &.done {
+      opacity: 0.2;
+      // skip fadeFromTransparent animation
+      animation: none;
+    }
+
+    // @for $i from 2 through 10 {
+    //   &:nth-child(#{$i}) {
+    //     opacity: #{50% - $i * 10%};
+    //   }
+    // }
+  }
+}

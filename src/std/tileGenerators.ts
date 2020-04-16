@@ -54,14 +54,14 @@ const Level0: TileGenerator = (pos, world) => {
       const heightScalar = Math.pow(map(y - world.height / 2, 0, world.height / 2, 0.5, 1), 2);
       const simplexScalar = 0.2;
       // the + at the end makes a *huge* difference
-      const simplexValue = noiseWater.simplex2(x * simplexScalar, y * simplexScalar) + 0.2;
+      const simplexValue = noiseWater.simplex2(x * simplexScalar, y * simplexScalar) + 0.15;
 
-      const isFountain = simplexValue > 0.9 && y - soilLevel > 8;
-      if (isFountain) {
-        return new Fountain(pos, world, 3, map(y, world.height / 2, world.height, 100, 300) + randInt(-10, 10));
+      const isEarlyFountain = simplexValue > 0.9 && y - soilLevel > 8 && y - soilLevel < 13;
+      if (isEarlyFountain) {
+        return new Fountain(pos, world, 3, 75 + randInt(-10, 10));
       }
 
-      if (heightScalar * simplexValue > 1) {
+      if (heightScalar * simplexValue > 1 && y - soilLevel > 8) {
         const emitWaterScalar = Math.min(heightScalar * simplexValue, 1);
         return new Fountain(
           pos,
@@ -94,13 +94,13 @@ const Temperate: TileGenerator = (pos, world) => {
       const heightScalar = Math.pow(map(y - world.height / 2, 0, world.height / 2, 0.5, 1), 2);
       const simplexScalar = 0.2;
       // the + at the end makes a *huge* difference
-      const simplexValue = noiseWater.simplex2(x * simplexScalar, y * simplexScalar) + 0.2;
+      const simplexValue = noiseWater.simplex2(x * simplexScalar, y * simplexScalar) + 0.13;
 
-      const isFountain = simplexValue > 0.95 && y - soilLevel > 5;
+      const isFountain = simplexValue > 0.95 && y - soilLevel > 8;
       if (isFountain) {
         return new Fountain(pos, world, 3, map(y, world.height / 2, world.height, 100, 300));
       }
-      if (heightScalar * simplexValue > 1) {
+      if (heightScalar * simplexValue > 1 && y - soilLevel > 8) {
         const emitWaterScalar = Math.min(heightScalar * simplexValue, 1);
         return new Fountain(
           pos,
