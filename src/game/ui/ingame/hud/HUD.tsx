@@ -82,7 +82,11 @@ export class HUD extends React.Component<HUDProps, HUDState> {
       <>
         {!isFirstPlaythrough ? <div className="hex-title">{this.mito.attempt.targetHex.displayName}</div> : null}
         <div className={classnames("hud-top-center", { hidden: !showPlayerHUD })}>
-          <SeasonsTracker time={this.world.time} season={this.world.season} />
+          <SeasonsTracker
+            time={this.world.time}
+            season={this.world.season}
+            temperature={this.world.weather.getCurrentTemperature()}
+          />
         </div>
         {this.maybeRenderSpeciesViewer()}
         {this.maybeRenderCollectButton()}

@@ -1,0 +1,21 @@
+@import "./variables";
+
+.bp3-popover-target {
+  cursor: pointer;
+  // still allow hovering over the individual tooltip items.
+  pointer-events: initial;
+}
+
+.bp3-popover {
+  max-width: 340px;
+
+  .bp3-popover-arrow-fill {
+    fill: $white;
+  }
+
+  .bp3-popover-content {
+    background: $white;
+    color: $black;
+    // color: $red3;
+  }
+}

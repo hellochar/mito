@@ -7,7 +7,7 @@ import { CELL_DROOP } from "../constants";
 import { DIRECTIONS } from "../directions";
 import { step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
-import { nextTemperature, Temperature } from "../temperature";
+import { nextTemperature } from "../temperature";
 import { DeadCell } from "../tile/deadCell";
 import { Tile } from "../tile/tile";
 import { World } from "../world/world";
@@ -270,13 +270,13 @@ export class Cell extends Tile implements Interactable {
     const neighborTemperatures = Array.from(neighbors.values()).map((t) => t.temperatureFloat);
     this.nextTemperature = nextTemperature(this.temperatureFloat, neighborTemperatures, dt);
     if (this.temperatureFloat <= 0) {
-      const chanceToFreeze = 0.01 * dt;
+      const chanceToFreeze = 0.01667 * dt; // on average, this cell freezes every day
       if (Math.random() < chanceToFreeze) {
         this.addEffect(new FreezeEffect());
       }
-    } else if (this.temperatureFloat >= 64) {
+    } else if (this.temperatureFloat > 96) {
       const waterToLose = Math.min(this.inventory.water, 1);
-      const chanceEvaporate = waterToLose * (this.temperature === Temperature.Hot ? 0.003 : 0.3);
+      const chanceEvaporate = waterToLose * 0.01667; // no average, lose 1 water per day
       if (Math.random() < chanceEvaporate * dt) {
         this.inventory.add(-waterToLose, 0);
         this.world.logEvent({

@@ -221,11 +221,6 @@
   .tile-details {
     margin-bottom: 20px;
     pointer-events: none;
-
-    // still allow hovering over the individual tooltip items.
-    .bp3-popover-target {
-      pointer-events: initial;
-    }
   }
 }
 

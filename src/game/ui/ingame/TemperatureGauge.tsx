@@ -39,13 +39,7 @@ const TemperatureGauge: React.FC<{ tile: Tile }> = ({ tile }) => {
     <Tooltip
       content={
         <>
-          <b>Temperature</b> changes with the seasons, and goes into your plant from the outside in.
-          <br />
-          <br />
-          Cold will slow down cell operation, and may eventually freeze your cells.
-          <br />
-          <br />
-          Heat will accelerate cell operation, but may cause evaporation even within your plant.
+          <b>Temperature</b> seeps into your Cells from the outside.
         </>
       }
     >

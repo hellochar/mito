@@ -1,7 +1,6 @@
 @import "../../../../variables";
 
 .seasons-tracker {
-  pointer-events: none;
   text-align: center;
 
   .season-display {
@@ -17,6 +16,24 @@
     border-left: 2px solid $gray3;
     padding-top: 5px;
     // font-family: $arial-family;
+  }
+
+  .temperature-label {
+    &.Hot {
+      color: $color-hot;
+    }
+
+    &.Scorching {
+      color: $color-scorching;
+    }
+
+    &.Cold {
+      color: $color-cold;
+    }
+
+    &.Freezing {
+      color: $color-freezing;
+    }
   }
 
   .time {
