@@ -301,7 +301,7 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
       useCountActionTarget(
         player,
         (action) => action.type === "pickup" && action.target instanceof Cell && action.target.displayName === "Root",
-        14
+        23
       )
     );
     return (
@@ -323,7 +323,7 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
       useCountActionTarget(
         player,
         (action) => action.type === "drop" && action.target instanceof Cell && action.target.displayName === "Leaf",
-        25
+        23
       )
     );
     return (
@@ -382,20 +382,21 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
 
 const TutorialStepContainer: React.FC<{
   mito: Mito;
+  index: number;
   active: boolean;
   isFirst: boolean;
   Step: React.FC<TutorialStepProps>;
-  onDone: () => void;
-}> = ({ mito, active, isFirst, Step, onDone }) => {
+  onDone: (index: number) => void;
+}> = ({ mito, active, index, isFirst, Step, onDone }) => {
   const [percentDoneRaw, setPercentDone] = React.useState(0);
   const percentDone = Math.min(percentDoneRaw, 1);
   const isDone = percentDone >= 1;
 
   React.useEffect(() => {
     if (isDone) {
-      onDone();
+      onDone(index);
     }
-  }, [isDone, onDone]);
+  }, [active, index, isDone, onDone]);
 
   const percentCss = `${(percentDone * 100).toFixed(1)}%`;
   const style: React.CSSProperties = {
@@ -418,9 +419,14 @@ const TutorialStepContainer: React.FC<{
 
 const Tutorial = ({ mito }: HUDProps) => {
   const [activeIndex, setActiveIndex] = React.useState(0);
-  const handleDone = React.useCallback(() => {
-    setActiveIndex((i) => i + 1);
-  }, []);
+  const handleDone = React.useCallback(
+    (index) => {
+      if (index === activeIndex) {
+        setActiveIndex((i) => i + 1);
+      }
+    },
+    [activeIndex]
+  );
   return (
     <div className="hud-left">
       {tutorialSteps.map((Step, index) => (
@@ -428,6 +434,7 @@ const Tutorial = ({ mito }: HUDProps) => {
           mito={mito}
           active={activeIndex === index}
           Step={Step}
+          index={index}
           isFirst={index === 0}
           onDone={handleDone}
           key={index}

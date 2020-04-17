@@ -11,6 +11,10 @@ export class Gene<S = any, K extends string = any> {
     public readonly shouldStepFn: GeneShouldStepFn<S, K>
   ) {}
 
+  get numLevels() {
+    return this.blueprint.levelCosts.length;
+  }
+
   level(level: number): RealizedGene<Gene<S, K>> {
     return new RealizedGene(this, level);
   }

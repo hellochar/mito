@@ -11,9 +11,7 @@ export function generateRandomGenes(numGenes = 3) {
   // disallow same gene to spawn in one drawing
   const AllGenes = Array.from(AllGenesByName.values());
   shuffle(AllGenes);
-  const genes: RealizedGene[] = AllGenes.slice(0, numGenes).map((g) =>
-    g.level(randInt(0, g.blueprint.levelCosts.length - 1))
-  );
+  const genes: RealizedGene[] = AllGenes.slice(0, numGenes).map((g) => g.level(randInt(0, g.numLevels - 1)));
   return genes;
 }
 

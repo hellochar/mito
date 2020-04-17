@@ -53,7 +53,7 @@ export class PlayerSeedRenderer extends Renderer<PlayerSeed> {
 
   public popOutAnimation(): Animation {
     const growBigDuration = 0.5;
-    const finalScale = 6.5;
+    const finalScale = 7.0;
     const growBig: Animation = (t) => {
       const tNorm = t / growBigDuration;
       this.mesh.scale.setScalar(lerp(1, finalScale, easeQuadOut(tNorm)));
@@ -65,7 +65,7 @@ export class PlayerSeedRenderer extends Renderer<PlayerSeed> {
       return t > 1;
     };
     const fadeOut: Animation = (t) => {
-      const tNorm = t / 0.5;
+      const tNorm = t / 0.2;
       (this.mesh.material as MeshBasicMaterial).opacity = lerp(1, 0, tNorm);
       return tNorm > 1;
     };

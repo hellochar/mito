@@ -50,7 +50,7 @@ export class RealizedGene<G extends Gene = Gene> {
   }
 
   setLevel(newLevel: number): void {
-    this.level = clamp(newLevel, 0, this.gene.blueprint.levelCosts.length);
+    this.level = clamp(newLevel, 0, this.gene.numLevels - 1);
   }
 
   public newInstance(cell: Cell): GeneInstance<G> {

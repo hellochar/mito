@@ -29,7 +29,7 @@ export const RealizedGeneViewer: React.FC<{
         >
           <div className="gene-header">
             <h4>
-              {gd.blueprint.name} {gene.gene.blueprint.levelCosts.length > 1 ? gene.level + 1 : ""}
+              {gd.blueprint.name} {gene.gene.numLevels > 1 ? gene.level + 1 : null}
             </h4>
             <GeneCost cost={cost} />
           </div>
