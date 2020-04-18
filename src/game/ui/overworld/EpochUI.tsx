@@ -1,8 +1,8 @@
+import { Tooltip } from "@blueprintjs/core";
 import classNames from "classnames";
 import { lineage } from "core/species";
 import { useAppReducer } from "game/app";
 import DynamicNumber from "game/ui/common/DynamicNumber";
-import Tooltip from "rc-tooltip";
 import React, { useState } from "react";
 import { GiSandsOfTime } from "react-icons/gi";
 import { HexTile } from "../../../core/overworld/hexTile";
@@ -25,18 +25,14 @@ export function EpochUI({ onNextEpoch, onFocusHex }: EpochUIProps) {
     const pointsPerEpoch = overWorld.getMaxGenePool(species);
     speciesProductionEls.push(
       <div key={species.id}>
-        <span className="species-name">{species.name}</span> +<MP amount={pointsPerEpoch} />
+        <span className="species-name">{species.name}</span>{" "}
+        <MP amount={species.freeMutationPoints} total={pointsPerEpoch} />
         {/* over{" "} {hexes.length} hexes. */}
       </div>
     );
   }
 
-  const epochButtonTooltipContent = (
-    <>
-      <div>Refill mutation points on all species and re-roll mutations.</div>
-      <div>Each species will get MP equal to their total production across all hexes they are habiting.</div>
-    </>
-  );
+  const epochButtonTooltipContent = <>Refill mutation points.</>;
   return (
     <div className={classNames("epoch-display", { "ready-to-advance": false, transitioning })}>
       <h1 className="number">
@@ -44,7 +40,7 @@ export function EpochUI({ onNextEpoch, onFocusHex }: EpochUIProps) {
       </h1>
       <div className="production-overview">{speciesProductionEls}</div>
 
-      <Tooltip placement="left" trigger="hover" overlay={epochButtonTooltipContent}>
+      <Tooltip position="left" content={epochButtonTooltipContent}>
         <button className="button-next-epoch" onClick={handleNextEpoch} disabled={transitioning}>
           <GiSandsOfTime className="icon" />
         </button>
