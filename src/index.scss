@@ -24,32 +24,32 @@ h6 {
   margin: 0;
 }
 
-a {
-  color: $dark-gray1;
-  text-decoration: none;
-  transition: border-bottom 0.05s;
+// a {
+//   color: $dark-gray1;
+//   text-decoration: none;
+//   transition: border-bottom 0.05s;
 
-  &:hover {
-    border-bottom: 3px solid $black;
-  }
+//   &:hover {
+//     border-bottom: 2px solid $black;
+//   }
 
-  &:active {
-    position: relative;
-    top: 1px;
-  }
-}
+//   &:active {
+//     position: relative;
+//     top: 1px;
+//   }
+// }
 
 body {
   font-family: $palatino-family;
 }
 
-p {
-  font-weight: 400;
-  font-style: normal;
-  font-size: 21px;
-  line-height: 1.58;
-  font-family: $georgia-family;
-}
+// p {
+//   font-weight: 400;
+//   font-style: normal;
+//   font-size: 21px;
+//   line-height: 1.58;
+//   font-family: $georgia-family;
+// }
 
 figure {
   margin: 0;

@@ -25,10 +25,8 @@ import { ToolBar } from "../input/toolBar";
 import { params } from "../params";
 import { InstancedTileRenderer } from "../renderers/tile/InstancedTileRenderer";
 import { WorldRenderer } from "../renderers/WorldRenderer";
-import { NewPlayerTutorial } from "../tutorial";
 import { Hover, HUD } from "../ui/ingame";
 import Debug from "../ui/ingame/Debug";
-import { Instructions } from "../ui/ingame/Instructions";
 import { CameraState } from "./cameraState";
 import { logRenderInfo } from "./logRenderInfo";
 import "./mito.scss";
@@ -51,11 +49,7 @@ export class Mito extends ISketch {
 
   private readonly camera = new OrthographicCamera(0, 0, 0, 0, -100, 100);
 
-  public tutorialRef: NewPlayerTutorial | null = null;
-
   public mouse = new Mouse(this.canvas);
-
-  public instructionsOpen = false;
 
   public readonly audioListener = new THREE.AudioListener();
 
@@ -235,13 +229,11 @@ export class Mito extends ISketch {
     const showPlayerHUD = this.world.playerSeed == null;
     return (
       <>
-        {/* <NewPlayerTutorial ref={(ref) => this.tutorialRef = ref } mito={this} />, */}
         <HUD mito={this} />
         {showPlayerHUD ? <Hover mito={this} /> : null}
         <div className="world-dom-components">{worldDomElementComponents}</div>
         {params.showGodUI ? <Debug mito={this} /> : null}
         {params.showFPS ? <WindowFPS mito={this} /> : null}
-        {this.instructionsOpen ? <Instructions play={() => (this.instructionsOpen = false)} /> : null}
       </>
     );
   }
@@ -254,29 +246,8 @@ export class Mito extends ISketch {
     strings.gain.gain.value = Math.max(0, stringsVolume);
   }
 
-  maybeToggleInstructions(code: string) {
-    if (code === "F1") {
-      this.instructionsOpen = !this.instructionsOpen;
-      return true;
-    }
-    if (this.instructionsOpen) {
-      if (code === "Escape") {
-        this.instructionsOpen = false;
-        return true;
-      }
-    }
-  }
-
   public worldStep(dt: number) {
-    if (this.instructionsOpen) {
-      return;
-    }
-
     this.world.step(dt);
-
-    if (this.tutorialRef) {
-      this.tutorialRef.setState({ time: this.world.time });
-    }
 
     const gameResult = maybeGetGameResult(this);
     if (gameResult != null) {

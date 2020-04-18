@@ -100,7 +100,7 @@ export const sticky = new Howl({
 
 export const dropSugar = new Howl({
   src: [impactSoftMedium003Src],
-  volume: 1,
+  volume: 0.5,
 });
 
 export const dropWater = new Howl({

@@ -49,10 +49,6 @@ export class PlayerControlScheme implements ControlScheme {
 
   animate(_ms: number) {
     const { mito } = this;
-    if (mito.instructionsOpen) {
-      return;
-    }
-
     // keyboard actions
     const moveAction = this.keysToMovement(Keyboard.keyMap);
     if (moveAction) {
@@ -78,10 +74,6 @@ export class PlayerControlScheme implements ControlScheme {
     if (!event.repeat) {
       if (code === "Space") {
         mito.isPaused = !mito.isPaused;
-        return;
-      }
-      const instructionsCapturedEvent = mito.maybeToggleInstructions(code);
-      if (instructionsCapturedEvent) {
         return;
       }
       if (ACTION_INSTANT_KEYMAP[code]) {

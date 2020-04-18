@@ -1,3 +1,5 @@
+// LICENSE: https://github.com/josephg/noisejs/blob/master/LICENSE
+
 // copy-pasted from https://raw.githubusercontent.com/josephg/noisejs/master/perlin.js
 // tslint:disable
 

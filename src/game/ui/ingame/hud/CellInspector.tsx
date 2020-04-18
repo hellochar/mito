@@ -20,7 +20,7 @@ export const CellInspector: React.FC<{
             <div className="resource-row">
               <button
                 disabled={player.inventory.water === 0}
-                onClickCapture={(e) => {
+                onMouseUpCapture={(e) => {
                   player.inventory.give(cell.inventory, cell.inventory.space(), 0);
                   e.preventDefault();
                   e.stopPropagation();
@@ -32,7 +32,7 @@ export const CellInspector: React.FC<{
               </button>
               <button
                 disabled={cell.inventory.water === 0}
-                onClickCapture={(e) => {
+                onMouseUpCapture={(e) => {
                   cell.inventory.give(player.inventory, cell.inventory.water, 0);
                   e.preventDefault();
                   e.stopPropagation();
@@ -46,7 +46,7 @@ export const CellInspector: React.FC<{
             <div className="resource-row">
               <button
                 disabled={player.inventory.sugar === 0}
-                onClickCapture={(e) => {
+                onMouseUpCapture={(e) => {
                   player.inventory.give(cell.inventory, 0, cell.inventory.space());
                   e.preventDefault();
                   e.stopPropagation();
@@ -58,7 +58,7 @@ export const CellInspector: React.FC<{
               </button>
               <button
                 disabled={cell.inventory.sugar === 0}
-                onClickCapture={(e) => {
+                onMouseUpCapture={(e) => {
                   cell.inventory.give(player.inventory, 0, cell.inventory.sugar);
                   e.preventDefault();
                   e.stopPropagation();

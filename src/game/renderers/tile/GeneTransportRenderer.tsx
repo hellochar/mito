@@ -54,7 +54,7 @@ export class GeneTransportRenderer extends GeneRenderer<GeneTransport> {
         this.arrow.parent!.remove(this.arrow);
       }
       // const length = target.dir.length() - 0.25;
-      const length = 0.75;
+      const length = 0.5;
       const arrowDir = dir.clone().normalize();
       this.origin = arrowDir.clone().multiplyScalar(-length / 2);
       this.arrow = new ArrowHelper(

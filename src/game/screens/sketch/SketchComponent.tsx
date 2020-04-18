@@ -131,7 +131,7 @@ class SketchSuccessComponent extends React.PureComponent<SketchSuccessComponentP
     if (params.hud) {
       const { volumeEnabled } = this.state;
       return (
-        <button className="user-volume" onClick={this.handleVolumeButtonClick}>
+        <button className="user-volume game-options-button" onClick={this.handleVolumeButtonClick}>
           {volumeEnabled ? <FaVolumeUp /> : <FaVolumeOff />}
         </button>
       );

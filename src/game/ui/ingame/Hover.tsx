@@ -1,13 +1,11 @@
 import classNames from "classnames";
 import Keyboard from "game/input/keyboard";
 import { WorldDOMComponent } from "game/mito/WorldDOMElement";
-import TileHighlight from "game/tutorial/tileHighlight";
+import { BuildBlueprint, PointHighlight, TileHighlight } from "game/renderers/r3";
 import * as React from "react";
 import { findBuildCandidateTiles } from "std/worldUtils";
 import { Tile } from "../../../core/tile";
 import Mito from "../../mito/mito";
-import BuildBlueprint from "../../tutorial/buildBlueprint";
-import PointHighlight from "../../tutorial/PointHighlight";
 import "./Hover.scss";
 
 interface HoverProps {

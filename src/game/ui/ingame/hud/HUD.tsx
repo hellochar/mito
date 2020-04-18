@@ -1,15 +1,8 @@
-import { Popover } from "@blueprintjs/core";
-import classNames, { default as classnames } from "classnames";
-import { Player, StepStats } from "core";
-import { Action } from "core/player/action";
-import { Cell, Tile } from "core/tile";
-import { EventPhotosynthesis } from "core/tile/tileEvent";
+import classNames from "classnames";
 import { WorldDOMComponent } from "game/mito/WorldDOMElement";
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
 import { DragDropContext } from "react-beautiful-dnd";
-import { GeneSeed } from "std/genes";
-import uuid from "uuid";
 import { getDecidedGameResult } from "../../../gameResult";
 import { PlayerSeedControlScheme } from "../../../input/ControlScheme";
 import Mito from "../../../mito/mito";
@@ -18,9 +11,13 @@ import { HotkeyButton } from "../HotkeyButton";
 import { InventoryBar } from "../InventoryBar";
 import { TileDetails } from "../TileDetails";
 import { CellInspector } from "./CellInspector";
+import { GameMenu } from "./GameMenu";
 import "./HUD.scss";
+import { InvalidActionMessage } from "./InvalidActionMessage";
+import { PausedTileDetailsPopover } from "./PausedTileDetailsPopover";
 import SeasonsTracker from "./SeasonsTracker";
 import { ToolBarUI } from "./ToolBarUI";
+import { Tutorial } from "./Tutorial";
 
 export interface HUDProps {
   mito: Mito;
@@ -53,10 +50,6 @@ export class HUD extends React.Component<HUDProps, HUDState> {
     return this.player.inventory;
   }
 
-  private isTutorialFinished() {
-    return this.mito.tutorialRef == null ? true : this.mito.tutorialRef.isFinished();
-  }
-
   componentDidMount() {
     window.addEventListener("keydown", this.handleKeyDown);
   }
@@ -81,13 +74,14 @@ export class HUD extends React.Component<HUDProps, HUDState> {
     return (
       <>
         {!isFirstPlaythrough ? <div className="hex-title">{this.mito.attempt.targetHex.displayName}</div> : null}
-        <div className={classnames("hud-top-center", { hidden: !showPlayerHUD })}>
+        <div className={classNames("hud-top-center")}>
           <SeasonsTracker
             time={this.world.time}
             season={this.world.season}
             temperature={this.world.weather.getCurrentTemperature()}
           />
         </div>
+        {this.maybeRenderMenu()}
         {this.maybeRenderSpeciesViewer()}
         {this.maybeRenderCollectButton()}
         {this.maybeRenderWinShine()}
@@ -95,7 +89,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         {this.maybeRenderPausedUI()}
         {this.maybeRenderInvalidAction()}
         {this.maybeRenderTutorial()}
-        <div className={classnames("hud-bottom-right", { hidden: !showPlayerHUD })}>
+        <div className={classNames("hud-bottom-right", { hidden: !showPlayerHUD })}>
           {this.mito.isPaused ? (
             this.mito.pausedInspectedTile ? null : (
               <TileDetails tile={this.mito.getTileAtScreen()} />
@@ -123,6 +117,12 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   private positionFn = () => {
     return this.mito.inspectedCell ?? null;
   };
+
+  maybeRenderMenu() {
+    if (!this.mito.isFirstPlaythrough) {
+      return <GameMenu {...this.props} />;
+    }
+  }
 
   maybeRenderCellInspector() {
     const cell = this.mito.inspectedCell;
@@ -238,239 +238,16 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   private handleDragEnd = () => {};
 }
 
-function useCountActions(player: Player, predicate: (action: Action) => boolean) {
-  const [count, setCount] = React.useState(0);
+export function useHotkey(key: string, action: (event: KeyboardEvent) => void) {
   React.useEffect(() => {
-    const cb = (action: Action) => {
-      if (predicate(action)) {
-        setCount((c) => c + 1);
+    const cb = (event: KeyboardEvent) => {
+      if (key === event.code) {
+        action(event);
       }
     };
-    player.on("action", cb);
+    window.addEventListener("keyup", cb);
     return () => {
-      player.off("action", cb);
+      window.removeEventListener("keyup", cb);
     };
-  });
-  return count;
+  }, [action, key]);
 }
-
-function useCountActionTarget(player: Player, predicate: (a: Action) => boolean, target: number) {
-  const count = useCountActions(player, predicate);
-  return count / target;
-}
-
-interface TutorialStepProps {
-  player: Player;
-  setPercentDone: (percent: number) => void;
-}
-
-const build = (name: string) => {
-  return (action: Action) => action.type === "build" && action.cellType.name === name;
-};
-
-const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
-  ({ player, setPercentDone }) => {
-    setPercentDone(useCountActionTarget(player, (action) => action.type === "move", 150));
-    return (
-      <>
-        Move - <HotkeyButton hotkey="W" />
-        <HotkeyButton hotkey="A" />
-        <HotkeyButton hotkey="S" />
-        <HotkeyButton hotkey="D" />
-      </>
-    );
-  },
-  ({ player, setPercentDone }) => {
-    setPercentDone(useCountActionTarget(player, build("Tissue"), 3));
-    return (
-      <>
-        Grow Tissue - <HotkeyButton hotkey="1" />, click.{" "}
-      </>
-    );
-  },
-  ({ player, setPercentDone }) => {
-    setPercentDone(useCountActionTarget(player, build("Root"), 5));
-    return (
-      <>
-        Grow Roots - <HotkeyButton hotkey="3" />, click Soil.
-      </>
-    );
-  },
-  ({ player, setPercentDone }) => {
-    setPercentDone(
-      useCountActionTarget(
-        player,
-        (action) => action.type === "pickup" && action.target instanceof Cell && action.target.displayName === "Root",
-        23
-      )
-    );
-    return (
-      <>
-        Take water from Roots - <HotkeyButton hotkey="Q" />, click Root.
-      </>
-    );
-  },
-  ({ player, setPercentDone }) => {
-    setPercentDone(useCountActionTarget(player, build("Leaf"), 5));
-    return (
-      <>
-        Grow Leaves - <HotkeyButton hotkey="2" />, click Air.
-      </>
-    );
-  },
-  ({ player, setPercentDone }) => {
-    setPercentDone(
-      useCountActionTarget(
-        player,
-        (action) => action.type === "drop" && action.target instanceof Cell && action.target.displayName === "Leaf",
-        23
-      )
-    );
-    return (
-      <>
-        Put water in Leaf - <HotkeyButton hotkey="Q" />, click Leaf.
-      </>
-    );
-  },
-  ({ player, setPercentDone }) => {
-    const [sugarMade, setSugarMade] = React.useState(0);
-    React.useEffect(() => {
-      const cb = (stats: StepStats) => {
-        const sugarMade = stats.events.photosynthesis.reduce(
-          (sum, event: EventPhotosynthesis) => event.sugarMade + sum,
-          0
-        );
-        setSugarMade((s) => s + sugarMade);
-      };
-      player.world.on("step", cb);
-      return () => {
-        player.world.off("step", cb);
-      };
-    }, [player.world]);
-    setPercentDone(sugarMade / 5);
-    return <>Wait for Photosynthesis.</>;
-  },
-  ({ player, setPercentDone }) => {
-    setPercentDone(useCountActionTarget(player, build("Seed"), 1));
-    return (
-      <>
-        Grow Seed - <HotkeyButton hotkey="4" />, click.
-      </>
-    );
-  },
-  ({ player, setPercentDone }) => {
-    setPercentDone(
-      useCountActionTarget(
-        player,
-        (action) => action.type === "drop" && action.target instanceof Cell && action.target.displayName === "Tissue",
-        5
-      )
-    );
-    return (
-      <>
-        Feed Tissue - <HotkeyButton hotkey="Q" />, click Tissue.
-      </>
-    );
-  },
-  ({ player, setPercentDone }) => {
-    const percentDone =
-      (Array.from(player.world.mpEarners.keys())[0]?.findGene(GeneSeed)?.state.energyRecieved ?? 0) / 100;
-    setPercentDone(percentDone);
-    return <>Get seed to 100 energy.</>;
-  },
-];
-
-const TutorialStepContainer: React.FC<{
-  mito: Mito;
-  index: number;
-  active: boolean;
-  isFirst: boolean;
-  Step: React.FC<TutorialStepProps>;
-  onDone: (index: number) => void;
-}> = ({ mito, active, index, isFirst, Step, onDone }) => {
-  const [percentDoneRaw, setPercentDone] = React.useState(0);
-  const percentDone = Math.min(percentDoneRaw, 1);
-  const isDone = percentDone >= 1;
-
-  React.useEffect(() => {
-    if (isDone) {
-      onDone(index);
-    }
-  }, [active, index, isDone, onDone]);
-
-  const percentCss = `${(percentDone * 100).toFixed(1)}%`;
-  const style: React.CSSProperties = {
-    // background: `linear-gradient(to right, ${filled}, ${filled} ${percentCss}, transparent ${percentCss}, transparent)`,
-    width: percentCss,
-  };
-
-  // kill animation in the WASD tutorial
-  if (isFirst) {
-    style.transition = "unset";
-  }
-
-  return (
-    <div className={classNames("instruction", { active, first: isFirst, done: isDone })}>
-      <div className="background-fill" style={style} />
-      <Step player={mito.world.player} setPercentDone={setPercentDone} />
-    </div>
-  );
-};
-
-const Tutorial = ({ mito }: HUDProps) => {
-  const [activeIndex, setActiveIndex] = React.useState(0);
-  const handleDone = React.useCallback(
-    (index) => {
-      if (index === activeIndex) {
-        setActiveIndex((i) => i + 1);
-      }
-    },
-    [activeIndex]
-  );
-  return (
-    <div className="hud-left">
-      {tutorialSteps.map((Step, index) => (
-        <TutorialStepContainer
-          mito={mito}
-          active={activeIndex === index}
-          Step={Step}
-          index={index}
-          isFirst={index === 0}
-          onDone={handleDone}
-          key={index}
-        />
-      ))}
-    </div>
-  );
-};
-
-const PausedTileDetailsPopover = ({ mito, tile }: { mito: Mito; tile: Tile }) => {
-  const positionFn = React.useCallback(() => tile, [tile]);
-
-  return (
-    <WorldDOMComponent mito={mito} positionFn={positionFn} className="paused-popover">
-      <Popover
-        content={<TileDetails key={tile.toString()} tile={tile} />}
-        usePortal={false}
-        autoFocus={false}
-        isOpen
-        minimal
-      >
-        <span />
-      </Popover>
-    </WorldDOMComponent>
-  );
-};
-
-const InvalidActionMessage: React.FC<{ invalidAction: { message: string } }> = React.memo(({ invalidAction }) => {
-  // get new id on every render (aka reference equal invalidAction)
-  // to trigger animation each time
-  const id = uuid();
-  return (
-    <div className="hud-below-center">
-      <div className="invalid-action" key={id}>
-        {invalidAction.message}
-      </div>
-    </div>
-  );
-});

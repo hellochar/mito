@@ -1,0 +1,69 @@
+@import "../../../../variables";
+
+.game-menu {
+  color: white;
+  top: 50%;
+  left: 50%;
+  // left: 100px;
+  // top: 100px;
+  transform: translate(-50%, -50%);
+
+  &:focus {
+    outline: none;
+  }
+
+  .esc {
+    color: $gray3;
+    cursor: pointer;
+    position: absolute;
+    right: 100%;
+    white-space: nowrap;
+    font-size: 16px;
+  }
+
+  .bp3-tab {
+    font-size: 30px;
+    font-weight: bold;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .bp3-tab-panel {
+    margin-top: 40px;
+  }
+
+  .option {
+    cursor: pointer;
+    display: inline;
+    font-size: 20px;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+
+    &:hover {
+      border-bottom: 2px solid $blue5;
+      color: $blue5;
+    }
+  }
+
+  .attribution {
+    a {
+      text-decoration: none;
+      transition: border-bottom 0.05s;
+
+      &:hover {
+        border-bottom: 2px solid $blue5;
+      }
+
+      &:active {
+        position: relative;
+        top: 1px;
+      }
+    }
+  }
+}
+
+.bp3-overlay-backdrop.game-menu-backdrop {
+  background-color: transparentize($color: $black, $amount: 0.1);
+}

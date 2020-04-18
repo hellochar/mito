@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as THREE from "three";
-import lazy from "../../common/lazy";
+import lazy from "../../../common/lazy";
 import { SceneObject } from "./sceneObject";
 
 export const POINT_HIGHLIGHT = lazy(() => {
@@ -28,7 +28,7 @@ export interface PointHighlightProps {
   scene: THREE.Scene;
 }
 
-class PointHighlight extends React.PureComponent<PointHighlightProps, {}> {
+export class PointHighlight extends React.PureComponent<PointHighlightProps, {}> {
   private object = POINT_HIGHLIGHT().clone();
 
   render() {
@@ -42,5 +42,3 @@ class PointHighlight extends React.PureComponent<PointHighlightProps, {}> {
     );
   }
 }
-
-export default PointHighlight;

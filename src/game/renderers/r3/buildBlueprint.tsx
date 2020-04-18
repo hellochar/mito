@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from "three";
-import { CellType } from "../../core/cell/genome";
-import { textureFromSpritesheet } from "../spritesheet";
+import { CellType } from "../../../core/cell/genome";
+import { textureFromSpritesheet } from "../../spritesheet";
 import { SceneObject } from "./sceneObject";
 
 export const BUILD_BLUEPRINT = (() => {
@@ -18,14 +18,14 @@ export const BUILD_BLUEPRINT = (() => {
   return mesh;
 })();
 
-export interface TileHighlightProps {
+export interface BuildBlueprintProps {
   x: number;
   y: number;
   cellType: CellType;
   scene: THREE.Scene;
 }
 
-const BuildBlueprint: React.FC<TileHighlightProps> = ({ x, y, cellType, scene }) => {
+export const BuildBlueprint: React.FC<BuildBlueprintProps> = ({ x, y, cellType, scene }) => {
   const object = React.useMemo(() => BUILD_BLUEPRINT.clone(), []);
 
   React.useEffect(() => {
@@ -45,5 +45,3 @@ const BuildBlueprint: React.FC<TileHighlightProps> = ({ x, y, cellType, scene })
 
   return <SceneObject object={object} parent={scene} />;
 };
-
-export default BuildBlueprint;
