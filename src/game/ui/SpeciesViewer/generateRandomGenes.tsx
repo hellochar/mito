@@ -16,9 +16,10 @@ export function generateRandomGenes(numGenes = 3) {
 }
 
 export function populateGeneOptions(species: Species): RealizedGene[] {
-  const hasTransport = species.genome.cellTypes.some((type) => type.chromosome.has(GeneTransport));
-  const hasPipes = species.genome.cellTypes.some((type) => type.chromosome.has(GenePipes));
-  const hasDiffuseWater = species.genome.cellTypes.some((type) => type.chromosome.has(GeneDiffuseWater));
+  const allGenes = species.genome.getAllGenes();
+  const hasTransport = allGenes.some((gene) => gene.gene === GeneTransport);
+  const hasPipes = allGenes.some((gene) => gene.gene === GenePipes);
+  const hasDiffuseWater = allGenes.some((gene) => gene.gene === GeneDiffuseWater);
 
   if (!hasTransport && !hasPipes && !hasDiffuseWater) {
     return [GeneTransport.level(2), GenePipes.level(2), GeneDiffuseWater.level(0)];

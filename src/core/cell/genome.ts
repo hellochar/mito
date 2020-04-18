@@ -118,6 +118,13 @@ export default class Genome {
     this.cellTypes = cellTypes!;
     this.unusedGenes = unusedGenes ?? [];
   }
+
+  /**
+   * All genes on this genome - genes on cells, and unused as well.
+   */
+  public getAllGenes(): RealizedGene[] {
+    return [...this.cellTypes.flatMap((cell) => cell.chromosome.genes), ...this.unusedGenes];
+  }
 }
 
 export function describeCellInteraction({ resources, type }: CellInteraction) {

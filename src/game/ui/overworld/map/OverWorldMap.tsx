@@ -80,12 +80,12 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   private handleCanvasRef = (ref: HTMLCanvasElement | null) => {
     this.canvas = ref;
     if (ref != null) {
-      Ticker.addAnimation(() => {
-        if (this.canvas != null) {
-          this.setState({ frame: this.state.frame + 1 });
-        }
-        return this.canvas == null;
-      });
+      // Ticker.addAnimation(() => {
+      //   if (this.canvas != null) {
+      //     this.setState({ frame: this.state.frame + 1 });
+      //   }
+      //   return this.canvas == null;
+      // });
       this.handleResize();
     }
   };

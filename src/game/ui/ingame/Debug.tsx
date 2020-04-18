@@ -11,7 +11,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
       mpEarners: mito.world.mpEarners,
       world: mito.world,
       status: "won",
-      mutationPointsPerEpoch: 2,
+      mutationPointsPerEpoch: 1,
       vignettes: mito.vignettes,
     });
   }, [mito]);
