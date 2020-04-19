@@ -159,7 +159,9 @@ function handleNextEpoch(state: AppState, action: AANextEpoch): AppState {
     for (const species of lineage(draft.rootSpecies)) {
       species.freeMutationPoints = draft.overWorld.getMaxGenePool(species);
       if (species.freeMutationPoints > 0) {
-        species.geneOptions = populateGeneOptions(species);
+        // on the very first time you move an epoch, you get one chance to get transport/pipes/diffuse water
+        const isFirstChoice = draft.epoch === 0;
+        species.geneOptions = populateGeneOptions(species, isFirstChoice);
       }
     }
     draft.epoch += 1;

@@ -73,7 +73,7 @@ function speciesViewerDragEnd(
         }
       }
       if (shouldRepopulateGeneOptions) {
-        draft.geneOptions = populateGeneOptions(draft);
+        draft.geneOptions = populateGeneOptions(draft, false);
       }
     });
     dispatch({

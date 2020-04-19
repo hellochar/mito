@@ -15,15 +15,9 @@ export function generateRandomGenes(numGenes = 3) {
   return genes;
 }
 
-export function populateGeneOptions(species: Species): RealizedGene[] {
-  const allGenes = species.genome.getAllGenes();
-  const hasTransport = allGenes.some((gene) => gene.gene === GeneTransport);
-  const hasPipes = allGenes.some((gene) => gene.gene === GenePipes);
-  const hasDiffuseWater = allGenes.some((gene) => gene.gene === GeneDiffuseWater);
-
-  if (!hasTransport && !hasPipes && !hasDiffuseWater) {
+export function populateGeneOptions(species: Species, isFirstChoice: boolean): RealizedGene[] {
+  if (isFirstChoice) {
     return [GeneTransport.level(2), GenePipes.level(2), GeneDiffuseWater.level(0)];
-  } else {
-    return generateRandomGenes(3);
   }
+  return generateRandomGenes(3);
 }
