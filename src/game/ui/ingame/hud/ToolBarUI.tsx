@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import Keyboard from "game/input/keyboard";
 import { spritesheetLoaded } from "game/spritesheet";
 import IconCell, { ActionBarItem } from "game/ui/common/IconCell";
 import * as React from "react";
@@ -63,7 +64,12 @@ const ToolBuildIcon: React.FC<CellBarItemProps> = ({ onClick, spritesheetLoaded,
     argsChildren.push(<TransportDirArrow key={argsChildren.length} dir={type.args.direction} />);
   }
   return (
-    <IconCell onClick={onClick} cellType={type} spritesheetLoaded={spritesheetLoaded}>
+    <IconCell
+      onClick={onClick}
+      cellType={type}
+      spritesheetLoaded={spritesheetLoaded}
+      showCosts={Keyboard.keyMap.has("ShiftLeft")}
+    >
       {type.name}
       {argsChildren}
     </IconCell>

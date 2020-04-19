@@ -2,7 +2,6 @@
 @import "~@blueprintjs/core/lib/css/blueprint.css";
 
 @import "./variables";
-@import "./rc-tooltip.scss";
 @import "./social.scss";
 @import "./bp3-popover.scss";
 
@@ -55,13 +54,13 @@ figure {
   margin: 0;
 }
 
-h1 ~ p {
-  margin-top: 10px;
-}
+// h1 ~ p {
+//   margin-top: 10px;
+// }
 
-p ~ p {
-  margin-top: 30px;
-}
+// p ~ p {
+//   margin-top: 30px;
+// }
 
 #root {
   overflow: hidden;

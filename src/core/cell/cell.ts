@@ -78,6 +78,10 @@ export class Cell extends Tile implements Interactable {
     return this.properties.tempo * this.temperatureTempo;
   }
 
+  get energyUpkeep() {
+    return this.properties.energyUpkeep;
+  }
+
   get darknessContrib() {
     return 0;
   }
@@ -225,43 +229,37 @@ export class Cell extends Tile implements Interactable {
 
     // diffusion, darkness, gravity
     super.step(dt);
+    this.stepDroop(dt);
 
-    const tileNeighbors = this.world.tileNeighbors(this.pos);
-    this.stepDroop(tileNeighbors, dt);
+    // cell effects and genes scale according to tempo
+    dt = this.tempo * dt;
+    this.stepCancer(dt);
+    this.stepCellEffects(dt);
+    this.stepGeneInstances(dt);
+    this.stepEnergyUpkeep(dt);
+  }
 
-    if (this.droopY > 0.5) {
-      if (this.pos.y < this.world.height - 1) {
-        // make the player ride the train!
-        if (this.world.player.pos.equals(this.pos)) {
-          this.world.player.posFloat.y += 1;
-        }
-        this.world.maybeRemoveCellAt(this.pos);
-        this.pos.y += 1;
-        this.droopY -= 1;
-        this.world.setTileAt(this.pos, this);
-      } else {
-        this.droopY = 0.5;
-      }
-    }
-
+  private stepEnergyUpkeep(dt: number) {
+    this.energy -= this.energyUpkeep * dt;
     if (this.energy <= 0) {
       this.die();
-    } else {
-      // cell effects and genes scale according to tempo
-      dt = this.tempo * dt;
+    }
+  }
 
-      // cancer
-      if (Math.random() < this.type.getChanceToBecomeCancerous() * dt) {
-        this.addEffect(new CancerEffect());
-      }
+  private stepGeneInstances(dt: number) {
+    this.geneInstances.forEach((g) => step(g, dt));
+  }
 
-      // step all cell effects (e.g.freezing)
-      for (const effect of this.effects) {
-        effect.step(dt);
-      }
+  private stepCellEffects(dt: number) {
+    // step all cell effects (e.g.freezing)
+    for (const effect of this.effects) {
+      effect.step(dt);
+    }
+  }
 
-      // step all genes
-      this.geneInstances.forEach((g) => step(g, dt));
+  private stepCancer(dt: number) {
+    if (Math.random() < this.type.getChanceToBecomeCancerous() * dt) {
+      this.addEffect(new CancerEffect());
     }
   }
 
@@ -287,7 +285,8 @@ export class Cell extends Tile implements Interactable {
     }
   }
 
-  stepDroop(tileNeighbors: Map<Vector2, Tile>, dt: number) {
+  stepDroop(dt: number) {
+    const tileNeighbors = this.world.tileNeighbors(this.pos);
     const below = tileNeighbors.get(DIRECTIONS.s)!;
     const belowLeft = tileNeighbors.get(DIRECTIONS.sw)!;
     const belowRight = tileNeighbors.get(DIRECTIONS.se)!;
@@ -312,6 +311,25 @@ export class Cell extends Tile implements Interactable {
     ) as Cell[];
     // TODO tighten springs scaled by dt
     this.droopY = springNeighborCells.reduce((sum, n) => sum + n.droopY, 0) / springNeighborCells.length;
+
+    this.stepDroopPositionUpdate();
+  }
+
+  private stepDroopPositionUpdate() {
+    if (this.droopY > 0.5) {
+      if (this.pos.y < this.world.height - 1) {
+        // make the player ride the train!
+        if (this.world.player.pos.equals(this.pos)) {
+          this.world.player.posFloat.y += 1;
+        }
+        this.world.maybeRemoveCellAt(this.pos);
+        this.pos.y += 1;
+        this.droopY -= 1;
+        this.world.setTileAt(this.pos, this);
+      } else {
+        this.droopY = 0.5;
+      }
+    }
   }
 
   stepDarkness(neighbors: Map<Vector2, Tile>) {

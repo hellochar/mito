@@ -121,13 +121,11 @@
 }
 
 .unused-genes {
-  background: $light-gray4;
   border-radius: 5px;
   margin: 10px;
   padding: 10px;
 
-  h1 {
-    text-align: center;
+  h2 {
     margin-bottom: 10px;
   }
 
@@ -136,5 +134,8 @@
     border-radius: 2px;
     display: flex;
     min-height: 100px;
+    .gene {
+      margin: 10px;
+    }
   }
 }

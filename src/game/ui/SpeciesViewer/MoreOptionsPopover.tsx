@@ -1,15 +1,15 @@
+import { Popover } from "@blueprintjs/core";
 import React, { useCallback, useState } from "react";
 import { IoMdMore } from "react-icons/io";
-import Popover from "react-popover";
 import "./MoreOptionsPopover.scss";
 
 const MoreOptionsPopover: React.FC = ({ children }) => {
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const handleMoreClicked = useCallback(() => {
-    setMoreOpen((open) => !open);
+    setIsOpen((open) => !open);
   }, []);
   const handleOuterAction = useCallback(() => {
-    setMoreOpen(false);
+    setIsOpen(false);
   }, []);
   const popoverContent = (
     <div className="more-options">
@@ -19,11 +19,11 @@ const MoreOptionsPopover: React.FC = ({ children }) => {
   );
   return (
     <Popover
-      isOpen={moreOpen}
-      preferPlace="right"
-      enterExitTransitionDurationMs={100}
-      body={popoverContent}
-      onOuterAction={handleOuterAction}
+      isOpen={isOpen}
+      position="right"
+      transitionDuration={100}
+      content={popoverContent}
+      popoverClassName="more-options-popover"
     >
       <IoMdMore className="more-options-icon" onClick={handleMoreClicked} />
     </Popover>

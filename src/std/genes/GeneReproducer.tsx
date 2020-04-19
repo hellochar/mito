@@ -69,11 +69,9 @@ const NEIGHBOR_ENERGY_THRESHOLD = 0.5;
 function reproducerDescription({ mpEarned, neededEnergy }: Record<string, number>) {
   return (
     <>
-      <p>Reproducer.</p>
-      <p>Absorbs energy from neighbors to mature.</p>
+      <p>Absorbs {neededEnergy} energy from neighbors to mature.</p>
       <p>
-        Need {neededEnergy} total energy. Each neighboring Cell contributes 1 energy every{" "}
-        <b>{nf(1 / ENERGY_TRANSFER_PER_SECOND, 1)}</b> seconds.
+        Each neighboring Cell contributes 1 energy every <b>{nf(1 / ENERGY_TRANSFER_PER_SECOND, 1)}</b> seconds.
       </p>
       <p>
         On maturation,{" "}

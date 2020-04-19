@@ -5,15 +5,14 @@
 }
 
 .gene {
-  $background: rgb(194, 187, 177);
   position: relative;
   border-radius: 2px;
   padding: 5px;
-  margin: 10px;
-  background: $background;
+  background: $light-gray4;
+  margin: 10px 0;
   transition: box-shadow 0.1s;
+  width: 295px;
   overflow: hidden;
-  width: 296px;
 
   &.small {
     max-height: 28px;
@@ -21,19 +20,13 @@
 
   &.draggable {
     cursor: grab;
-    box-shadow: 0 4px 8px rgba(64, 64, 64, 0.5);
 
     &:hover {
       max-height: 500px;
-      box-shadow: 15px 15px 8px 2px rgba(64, 64, 64, 0.9);
+      box-shadow: 0px 4px 8px 2px $gray1;
       left: -2px;
       top: -2px;
     }
-  }
-
-  &.provider {
-    background: invert($color: $background);
-    color: white;
   }
 
   &.invalid {
@@ -48,32 +41,61 @@
     }
   }
 
+  &.reproducer {
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 2px solid $color-mutation;
+      border-radius: 2px;
+    }
+  }
+
   &:not(.draggable) {
     box-shadow: none !important;
   }
 
-  .description,
-  p {
+  .description {
     @include smalltext();
     line-height: 1.25;
-    margin: 10px 0 0;
+    margin: 10px 0 0 32px;
   }
+
+  // p {
+  //   @include smalltext();
+  //   line-height: 1.25;
+  //   margin: 10px 0 0;
+  // }
 
   .gene-header {
     display: flex;
     align-items: center;
 
+    .energy-upkeep {
+      border-radius: 10px;
+      background: lightblue;
+      margin-right: 5px;
+      padding: 2px;
+    }
+
     .gene-cost {
-      border-bottom-left-radius: 10px;
+      border-radius: 10px;
       position: absolute;
-      top: 0;
-      right: 0;
     }
 
     h4 {
       font-size: 1em;
       margin-right: auto;
+      margin-left: 32px;
       flex-grow: 1;
+    }
+
+    .gene-level {
+      display: inline;
+      letter-spacing: -1px;
     }
 
     .grip-lines {
@@ -104,9 +126,4 @@
 .gn {
   font-size: 1.1em;
   font-weight: 600;
-}
-
-.Fruit,
-.Seed {
-  border: 3px solid $color-mutation !important;
 }

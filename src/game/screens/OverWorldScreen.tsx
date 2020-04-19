@@ -1,3 +1,4 @@
+import { Overlay } from "@blueprintjs/core";
 import classNames from "classnames";
 import { sleep } from "common/promise";
 import { lineage, Species } from "core/species";
@@ -8,7 +9,6 @@ import { Button } from "game/ui/common/Button";
 import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { GiFamilyTree } from "react-icons/gi";
-import ReactModal from "react-modal";
 import { HexTile } from "../../core/overworld/hexTile";
 import { EpochUI } from "../ui/overworld/EpochUI";
 import { OverWorldMap } from "../ui/overworld/map/OverWorldMap";
@@ -79,27 +79,18 @@ const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
     );
   }
 
-  const closeGenomeViewer = useCallback(() => {
+  const handleSpeciesViewerClose = useCallback(() => {
     setViewedSpecies(undefined);
   }, []);
-  const speciesViewer = (
-    <ReactModal
-      ariaHideApp={false}
-      isOpen={viewedSpecies != null}
-      shouldCloseOnEsc
-      shouldCloseOnOverlayClick
-      onRequestClose={closeGenomeViewer}
-      className="species-viewer-modal"
-    >
-      {viewedSpecies != null ? (
-        <>
-          <button className="close" onClick={closeGenomeViewer}>
-            ✖
-          </button>
-          <SpeciesViewer speciesId={viewedSpecies} editable />
-        </>
-      ) : null}
-    </ReactModal>
+  const speciesViewerEl = (
+    <Overlay isOpen={viewedSpecies != null} onClose={handleSpeciesViewerClose}>
+      <div className="species-viewer-modal">
+        <button className="close" onClick={handleSpeciesViewerClose}>
+          ✖
+        </button>
+        <SpeciesViewer speciesId={viewedSpecies!} editable />
+      </div>
+    </Overlay>
   );
 
   const [focusedHex, setFocusedHex] = useState<HexTile | undefined>(undefined);
@@ -113,7 +104,7 @@ const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
     <div className="overworld-screen">
       <OverWorldMap focusedHex={focusedHex} />
       {maybeRenderPhylogeneticTreePanel()}
-      {speciesViewer}
+      {speciesViewerEl}
       <EpochUI onNextEpoch={onNextEpoch} onFocusHex={handleFocusHex} />
       <div style={{ position: "absolute", right: "10px", top: "10px" }}>
         <Button onClick={() => save(appState)}>Save</Button>

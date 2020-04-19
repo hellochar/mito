@@ -1,6 +1,7 @@
 import { RealizedGene } from "core/cell";
 import { Species } from "core/species";
 import { AppActions } from "game/app";
+import { geneDrop } from "game/audio";
 import produce from "immer";
 import { DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { droppableIdToCell } from "./droppableId";
@@ -33,7 +34,8 @@ function speciesViewerDragEnd(
   species: Species,
   dispatch: React.Dispatch<AppActions>
 ) {
-  if (result.destination) {
+  if (result.destination != null && result.destination.droppableId !== ID_GENE_OPTIONS) {
+    geneDrop.play();
     const sourceIndex = result.source.index;
     const { index: destinationIndex, droppableId } = result.destination;
     const newSpecies = produce(species, (draft) => {

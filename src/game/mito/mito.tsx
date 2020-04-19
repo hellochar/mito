@@ -1,7 +1,6 @@
 import devlog from "common/devlog";
 import { sleep } from "common/promise";
 import { CancerEffect, FreezeEffect } from "core/cell";
-import { Action, isContinuous } from "core/player/action";
 import { easeSinIn } from "d3-ease";
 import { PopulationAttempt } from "game/app";
 import { Mouse } from "game/input/mouse";
@@ -132,7 +131,6 @@ export class Mito extends ISketch {
     this.nodePost.output = noiseNode as any;
     const { info } = attempt.targetHex;
     this.world = new World(environmentFromLevelInfo(info), info.seed, attempt.settlingSpecies);
-    this.world.player.on("action-fail", this.handlePlayerActionFail);
 
     this.camera.position.z = 10;
     this.camera.lookAt(0, 0, 0);
@@ -171,28 +169,6 @@ export class Mito extends ISketch {
       const newZoom = clamp(currZoom * scalar, 1, 3);
       this.userZoom = newZoom;
     },
-  };
-
-  private handlePlayerActionFail = (action: Action, message?: string) => {
-    if (message == null) {
-      if (action.type === "pickup" && this.world.player.inventory.isMaxed()) {
-        message = "Inventory full!";
-      }
-      // else if (action.type === "drop" && action.target && action.target.inventory.isMaxed()) {
-      //   message = `${action.target.displayName} inventory full!`;
-      // }
-    }
-
-    if (message != null) {
-      if (isContinuous(action)) {
-        // only show an error if it's not the exact same error that already exists
-        if (this.invalidAction?.message !== message) {
-          this.showInvalidAction({ message });
-        }
-      } else {
-        this.showInvalidAction({ message });
-      }
-    }
   };
 
   private handleBeforeUnload = () => {

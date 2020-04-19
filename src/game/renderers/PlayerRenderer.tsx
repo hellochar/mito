@@ -4,10 +4,10 @@ import { easeSinInOut } from "d3-ease";
 import Keyboard from "game/input/keyboard";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { Player } from "../../core";
-import { Action, ActionBuild, ActionLong } from "../../core/player/action";
+import { Action, ActionBuild, ActionLong, isContinuous } from "../../core/player/action";
 import { Tile } from "../../core/tile";
 import { clamp, lerp2, map, randFloat } from "../../math";
-import { build, deconstruct, dropSugar, dropWater, footsteps, interactSound, sticky } from "../audio";
+import { build, deconstruct, dropSugar, dropWater, footsteps, interactSound, moveBumped, sticky } from "../audio";
 import { Mito } from "../mito/mito";
 import { textureFromSpritesheet } from "../spritesheet";
 import NeuronMesh from "./neuronMesh";
@@ -34,8 +34,10 @@ export class PlayerRenderer extends Renderer<Player> {
       this.scene.add(this.mesh);
     });
 
+    // TODO unregister these!
     this.target.on("start-long-action", this.handleStartLongAction);
     this.target.on("action", this.handleAction);
+    this.target.on("action-fail", this.handlePlayerActionFail);
   }
 
   handleStartLongAction = (action: ActionLong) => {
@@ -70,6 +72,34 @@ export class PlayerRenderer extends Renderer<Player> {
     } else if (action.type === "move") {
       footsteps.fade(0.1, 0, 50);
       footsteps.rate(randFloat(0.8, 1.5));
+    }
+  };
+
+  handlePlayerActionFail = (action: Action, message?: string) => {
+    if (action.type === "move") {
+      if (!moveBumped.playing()) {
+        moveBumped.play();
+        moveBumped.rate(randFloat(0.8, 1.2));
+      }
+    }
+    if (message == null) {
+      if (action.type === "pickup" && this.target.inventory.isMaxed()) {
+        message = "Inventory full!";
+      }
+      // else if (action.type === "drop" && action.target && action.target.inventory.isMaxed()) {
+      //   message = `${action.target.displayName} inventory full!`;
+      // }
+    }
+
+    if (message != null) {
+      if (isContinuous(action)) {
+        // only show an error if it's not the exact same error that already exists
+        if (this.mito.invalidAction?.message !== message) {
+          this.mito.showInvalidAction({ message });
+        }
+      } else {
+        this.mito.showInvalidAction({ message });
+      }
     }
   };
 

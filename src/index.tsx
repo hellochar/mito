@@ -1,14 +1,11 @@
 // import "@blueprintjs/icons/lib/css/blueprint.css";
-import "rc-tooltip/assets/bootstrap.css";
 import React from "react";
 import ReactDOM from "react-dom";
-import "react-dropdown/style.css";
 import { HashRouter } from "react-router-dom";
 import Routes from "Routes";
 import "./addThreeJsModelSchemas";
 import "./index.scss";
 import * as serviceWorker from "./serviceWorker";
-
 function requireAll(r: any) {
   r.keys().forEach(r);
 }

@@ -1,3 +1,4 @@
+import { nf } from "common/formatters";
 import { ResourceIcon } from "game/ui/common/ResourceIcon";
 import React from "react";
 import GN from "std/genes/GN";
@@ -11,12 +12,15 @@ export const GeneMetabolism = Gene.make(
     levelProps: {
       energyPerSugar: [0.25, 0.5, 1, 1.5, 2],
     },
+    static: {
+      // energyUpkeep: 1 / 600,
+    },
     description: ({ energyPerSugar }) => (
       <>
         <p>
           Convert 1<ResourceIcon name="sugar" /> into <GN value={energyPerSugar * 100} sigFigs={3} />% energy.
         </p>
-        <p>Starts below 95% energy. Restores {EAT_ENERGY_PER_SECOND * 100}% energy per second.</p>
+        <p>Starts below 95% energy. Restores {nf(EAT_ENERGY_PER_SECOND * 100, 3)}% energy per second.</p>
       </>
     ),
   },

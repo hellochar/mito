@@ -34,33 +34,21 @@ export const CellTypeViewer: React.FC<{
   return (
     <div className={classNames("cell-type", { reproducer })}>
       <div className="cell-header">
-        <IconCell cellType={cellType} spritesheetLoaded={spritesheetLoaded} />
-        <div className="cell-name">
-          <h2>{name}</h2>
-          <CellInteractionSelector interaction={cellType.interaction} setInteraction={handleSetInteraction} />
-        </div>
+        <h2>{name}</h2>
         {editable ? <CellActionsPopover cellType={cellType} genome={genome} /> : null}
       </div>
       <ChromosomeViewer cellType={cellType} />
+      <div className="cell-footer">
+        <GeneSlots cellType={cellType} />
+        <CellInteractionSelector interaction={cellType.interaction} setInteraction={handleSetInteraction} />
+        <IconCell cellType={cellType} spritesheetLoaded={spritesheetLoaded} showCosts />
+      </div>
     </div>
   );
 };
 
-// function shouldDisableDrag(droppableCell: CellType, viewerState: ViewerState) {
-//   const draggedGene = getDraggedGene(viewerState);
-
-//   if (draggedGene == null) {
-//     return false;
-//   } else {
-//     return droppableCell.chromosome.has(draggedGene.gene);
-//   }
-// }
-
-const ChromosomeViewer = ({ cellType }: { cellType: CellType }) => {
-  const viewerState = useContext(ViewerContext);
-  const { editable, view, isDragging } = viewerState;
+const GeneSlots: React.FC<{ cellType: CellType }> = ({ cellType }) => {
   const { chromosome } = cellType;
-  const { genes } = chromosome;
   const chanceForCancer = cellType.getChanceToBecomeCancerous();
   const cancerEl =
     chanceForCancer > 0 ? (
@@ -77,51 +65,52 @@ const ChromosomeViewer = ({ cellType }: { cellType: CellType }) => {
       {cancerEl}
     </>
   );
+  return (
+    <Tooltip content={tooltipContent} position="top" popoverClassName="gene-slots-popover" hoverOpenDelay={250}>
+      <div className="gene-slots">
+        Gene Slots:{" "}
+        <span className={classNames("slots-used", { "is-over": isGeneSlotsOver })}>
+          <DynamicNumber value={Math.abs(chromosome.geneSlotsNet())} /> {isGeneSlotsOver ? "over" : "under"}.
+        </span>
+      </div>
+    </Tooltip>
+  );
+};
+
+const ChromosomeViewer = ({ cellType }: { cellType: CellType }) => {
+  const viewerState = useContext(ViewerContext);
+  const { editable, view, isDragging } = viewerState;
+  const { chromosome } = cellType;
+  const { genes } = chromosome;
+  const empty = genes.length === 0;
 
   const duplicateGenes = cellType.getDuplicateGenes();
   const validationEl =
-    duplicateGenes.size > 0 ? (
-      <div className="invalid-alert-text">Cannot have duplicate genes.</div>
-    ) : // <Tooltip content="Cannot have duplicate genes. Cell will not build." className="invalid-alert">
-    // <MdError />
-    // </Tooltip>
-    null;
-
-  // const isDropDisabled = shouldDisableDrag(cellType, viewerState);
+    duplicateGenes.size > 0 ? <div className="invalid-alert-text">Cannot have duplicate genes.</div> : null;
 
   return (
-    <>
-      <Tooltip content={tooltipContent} position="top" popoverClassName="gene-slots-popover" hoverOpenDelay={250}>
-        <div className="gene-slots">
-          Gene Slots:{" "}
-          <span className={classNames("slots-used", { "is-over": isGeneSlotsOver })}>
-            <DynamicNumber value={Math.abs(chromosome.geneSlotsNet())} /> {isGeneSlotsOver ? "over" : "under"}.
-          </span>
+    <Droppable key={cellType.name} droppableId={cellToDroppableId(cellType)}>
+      {(provided, snapshot) => (
+        <div
+          {...provided.droppableProps}
+          ref={provided.innerRef}
+          className={classNames("chromosome", { dragging: isDragging, empty, invalid: duplicateGenes.size > 0 })}
+        >
+          {validationEl}
+          {genes.map((gene, i) => (
+            <RealizedGeneViewer
+              index={i}
+              key={gene.uuid}
+              gene={gene}
+              draggable={editable}
+              view={view}
+              invalid={duplicateGenes.has(gene)}
+            />
+          ))}
+          {provided.placeholder}
         </div>
-      </Tooltip>
-      <Droppable key={cellType.name} droppableId={cellToDroppableId(cellType)}>
-        {(provided, snapshot) => (
-          <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-            className={classNames("chromosome", { dragging: isDragging, invalid: duplicateGenes.size > 0 })}
-          >
-            {validationEl}
-            {genes.map((gene, i) => (
-              <RealizedGeneViewer
-                index={i}
-                key={gene.uuid}
-                gene={gene}
-                draggable={editable}
-                view={view}
-                invalid={duplicateGenes.has(gene)}
-              />
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </>
+      )}
+    </Droppable>
   );
 };
 

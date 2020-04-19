@@ -29,4 +29,12 @@
 
 .more-options-icon {
   cursor: pointer;
+  position: absolute;
+  right: 10px;
+}
+
+.bp3-popover.more-options-popover {
+  .bp3-popover-arrow-fill {
+    color: $black;
+  }
 }

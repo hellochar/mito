@@ -24,6 +24,10 @@ export type CellProperties = {
    * How fast Genes and Effects happen on the cell.
    */
   tempo: number;
+  /**
+   * How much energy per second this cell burns.
+   */
+  energyUpkeep: number;
   [k: string]: number | boolean;
 };
 
@@ -38,6 +42,7 @@ export function defaultCellProperties(): CellProperties {
     diffusionWater: 0,
     diffusionSugar: 0,
     tempo: 1,
+    energyUpkeep: 0,
     timeToBuild: CELL_BUILD_TIME,
     isDirectional: false,
   };
