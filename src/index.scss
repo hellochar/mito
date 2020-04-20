@@ -5,6 +5,57 @@
 @import "./social.scss";
 @import "./bp3-popover.scss";
 
+$size: 25px;
+
+.row {
+  height: $size;
+}
+
+.tile0,
+.tile1,
+.tile2,
+.tile3,
+.tile4 {
+  font-family: "Courier New", Courier, monospace;
+  width: $size;
+  height: size;
+  font-size: $size * 1;
+  @include center-children();
+  user-select: none;
+}
+
+.tile0 {
+  background-color: lightseagreen;
+}
+
+.tile1 {
+  background-color: lightgoldenrodyellow;
+}
+
+.tile2 {
+  background-color: lightgreen;
+}
+
+.tile3 {
+  background-color: lightblue;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.source {
+  margin: 100px;
+}
+
+.output {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 * {
   box-sizing: border-box;
 }

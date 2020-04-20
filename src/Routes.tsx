@@ -3,6 +3,7 @@ import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import TestDiffusion from "tests/TestDiffusion";
 import { TestLoseScreen } from "tests/TestLoseScreen";
 import { TestWinScreen } from "tests/TestWinScreen";
+import WFCTest from "tests/WFCTest";
 import App from "./game/screens/App";
 import "./index.scss";
 import TestStats from "./tests/TestStats";
@@ -20,6 +21,9 @@ export default () => (
     </Route>
     <Route path="/test-diffusion">
       <TestDiffusion />
+    </Route>
+    <Route path="/wfc">
+      <WFCTest />
     </Route>
     <Route exact path="/">
       <App />
