@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import produce from "immer";
 import { minBy } from "lodash";
 import { randInt } from "math";
 import { arrayRange, gridRange } from "math/arrays";
 import React, { useCallback, useMemo, useState } from "react";
+import "./WFCTest.scss";
 
 type Id = number;
 
@@ -18,11 +20,11 @@ type Id = number;
  */
 type Grid = Id[][];
 
-type UncollapsedGrid = (RelationWeights | number)[][];
-
 function grid(width: number, height: number): Grid {
   return gridRange(width, height, () => 0);
 }
+
+type UncollapsedGrid = (RelationWeights | number)[][];
 
 const charMap: Record<Id, string> = {
   0: "~",
@@ -79,7 +81,7 @@ const WFCTest = () => {
   const outputSrcReact = useMemo(() => gridToReact(srcGrid, handleSrcClick), [handleSrcClick, srcGrid]);
 
   return (
-    <div className="container">
+    <div className="wfc-container">
       <div className="source">
         <h2>Source</h2>
         {outputSrcReact}
