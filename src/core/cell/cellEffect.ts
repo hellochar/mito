@@ -129,6 +129,8 @@ export class CancerEffect extends CellEffect implements Interactable {
   }
 
   step(dt: number): void {
+    // eat 20% energy per day
+    this.cell.energy -= (1 / 300) * dt;
     this.timeToDuplicate -= dt;
     if (this.timeToDuplicate < 0) {
       const world = this.cell.world;

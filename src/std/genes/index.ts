@@ -10,7 +10,6 @@ export * from "./GeneEnergyTransfer";
 export * from "./GeneHydrostasis";
 export * from "./GeneInventory";
 export * from "./GeneLiving";
-export * from "./GeneMetabolism";
 export * from "./GeneNetworkEffect";
 export * from "./GeneNutrientExtraction";
 export * from "./GeneObstacle";

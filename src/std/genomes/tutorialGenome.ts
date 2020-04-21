@@ -5,7 +5,6 @@ import {
   GeneEnergyTransfer,
   GeneInventory,
   GeneLiving,
-  GeneMetabolism,
   GeneObstacle,
   GenePhotosynthesis,
   GeneScaffolding,
@@ -16,7 +15,7 @@ import {
 const cellTypeTissue = new CellType(
   "Tissue",
   0,
-  new Chromosome(GeneLiving.level(2), GeneInventory.level(2), GeneMetabolism.level(2), GeneEnergyTransfer.level(1)),
+  new Chromosome(GeneLiving.level(2), GeneEnergyTransfer.level(1)),
   {
     texturePosition: new Vector2(1, 1),
     color: new Color(0x30ae25),
@@ -30,7 +29,7 @@ const cellTypeTissue = new CellType(
 const cellTypeLeaf = new CellType(
   "Leaf",
   0,
-  new Chromosome(GeneLiving.level(0), GeneObstacle.level(0), GeneInventory.level(2), GenePhotosynthesis.level(1)),
+  new Chromosome(GeneLiving.level(0), GeneObstacle.level(0), GeneInventory.level(1), GenePhotosynthesis.level(1)),
   {
     color: new Color("white"),
     texturePosition: new Vector2(2, 1),

@@ -19,6 +19,9 @@ export const GeneSoilAbsorption = Gene.make<SoilAbsorptionState>(
     levelProps: {
       secondsPerAbsorb: [60, 30, 15, 9, 6],
     },
+    static: {
+      energyUpkeep: 1 / 480,
+    },
     description: ({ secondsPerAbsorb }) => (
       <>
         Absorb 1<ResourceIcon name="water" /> every <GN value={secondsPerAbsorb} /> seconds from every neighboring Soil.

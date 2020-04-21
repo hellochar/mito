@@ -10,7 +10,7 @@ import { HUDProps } from ".";
 import { HotkeyButton } from "../HotkeyButton";
 import "./Tutorial.scss";
 
-export const Tutorial = ({ mito }: HUDProps) => {
+export const Tutorial = ({ mito, isViewerOpen }: HUDProps & {isViewerOpen: boolean}) => {
   const [activeIndex, setActiveIndex] = React.useState(0);
   const handleDone = React.useCallback(
     (index) => {
@@ -26,6 +26,7 @@ export const Tutorial = ({ mito }: HUDProps) => {
         <TutorialStepContainer
           mito={mito}
           active={activeIndex === index}
+          isViewerOpen={isViewerOpen}
           Step={Step}
           index={index}
           isFirst={index === 0}
@@ -62,6 +63,7 @@ interface TutorialStepProps {
   player: Player;
   setPercentDone: (percent: number) => void;
   active: boolean;
+  isViewerOpen: boolean;
 }
 
 const build = (name: string) => {
@@ -173,6 +175,15 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
       </>
     );
   },
+  ({ player, setPercentDone, isViewerOpen, active }) => {
+    const percentDone = (isViewerOpen && active) ? 1 : 0;
+    setPercentDone(percentDone)
+    return (
+      <>
+        Look at your Genes - <HotkeyButton hotkey="Tab" />.
+      </>
+    );
+  },
   ({ player, setPercentDone }) => {
     const percentDone =
       (Array.from(player.world.mpEarners.keys())[0]?.findGene(GeneSeed)?.state.energyRecieved ?? 0) / 100;
@@ -185,10 +196,11 @@ const TutorialStepContainer: React.FC<{
   mito: Mito;
   index: number;
   active: boolean;
+  isViewerOpen: boolean;
   isFirst: boolean;
   Step: React.FC<TutorialStepProps>;
   onDone: (index: number) => void;
-}> = ({ mito, active, index, isFirst, Step, onDone }) => {
+}> = ({ mito, active, index, isViewerOpen, isFirst, Step, onDone }) => {
   const [percentDoneRaw, setPercentDone] = React.useState(0);
   const percentDone = Math.min(percentDoneRaw, 1);
   const isDone = percentDone >= 1;
@@ -213,7 +225,7 @@ const TutorialStepContainer: React.FC<{
   return (
     <div className={classNames("instruction", { active, first: isFirst, done: isDone })}>
       <div className="background-fill" style={style} />
-      <Step player={mito.world.player} setPercentDone={setPercentDone} active={active} />
+      <Step player={mito.world.player} setPercentDone={setPercentDone} active={active} isViewerOpen={isViewerOpen} />
     </div>
   );
 };

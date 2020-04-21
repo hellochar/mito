@@ -21,6 +21,9 @@ export const GenePhotosynthesis = Gene.make<PhotosynthesisState>(
     levelProps: {
       reactionChancePerSecond: [0.0125, 0.025, 0.05, 0.1, 0.2],
     },
+    static: {
+      energyUpkeep: 1 / 400,
+    },
     description: ({ reactionChancePerSecond }) => (
       <>
         <p>

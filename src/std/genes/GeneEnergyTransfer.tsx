@@ -10,6 +10,9 @@ export const GeneEnergyTransfer = Gene.make(
     levelProps: {
       differenceThreshold: [0.08, 0.04, 0.02, 0.01, 0.005],
     },
+    static: {
+      energyUpkeep: 1 / 600,
+    },
     description: ({ differenceThreshold }) => (
       <>
         <p>

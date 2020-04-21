@@ -10,19 +10,44 @@
   padding: 5px;
   background: $light-gray4;
   margin: 10px 0;
-  transition: box-shadow 0.1s;
+  transition: box-shadow 0.5s, max-height 0.5s;
   width: 295px;
   overflow: hidden;
 
   &.small {
     max-height: 28px;
+
+    &:hover {
+      max-height: 200px;
+
+      &::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        box-shadow: 0 0 0 1px inset $light-gray1;
+      }
+    }
+  }
+
+  &.expanded {
+    &::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      box-shadow: 0 0 0 1px inset $light-gray1;
+    }
   }
 
   &.draggable {
     cursor: grab;
 
     &:hover {
-      max-height: 500px;
       box-shadow: 0px 4px 8px 2px $gray1;
       left: -2px;
       top: -2px;
@@ -49,13 +74,9 @@
       left: 0;
       right: 0;
       bottom: 0;
-      border: 2px solid $color-mutation;
+      border: 1px solid $color-mutation;
       border-radius: 2px;
     }
-  }
-
-  &:not(.draggable) {
-    box-shadow: none !important;
   }
 
   .description {
@@ -78,7 +99,7 @@
       border-radius: 10px;
       background: lightblue;
       margin-right: 5px;
-      padding: 2px;
+      padding: 2px 5px;
     }
 
     .gene-cost {

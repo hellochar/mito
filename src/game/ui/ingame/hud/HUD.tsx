@@ -24,14 +24,12 @@ export interface HUDProps {
 }
 
 export interface HUDState {
-  traitsPanelOpen: boolean;
-  genomeViewerOpen: boolean;
+  isViewerOpen: boolean;
 }
 
 export class HUD extends React.Component<HUDProps, HUDState> {
   state: HUDState = {
-    traitsPanelOpen: true,
-    genomeViewerOpen: false,
+    isViewerOpen: false,
   };
 
   get mito() {
@@ -61,7 +59,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   private handleKeyDown = (e: KeyboardEvent) => {
     if (e.code === "Tab") {
       this.setState({
-        genomeViewerOpen: !this.state.genomeViewerOpen,
+        isViewerOpen: !this.state.isViewerOpen,
       });
     }
   };
@@ -194,7 +192,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   }
 
   maybeRenderSpeciesViewer() {
-    if (this.state.genomeViewerOpen) {
+    if (this.state.isViewerOpen) {
       return (
         <div className="hud-top">
           <DragDropContext onDragEnd={this.handleDragEnd}>
@@ -230,7 +228,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   maybeRenderTutorial() {
     const showPlayerHUD = this.world.playerSeed == null;
     if (this.mito.isFirstPlaythrough && showPlayerHUD) {
-      return <Tutorial {...this.props} />;
+      return <Tutorial {...this.props} isViewerOpen={this.state.isViewerOpen} />;
     }
   }
 

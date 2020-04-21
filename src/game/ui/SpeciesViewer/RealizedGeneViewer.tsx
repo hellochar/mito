@@ -45,8 +45,8 @@ export const RealizedGeneViewer: React.FC<{
   const geneLevelEl =
     gene.level > 0 ? (
       <div className="gene-level">
-        {arrayRange(gene.level + 1).map((i) => (
-          <>⬥</>
+        {arrayRange(gene.level).map((i) => (
+          <React.Fragment key={i}>⬥</React.Fragment>
         ))}
       </div>
     ) : null;

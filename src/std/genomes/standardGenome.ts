@@ -1,14 +1,7 @@
 import { Color, Vector2 } from "three";
 import Chromosome from "../../core/cell/chromosome";
 import Genome, { CellType } from "../../core/cell/genome";
-import {
-  GeneAttractsWater,
-  GeneEnergyTransfer,
-  GeneInventory,
-  GeneLiving,
-  GeneMetabolism,
-  GeneSoilAbsorption,
-} from "../genes";
+import { GeneAttractsWater, GeneEnergyTransfer, GeneInventory, GeneLiving, GeneSoilAbsorption } from "../genes";
 import { GeneAttractsSugar } from "../genes/GeneAttractsSugar";
 import { GeneCannotFreeze } from "../genes/GeneCannotFreeze";
 import { GeneObstacle } from "../genes/GeneObstacle";
@@ -19,7 +12,7 @@ import { GeneTransport } from "../genes/GeneTransport";
 const cellTypeTissue = new CellType(
   "Tissue",
   0,
-  new Chromosome(GeneLiving.level(2), GeneInventory.level(3), GeneMetabolism.level(2), GeneEnergyTransfer.level(1)),
+  new Chromosome(GeneLiving.level(2), GeneInventory.level(3), GeneEnergyTransfer.level(1)),
   {
     texturePosition: new Vector2(1, 1),
     color: new Color(0x30ae25),

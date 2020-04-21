@@ -16,7 +16,6 @@ import Keyboard from "game/input/keyboard";
 import * as React from "react";
 import {
   GeneFruit,
-  GeneLiving,
   GeneOsmosis,
   GenePhotosynthesis,
   GeneSeed,
@@ -73,8 +72,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
 
   private cellInfo(tile: Tile) {
     if (tile instanceof Cell) {
-      const living = tile.findGene(GeneLiving);
-      const secondsPerUpkeep = living?.props.secondsPerUpkeep;
+      const secondsPerUpkeep = 1 / tile.energyUpkeep;
       const secondsRemaining = secondsPerUpkeep != null ? tile.energy * secondsPerUpkeep : null;
       const secondsRemainingEl = secondsRemaining ? <>({Math.floor(secondsRemaining)} seconds remaining)</> : null;
       const energyEl = (

@@ -63,7 +63,9 @@ const SpeciesViewer: React.FC<{
           {species.freeMutationPoints > 0 && editable ? <MutationChooser species={species} /> : null}
           {isDragging ? <DeleteGeneDroppable /> : null}
           <GenomeViewer genome={species.genome} />
-          <UnusedGeneArea genes={species.genome.unusedGenes} />
+          {editable || species.genome.unusedGenes.length > 0 ? (
+            <UnusedGeneArea genes={species.genome.unusedGenes} />
+          ) : null}
         </div>
       </ViewerContext.Provider>
     </DragDropContext>
