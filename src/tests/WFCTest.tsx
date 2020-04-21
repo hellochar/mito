@@ -35,9 +35,9 @@ const charMap: Record<Id, string> = {
 function gridToReact(g: Grid, onClick?: (event: React.MouseEvent) => void): JSX.Element {
   return (
     <div className="grid">
-      {g.map((row, x) => (
+      {g.map((row, y) => (
         <div className="row">
-          {row.map((id, y) => (
+          {row.map((id, x) => (
             <span grid-x={x} grid-y={y} className={"tile" + String(id)} onClick={onClick}>
               {charMap[id]}
             </span>
@@ -49,16 +49,21 @@ function gridToReact(g: Grid, onClick?: (event: React.MouseEvent) => void): JSX.
 }
 
 const initialSrcGrid = g(`
-210000000
-211111110
-222222210
-211111110
-222211110
-223222210
-222222210
-211111110
-210000000
+000
+111
+121
 `);
+// const initialSrcGrid = g(`
+// 210000000
+// 211111110
+// 222222210
+// 211111110
+// 222211110
+// 223222210
+// 222222210
+// 211111110
+// 210000000
+// `);
 
 const WFCTest = () => {
   const [srcGrid, setSrcGrid] = useState(initialSrcGrid);
@@ -74,7 +79,7 @@ const WFCTest = () => {
     const y = Number(event.currentTarget.attributes.getNamedItem("grid-y")!.value);
     setSrcGrid((srcGrid) =>
       produce(srcGrid, (srcGrid) => {
-        srcGrid[x][y] = (srcGrid[x][y] + 1) % NUM_IDS;
+        srcGrid[y][x] = (srcGrid[y][x] + 1) % NUM_IDS;
       })
     );
   }, []);
@@ -107,18 +112,16 @@ let NUM_IDS = 4;
 let IDS_LIST = arrayRange(NUM_IDS);
 
 function wfc(grid: Grid, outWidth: number, outHeight: number): Grid {
-  console.log = () => {};
   const gridFlat = grid.flat();
   // NUM_IDS = new Set(gridFlat).size;
   // IDS_LIST = arrayRange(NUM_IDS);
   // first, extract neighbor weights from input
   const relationModel = newRelationModel(grid);
+  console.log(relationModel);
 
   const globalAppearanceWeights: RelationWeights = newRelationWeights(NUM_IDS);
   gridFlat.forEach((id) => (globalAppearanceWeights[id] = (globalAppearanceWeights[id] ?? 0) + 1));
   normalizeWeights(globalAppearanceWeights);
-
-  console.log(relationModel, globalAppearanceWeights);
 
   function tryCollapseGrid(): Grid | undefined {
     // start with a uncollapsed grid
@@ -131,18 +134,16 @@ function wfc(grid: Grid, outWidth: number, outHeight: number): Grid {
     const frontier: Map<string, number> = new Map();
     let iter = 0;
     do {
-      console.log("---iteration " + iter + "----");
-      const id = collapseGridPoint(uncollapsedGrid, point);
+      const id = collapseGridPoint(uncollapsedGrid, point, relationModel);
       if (id == null) {
         // we hit a degenerate case, fail the entire tryCollapseGrid attempt
-        console.log("degenerate! grid:", uncollapsedGrid, "frontier:", frontier);
         return;
       }
       frontier.delete(`${point.x},${point.y}`);
 
       // return true if weights updated, false if neighbor became degenerate
       function updateNeighborWeights(x: number, y: number, relationWeights: RelationWeights) {
-        const neighborWeights = uncollapsedGrid[x]?.[y];
+        const neighborWeights = uncollapsedGrid[y]?.[x];
         // ignore out of bounds or already collapsed
         if (neighborWeights == null || typeof neighborWeights === "number") {
           return;
@@ -161,9 +162,8 @@ function wfc(grid: Grid, outWidth: number, outHeight: number): Grid {
           normalizeWeights(newWeights);
         }
 
-        uncollapsedGrid[x][y] = newWeights;
+        uncollapsedGrid[y][x] = newWeights;
         // now, update the frontier. Be sure to normalize
-        console.log("setting frontier", `${x},${y}`, entropy(newWeights));
         frontier.set(`${x},${y}`, entropy(newWeights));
       }
 
@@ -188,7 +188,6 @@ function wfc(grid: Grid, outWidth: number, outHeight: number): Grid {
       point = pickNextPoint();
       iter++;
     } while (point != null);
-    console.log("made grid after iter", iter);
     return uncollapsedGrid as Grid;
   }
 
@@ -238,9 +237,9 @@ function entropy(weights: RelationWeights): number {
   return e;
 }
 
-function dot(a: RelationWeights, b: RelationWeights): RelationWeights {
+function multiplyWeights(a: RelationWeights, b: RelationWeights): RelationWeights {
   if (a.length !== b.length) {
-    throw new Error("dot product length mismatch");
+    throw new Error("multiply length mismatch");
   }
   return arrayRange(a.length, (i) => a[i] * b[i]);
 }
@@ -251,8 +250,12 @@ function isZero(weights: RelationWeights) {
 
 type Point = { x: number; y: number };
 
-function collapseGridPoint(uncollapsedGrid: UncollapsedGrid, point: Point): Id | undefined {
-  const weights = uncollapsedGrid[point.x][point.y];
+function collapseGridPoint(
+  uncollapsedGrid: UncollapsedGrid,
+  point: Point,
+  relationModel: RelationModel
+): Id | undefined {
+  let weights = uncollapsedGrid[point.y][point.x];
   if (typeof weights === "number") {
     debugger;
     throw new Error("Collapsing an already collapsed point!");
@@ -260,10 +263,29 @@ function collapseGridPoint(uncollapsedGrid: UncollapsedGrid, point: Point): Id |
   if (isZero(weights)) {
     return;
   }
+  weights = weights.slice();
+
+  function scaleFromNeighbors(weights: RelationWeights, x: number, y: number, dir: "n" | "w" | "e" | "s") {
+    // account for nearby grid points
+    const neighbor = uncollapsedGrid[y]?.[x];
+    if (neighbor == null) {
+      return;
+    }
+    if (typeof neighbor === "number") {
+      // it's collapsed; scale the weights by exactly the relation model
+      weights = multiplyWeights(weights, relationModel.get(neighbor)![dir]);
+    } else {
+      // do nothing for uncollapsed (for now)
+    }
+  }
+  scaleFromNeighbors(weights, point.x, point.y - 1, "s");
+  scaleFromNeighbors(weights, point.x, point.y + 1, "n");
+  scaleFromNeighbors(weights, point.x - 1, point.y, "e");
+  scaleFromNeighbors(weights, point.x + 1, point.y, "w");
+
   normalizeWeights(weights);
   const sample = collapse(weights);
-  uncollapsedGrid[point.x][point.y] = sample;
-  console.log("collapsing", point, "with weights", weights, "to", sample);
+  uncollapsedGrid[point.y][point.x] = sample;
   return sample;
 }
 
@@ -275,13 +297,13 @@ function newRelationModel(grid: Grid) {
   const relationModel: RelationModel = new Map();
 
   function maybeCountNeighbor(x: number, y: number, array: RelationWeights) {
-    const id: number | undefined = grid[x]?.[y];
+    const id: number | undefined = grid[y]?.[x];
     if (id != null) {
       // count +1 to the weight for the neighbor
       array[id] = (array[id] ?? 0) + 1;
     }
   }
-  function countWeight(i: number, j: number, id: Id) {
+  function countWeight(x: number, y: number, id: Id) {
     if (!relationModel.has(id)) {
       relationModel.set(id, {
         s: newRelationWeights(NUM_IDS),
@@ -292,15 +314,15 @@ function newRelationModel(grid: Grid) {
     }
     const relations = relationModel.get(id)!;
 
-    maybeCountNeighbor(i, j - 1, relations.n);
-    maybeCountNeighbor(i, j + 1, relations.s);
-    maybeCountNeighbor(i - 1, j, relations.w);
-    maybeCountNeighbor(i + 1, j, relations.e);
+    maybeCountNeighbor(x, y - 1, relations.n);
+    maybeCountNeighbor(x, y + 1, relations.s);
+    maybeCountNeighbor(x - 1, y, relations.w);
+    maybeCountNeighbor(x + 1, y, relations.e);
   }
   // iterate through input and build relation model
-  for (let i = 0; i < grid.length; i++) {
-    for (let j = 0; j < grid[i].length; j++) {
-      countWeight(i, j, grid[i][j]);
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[y].length; x++) {
+      countWeight(x, y, grid[y][x]);
     }
   }
 
