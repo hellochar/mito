@@ -9,6 +9,13 @@ import { GeneInstance } from "./geneInstance";
 import { makeGeneUnknown } from "./GeneUnknown";
 
 function serializeGeneIntoName(gene: Gene): string {
+  const unknownRegex = /^Unknown \((.+)\)$/;
+  const regexMatch = gene.blueprint.name.match(unknownRegex);
+  // account for Unknown (${name})
+  if (regexMatch != null) {
+    const originalName = regexMatch[1];
+    return originalName;
+  }
   return gene.blueprint.name;
 }
 
