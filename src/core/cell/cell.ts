@@ -70,6 +70,10 @@ export class Cell extends Tile implements Interactable {
     return this.properties.diffusionSugar;
   }
 
+  get moveSpeed() {
+    return this.temperatureTempo * this.properties.moveSpeed;
+  }
+
   get timeToBuild() {
     return this.properties.timeToBuild;
   }
@@ -145,10 +149,6 @@ export class Cell extends Tile implements Interactable {
    */
   canPullResources(giver: Tile) {
     return giver instanceof Cell;
-  }
-
-  public getMovespeedMultiplier() {
-    return this.temperatureTempo;
   }
 
   addEffect(effect: CellEffect) {

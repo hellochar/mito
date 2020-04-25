@@ -29,7 +29,7 @@ const cellTypeTissue = new CellType(
 const cellTypeLeaf = new CellType(
   "Leaf",
   0,
-  new Chromosome(GeneLiving.level(0), GeneObstacle.level(0), GeneInventory.level(0), GenePhotosynthesis.level(0)),
+  new Chromosome(GeneLiving.level(0), GeneObstacle.level(0), GenePhotosynthesis.level(0)),
   {
     color: new Color("white"),
     texturePosition: new Vector2(2, 1),

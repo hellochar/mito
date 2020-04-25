@@ -17,11 +17,17 @@ export type CellProperties = {
   diffusionWater: number;
   diffusionSugar: number;
   /**
+   * How much faster you move.
+   */
+  moveSpeed: number;
+  /**
    * Seconds it take to build.
    */
   timeToBuild: number;
   /**
    * How fast Genes and Effects happen on the cell.
+   *
+   * Tempo stacks multiplicatively.
    */
   tempo: number;
   /**
@@ -41,6 +47,7 @@ export function defaultCellProperties(): CellProperties {
     costWater: 1,
     diffusionWater: 0,
     diffusionSugar: 0,
+    moveSpeed: 1,
     tempo: 1,
     energyUpkeep: 0,
     timeToBuild: CELL_BUILD_TIME,

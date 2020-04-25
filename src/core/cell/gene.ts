@@ -30,12 +30,14 @@ export class Gene<S = any, K extends string = any> {
         ? (initialState as GeneInitialStateFn<S, K>)
         : () => ({ ...(initialState ?? ({} as S)) });
     const gene = new Gene<S, K>(blueprint, initialStateFn, step ?? (stepNoOP as GeneStepFn<S, K>), shouldStep);
-    const { name } = gene.blueprint;
-    const exists = AllGenesByName.has(name);
-    if (exists) {
-      console.error("A gene named", name, "already exists!");
+    if (!blueprint.isHidden) {
+      const { name } = gene.blueprint;
+      const exists = AllGenesByName.has(name);
+      if (exists) {
+        console.error("A gene named", name, "already exists!");
+      }
+      AllGenesByName.set(gene.blueprint.name, (gene as unknown) as Gene);
     }
-    AllGenesByName.set(gene.blueprint.name, (gene as unknown) as Gene);
     return gene;
   }
 }
@@ -48,6 +50,7 @@ export type PropBlueprint<K extends string> = Record<K, number | number[]>;
 
 export interface GeneBlueprint<K extends string> {
   name: string;
+  isHidden?: boolean;
   description: (props: RealizedProps<K>, sProps: Partial<CellProperties>) => React.ReactNode;
   levelCosts: number[];
   levelProps: PropBlueprint<K>;

@@ -100,7 +100,7 @@ export class CellType {
     if (geneSlotsNet < 0) {
       // 1.5^x * 0.0125
       // 0.188%, 0.281%, 0.422%, 0.633%, 0.949%, 1.43%, 2.14%, 3.2%, 4.81%, 7.21%
-      return clamp(Math.pow(1.3, Math.abs(geneSlotsNet)) * 0.00225, 0, 1);
+      return clamp(Math.pow(1.3, Math.abs(geneSlotsNet)) * 0.00125, 0, 1);
     } else {
       return 0;
     }

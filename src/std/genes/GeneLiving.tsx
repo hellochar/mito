@@ -18,7 +18,7 @@ export const GeneLiving = Gene.make(
         </p>
         <p>
           Allows cell to hold <RI w />
-          <RI s />. Resource Capacity +3.
+          <RI s />. Resource Capacity +5.
         </p>
       </>
     ),

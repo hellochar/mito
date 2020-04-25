@@ -6,14 +6,19 @@ import { Cell } from "../tile";
 import { CellProperties } from "./cellProperties";
 import { AllGenesByName, Gene } from "./gene";
 import { GeneInstance } from "./geneInstance";
-import { GeneUnknown } from "./GeneUnknown";
+import { makeGeneUnknown } from "./GeneUnknown";
 
 function serializeGeneIntoName(gene: Gene): string {
   return gene.blueprint.name;
 }
 
 function deserializeGeneFromName(name: string): Gene {
-  return AllGenesByName.get(name) || GeneUnknown;
+  const gene = AllGenesByName.get(name);
+  if (gene == null) {
+    console.error("Couldn't load gene", name);
+    return makeGeneUnknown(name);
+  }
+  return gene;
 }
 
 export class RealizedGene<G extends Gene = Gene> {
