@@ -6,9 +6,9 @@ import RI from "./RI";
 export const GeneOsmosis = Gene.make(
   {
     name: "Osmosis",
-    levelCosts: [4],
+    levelCosts: [1],
     levelProps: {
-      secondsPerPull: 3,
+      secondsPerPull: 1,
     },
     static: {},
     description: ({ secondsPerPull }) => (

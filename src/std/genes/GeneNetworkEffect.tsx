@@ -7,24 +7,26 @@ const PERCENT_FASTER = 1;
 
 export const GeneNetworkEffect = Gene.make({
   name: "Network Effect",
-  levelCosts: [4],
-  levelProps: {},
+  levelCosts: [2],
+  levelProps: {
+    energyUpkeep: 1 / 600,
+  },
   description: () => (
     <>
-      If this cell has {NEIGHBORS_NEEDED} or more neighbors (diagonals included) of the same type, it operates{" "}
+      If this cell has {NEIGHBORS_NEEDED} or more neighbors (diagonals included), it operates{" "}
       <b>{PERCENT_FASTER * 100}%</b> faster.
     </>
   ),
   dynamic(cell, properties) {
     const neighbors = Array.from(cell.world.tileNeighbors(cell.pos).values());
-    let numSameType = 0;
+    let numCells = 0;
     for (const n of neighbors) {
-      if (n instanceof Cell && n.type === cell.type) {
-        numSameType++;
+      if (n instanceof Cell) {
+        numCells++;
       }
     }
 
-    if (numSameType >= NEIGHBORS_NEEDED) {
+    if (numCells >= NEIGHBORS_NEEDED) {
       properties.tempo *= 1 + PERCENT_FASTER;
     }
     return properties;

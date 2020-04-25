@@ -3,7 +3,7 @@ import { Gene } from "../../core/cell/gene";
 export const GeneObstacle = Gene.make(
   {
     name: "Obstacle",
-    levelCosts: [-4],
+    levelCosts: [-3],
     levelProps: {},
     static: {
       isObstacle: true,

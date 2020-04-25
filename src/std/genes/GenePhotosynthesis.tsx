@@ -17,9 +17,9 @@ export interface PhotosynthesisState {
 export const GenePhotosynthesis = Gene.make<PhotosynthesisState>(
   {
     name: "Photosynthesis",
-    levelCosts: [3, 6, 9, 12, 15],
+    levelCosts: [3, 5, 7, 9, 11],
     levelProps: {
-      reactionChancePerSecond: [0.0125, 0.025, 0.05, 0.1, 0.2],
+      reactionChancePerSecond: [0.06, 0.08, 0.11, 0.15, 0.2],
     },
     static: {
       energyUpkeep: 1 / 400,

@@ -7,7 +7,7 @@ import RI from "./RI";
 export const GeneBark = Gene.make(
   {
     name: "Bark",
-    levelCosts: [2],
+    levelCosts: [0],
     levelProps: {
       timeBeforeGrowth: TIME_PER_DAY,
     },
@@ -18,7 +18,7 @@ export const GeneBark = Gene.make(
     description: ({ timeBeforeGrowth }) => (
       <>
         <p>
-          This cell costs 1<RI w />1<RI s /> more to grow.
+          Cell costs 1<RI w />1<RI s /> more to grow.
         </p>
         <p>
           <b>{timeBeforeGrowth} seconds</b> after growth, this cell emits a Dead Cell on each directly neighboring Air.

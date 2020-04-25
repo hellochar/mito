@@ -33,8 +33,8 @@ const mixedSoilRock: TileGenerator = (pos, world) => {
   const { noiseSoil, noiseWater } = world.generatorContext;
   const { x, y } = pos;
   const level = noiseSoil.octaveSimplex2(x / 10, y / 10);
-  const s = new (level < -0.37 ? Sand : level < 0.37 ? Silt : level < 1 ? Clay : Rock)(pos, world);
-  const water = clamp((noiseWater.simplex2(x / 5, y / 5) + 0.2 > 0.4 ? level : 0) * 20, 1, 20);
+  const s = new (level < -0.37 ? Sand : level < 0.37 ? Silt : level < 1.2 ? Clay : Rock)(pos, world);
+  const water = clamp(level * 30, 1, 20);
   s.inventory.add(water, 0);
   return s;
 };
@@ -110,9 +110,9 @@ const Temperate: TileGenerator = (pos, world) => {
         );
       } else {
         const s = mixedSoilRock(pos, world)!;
-        const water = Math.round(clamp((simplexValue > 0.4 ? heightScalar : 0) * 10, 1, 10));
+        // const water = Math.round(clamp((simplexValue > 0.4 ? heightScalar : 0) * 10, 1, 10));
 
-        s.inventory.set(water, 0);
+        // s.inventory.set(water, 0);
         return s;
       }
     }

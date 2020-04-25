@@ -15,12 +15,12 @@ export interface SoilAbsorptionState {
 export const GeneSoilAbsorption = Gene.make<SoilAbsorptionState>(
   {
     name: "Soil Absorption",
-    levelCosts: [4, 6, 8, 10, 12],
+    levelCosts: [3, 5, 7, 9, 11],
     levelProps: {
-      secondsPerAbsorb: [60, 30, 15, 9, 6],
+      secondsPerAbsorb: [15, 12, 9.6, 7.68, 6.14],
     },
     static: {
-      energyUpkeep: 1 / 480,
+      energyUpkeep: 1 / 540,
     },
     description: ({ secondsPerAbsorb }) => (
       <>

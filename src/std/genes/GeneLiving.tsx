@@ -5,10 +5,10 @@ import RI from "./RI";
 export const GeneLiving = Gene.make(
   {
     name: "Living",
-    levelCosts: [-6, -8, -10, -12, -15],
+    levelCosts: [-3, -4, -5, -6, -7],
     levelProps: {},
     static: {
-      inventoryCapacity: 3,
+      inventoryCapacity: 5,
       energyUpkeep: 1 / 1200,
     },
     description: () => (

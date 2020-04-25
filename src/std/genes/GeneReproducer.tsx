@@ -41,7 +41,7 @@ export type GeneFruit = typeof GeneFruit;
 export const GeneSeed = Gene.make<ReproducerState>(
   {
     name: "Seed",
-    levelCosts: [10, 12, 14, 16, 18],
+    levelCosts: [3, 4, 5, 6, 8],
     levelProps: {
       mpEarned: [1, 1.25, 1.5, 1.75, 2],
       neededEnergy: 100,

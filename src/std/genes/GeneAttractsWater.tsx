@@ -1,20 +1,23 @@
 import { randFloat } from "math";
 import React from "react";
 import GN from "std/genes/GN";
-import { takeFromOneNeighborCell } from "std/geneUtil";
+import { takeFromEveryNeighborCell } from "std/geneUtil";
 import { Gene } from "../../core/cell/gene";
 import RI from "./RI";
 
 export const GeneAttractsWater = Gene.make(
   {
     name: "Attracts Water",
-    levelCosts: [1, 2, 3, 4, 5],
+    levelCosts: [1, 1, 1, 1, 4],
     levelProps: {
-      secondsPerPull: [20, 10, 5, 3, 2],
+      secondsPerPull: [20, 14, 9, 5, 1],
+    },
+    static: {
+      energyUpkeep: 1 / 1000,
     },
     description: ({ secondsPerPull }) => (
       <>
-        Every <GN value={secondsPerPull} sigFigs={2} /> seconds, take 1<RI w /> from any neighboring Cell.
+        Every <GN value={secondsPerPull} sigFigs={2} /> seconds, take 1<RI w /> from every neighboring Cell.
       </>
     ),
   },
@@ -23,7 +26,7 @@ export const GeneAttractsWater = Gene.make(
   }),
   (dt, { cell, state, props: { secondsPerPull } }) => {
     if (state.cooldown <= 0) {
-      takeFromOneNeighborCell(cell, 1, 0);
+      takeFromEveryNeighborCell(cell, 1, 0);
       state.cooldown += secondsPerPull;
     }
     state.cooldown -= dt;

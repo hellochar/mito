@@ -7,9 +7,12 @@ import { Gene } from "../../core/cell/gene";
 export const GeneNutrientExtraction = Gene.make(
   {
     name: "Nutrient Extraction",
-    levelCosts: [5],
+    levelCosts: [1, 1, 1, 1, 4],
     levelProps: {
-      energyPerSecond: 0.02,
+      energyPerSecond: [0.02, 0.03, 0.04, 0.05, 0.1],
+    },
+    static: {
+      energyUpkeep: 1 / 720,
     },
     description: ({ energyPerSecond }) => (
       <>

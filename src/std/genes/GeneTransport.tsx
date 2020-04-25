@@ -8,25 +8,22 @@ import { Gene } from "../../core/cell/gene";
 export const GeneTransport = Gene.make(
   {
     name: "Transport",
-    levelCosts: [2, 3, 4, 5, 6],
+    levelCosts: [1, 1, 1, 2, 3],
     levelProps: {
-      secondsPerPush: [20, 10, 5, 3, 2],
+      secondsPerPush: [5, 4, 3, 2, 1],
     },
     description: ({ secondsPerPush }) => (
       <>
         <b>Hold Shift to configure.</b>
         <p>
-          Every <GN value={secondsPerPush} sigFigs={2} /> seconds, give 1<ResourceIcon name="water" />1
-          <ResourceIcon name="sugar" /> into the directed cell.
-        </p>
-        <p>
-          Every <GN value={secondsPerPush} sigFigs={2} /> seconds, take 1
-          <ResourceIcon name="water" />1<ResourceIcon name="sugar" /> from behind.
+          Every <GN value={secondsPerPush} sigFigs={2} /> seconds, move 1<ResourceIcon name="water" />1
+          <ResourceIcon name="sugar" /> into the directed cell from behind.
         </p>
       </>
     ),
     static: {
       isDirectional: true,
+      energyUpkeep: 1 / 720,
     },
   },
   (gene, { secondsPerPush }) => ({

@@ -6,20 +6,20 @@ import { Gene } from "../../core/cell/gene";
 export const GenePushWater = Gene.make(
   {
     name: "Push Water",
-    levelCosts: [1, 2, 3, 4, 5],
+    levelCosts: [1, 1, 1, 1, 1],
     levelProps: {
-      secondsPerPull: [20, 10, 5, 3, 2],
+      secondsPerPush: [20, 12, 7, 3, 1],
     },
-    description: ({ secondsPerPull }) => (
+    description: ({ secondsPerPush }) => (
       <>
-        Every <GN value={secondsPerPull} sigFigs={2} /> seconds, push 1 water from this Cell to each neighboring Cell.
+        Every <GN value={secondsPerPush} sigFigs={2} /> seconds, push 1 water from this Cell to each neighboring Cell.
       </>
     ),
   },
   {
     cooldown: 0,
   },
-  (dt, { cell, state, props: { secondsPerPull } }) => {
+  (dt, { cell, state, props: { secondsPerPush } }) => {
     const neighbors = cell.world.tileNeighbors(cell.pos);
     if (state.cooldown <= 0) {
       for (const [, tile] of neighbors) {
@@ -32,7 +32,7 @@ export const GenePushWater = Gene.make(
           // }
         }
       }
-      state.cooldown += secondsPerPull;
+      state.cooldown += secondsPerPush;
     }
     state.cooldown -= dt;
   }

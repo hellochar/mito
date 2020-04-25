@@ -10,7 +10,7 @@ import { HUDProps } from ".";
 import { HotkeyButton } from "../HotkeyButton";
 import "./Tutorial.scss";
 
-export const Tutorial = ({ mito, isViewerOpen }: HUDProps & {isViewerOpen: boolean}) => {
+export const Tutorial = ({ mito, isViewerOpen }: HUDProps & { isViewerOpen: boolean }) => {
   const [activeIndex, setActiveIndex] = React.useState(0);
   const handleDone = React.useCallback(
     (index) => {
@@ -103,7 +103,7 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
       useCountActionTarget(
         player,
         (action) => action.type === "pickup" && action.target instanceof Cell && action.target.displayName === "Root",
-        16
+        14
       )
     );
     return (
@@ -125,7 +125,7 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
       useCountActionTarget(
         player,
         (action) => action.type === "drop" && action.target instanceof Cell && action.target.displayName === "Leaf",
-        16
+        14
       )
     );
     return (
@@ -176,8 +176,8 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
     );
   },
   ({ player, setPercentDone, isViewerOpen, active }) => {
-    const percentDone = (isViewerOpen && active) ? 1 : 0;
-    setPercentDone(percentDone)
+    const percentDone = isViewerOpen && active ? 1 : 0;
+    setPercentDone(percentDone);
     return (
       <>
         Look at your Genes - <HotkeyButton hotkey="Tab" />.

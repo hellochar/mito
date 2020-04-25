@@ -17,7 +17,7 @@ export function generateRandomGenes(numGenes = 3) {
 
 export function populateGeneOptions(species: Species, isFirstChoice: boolean): RealizedGene[] {
   if (isFirstChoice) {
-    return [GeneTransport.level(2), GenePipes.level(2), GeneDiffuseWater.level(0)];
+    return [GeneTransport.level(0), GenePipes.level(0), GeneDiffuseWater.level(0)];
   }
   return generateRandomGenes(3);
 }

@@ -4,10 +4,10 @@ import { Gene } from "../../core/cell/gene";
 export const GeneInventory = Gene.make(
   {
     name: "Inventory",
-    levelCosts: [1, 2, 3, 4, 5],
+    levelCosts: [1, 1, 2, 2, 3],
     levelProps: {},
     static: {
-      inventoryCapacity: [1, 2, 3, 5, 8],
+      inventoryCapacity: [2, 4, 7, 11, 15],
     },
     description: (_, { inventoryCapacity }) => (
       <>

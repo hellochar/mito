@@ -6,12 +6,12 @@ import { Gene } from "../../core/cell/gene";
 export const GeneEnergyTransfer = Gene.make(
   {
     name: "Energy Transfer",
-    levelCosts: [1, 3, 4, 5, 7],
+    levelCosts: [1, 1, 1, 1, 1],
     levelProps: {
-      differenceThreshold: [0.08, 0.04, 0.02, 0.01, 0.005],
+      differenceThreshold: [0.08, 0.04, 0.02, 0.01, 0.0],
     },
     static: {
-      energyUpkeep: 1 / 600,
+      energyUpkeep: 1 / 800,
     },
     description: ({ differenceThreshold }) => (
       <>

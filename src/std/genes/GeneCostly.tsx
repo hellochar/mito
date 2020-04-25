@@ -4,7 +4,7 @@ import { Gene } from "../../core/cell/gene";
 export const GeneCostly = Gene.make(
   {
     name: "Costly",
-    levelCosts: [-3, -4, -5, -6, -8],
+    levelCosts: [-3, -4, -5, -6, -10],
     levelProps: {},
     static: {
       costSugar: [2, 3, 4, 5, 8],

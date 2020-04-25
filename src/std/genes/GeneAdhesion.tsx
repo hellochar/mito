@@ -9,8 +9,11 @@ const extraDiffusion = 0.1;
 export const GeneAdhesion = Gene.make(
   {
     name: "Adhesion",
-    levelCosts: [2],
+    levelCosts: [1],
     levelProps: {},
+    static: {
+      energyUpkeep: 1 / 1200,
+    },
     dynamic(cell, properties) {
       const neighbors = cell.world.tileNeighbors(cell.pos);
       let nonCellNeighbors = 0;

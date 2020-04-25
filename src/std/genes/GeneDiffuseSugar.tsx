@@ -6,9 +6,9 @@ import RI from "./RI";
 export const GeneDiffuseSugar = Gene.make(
   {
     name: "Diffuse Sugar",
-    levelCosts: [0, 1, 2, 3, 5],
+    levelCosts: [0, 0, 0, 0, 1],
     static: {
-      diffusionSugar: [0.08, 0.1, 0.12, 0.15, 0.2],
+      diffusionSugar: [0.1, 0.12, 0.14, 0.16, 0.25],
     },
     levelProps: {},
     description: (props, { diffusionSugar }) => (

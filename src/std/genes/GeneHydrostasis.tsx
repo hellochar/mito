@@ -8,8 +8,11 @@ const PERCENT_FASTER = 1;
 
 export const GeneHydrostasis = Gene.make({
   name: "Hydrostasis",
-  levelCosts: [4],
+  levelCosts: [1, 1, 1, 2, 3],
   levelProps: {},
+  static: {
+    energyUpkeep: 1 / 600,
+  },
   description: () => (
     <>
       If this cell holds between {WATER_MIN} and {WATER_MAX} <ResourceIcon name="water" />, it operates{" "}

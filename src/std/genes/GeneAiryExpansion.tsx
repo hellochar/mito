@@ -7,7 +7,7 @@ const NEIGHBORING_AIR_NEEDED = 5;
 
 export const GeneAiryExpansion = Gene.make({
   name: "Airy Expansion",
-  levelCosts: [2],
+  levelCosts: [1],
   levelProps: {},
   description: () => (
     <>

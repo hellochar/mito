@@ -15,7 +15,7 @@ import {
 const cellTypeTissue = new CellType(
   "Tissue",
   0,
-  new Chromosome(GeneLiving.level(2), GeneEnergyTransfer.level(1)),
+  new Chromosome(GeneLiving.level(0), GeneEnergyTransfer.level(0)),
   {
     texturePosition: new Vector2(1, 1),
     color: new Color(0x30ae25),
@@ -29,7 +29,7 @@ const cellTypeTissue = new CellType(
 const cellTypeLeaf = new CellType(
   "Leaf",
   0,
-  new Chromosome(GeneLiving.level(0), GeneObstacle.level(0), GeneInventory.level(1), GenePhotosynthesis.level(1)),
+  new Chromosome(GeneLiving.level(0), GeneObstacle.level(0), GeneInventory.level(0), GenePhotosynthesis.level(0)),
   {
     color: new Color("white"),
     texturePosition: new Vector2(2, 1),
@@ -43,7 +43,7 @@ const cellTypeLeaf = new CellType(
 const cellTypeRoot = new CellType(
   "Root",
   0,
-  new Chromosome(GeneLiving.level(2), GeneScaffolding.level(1), GeneInventory.level(3), GeneSoilAbsorption.level(2)),
+  new Chromosome(GeneLiving.level(0), GeneScaffolding.level(0), GeneInventory.level(0), GeneSoilAbsorption.level(0)),
   {
     color: new Color("white"),
     texturePosition: new Vector2(3, 1),
@@ -54,7 +54,7 @@ const cellTypeRoot = new CellType(
   }
 );
 
-const cellTypeSeed = new CellType("Seed", 0, new Chromosome(GeneLiving.level(2), GeneSeed.level(0)), {
+const cellTypeSeed = new CellType("Seed", 0, new Chromosome(GeneLiving.level(0), GeneSeed.level(0)), {
   texturePosition: new Vector2(1, 4),
 });
 

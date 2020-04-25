@@ -7,9 +7,12 @@ import RI from "./RI";
 export const GenePipes = Gene.make(
   {
     name: "Pipes",
-    levelCosts: [1, 2, 3, 5, 8],
+    levelCosts: [1, 1, 1, 2, 3],
     levelProps: {
-      diffusionRate: [0.025, 0.05, 0.1, 0.2, 0.4],
+      diffusionRate: [0.15, 0.175, 0.2, 0.25, 0.25],
+    },
+    static: {
+      energyUpkeep: 1 / 540,
     },
     description: ({ diffusionRate }) => (
       <>
