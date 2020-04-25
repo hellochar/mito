@@ -1,7 +1,7 @@
 import { HexTile } from "core/overworld/hexTile";
 import { lineage, Species } from "core/species";
 import { GameResult } from "game/gameResult";
-import { populateGeneOptions } from "game/ui/SpeciesViewer/generateRandomGenes";
+import { generateGeneOptions } from "game/ui/SpeciesViewer/generateGeneOptions";
 import produce from "immer";
 import React, { useContext } from "react";
 import { AppState, PopulationAttempt } from "./state";
@@ -161,7 +161,7 @@ function handleNextEpoch(state: AppState, action: AANextEpoch): AppState {
       if (species.freeMutationPoints > 0) {
         // on the very first time you move an epoch, you get one chance to get transport/pipes/diffuse water
         const isFirstChoice = draft.epoch === 0;
-        species.geneOptions = populateGeneOptions(species, isFirstChoice);
+        species.geneOptions = generateGeneOptions(species, isFirstChoice);
       }
     }
     draft.epoch += 1;

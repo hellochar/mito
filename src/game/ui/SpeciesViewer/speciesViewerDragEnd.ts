@@ -5,28 +5,11 @@ import { geneDrop } from "game/audio";
 import produce from "immer";
 import { DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { droppableIdToCell } from "./droppableId";
-import { populateGeneOptions } from "./generateRandomGenes";
-import { ViewerState } from "./viewerState";
+import { generateGeneOptions } from "./generateGeneOptions";
 
 export const ID_TRASH = "trash";
 export const ID_GENE_OPTIONS = "gene-options";
 export const ID_GENES_UNUSED = "genes-unused";
-
-export function getDraggedGene(viewerState: ViewerState) {
-  const { species, dragStart } = viewerState; //: Species, source: DraggableLocation) {
-
-  if (dragStart != null) {
-    const { droppableId, index } = dragStart.source;
-    switch (droppableId) {
-      case ID_GENE_OPTIONS:
-        return species.geneOptions[index];
-      case ID_GENES_UNUSED:
-        return species.genome.unusedGenes[index];
-      default:
-        return droppableIdToCell(species.genome, droppableId)?.chromosome.genes[index];
-    }
-  }
-}
 
 function speciesViewerDragEnd(
   result: DropResult,
@@ -55,7 +38,7 @@ function speciesViewerDragEnd(
       } else if (result.source.droppableId === ID_GENES_UNUSED) {
         gene = draft.genome.unusedGenes.splice(sourceIndex, 1)[0];
       } else {
-        // successful drag; move the gene
+        // drag between cells; move the gene
         const sourceCell = droppableIdToCell(draft.genome, result.source.droppableId);
         // delete and get gene from source cell
         gene = sourceCell?.chromosome.genes.splice(sourceIndex, 1)[0];
@@ -73,7 +56,7 @@ function speciesViewerDragEnd(
         }
       }
       if (shouldRepopulateGeneOptions) {
-        draft.geneOptions = populateGeneOptions(draft, false);
+        draft.geneOptions = generateGeneOptions(draft, false);
       }
     });
     dispatch({

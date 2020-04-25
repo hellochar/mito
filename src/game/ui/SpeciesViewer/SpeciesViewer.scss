@@ -89,10 +89,10 @@
   // border: 1px solid $gray5;
   // background: $light-gray5;
   // border-radius: 5px;
-  background: linear-gradient(221deg, #9d45d9, #c396e1, #be60ff, #b63dfb);
-  background-size: 400% 400%;
+  background: linear-gradient(221deg, transparent 0%, desaturate(#b63dfb, 50%), transparent 100%);
+  background-size: 200% 200%;
 
-  animation: swirly 5s ease infinite;
+  animation: swirly 21s ease infinite;
 
   @keyframes swirly {
     0% {
@@ -107,6 +107,11 @@
   }
 
   h1 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .mutations-remaining {
     text-align: center;
   }
 }
