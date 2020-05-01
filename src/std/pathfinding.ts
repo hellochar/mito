@@ -2,7 +2,7 @@ import { AStarFinder, DiagonalMovement, Grid } from "pathfinding";
 import { Vector2 } from "three";
 import { World } from "../core";
 import { ActionMove } from "../core/player/action";
-import { Cell } from "../core/tile";
+import { Air, Cell } from "../core/tile";
 import { MOVEMENTS } from "../game/input/keymap";
 
 export function findPositionsThroughTissue(world: World, target: Vector2, includeTargetIfNonTissue = false) {
@@ -19,6 +19,23 @@ export function findPositionsThroughTissue(world: World, target: Vector2, includ
     path.pop();
     return path;
   }
+  return path;
+}
+
+export function findPositionsThroughAir(world: World, target: Vector2) {
+  const grid = newGrid(world.width, world.height, (x, y, g) => {
+    const tile = world.tileAt(x, y);
+    if (tile instanceof Air) {
+      g.setWalkableAt(x, y, true);
+    }
+  });
+  grid.setWalkableAt(target.x, target.y, true);
+  const path = findPositions(grid, world.player.pos, target);
+  // if (!(world.tileAt(target) instanceof Cell) && !includeTargetIfNonTissue) {
+  //   // get rid of trying to actually walk past the edge
+  //   path.pop();
+  //   return path;
+  // }
   return path;
 }
 

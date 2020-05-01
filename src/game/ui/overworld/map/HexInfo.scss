@@ -16,9 +16,9 @@
     padding-left: 10px;
   }
 
-  .body {
+  .inhabited {
     text-align: center;
-    padding: 20px;
+
     p {
       font-size: 16px;
       margin: 0;
@@ -47,5 +47,15 @@
       flex-grow: 1;
       padding: 10px 20px;
     }
+  }
+}
+
+.environment-info {
+  text-align: left;
+  > div {
+    margin: 10px 0;
+  }
+  .insects {
+    font-size: 24px;
   }
 }

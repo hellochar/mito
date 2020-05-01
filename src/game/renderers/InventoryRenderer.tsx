@@ -71,6 +71,10 @@ export class InventoryRenderer extends Renderer<Inventory> {
     this.updateSugarAndWaterParticles();
   }
 
+  public getCarrierPos() {
+    return this.target.carrier.pos;
+  }
+
   private handleGetResources = (giver: Inventory) => {
     this.updateSugarAndWaterParticles(giver);
   };
@@ -113,7 +117,7 @@ export class InventoryRenderer extends Renderer<Inventory> {
       //     const carrierInventoryRenderer = carrierRenderer.inventoryRenderer;
       //     const
       //   }
-      const v = giver != null ? giver.carrier.pos.clone().sub(this.target.carrier.pos) : newParticle();
+      const v = giver != null ? giver.carrier.pos.clone().sub(this.getCarrierPos()) : newParticle();
       v.x += (Math.random() - 0.5) * 0.1;
       v.y += (Math.random() - 0.5) * 0.1;
       particles.push(v);
@@ -140,14 +144,14 @@ export class InventoryRenderer extends Renderer<Inventory> {
     const numFullSizedParticles = Math.floor(resource);
     for (let i = 0; i < numFullSizedParticles; i++) {
       const p = resourceArray[i];
-      particles.commit(p.x + this.target.carrier.pos.x, p.y + this.target.carrier.pos.y, 10, 1, 1);
+      particles.commit(p.x + this.getCarrierPos().x, p.y + this.getCarrierPos().y, 10, 1, 1);
     }
     const fract = resource - numFullSizedParticles;
     if (fract > 0) {
       const p = resourceArray[resourceArray.length - 1];
       particles.commit(
-        p.x + this.target.carrier.pos.x,
-        p.y + this.target.carrier.pos.y,
+        p.x + this.getCarrierPos().x,
+        p.y + this.getCarrierPos().y,
         10,
         map(Math.sqrt(fract), 0, 1, 0.2, 1),
         1

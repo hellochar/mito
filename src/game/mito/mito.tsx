@@ -166,7 +166,8 @@ export class Mito extends ISketch {
       const delta = -(e.deltaX + e.deltaY) / 125 / 20;
       const currZoom = this.userZoom;
       const scalar = Math.pow(2, delta);
-      const newZoom = clamp(currZoom * scalar, 1, 3);
+      // const newZoom = clamp(currZoom * scalar, 1, 3);
+      const newZoom = currZoom * scalar;
       this.userZoom = newZoom;
     },
   };

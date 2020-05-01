@@ -1,8 +1,11 @@
+import locustsSrc from "assets/images/grasshopper.png";
+import { Environment } from "core/environment";
+import { LevelInfo } from "core/overworld/levelInfo";
 import { Species } from "core/species";
 import React from "react";
+import { environmentFromLevelInfo } from "std/environments";
 import { HexTile } from "../../../../core/overworld/hexTile";
 import { Button } from "../../common/Button";
-import Expand from "../../common/Expand";
 import MP from "../../common/MP";
 import "./HexInfo.scss";
 
@@ -24,9 +27,9 @@ function HexInfo({ playSpecies, tile, onClickPlay }: HexInfo) {
       </div>
     );
 
-  const body =
+  const floraInfo =
     flora != null ? (
-      <>
+      <div className="inhabited">
         <p>
           Inhabited by{" "}
           <b>
@@ -36,28 +39,50 @@ function HexInfo({ playSpecies, tile, onClickPlay }: HexInfo) {
         <p>
           <MP amount={flora.mutationPointsPerEpoch} /> per epoch
         </p>
-      </>
-    ) : tile.isHabitable ? null : (
-      <p style={{ color: "red" }}>Uninhabitable</p>
-    );
+      </div>
+    ) : null;
 
   const stringifyInfo = { ...tile.info };
   delete stringifyInfo.flora;
 
-  const expand = tile.isHabitable ? (
-    <Expand shrunkElements={<div className="details">Details</div>}>
-      <pre style={{ fontSize: "12px" }}>{JSON.stringify(stringifyInfo, null, 4)}</pre>
-    </Expand>
-  ) : null;
+  const habitableInfo = tile.isHabitable ? (
+    <EnvironmentInfo info={tile.info} environment={environmentFromLevelInfo(tile.info)} />
+  ) : (
+    <p style={{ color: "red" }}>Uninhabitable</p>
+  );
 
   return (
     <div className="hex-info-container">
       <div className="header">{tile.displayName}</div>
-      <div className="body">{body}</div>
-      {expand}
+      <div className="body">
+        {floraInfo}
+        {habitableInfo}
+      </div>
       {playButtonElement}
     </div>
   );
 }
+
+const EnvironmentInfo: React.FC<{ environment: Environment; info: LevelInfo }> = ({ environment, info }) => {
+  return (
+    <div className="environment-info">
+      {environment.insectsPerDay > 0 ? (
+        <div className="insects">
+          <img src={locustsSrc} />
+          <b>Has Locusts</b>
+        </div>
+      ) : null}
+      <div>
+        <b>Rainfall</b>: {info.rainfall}
+      </div>
+      <div>
+        <b>Temperature</b>: {info.temperature}
+      </div>
+      <div>
+        <b>Soil Type</b>: {info.soilType}
+      </div>
+    </div>
+  );
+};
 
 export default HexInfo;

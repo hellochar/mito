@@ -23,6 +23,8 @@ export abstract class Tile implements Steppable {
 
   public abstract inventory: Inventory;
 
+  public closestCellDistance: number = Infinity;
+
   // public lightIntersection?: Intersection;
   get temperature(): Temperature {
     return temperatureFor(this.temperatureFloat);
@@ -46,6 +48,10 @@ export abstract class Tile implements Steppable {
       // map(this.pos.y, this.world.height / 2, this.world.height, params.soilDarknessBase, 1)
     );
     return contrib;
+  }
+
+  get cellDistanceContrib() {
+    return 1;
   }
 
   public readonly timeMade: number;
@@ -132,6 +138,7 @@ export abstract class Tile implements Steppable {
   public step(dt: number) {
     const neighbors = this.world.tileNeighbors(this.pos);
     this.stepDarkness(neighbors);
+    this.stepClosestCellDistance(neighbors);
     this.stepDiffusion(neighbors, dt);
     this.stepTemperature(dt);
     this.stepGravity(dt);
@@ -148,6 +155,15 @@ export abstract class Tile implements Steppable {
       minDarkness = Math.min(minDarkness, darknessFromNeighbor);
     }
     this.darkness = minDarkness;
+  }
+
+  stepClosestCellDistance(neighbors: Map<Vector2, Tile>) {
+    let minDistance = this.closestCellDistance;
+    for (const [v, t] of neighbors) {
+      const neighborDistance = t.closestCellDistance + this.cellDistanceContrib * v.length();
+      minDistance = Math.min(minDistance, neighborDistance);
+    }
+    this.closestCellDistance = minDistance;
   }
 
   stepDiffusion(neighbors: Map<Vector2, Tile>, dt: number) {

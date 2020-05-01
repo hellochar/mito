@@ -8,6 +8,7 @@ import { newBaseSpecies } from "../core/species";
 import { Experiment, Visitors } from "./experiment";
 
 const allSoilEnvironment: Environment = {
+  insectsPerDay: 0,
   airEvaporation: 0,
   climate: { rainDuration: 0, timeBetweenRainfall: Infinity, waterPerSecond: 0 },
   fill: (pos, world) => undefined,

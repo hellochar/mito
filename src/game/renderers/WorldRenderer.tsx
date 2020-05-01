@@ -1,9 +1,11 @@
+import { Insect } from "core/insect";
 import { createSelector } from "reselect";
 import { Scene } from "three";
 import { Entity, Player, PlayerSeed, StepStats, World } from "../../core";
 import { Tile } from "../../core/tile";
 import Mito from "../mito/mito";
 import { EventLogRenderer } from "./events/eventLogRenderer";
+import { InsectRenderer } from "./InsectRenderer";
 import { InventoryPoints } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";
 import { PlayerSeedRenderer } from "./PlayerSeedRenderer";
@@ -57,6 +59,8 @@ export class WorldRenderer extends Renderer<World> {
       return new PlayerSeedRenderer(object, this.scene, this.mito);
     } else if (object instanceof Tile) {
       return new InstancedTileRenderer(object, this.scene, this.mito, this.tileBatcher, this);
+    } else if (object instanceof Insect) {
+      return new InsectRenderer(object, this.scene, this.mito);
     } else {
       console.error(`Couldn't find renderer for`, object);
       return null;

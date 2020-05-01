@@ -23,6 +23,7 @@ export function environmentFromLevelInfo(info: LevelInfo) {
 }
 
 export const Level0: Environment = {
+  insectsPerDay: 0,
   airEvaporation: 0.2,
   climate: {
     // 9 water/sec
@@ -37,6 +38,7 @@ export const Level0: Environment = {
 };
 
 export const Temperate: Environment = {
+  insectsPerDay: 1,
   airEvaporation: 0.3,
   climate: {
     // 8.62 water/sec
@@ -51,6 +53,7 @@ export const Temperate: Environment = {
 };
 
 export const Reservoires: Environment = {
+  insectsPerDay: 1,
   airEvaporation: 0.3,
   climate: {
     // 12 water/sec (!)
@@ -65,6 +68,7 @@ export const Reservoires: Environment = {
 };
 
 export const Rocky: Environment = {
+  insectsPerDay: 0,
   airEvaporation: 0.3,
   climate: {
     // 8.6 water/sec, but much longer apart
@@ -79,6 +83,7 @@ export const Rocky: Environment = {
 };
 
 export const SkySoil: Environment = {
+  insectsPerDay: 0,
   airEvaporation: 0.3,
   climate: {
     // 9 water/sec; often, but small rains
@@ -93,6 +98,7 @@ export const SkySoil: Environment = {
 };
 
 export const Desert: Environment = {
+  insectsPerDay: 0,
   airEvaporation: 0.3,
   climate: {
     // 5.57 water/sec (very little!)

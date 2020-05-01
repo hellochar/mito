@@ -206,6 +206,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
               capacityBasedWidth
             />
           </Tooltip>
+          <div>{tile.closestCellDistance}</div>
         </div>
       </div>
     );

@@ -11,6 +11,7 @@ export interface Environment {
     rainDuration: number;
     waterPerSecond: number;
   };
+  insectsPerDay: number;
   secondsToEvaporate: number;
   floorCo2: number;
   temperaturePerSeason: number[];

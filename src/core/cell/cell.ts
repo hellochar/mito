@@ -33,6 +33,8 @@ export class Cell extends Tile implements Interactable {
 
   public darkness = 0;
 
+  public closestCellDistance = 0;
+
   public nextTemperature: number;
 
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
@@ -87,6 +89,10 @@ export class Cell extends Tile implements Interactable {
   }
 
   get darknessContrib() {
+    return 0;
+  }
+
+  get cellDistanceContrib() {
     return 0;
   }
 
@@ -333,7 +339,11 @@ export class Cell extends Tile implements Interactable {
   }
 
   stepDarkness(neighbors: Map<Vector2, Tile>) {
-    return 0;
+    this.darkness = 0;
+  }
+
+  stepClosestCellDistance() {
+    this.closestCellDistance = 0;
   }
 
   public validateDirection() {

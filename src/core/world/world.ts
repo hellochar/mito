@@ -1,5 +1,9 @@
+import { Toaster } from "@blueprintjs/core";
+import { TIME_PER_DAY } from "core/constants";
 import { Environment } from "core/environment";
+import { Insect } from "core/insect";
 import { EventEmitter } from "events";
+import { randFloat } from "math";
 import { gridRange } from "math/arrays";
 import { TileGenerators } from "std/tileGenerators";
 import { Vector2 } from "three";
@@ -28,6 +32,10 @@ const optionsDefault: WorldOptions = {
 };
 
 export class World {
+  isAtEdge(pos: Vector2) {
+    return pos.x === 0 || pos.x === this.width - 1 || pos.y === 0 || pos.y === this.height - 1;
+  }
+
   public time: number = 0;
 
   public frame: number = 0;
@@ -37,6 +45,8 @@ export class World {
   public readonly height: number;
 
   public readonly player: Player;
+
+  public insects: Insect[] = [];
 
   public playerSeed?: PlayerSeed;
 
@@ -229,6 +239,12 @@ export class World {
     return cell;
   }
 
+  removeInsect(insect: Insect) {
+    this.insects.splice(this.insects.indexOf(insect), 1);
+    this.stepStats.deleted.push(insect);
+    return true;
+  }
+
   public isValidPosition(x: number, y: number) {
     if (x >= this.width || x < 0 || y >= this.height || y < 0) {
       return false;
@@ -321,6 +337,7 @@ export class World {
     } else {
       newEntities.push(this.player);
     }
+    newEntities.push(...this.insects);
     this.cachedEntities = newEntities;
 
     // update renderable entities
@@ -350,6 +367,7 @@ export class World {
         step(entity, dt);
       }
     });
+    this.stepInsects(dt);
     this.weather.step(dt);
     this.frame++;
     this.time += dt;
@@ -357,6 +375,20 @@ export class World {
     this.events.emit("step", this.stepStats);
     return this.stepStats;
     // this.checkResources();
+  }
+
+  stepInsects(dt: number) {
+    if (
+      this.playerSeed == null &&
+      this.insects.length < 1 &&
+      Math.random() < (this.environment.insectsPerDay / TIME_PER_DAY) * dt
+    ) {
+      InsectToaster.clear();
+      InsectToaster.show({
+        message: "Insect approaching!",
+      });
+      this.insects.push(new Insect(new Vector2(randFloat(0, this.width), 0), this));
+    }
   }
 
   logEvent(event: TileEvent) {
@@ -505,3 +537,9 @@ const DIRECTION_VALUES_RAND = [
   shuffle(DIRECTION_VALUES.slice()),
   shuffle(DIRECTION_VALUES.slice()),
 ];
+
+const InsectToaster = Toaster.create({
+  canEscapeKeyClear: false,
+  maxToasts: 1,
+  position: "bottom",
+});
