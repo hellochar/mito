@@ -110,7 +110,7 @@ export class Player implements Steppable {
     return this.world.tileAt(this.pos)!;
   }
 
-  public findNearestWalkableCell() {
+  public findNearestDirectlyWalkableCell() {
     for (const tile of this.world.bfsIterator(this.pos, this.world.width * this.world.height)) {
       if (this.isWalkable(tile)) {
         return tile;
@@ -133,16 +133,11 @@ export class Player implements Steppable {
   }
 
   public step(dt: number) {
-    // this.maybeMoveWithTransports(dt);
+    // if we are walkable, but not *directly* walkable, slowly push the player back towards home
     if (!this.isWalkable(this.currentTile())) {
-      const nearestWalkableCell = this.findNearestWalkableCell();
-      if (nearestWalkableCell != null) {
-        this.world.logEvent({
-          type: "oof",
-          from: this.posFloat,
-          to: nearestWalkableCell,
-        });
-        this.posFloat.copy(nearestWalkableCell.pos);
+      const nearestWalkableCell = this.findNearestDirectlyWalkableCell();
+      if (nearestWalkableCell) {
+        this.posFloat.lerp(nearestWalkableCell.pos, 0.13);
       }
     }
     if (this.action != null) {
@@ -189,12 +184,7 @@ export class Player implements Steppable {
     }
   }
 
-  public isWalkable(pos: Tile): pos is Cell;
-
-  public isWalkable(pos: Vector2): boolean;
-
-  public isWalkable(pos: Tile | Vector2) {
-    const tile = pos instanceof Vector2 ? this.world.tileAt(Math.round(pos.x), Math.round(pos.y)) : pos;
+  public isWalkable(tile: Tile | null | undefined): tile is Cell {
     if (tile == null) {
       return false;
     }
@@ -204,17 +194,28 @@ export class Player implements Steppable {
     if (tile instanceof Cell) {
       return tile.findEffectOfType(FreezeEffect) == null;
     }
-    return true;
+    return false;
   }
 
   public canBuildAt(tile: Tile | null): tile is Tile {
     if (tile == null) {
       return false;
-    } else if (tile instanceof Cell) {
-      return false;
-    } else {
-      return !tile.isObstacle;
     }
+    if (tile instanceof Cell) {
+      return false;
+    }
+    if (tile.isObstacle) {
+      return false;
+    }
+
+    // you can build off any adjacent existing cell
+    const neighbors = this.world.tileNeighbors(tile.pos);
+    for (const n of neighbors.values()) {
+      if (n instanceof Cell) {
+        return true;
+      }
+    }
+    return false;
   }
 
   isTakingLongAction() {
@@ -223,24 +224,8 @@ export class Player implements Steppable {
 
   public attemptMove(action: ActionMove, dt: number) {
     const nextPos = this.posFloat.clone().add(action.dir.clone().setLength(this.speed * dt));
-    if (this.isWalkable(nextPos)) {
-      // const t = this.currentTile();
-      // if (t instanceof Cell) {
-      //   if (t.temperature < 40) {
-      //     t.nextTemperature += 0.2;
-      //   }
-      //   else if (t.temperature > 60) {
-      //     t.nextTemperature -= 0.2;
-      //   }
-      // }
-      // do the move
-      this.posFloat.copy(nextPos);
-      // this._pos = this.posFloat.clone().round();
-      // this.autopickup();
-      return true;
-    } else {
-      return false;
-    }
+    this.posFloat.copy(nextPos);
+    return true;
   }
 
   public attemptStill(_dt: number) {
