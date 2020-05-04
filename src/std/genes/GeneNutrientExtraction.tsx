@@ -12,7 +12,7 @@ export const GeneNutrientExtraction = Gene.make(
       energyPerSecond: [0.02, 0.03, 0.04, 0.05, 0.1],
     },
     static: {
-      energyUpkeep: 1 / 720,
+      energyUpkeep: 1 / 1200,
     },
     description: ({ energyPerSecond }) => (
       <>

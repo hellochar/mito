@@ -6,7 +6,6 @@ export * from "./GeneCannotFreeze";
 export * from "./GeneCostly";
 export * from "./GeneDiffuseSugar";
 export * from "./GeneDiffuseWater";
-export * from "./GeneEnergyTransfer";
 export * from "./GeneHydrostasis";
 export * from "./GeneInventory";
 export * from "./GeneLiving";

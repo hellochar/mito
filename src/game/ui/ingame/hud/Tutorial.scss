@@ -22,15 +22,17 @@
   }
 
   .instruction {
-    margin: 10px 0;
     transition: all 0.2s, font-size 0.2s cubic-bezier(0.37, 1.5, 0.7, 0.94);
     display: flex;
     align-items: center;
     position: relative;
     white-space: nowrap;
-    height: 32px;
-    width: 265px;
-    padding: 0 5px;
+    min-height: 32px;
+    min-width: 265px;
+    padding: 10px 5px;
+    background: transparentize($color: $color-sugar, $amount: 0.1);
+    border-radius: 5px;
+    overflow: hidden;
 
     .background-fill {
       position: absolute;
@@ -38,14 +40,19 @@
       top: 0;
       height: 100%;
       transition: width 0.2s;
-      background-color: rgba(255, 255, 255, 0.5);
+      background-color: $color-tissue;
+      transform: translateX(-7px) skewX(-11deg) scaleX(1.08);
       pointer-events: none;
-      z-index: -1;
+    }
+
+    .instruction-content {
+      z-index: 1;
     }
 
     .mito-hud-button {
       display: inline;
       margin: 0 4px;
+      text-shadow: none;
 
       .mito-hud-button-hotkey {
         color: $black;
@@ -61,7 +68,12 @@
     &.active,
     &:hover {
       font-size: 2em;
+      text-shadow: 1px 0 0 $black, 0 -1px 0 $black, 0 1px 0 $black, -1px 0 0 $black;
       opacity: 1 !important;
+      // border-radius: 2px;
+      // color: $black;
+      padding: 20px;
+      height: 72px;
     }
     &:not(.active):not(:hover) {
       opacity: 0.2;

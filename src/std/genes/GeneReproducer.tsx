@@ -18,7 +18,7 @@ export const GeneFruit = Gene.make<ReproducerState>(
     levelCosts: [10, 15, 20, 25, 30],
     levelProps: {
       mpEarned: [3, 4, 5, 6, 7],
-      neededEnergy: 300,
+      neededEnergy: 400,
     },
     static: {
       isReproductive: true,
@@ -44,7 +44,7 @@ export const GeneSeed = Gene.make<ReproducerState>(
     levelCosts: [3, 4, 5, 6, 8],
     levelProps: {
       mpEarned: [1, 1.25, 1.5, 1.75, 2],
-      neededEnergy: 100,
+      neededEnergy: 150,
     },
     static: {
       isReproductive: true,
@@ -99,6 +99,12 @@ function reproducerStep(dt: number, instance: GeneInstance<Gene<ReproducerState,
       state.timeMatured = cell.world.time;
       instance.earnMP(cell, mpEarned);
     }
+    // give energy to the cell itself if it's going to die
+    if (cell.energy < 0.5) {
+      const energyToGive = clamp(clamp(0.5 - cell.energy, 0, ENERGY_TRANSFER_PER_SECOND * dt), 0, state.energyRecieved);
+      state.energyRecieved -= energyToGive;
+      cell.energy += energyToGive;
+    }
   }
 }
 
@@ -106,8 +112,8 @@ function commitEnergy(dt: number, seed: Cell, state: ReproducerState, neededEner
   let energyLeftToTake = neededEnergy - state.energyRecieved;
   let energyRecieved = 0;
   const tileNeighbors = seed.world.tileNeighbors(seed.pos);
-  for (const [, neighbor] of tileNeighbors) {
-    if (neighbor.pos.manhattanDistanceTo(seed.pos) > 1 || !(neighbor instanceof Cell)) continue;
+  for (const neighbor of tileNeighbors.values()) {
+    if (!(neighbor instanceof Cell)) continue;
 
     if (neighbor.energy > NEIGHBOR_ENERGY_THRESHOLD && energyLeftToTake > 0 && !neighbor.isReproductive) {
       const energyToTake = clamp(neighbor.energy, 0, ENERGY_TRANSFER_PER_SECOND * dt);

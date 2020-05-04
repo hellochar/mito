@@ -17,18 +17,19 @@ export interface PhotosynthesisState {
 export const GenePhotosynthesis = Gene.make<PhotosynthesisState>(
   {
     name: "Photosynthesis",
-    levelCosts: [3, 5, 7, 9, 11],
+    levelCosts: [4, 6, 8, 10, 12],
     levelProps: {
       reactionChancePerSecond: [0.05, 0.075, 0.1, 0.15, 0.2],
     },
     static: {
-      energyUpkeep: 1 / 400,
+      energyUpkeep: 1 / 800,
     },
     description: ({ reactionChancePerSecond }) => (
       <>
         <p>
-          Converts 2<ResourceIcon name="water" /> into 1<ResourceIcon name="sugar" />.
+          Converts <ResourceIcon name="water" /> into <ResourceIcon name="sugar" />.
         </p>
+        <p>50% co2, the trade is 2:1. At 100% co2, the trade is 1:1.</p>
         <p>
           Each neighboring Air provides a <GN value={reactionChancePerSecond * 100} sigFigs={3} />% chance per second,
           scaled with sunlight.
@@ -76,9 +77,8 @@ function maybePhotosynthesize(
   const sunlight = air.sunlight();
 
   // gives much less sugar lower down
-  // const conversionRate = air.co2();
+  const conversionRate = air.co2();
 
-  const conversionRate = 0.5;
   state.averageConversionRate += conversionRate;
   // in prime conditions:
   //      our rate of conversion is speed * params.leafReactionRate

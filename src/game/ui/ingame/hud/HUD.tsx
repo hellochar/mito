@@ -79,7 +79,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
             temperature={this.world.weather.getCurrentTemperature()}
           />
         </div>
-        {this.maybeRenderMenu()}
+        <GameMenu {...this.props} />
         {this.maybeRenderSpeciesViewer()}
         {this.maybeRenderCollectButton()}
         {this.maybeRenderWinShine()}
@@ -115,12 +115,6 @@ export class HUD extends React.Component<HUDProps, HUDState> {
   private positionFn = () => {
     return this.mito.inspectedCell ?? null;
   };
-
-  maybeRenderMenu() {
-    if (!this.mito.isFirstPlaythrough) {
-      return <GameMenu {...this.props} />;
-    }
-  }
 
   maybeRenderCellInspector() {
     const cell = this.mito.inspectedCell;

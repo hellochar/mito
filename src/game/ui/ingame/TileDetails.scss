@@ -48,6 +48,18 @@
     > div:first-of-type {
       width: 75px;
     }
+
+    .co2-container {
+      margin-left: 20px;
+    }
+
+    .co2 {
+      font-family: $arial-family;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: -1px;
+      margin-right: 2px;
+    }
   }
 
   .info-cell-effects {

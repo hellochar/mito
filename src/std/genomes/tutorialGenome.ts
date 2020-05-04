@@ -2,7 +2,6 @@ import { Color, Vector2 } from "three";
 import Chromosome from "../../core/cell/chromosome";
 import Genome, { CellType } from "../../core/cell/genome";
 import {
-  GeneEnergyTransfer,
   GeneInventory,
   GeneLiving,
   GeneObstacle,
@@ -15,7 +14,7 @@ import {
 const cellTypeTissue = new CellType(
   "Tissue",
   0,
-  new Chromosome(GeneLiving.level(0), GeneEnergyTransfer.level(0)),
+  new Chromosome(GeneLiving.level(0)),
   {
     texturePosition: new Vector2(1, 1),
     color: new Color(0x30ae25),

@@ -12,7 +12,7 @@ export const GenePipes = Gene.make(
       diffusionRate: [0.15, 0.175, 0.2, 0.25, 0.25],
     },
     static: {
-      energyUpkeep: 1 / 540,
+      energyUpkeep: 1 / 1500,
     },
     description: ({ diffusionRate }) => (
       <>

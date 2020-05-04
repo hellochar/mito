@@ -20,7 +20,7 @@ export const GeneSoilAbsorption = Gene.make<SoilAbsorptionState>(
       secondsPerAbsorb: [15, 12, 9.6, 7.68, 6.14],
     },
     static: {
-      energyUpkeep: 1 / 540,
+      energyUpkeep: 1 / 800,
     },
     description: ({ secondsPerAbsorb }) => (
       <>

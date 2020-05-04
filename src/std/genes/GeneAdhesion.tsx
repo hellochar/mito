@@ -30,7 +30,7 @@ export const GeneAdhesion = Gene.make(
     description: () => (
       <>
         <p>
-          While this cell has 3 or more non-Cell neighbors, diffuse <RI w /> into this cell.
+          While this cell has 3 or more non-Cell neighbors, take <RI w /> from other Cells.
         </p>
         <p>
           On average, get 1<RI w /> every <GN value={1 / extraDiffusion} sigFigs={3} /> seconds.

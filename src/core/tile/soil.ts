@@ -1,8 +1,9 @@
+import { TIME_PER_DAY } from "core/constants";
 import { Interactable } from "core/interactable";
 import { Inventory } from "core/inventory";
 import { Action } from "core/player/action";
 import { Tile } from "core/tile/tile";
-import { clamp, lerp, map, randRound } from "math/index";
+import { clamp, lerp, map, randFloat, randRound } from "math/index";
 import { Air } from "./air";
 export abstract class Soil extends Tile implements Interactable {
   /**
@@ -19,6 +20,8 @@ export abstract class Soil extends Tile implements Interactable {
   isObstacle = false;
 
   isStructuralSupport = true;
+
+  private rechargeWaterCooldown = randFloat(0, TIME_PER_DAY);
 
   get depthDiffusionFactor() {
     // make water move slower in deeper soil. Every depth 10, slow down gravity and fallAmount by this much
@@ -51,6 +54,7 @@ export abstract class Soil extends Tile implements Interactable {
   step(dt: number) {
     super.step(dt);
     this.stepEvaporation(dt);
+    this.stepGiveWater(dt);
   }
 
   stepEvaporation(dt: number) {
@@ -62,6 +66,17 @@ export abstract class Soil extends Tile implements Interactable {
       this.inventory.add(-waterToEvaporate, 0);
       this.world.logEvent({ type: "evaporation", tile: this });
       this.world.numEvaporatedSoil += waterToEvaporate;
+    }
+  }
+
+  stepGiveWater(dt: number) {
+    this.rechargeWaterCooldown -= dt;
+    if (this.rechargeWaterCooldown <= 0) {
+      if (this.inventory.water < this.saturation) {
+        this.inventory.add(1, 0);
+        this.world.numRechargedWater += 1;
+      }
+      this.rechargeWaterCooldown += TIME_PER_DAY;
     }
   }
 
@@ -106,7 +121,7 @@ export class Sand extends Soil {
   }
 
   get fallAmount() {
-    return 1.5 / this.depthDiffusionFactor;
+    return 2.0 / this.depthDiffusionFactor;
   }
 
   public inventory = new Inventory(20, this);
@@ -124,7 +139,7 @@ export class Silt extends Soil {
   }
 
   get fallAmount() {
-    return 0.2 / this.depthDiffusionFactor;
+    return 0.3 / this.depthDiffusionFactor;
   }
 
   public inventory = new Inventory(10, this);
@@ -142,7 +157,7 @@ export class Clay extends Soil {
   }
 
   get fallAmount() {
-    return 0.05 / this.depthDiffusionFactor;
+    return 0.075 / this.depthDiffusionFactor;
   }
 
   public inventory = new Inventory(10, this);

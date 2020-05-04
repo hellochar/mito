@@ -9,7 +9,7 @@ export const GeneNetworkEffect = Gene.make({
   name: "Network Effect",
   levelCosts: [2],
   levelProps: {
-    energyUpkeep: 1 / 600,
+    energyUpkeep: 1 / 1200,
   },
   description: () => (
     <>

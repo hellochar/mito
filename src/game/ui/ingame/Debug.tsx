@@ -55,6 +55,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
       <PlantStats world={mito.world} time={Math.floor(mito.world.time)} />
       <div>
         <div>Rainwater: {mito.world.numRainWater}</div>
+        <div>Recharged water: {mito.world.numRechargedWater}</div>
         <div>Evaporated Air: {mito.world.numEvaporatedAir}</div>
         <div>Evaporated Soil: {mito.world.numEvaporatedSoil}</div>
       </div>

@@ -2,7 +2,7 @@ import { Interactable } from "core/interactable";
 import { Action } from "core/player/action";
 import { Vector2 } from "three";
 import { Noise } from "../../common/perlin";
-import { map } from "../../math/index";
+import { clamp, map } from "../../math/index";
 import { Inventory } from "../inventory";
 import { World } from "../world/world";
 import { Tile } from "./tile";
@@ -47,17 +47,14 @@ export class Air extends Tile implements Interactable {
   }
 
   private computeCo2() {
-    const base = map(this.pos.y, this.world.height / 2, 0, this.world.environment.floorCo2, 1.15);
-    const scaleX = Math.max(1, map(this.pos.y, this.world.height / 2, 0, 4, 9));
-    // const offset = noiseCo2.perlin3(94.2321 - this.pos.x / scaleX, 3221 - this.pos.y / 2.5, world.time / 5 + 93.1) * 0.2;
+    const base = map(this.pos.y, this.world.height / 2, this.world.height / 4, this.world.environment.floorCo2, 1.15);
+    const scaleX = Math.max(1, map(this.pos.y, this.world.height / 2, 0, 4, 9)) * 5;
     const time = this.world == null ? 0 : this.world.time;
     const offset =
-      noiseCo2.perlin3(
-        94.231 + (this.pos.x - this.world.width / 2) / scaleX,
-        2312 + this.pos.y / 8,
-        time / 1000 + 93.1
-      ) * 0.25;
-    return Math.max(Math.min(base + offset, 1), Math.min(0.4, this.world.environment.floorCo2 * 0.75));
+      noiseCo2.perlin3(94.231 + (this.pos.x - this.world.width / 2) / scaleX, 2312 + this.pos.y / 8, time / 50 + 93.1) *
+        0.25 -
+      0.125;
+    return clamp(base + offset, 0.25, 1);
   }
 
   public lightAmount() {

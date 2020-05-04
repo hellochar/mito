@@ -23,7 +23,7 @@ export const GeneTransport = Gene.make(
     ),
     static: {
       isDirectional: true,
-      energyUpkeep: 1 / 720,
+      energyUpkeep: 1 / 1500,
     },
   },
   (gene, { secondsPerPush }) => ({

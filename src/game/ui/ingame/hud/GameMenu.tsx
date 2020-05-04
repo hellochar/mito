@@ -23,13 +23,10 @@ export const GameMenu: React.FC<HUDProps> = ({ mito }) => {
   const menuPanel = (
     <div>
       <div className="option abandon" onClick={handleAbandonPlant}>
-        Abandon Plant
+        {mito.isFirstPlaythrough ? "Restart" : "Abandon"} Plant
       </div>
     </div>
   );
-  if (mito.isFirstPlaythrough) {
-    return null;
-  }
   return (
     <>
       <button className="game-menu-toggle game-options-button" onClick={handleGameMenuToggleClick}>
@@ -49,7 +46,7 @@ export const GameMenu: React.FC<HUDProps> = ({ mito }) => {
               <FaArrowLeft />
             </div>
             <Tab id="menu" title="Menu" panel={menuPanel} />
-            {/* <Tab id="attr" title="Attribution" panel={<Attribution />} /> */}
+            <Tab id="attr" title="Attribution" panel={<Attribution />} />
           </Tabs>
         </div>
       </Overlay>

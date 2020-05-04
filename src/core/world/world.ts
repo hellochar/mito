@@ -405,6 +405,8 @@ export class World {
 
   numEvaporatedSoil = 0;
 
+  numRechargedWater = 0;
+
   public computeSoilDepths() {
     const airPositions = Array.from(this.allEnvironmentTiles())
       .filter((t) => t instanceof Air)

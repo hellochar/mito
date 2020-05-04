@@ -14,7 +14,7 @@ export const GeneVascular = Gene.make(
       diffusionRate: [0.1, 0.15, 0.2, 0.25, 0.35],
     },
     static: {
-      energyUpkeep: 1 / 800,
+      energyUpkeep: 1 / 1200,
     },
     description: ({ diffusionRate }) => `Diffuses water to other Vascular cells with rate ${diffusionRate}.`,
   },

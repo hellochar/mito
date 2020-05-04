@@ -7,7 +7,7 @@ export const GeneCannotFreeze = Gene.make(
     levelProps: {},
     static: {
       cantFreeze: true,
-      energyUpkeep: 1 / 450,
+      energyUpkeep: 1 / 600,
     },
     description: () => null,
   },

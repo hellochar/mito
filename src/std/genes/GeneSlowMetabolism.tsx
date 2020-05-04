@@ -1,3 +1,4 @@
+import { nf } from "common/formatters";
 import React from "react";
 import { Gene } from "../../core/cell/gene";
 
@@ -13,7 +14,7 @@ export const GeneSlowMetabolism = Gene.make({
   },
   description: (_, { tempo }) => (
     <>
-      Cell operates <b>{(1 - tempo!) * 100}%</b> slower. <i>(Energy upkeep is also decreased)</i>.
+      Cell operates <b>{nf((1 - tempo!) * 100, 3)}%</b> slower. <i>(Energy upkeep is also decreased)</i>.
     </>
   ),
 });

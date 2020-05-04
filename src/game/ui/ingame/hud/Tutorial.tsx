@@ -175,20 +175,20 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
       </>
     );
   },
-  ({ player, setPercentDone, isViewerOpen, active }) => {
-    const percentDone = isViewerOpen && active ? 1 : 0;
-    setPercentDone(percentDone);
-    return (
-      <>
-        Look at your Genes - <HotkeyButton hotkey="Tab" />.
-      </>
-    );
-  },
+  // ({ player, setPercentDone, isViewerOpen, active }) => {
+  //   const percentDone = isViewerOpen && active ? 1 : 0;
+  //   setPercentDone(percentDone);
+  //   return (
+  //     <>
+  //       Look at your Genes - <HotkeyButton hotkey="Tab" />.
+  //     </>
+  //   );
+  // },
   ({ player, setPercentDone }) => {
     const percentDone =
       (Array.from(player.world.mpEarners.keys())[0]?.findGene(GeneSeed)?.state.energyRecieved ?? 0) / 100;
     setPercentDone(percentDone);
-    return <>Get seed to 100 energy.</>;
+    return <>Get seed to 150 energy.</>;
   },
 ];
 
@@ -225,7 +225,9 @@ const TutorialStepContainer: React.FC<{
   return (
     <div className={classNames("instruction", { active, first: isFirst, done: isDone })}>
       <div className="background-fill" style={style} />
-      <Step player={mito.world.player} setPercentDone={setPercentDone} active={active} isViewerOpen={isViewerOpen} />
+      <div className="instruction-content">
+        <Step player={mito.world.player} setPercentDone={setPercentDone} active={active} isViewerOpen={isViewerOpen} />
+      </div>
     </div>
   );
 };

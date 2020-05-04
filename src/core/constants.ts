@@ -38,15 +38,15 @@ export const TIME_PER_DAY = TIME_PER_MONTH / 3; // 60 seconds per day (1 minute)
 export const PERCENT_DAYLIGHT = 0.9; // 45 second days, 5 second nights
 
 /**
- * How many seconds it takes to build a Cell.
+ * How many seconds by default it takes to build a Cell.
  */
-export const CELL_BUILD_TIME = 1.0;
+export const CELL_BUILD_TIME = 0;
 
 /**
  * How many tiles per frame a cell will freefall in the Air. Unscaled
  * by time.
  */
-export const CELL_DROOP = 0.13;
+export const CELL_DROOP = 0.027;
 
 /**
  * In a two Cell system with one Water, this water will diffuse, on average, after this many seconds.

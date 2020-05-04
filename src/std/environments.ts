@@ -32,7 +32,7 @@ export const Level0: Environment = {
     waterPerSecond: 210,
   },
   secondsToEvaporate: 166,
-  floorCo2: 0.85,
+  floorCo2: 0.5,
   temperaturePerSeason: [48, 56, 52, 43],
   fill: "Level0",
 };
@@ -41,10 +41,10 @@ export const Temperate: Environment = {
   insectsPerDay: 1,
   airEvaporation: 0.3,
   climate: {
-    // 8.62 water/sec
+    // 10.2 water/sec
     timeBetweenRainfall: 65,
-    rainDuration: 2.8,
-    waterPerSecond: 200,
+    rainDuration: 3,
+    waterPerSecond: 220,
   },
   secondsToEvaporate: 166,
   floorCo2: 0.5,
@@ -69,15 +69,15 @@ export const Reservoires: Environment = {
 
 export const Rocky: Environment = {
   insectsPerDay: 0,
-  airEvaporation: 0.3,
+  airEvaporation: 0.03,
   climate: {
-    // 8.6 water/sec, but much longer apart
+    // 12.96 water/sec, but much longer apart
     timeBetweenRainfall: 83.333,
-    rainDuration: 4,
+    rainDuration: 6,
     waterPerSecond: 180,
   },
-  secondsToEvaporate: 33,
-  floorCo2: 1,
+  secondsToEvaporate: 166,
+  floorCo2: 0.8,
   temperaturePerSeason: [40, 62, 36, 15],
   fill: "Rocky",
 };
@@ -86,13 +86,14 @@ export const SkySoil: Environment = {
   insectsPerDay: 0,
   airEvaporation: 0.3,
   climate: {
-    // 9 water/sec; often, but small rains
+    // 10.5 water/sec; often, but small rains
     timeBetweenRainfall: 12,
     rainDuration: 6,
-    waterPerSecond: 18,
+    waterPerSecond: 21,
   },
-  secondsToEvaporate: 33,
-  floorCo2: 1,
+  secondsToEvaporate: 166,
+  floorCo2: 0.5,
+  // start cold
   temperaturePerSeason: [18, 62, 36, 15],
   fill: "SkySoil",
 };
@@ -101,12 +102,14 @@ export const Desert: Environment = {
   insectsPerDay: 0,
   airEvaporation: 0.3,
   climate: {
-    // 5.57 water/sec (very little!)
+    // 12.66 water/sec, very far apart
     timeBetweenRainfall: 110,
     rainDuration: 6.3333,
     waterPerSecond: 220,
   },
+  // evaporates quickly!
   secondsToEvaporate: 16,
+  // very good co2
   floorCo2: 0.95,
   temperaturePerSeason: [72, 89, 110, 50],
   fill: "Desert",

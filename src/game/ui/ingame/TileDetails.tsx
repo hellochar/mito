@@ -150,14 +150,17 @@ export class TileDetails extends React.Component<TileDetailsProps> {
     if (tile instanceof Air) {
       return (
         <div className="info-air">
-          <Tooltip content={"Sunlight increases photosynthesis rate, and is affected by shadowing."}>
+          <Tooltip content={"Sunlight increases photosynthesis rate."}>
             <div>☀️ {nf(tile.sunlight() * 100, 2)}%</div>
           </Tooltip>
-          {/* <Tooltip content="Air quality ">
-            <div>
-              <GiDustCloud /> {nf((1 - tile.co2()) * 100, 2)}%
+          <Tooltip content="CO2 improves the water to sugar ratio.">
+            <div className="co2-container">
+              <span className="co2">
+                CO<sub>2</sub>
+              </span>{" "}
+              {nf(tile.co2() * 100, 2)}%
             </div>
-          </Tooltip> */}
+          </Tooltip>
         </div>
       );
     }
@@ -206,7 +209,6 @@ export class TileDetails extends React.Component<TileDetailsProps> {
               capacityBasedWidth
             />
           </Tooltip>
-          <div>{tile.closestCellDistance}</div>
         </div>
       </div>
     );

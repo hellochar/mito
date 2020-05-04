@@ -11,7 +11,7 @@ export const GeneHydrostasis = Gene.make({
   levelCosts: [1, 1, 1, 2, 3],
   levelProps: {},
   static: {
-    energyUpkeep: 1 / 600,
+    energyUpkeep: 1 / 1200,
   },
   description: () => (
     <>

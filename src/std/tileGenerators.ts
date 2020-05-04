@@ -56,7 +56,7 @@ const Level0: TileGenerator = (pos, world) => {
       // the + at the end makes a *huge* difference
       const simplexValue = noiseWater.simplex2(x * simplexScalar, y * simplexScalar) + 0.15;
 
-      const isEarlyFountain = simplexValue > 0.9 && y - soilLevel > 8 && y - soilLevel < 13;
+      const isEarlyFountain = simplexValue > 0.93 && y - soilLevel > 5 && y - soilLevel < 13;
       if (isEarlyFountain) {
         return new Fountain(pos, world, 3, 75 + randInt(-10, 10));
       }
@@ -96,7 +96,7 @@ const Temperate: TileGenerator = (pos, world) => {
       // the + at the end makes a *huge* difference
       const simplexValue = noiseWater.simplex2(x * simplexScalar, y * simplexScalar) + 0.13;
 
-      const isFountain = simplexValue > 0.9 && y - soilLevel > 8;
+      const isFountain = simplexValue > 0.93 && y - soilLevel > 5 && y - soilLevel < 13;
       if (isFountain) {
         return new Fountain(pos, world, 3, map(y, world.height / 2, world.height, 100, 300));
       }

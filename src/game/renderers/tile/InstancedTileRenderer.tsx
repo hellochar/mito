@@ -5,6 +5,7 @@ import { Air, Cell, DeadCell, Fountain, GrowingCell, Rock, Tile } from "core/til
 import { BarrenLand } from "core/tile/BarrenLand";
 import { Clay, Sand, Silt } from "core/tile/soil";
 import { easeCubic } from "d3-ease";
+import { scaleLinear } from "d3-scale";
 import Mito from "game/mito/mito";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
@@ -167,23 +168,15 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     } else if (this.target instanceof Cell && this.target.isReproductive) {
       // Do nothing; GeneRenderer sets scale for you
     } else {
-      lerp2(this.scale, InstancedTileRenderer.ONE, 0.1);
+      lerp2(this.scale, InstancedTileRenderer.ONE, 0.25);
     }
   }
 
   updateColor() {
     const lightAmount = this.target.lightAmount();
     if (this.target instanceof Air) {
-      const colorIndex = Math.max(0, map(this.target.co2(), 1 / 6, 1.001, 0, AIR_COLORSCALE.length - 1));
-      const startColorIndex = Math.floor(colorIndex);
-      const startColor = AIR_COLORSCALE[startColorIndex];
-      this.originalColor = startColor.clone();
-      if (startColorIndex !== AIR_COLORSCALE.length - 1) {
-        const alpha = colorIndex - startColorIndex;
-        const endColorIndex = startColorIndex + 1;
-        const endColor = AIR_COLORSCALE[endColorIndex];
-        this.originalColor.lerp(endColor, alpha);
-      }
+      const co2Color = CO2_COLORSCALE(this.target.co2());
+      this.originalColor.set(co2Color);
     }
     this.color.copy(this.originalColor);
     if (this.target instanceof Cell && this.target.energy < 0.5) {
@@ -292,11 +285,9 @@ export function getMaterialInfo(tile: Tile): MaterialInfo {
   }
 }
 
-const AIR_COLORSCALE = [
-  new Color("hsl(67, 31%, 25%)"),
-  new Color("hsl(180, 31%, 76%)"),
-  new Color("hsl(213, 63%, 58%)"),
-];
+const CO2_COLORSCALE = scaleLinear<string, string>()
+  .domain([0.25, 0.5, 1])
+  .range(["hsl(51, 32%, 28%)", "hsl(180, 31%, 76%)", "hsl(213, 83%, 48%)"]);
 
 const WHITE = new Color(1, 1, 1);
 const BLACK = new Color(0, 0, 0);

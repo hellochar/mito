@@ -195,8 +195,10 @@ export class Player implements Steppable {
 
   public isWalkable(pos: Tile | Vector2) {
     const tile = pos instanceof Vector2 ? this.world.tileAt(Math.round(pos.x), Math.round(pos.y)) : pos;
-    if (!(tile instanceof Cell) || tile.isObstacle) {
-      // can't move!
+    if (tile == null) {
+      return false;
+    }
+    if (tile.isObstacle) {
       return false;
     }
     if (tile instanceof Cell) {
