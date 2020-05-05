@@ -37,7 +37,7 @@ const StartScreen: React.FC<{ onStart: () => void }> = React.memo(({ onStart }) 
           <FaDiscord />
         </a>
       </div>
-      <div className="game-version">v0.8.0-dev</div>
+      <div className="game-version">v0.9.0-dev</div>
     </div>
   );
 });
