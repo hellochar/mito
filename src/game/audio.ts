@@ -17,6 +17,7 @@ import mitoStringsSrc from "assets/audio/mito-strings.mp3";
 import mitoDeathMp3 from "assets/audio/mitodeath.mp3";
 import stickySoundSrc from "assets/audio/sticky.mp3";
 import suckWaterSrc from "assets/audio/suckwater.wav";
+import clickGenericSrc from "assets/audio/switch23.wav";
 import genePickUpSrc from "assets/audio/switch25.wav";
 import whooshSrc from "assets/audio/whoosh.mp3";
 import { SketchAudioContext } from "game/screens/sketch/sketch";
@@ -29,6 +30,11 @@ import { Tile } from "../core/tile";
 export let mito: AudioUnit;
 export let strings: AudioUnit;
 export let drums: AudioUnit;
+
+export const clickGeneric = new Howl({
+  src: [clickGenericSrc],
+  volume: 0.1,
+});
 
 export const genePickUp = new Howl({
   src: [genePickUpSrc],

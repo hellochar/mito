@@ -1,3 +1,4 @@
+import configure from "common/configure";
 import Ticker from "std/ticker";
 import { Color, Scene, Vector2 } from "three";
 import { Inventory } from "../../core/inventory";
@@ -35,9 +36,9 @@ export const SUGAR_POINTS_PARAMS: CommittablePointsParameters = {
 };
 
 export class InventoryPoints {
-  public waters = new CommittablePoints(10000, WATER_POINTS_PARAMS);
+  public waters = configure(new CommittablePoints(10000, WATER_POINTS_PARAMS), (p) => (p.renderOrder = 1));
 
-  public sugars = new CommittablePoints(10000, SUGAR_POINTS_PARAMS);
+  public sugars = configure(new CommittablePoints(10000, SUGAR_POINTS_PARAMS), (p) => (p.renderOrder = 1));
 
   public startFrame() {
     this.waters.startFrame();

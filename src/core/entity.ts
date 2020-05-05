@@ -25,7 +25,8 @@ export function step(s: Steppable, dt: number) {
       if (e instanceof StopStep) {
         // no-op for exiting early
       } else {
-        throw e;
+        console.error(e);
+        // catch error but don't crash game
       }
     } finally {
       s.dtSinceLastStepped = 0;

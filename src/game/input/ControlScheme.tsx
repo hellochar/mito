@@ -6,7 +6,7 @@ import Keyboard from "./keyboard";
 import { ACTION_CONTINUOUS_KEYMAP, ACTION_INSTANT_KEYMAP, MOVEMENT_KEYS } from "./keymap";
 
 export interface ControlScheme {
-  animate(ms: number): void;
+  animate(): void;
 
   destroy(): void;
 
@@ -47,7 +47,7 @@ export class PlayerControlScheme implements ControlScheme {
     }
   };
 
-  animate(_ms: number) {
+  animate() {
     const { mito } = this;
     // keyboard actions
     const moveAction = this.keysToMovement(Keyboard.keyMap);
@@ -166,7 +166,7 @@ export class PlayerSeedControlScheme implements ControlScheme {
     window.removeEventListener("keydown", this.handleKeyDown);
   }
 
-  animate(_ms: number): void {
+  animate(): void {
     if (this.mito.mouse.button === 0) {
       this.handleLeftClick();
     }

@@ -79,7 +79,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     if (this.target instanceof Cell) {
       // if it takes no time to build, start it off small just for show
-      if (this.target.timeToBuild <= 0) {
+      if (this.target.timeToBuild <= 0 && worldRenderer.renderResources) {
         this.scale.set(0.01, 0.01, 1);
       }
       this.cellEffectsRenderer = new CellEffectsRenderer(this.target, this.scene, this.mito);
@@ -145,7 +145,9 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
         this.geneRenderer.update();
       }
 
-      this.animation.update();
+      if (this.worldRenderer.renderResources) {
+        this.animation.update();
+      }
       this.commit();
     }
   }

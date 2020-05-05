@@ -1,15 +1,18 @@
+import classNames from "classnames";
+import configure from "common/configure";
 import { CellType, GeneInstance } from "core/cell";
 import { Directions, DIRECTIONS } from "core/directions";
 import Keyboard from "game/input/keyboard";
 import { WorldDOMElement } from "game/mito/WorldDOMElement";
 import React, { useCallback } from "react";
 import { IoIosClose } from "react-icons/io";
-import { GenePipes } from "std/genes/GenePipes";
+import { GenePipes, PipesConnections } from "std/genes/GenePipes";
 import { BoxBufferGeometry, DoubleSide, Mesh, MeshBasicMaterial } from "three";
 import "./GenePipesRenderer.scss";
 import { GeneRenderer } from "./GeneRenderer";
 
-const geom = new BoxBufferGeometry(0.2, 0.1);
+const PIPE_DIR_GEOMETRY = new BoxBufferGeometry(0.4, 0.2);
+const PIPE_CENTER_GEOMETRY = new BoxBufferGeometry(0.2, 0.2);
 
 const materialMap = new Map<CellType, MeshBasicMaterial>();
 function getPipeMaterial(cellType: CellType) {
@@ -20,6 +23,8 @@ function getPipeMaterial(cellType: CellType) {
       new MeshBasicMaterial({
         color,
         side: DoubleSide,
+        opacity: 0.5,
+        transparent: true,
       })
     );
   }
@@ -28,6 +33,16 @@ function getPipeMaterial(cellType: CellType) {
 
 export class GenePipesRenderer extends GeneRenderer<GenePipes> {
   public meshes: Partial<Record<Directions, Mesh>> = {};
+
+  public zeroMesh = configure(new Mesh(PIPE_CENTER_GEOMETRY, getPipeMaterial(this.target.cell.type)), (mesh) => {
+    mesh.name = `Pipe Center`;
+    mesh.position.x = this.target.cell.pos.x;
+    mesh.position.y = this.target.cell.pos.y;
+    mesh.position.z = 1;
+    mesh.updateMatrix();
+    mesh.matrixAutoUpdate = false;
+    this.scene.add(mesh);
+  });
 
   private argsEditor?: WorldDOMElement;
 
@@ -47,13 +62,16 @@ export class GenePipesRenderer extends GeneRenderer<GenePipes> {
     }
   }
 
-  private addMesh(directionName: Directions) {
-    const mesh = (this.meshes[directionName] = new Mesh(geom, getPipeMaterial(this.target.cell.type)));
-    const direction = DIRECTIONS[directionName];
-    mesh.position.x = this.target.cell.pos.x + direction.x * 0.4;
-    mesh.position.y = this.target.cell.pos.y + direction.y * 0.4;
-    mesh.position.z = 2;
+  private addMesh(dir: Directions) {
+    const mesh = (this.meshes[dir] = new Mesh(PIPE_DIR_GEOMETRY, getPipeMaterial(this.target.cell.type)));
+    mesh.name = `Pipe ${dir}`;
+    const direction = DIRECTIONS[dir];
+    mesh.position.x = this.target.cell.pos.x + direction.x * 0.3;
+    mesh.position.y = this.target.cell.pos.y + direction.y * 0.3;
+    mesh.position.z = 1;
     mesh.rotation.z = direction.angle();
+    mesh.updateMatrix();
+    mesh.matrixAutoUpdate = false;
     this.scene.add(mesh);
   }
 
@@ -85,43 +103,65 @@ export class GenePipesRenderer extends GeneRenderer<GenePipes> {
     if (this.argsEditor) {
       this.mito.removeWorldDOMElement(this.argsEditor);
     }
+    let dir: Directions;
+    for (dir in this.meshes) {
+      const mesh = this.meshes[dir];
+      if (mesh != null) {
+        this.scene.remove(mesh);
+      }
+    }
+    this.scene.remove(this.zeroMesh);
+  }
+}
+
+let lastEventStateType: "set-true" | "set-false" | "all-true" | "all-false" | undefined;
+
+function handleMouseDown(connections: PipesConnections, dir: Directions) {
+  connections[dir] = !connections[dir];
+  lastEventStateType = connections[dir] ? "set-true" : "set-false";
+  console.log("setdircallback", dir, lastEventStateType);
+}
+
+function handleMouseMove(event: React.MouseEvent, connections: PipesConnections, dir: Directions) {
+  if (event.buttons > 0) {
+    if (lastEventStateType === "set-true") {
+      connections[dir] = true;
+    } else if (lastEventStateType === "set-false") {
+      connections[dir] = false;
+    }
   }
 }
 
 const PipesEditor: React.FC<{ gene: GeneInstance<GenePipes> }> = ({ gene }) => {
   const connections = gene.state.connections;
-  const setDirN = useCallback(() => {
-    connections.n = !connections.n;
-  }, [connections.n]);
+  const setDirN = useCallback(() => handleMouseDown(connections, "n"), [connections]);
+  const setDirS = useCallback(() => handleMouseDown(connections, "s"), [connections]);
+  const setDirE = useCallback(() => handleMouseDown(connections, "e"), [connections]);
+  const setDirW = useCallback(() => handleMouseDown(connections, "w"), [connections]);
 
-  const setDirS = useCallback(() => {
-    connections.s = !connections.s;
-  }, [connections.s]);
+  const mouseMoveDirN = useCallback((event) => handleMouseMove(event, connections, "n"), [connections]);
+  const mouseMoveDirS = useCallback((event) => handleMouseMove(event, connections, "s"), [connections]);
+  const mouseMoveDirE = useCallback((event) => handleMouseMove(event, connections, "e"), [connections]);
+  const mouseMoveDirW = useCallback((event) => handleMouseMove(event, connections, "w"), [connections]);
 
-  const setDirE = useCallback(() => {
-    connections.e = !connections.e;
-  }, [connections.e]);
-
-  const setDirW = useCallback(() => {
-    connections.w = !connections.w;
-  }, [connections.w]);
-
-  const clearDirections = useCallback(() => {
-    let name: Directions;
-    for (name in connections) {
-      connections[name] = false;
+  let shouldClickTurnOff = connections.n || connections.s || connections.e || connections.w;
+  const toggleAllDirections = useCallback(() => {
+    if (shouldClickTurnOff) {
+      connections.n = connections.s = connections.e = connections.w = false;
+    } else {
+      connections.n = connections.s = connections.e = connections.w = true;
     }
-  }, [connections]);
+  }, [connections.e, connections.n, connections.s, connections.w, shouldClickTurnOff]);
 
   return (
     <div className="pipes-editor">
-      <div className="zone-n" onClick={setDirN}></div>
-      <div className="zone-w" onClick={setDirW}></div>
-      <div className="zone-center" onClick={clearDirections}>
+      <div className="zone-n" onMouseDown={setDirN} onMouseMove={mouseMoveDirN}></div>
+      <div className="zone-w" onMouseDown={setDirW} onMouseMove={mouseMoveDirW}></div>
+      <div className={classNames("zone-center", { "turn-on": !shouldClickTurnOff })} onClick={toggleAllDirections}>
         <IoIosClose />
       </div>
-      <div className="zone-e" onClick={setDirE}></div>
-      <div className="zone-s" onClick={setDirS}></div>
+      <div className="zone-e" onMouseDown={setDirE} onMouseMove={mouseMoveDirE}></div>
+      <div className="zone-s" onMouseDown={setDirS} onMouseMove={mouseMoveDirS}></div>
     </div>
   );
 };

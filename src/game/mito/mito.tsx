@@ -10,7 +10,7 @@ import Stats from "stats.js";
 import { environmentFromLevelInfo } from "std/environments";
 import VignetteCapturer from "std/vignette";
 import * as THREE from "three";
-import { OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
+import { Object3D, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as Nodes from "three/examples/jsm/nodes/Nodes";
 import configure from "../../common/configure";
@@ -42,6 +42,17 @@ export class Mito extends ISketch {
 
   public readonly scene = configure(new Scene(), (s) => {
     s.background = new THREE.Color("black");
+    if (params.debug) {
+      const oldAdd = s.add;
+      s.add = function(...object: Object3D[]) {
+        for (const o of object) {
+          (o as any).addedStack = new Error().stack;
+          (o as any).addedOn = performance.now();
+        }
+
+        return oldAdd.apply(this, object);
+      };
+    }
   });
 
   public readonly scenePlayerSeed = new Scene();
@@ -329,7 +340,9 @@ export class Mito extends ISketch {
   public animate(millisDelta: number) {
     this.stats.end();
     this.stats.begin();
-    this.controls?.animate(millisDelta);
+    if (!this.isPaused) {
+      this.controls?.animate();
+    }
 
     const c = this.inspectedCell;
     if (c != null) {
@@ -341,8 +354,8 @@ export class Mito extends ISketch {
       }
     }
 
-    // cap out at 1/3rd of a second in one frame (about 10 frames)
-    const dt = Math.min(millisDelta / 1000, 1 / 3);
+    // cap out at 1/10th of a second in one frame (about 10fps)
+    const dt = Math.min(millisDelta / 1000, 1 / 10);
     if (!this.isPaused) {
       this.worldStep(dt);
       this.worldRenderer.update();

@@ -13,8 +13,8 @@ export class Rock extends Tile {
     return 1;
   }
 
-  get cellDistanceContrib() {
-    return Infinity;
+  get cellAirDistanceContrib() {
+    return 1000;
   }
 
   shouldStep(dt: number) {

@@ -21,7 +21,8 @@ export const GenePipes = Gene.make(
           Continuously equalize <RI w /> <RI s /> between connected cells.
         </p>
         <p>
-          On average, exchange 1 sugar and 1 water every <GN value={1 / diffusionRate} sigFigs={3} /> seconds.
+          On average, every 1<RI w />1<RI s /> will get equalized after <GN value={1 / diffusionRate} sigFigs={3} />{" "}
+          seconds.
         </p>
       </>
     ),

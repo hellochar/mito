@@ -23,7 +23,7 @@ export abstract class Tile implements Steppable {
 
   public abstract inventory: Inventory;
 
-  public closestCellDistance: number = Infinity;
+  public closestCellAirDistance: number = 1000;
 
   // public lightIntersection?: Intersection;
   get temperature(): Temperature {
@@ -50,8 +50,8 @@ export abstract class Tile implements Steppable {
     return contrib;
   }
 
-  get cellDistanceContrib() {
-    return 1;
+  get cellAirDistanceContrib() {
+    return 1000;
   }
 
   public readonly timeMade: number;
@@ -158,12 +158,12 @@ export abstract class Tile implements Steppable {
   }
 
   stepClosestCellDistance(neighbors: Map<Vector2, Tile>) {
-    let minDistance = this.closestCellDistance;
+    let minDistance = this.closestCellAirDistance + 1;
     for (const [v, t] of neighbors) {
-      const neighborDistance = t.closestCellDistance + this.cellDistanceContrib * v.length();
+      const neighborDistance = t.closestCellAirDistance + this.cellAirDistanceContrib * v.length();
       minDistance = Math.min(minDistance, neighborDistance);
     }
-    this.closestCellDistance = minDistance;
+    this.closestCellAirDistance = this.closestCellAirDistance * 0.5 + minDistance * 0.5;
   }
 
   stepDiffusion(neighbors: Map<Vector2, Tile>, dt: number) {

@@ -32,6 +32,14 @@ const optionsDefault: WorldOptions = {
 };
 
 export class World {
+  get minVector() {
+    return new Vector2(0, 0);
+  }
+
+  get maxVector() {
+    return new Vector2(this.width - 1, this.height - 1);
+  }
+
   isAtEdge(pos: Vector2) {
     return pos.x === 0 || pos.x === this.width - 1 || pos.y === 0 || pos.y === this.height - 1;
   }

@@ -19,6 +19,10 @@ export class Air extends Tile implements Interactable {
 
   public inventory = new Inventory(6, this);
 
+  get cellAirDistanceContrib() {
+    return 1;
+  }
+
   isObstacle = false;
 
   public constructor(public pos: Vector2, world: World) {
@@ -47,12 +51,16 @@ export class Air extends Tile implements Interactable {
   }
 
   private computeCo2() {
-    const base = map(this.pos.y, this.world.height / 2, this.world.height / 4, this.world.environment.floorCo2, 1.15);
-    const scaleX = Math.max(1, map(this.pos.y, this.world.height / 2, 0, 4, 9)) * 5;
+    const base = map(this.pos.y, this.world.height / 2, 0, this.world.environment.floorCo2, 1.15);
+    const scaleX = Math.max(1, map(this.pos.y, this.world.height / 2, 0, 20, 45));
     const time = this.world == null ? 0 : this.world.time;
     const offset =
-      noiseCo2.perlin3(94.231 + (this.pos.x - this.world.width / 2) / scaleX, 2312 + this.pos.y / 8, time / 50 + 93.1) *
-        0.25 -
+      (noiseCo2.perlin3(
+        94.231 + (this.pos.x - this.world.width / 2) / scaleX,
+        2312 + this.pos.y / 6,
+        time / 50 + 93.1
+      ) -
+        0.5) *
       0.125;
     return clamp(base + offset, 0.25, 1);
   }

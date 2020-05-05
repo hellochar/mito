@@ -18,7 +18,7 @@ export const GeneFruit = Gene.make<ReproducerState>(
     levelCosts: [10, 15, 20, 25, 30],
     levelProps: {
       mpEarned: [3, 4, 5, 6, 7],
-      neededEnergy: 400,
+      neededEnergy: 500,
     },
     static: {
       isReproductive: true,
@@ -44,7 +44,7 @@ export const GeneSeed = Gene.make<ReproducerState>(
     levelCosts: [3, 4, 5, 6, 8],
     levelProps: {
       mpEarned: [1, 1.25, 1.5, 1.75, 2],
-      neededEnergy: 150,
+      neededEnergy: 250,
     },
     static: {
       isReproductive: true,

@@ -9,7 +9,7 @@
   flex-direction: column;
   // 4s after seed germinates, show tutorial UI
   animation: 0.2s ease-in 4s both comeIn;
-  // pointer-events: none;
+  pointer-events: none;
 
   @keyframes comeIn {
     0% {
@@ -65,8 +65,7 @@
       margin-left: 5px;
     }
 
-    &.active,
-    &:hover {
+    &.active {
       font-size: 2em;
       text-shadow: 1px 0 0 $black, 0 -1px 0 $black, 0 1px 0 $black, -1px 0 0 $black;
       opacity: 1 !important;
@@ -75,7 +74,7 @@
       padding: 20px;
       height: 72px;
     }
-    &:not(.active):not(:hover) {
+    &:not(.active) {
       opacity: 0.2;
     }
 
@@ -112,11 +111,5 @@
       // skip fadeFromTransparent animation
       animation: none;
     }
-
-    // @for $i from 2 through 10 {
-    //   &:nth-child(#{$i}) {
-    //     opacity: #{50% - $i * 10%};
-    //   }
-    // }
   }
 }

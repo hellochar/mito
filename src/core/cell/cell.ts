@@ -33,7 +33,7 @@ export class Cell extends Tile implements Interactable {
 
   public darkness = 0;
 
-  public closestCellDistance = 0;
+  public closestCellAirDistance = 0;
 
   public nextTemperature: number;
 
@@ -92,7 +92,7 @@ export class Cell extends Tile implements Interactable {
     return 0;
   }
 
-  get cellDistanceContrib() {
+  get cellAirDistanceContrib() {
     return 0;
   }
 
@@ -338,12 +338,26 @@ export class Cell extends Tile implements Interactable {
     }
   }
 
+  diffuseWater(giver: Tile, dt: number, diffusionRate = this.diffusionWater) {
+    // Diffusion equation by finite difference: the purpose of this equation is to eventually
+    // equalize the amount of water between me and giver. The two questions are how long
+    // does it take, and what function does it follow to get there? These are generally
+    // defined by the diffusionWater variable.
+    const difference = giver.inventory.water - this.inventory.water;
+
+    if (difference > 0) {
+      // At high dt's this isn't accurate, but at these low numbers we can assume near linearity.
+      const diffusionAmount = Math.min(difference * diffusionRate * dt, difference / 2);
+      giver.inventory.give(this.inventory, diffusionAmount, 0);
+    }
+  }
+
   stepDarkness(neighbors: Map<Vector2, Tile>) {
     this.darkness = 0;
   }
 
   stepClosestCellDistance() {
-    this.closestCellDistance = 0;
+    this.closestCellAirDistance = 0;
   }
 
   public validateDirection() {

@@ -9,7 +9,7 @@ export const GeneLiving = Gene.make(
     levelProps: {},
     static: {
       inventoryCapacity: 5,
-      energyUpkeep: 1 / 1200,
+      energyUpkeep: 1 / 800,
     },
     description: () => (
       <>
@@ -38,7 +38,7 @@ export const GeneLiving = Gene.make(
     const tileNeighbors = cell.world.tileNeighbors(cell.pos);
     for (const neighbor of tileNeighbors.values()) {
       if (neighbor instanceof Cell) {
-        maybeGiveEnergy(dt, cell, neighbor, 0.01);
+        maybeGiveEnergy(dt, cell, neighbor, 0.05);
       }
     }
   }

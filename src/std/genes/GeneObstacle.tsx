@@ -8,7 +8,7 @@ export const GeneObstacle = Gene.make(
     static: {
       isObstacle: true,
     },
-    description: () => <>You may not walk on this Cell.</>,
+    description: () => <>You may not walk on or build off of this Cell.</>,
   },
   {},
   () => {}

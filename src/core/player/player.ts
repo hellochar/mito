@@ -1,6 +1,7 @@
 import { sleep } from "common/promise";
 import { EventEmitter } from "events";
 import { params } from "game/params";
+import { sortBy } from "lodash";
 import { Vector2 } from "three";
 import {
   PLAYER_BASE_SPEED,
@@ -110,8 +111,11 @@ export class Player implements Steppable {
     return this.world.tileAt(this.pos)!;
   }
 
-  public findNearestDirectlyWalkableCell() {
-    for (const tile of this.world.bfsIterator(this.pos, this.world.width * this.world.height)) {
+  public findNearestWalkableCell() {
+    const startPos = this.world.isValidPosition(this.posFloat.x, this.posFloat.y)
+      ? this.pos
+      : new Vector2(this.world.width / 2, this.world.height / 2);
+    for (const tile of this.world.bfsIterator(startPos, this.world.width * this.world.height)) {
       if (this.isWalkable(tile)) {
         return tile;
       }
@@ -132,18 +136,75 @@ export class Player implements Steppable {
     this.events.off(event, cb);
   }
 
+  /**
+   * You're near the plant if one of your neighbors is a cell.
+   */
+  public isNearPlant() {
+    if (this.currentTile() instanceof Cell) {
+      return true;
+    } else {
+      const neighbors = this.world.tileNeighbors(this.pos);
+      for (const n of neighbors.values()) {
+        if (n instanceof Cell) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
   public step(dt: number) {
-    // if we are walkable, but not *directly* walkable, slowly push the player back towards home
-    if (!this.isWalkable(this.currentTile())) {
-      const nearestWalkableCell = this.findNearestDirectlyWalkableCell();
-      if (nearestWalkableCell) {
-        this.posFloat.lerp(nearestWalkableCell.pos, 0.13);
+    if (!this.isNearPlant()) {
+      const nearestWalkableCell = this.findNearestWalkableCell();
+      if (nearestWalkableCell != null) {
+        this.world.logEvent({
+          type: "oof",
+          from: this.posFloat,
+          to: nearestWalkableCell,
+        });
+        this.posFloat.copy(nearestWalkableCell.pos);
       }
     }
     if (this.action != null) {
       this.attemptAction(this.action, dt);
       if (this.action.type !== "long") {
         this.action = undefined;
+      }
+    }
+    this.stepEdgePull();
+  }
+
+  /**
+   * While the player is off the plant, constantly pull them back. Creates an "edge tether" effect.
+   */
+  private stepEdgePull() {
+    if (!this.isWalkable(this.currentTile())) {
+      const neighbors = this.world.tileNeighbors(this.pos);
+      const walkableNeighbors = sortBy(
+        Array.from(neighbors.values()).filter(
+          (n) => this.isWalkable(n)
+          // && n.pos.manhattanDistanceTo(this.pos) === 1
+        ),
+        (n) => this.posFloat.distanceToSquared(n.pos)
+      );
+      const [closest, secondClosest] = walkableNeighbors;
+
+      // always pull to closest
+      if (closest != null) {
+        EDGE_PULL_VELOCITY.set(0, 0);
+
+        const forceClosest = 0.2;
+        const forceSecondClosest = 0.1;
+        EDGE_PULL_VELOCITY.x += (closest.pos.x - this.posFloat.x) * forceClosest;
+        EDGE_PULL_VELOCITY.y += (closest.pos.y - this.posFloat.y) * forceClosest;
+
+        // if the second closest is also touching the closest, pull to second closest as well.
+        // effectively, this works on diagonals.
+        if (secondClosest != null && closest.pos.distanceTo(secondClosest.pos) < 2) {
+          EDGE_PULL_VELOCITY.x += (secondClosest.pos.x - this.posFloat.x) * forceSecondClosest;
+          EDGE_PULL_VELOCITY.y += (secondClosest.pos.y - this.posFloat.y) * forceSecondClosest;
+        }
+        this.posFloat.add(EDGE_PULL_VELOCITY);
       }
     }
   }
@@ -211,7 +272,7 @@ export class Player implements Steppable {
     // you can build off any adjacent existing cell
     const neighbors = this.world.tileNeighbors(tile.pos);
     for (const n of neighbors.values()) {
-      if (n instanceof Cell) {
+      if (n instanceof Cell && !n.isObstacle) {
         return true;
       }
     }
@@ -224,8 +285,13 @@ export class Player implements Steppable {
 
   public attemptMove(action: ActionMove, dt: number) {
     const nextPos = this.posFloat.clone().add(action.dir.clone().setLength(this.speed * dt));
-    this.posFloat.copy(nextPos);
-    return true;
+    const nextTile = this.world.tileAt(Math.round(nextPos.x), Math.round(nextPos.y));
+    if (nextTile != null) {
+      this.posFloat.copy(nextPos);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public attemptStill(_dt: number) {
@@ -438,3 +504,5 @@ export class PlayerSeed implements Steppable {
     this.poppedOut = true;
   }
 }
+
+const EDGE_PULL_VELOCITY = new Vector2();

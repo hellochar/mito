@@ -7,7 +7,17 @@ import { Player } from "../../core";
 import { Action, ActionBuild, ActionLong, isContinuous } from "../../core/player/action";
 import { Tile } from "../../core/tile";
 import { clamp, lerp2, map, randFloat } from "../../math";
-import { build, deconstruct, dropSugar, dropWater, footsteps, interactSound, moveBumped, sticky } from "../audio";
+import {
+  build,
+  buildComplete,
+  deconstruct,
+  dropSugar,
+  dropWater,
+  footsteps,
+  interactSound,
+  moveBumped,
+  sticky,
+} from "../audio";
 import { Mito } from "../mito/mito";
 import { textureFromSpritesheet } from "../spritesheet";
 import NeuronMesh from "./neuronMesh";
@@ -64,8 +74,13 @@ export class PlayerRenderer extends Renderer<Player> {
         }
       }
     } else if (action.type === "build") {
-      const id = build.play();
-      build.rate(randFloat(0.5, 1.0), id);
+      if (action.cellType.chromosome.computeStaticProperties().timeToBuild >= 0) {
+        const id = build.play();
+        build.rate(randFloat(0.5, 1.0), id);
+      } else {
+        const id = buildComplete.play();
+        buildComplete.rate(id, randFloat(0.5, 1));
+      }
     } else if (action.type === "deconstruct") {
       const id = deconstruct.play();
       deconstruct.rate(randFloat(0.9, 1.1), id);

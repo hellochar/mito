@@ -35,7 +35,9 @@ export class Insect implements Steppable {
     return this.posFloat.clone().round();
   }
 
-  constructor(public posFloat: Vector2, public world: World) {}
+  constructor(public posFloat: Vector2, public world: World) {
+    posFloat.clamp(world.minVector, world.maxVector);
+  }
 
   shouldStep() {
     return true;
@@ -127,7 +129,7 @@ export class Insect implements Steppable {
       (t) => t.pos.manhattanDistanceTo(this.pos) < 2 && (t instanceof Air || t instanceof Cell)
     );
     if (this.inventory.sugar < 1) {
-      const target = minBy(neighbors, (tile) => tile.closestCellDistance);
+      const target = minBy(neighbors, (tile) => tile.closestCellAirDistance);
       if (target instanceof Air) {
         this.setAction({
           type: "move",
@@ -155,7 +157,7 @@ export class Insect implements Steppable {
       }
     } else {
       // insect is full; run away
-      const target = maxBy(neighbors, (tile) => tile.closestCellDistance);
+      const target = maxBy(neighbors, (tile) => tile.closestCellAirDistance);
       if (this.world.isAtEdge(this.pos)) {
         this.world.removeInsect(this);
       }
