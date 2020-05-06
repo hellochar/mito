@@ -101,7 +101,7 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
           <OverWorldScreen onNextEpoch={this.handleNextEpoch} />
         </AppScreen>
         <AppScreen show={state.activePopulationAttempt != null && state.activeGameResult == null}>
-          <MitoScreen otherArgs={this.otherArgsSelector(state)} />
+          <MitoScreen attempt={state.activePopulationAttempt!} onWinLoss={this.handleWinLoss} />
         </AppScreen>
         <AppScreen show={state.activeGameResult != null}>
           {state.activeGameResult ? (

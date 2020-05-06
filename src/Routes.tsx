@@ -2,6 +2,7 @@ import React from "react";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import TestDiffusion from "tests/TestDiffusion";
 import { TestLoseScreen } from "tests/TestLoseScreen";
+import TestTileGenerators from "tests/TestTileGenerators";
 import { TestWinScreen } from "tests/TestWinScreen";
 import WFCTest from "tests/WFCTest";
 import App from "./game/screens/App";
@@ -21,6 +22,9 @@ export default () => (
     </Route>
     <Route path="/test-diffusion">
       <TestDiffusion />
+    </Route>
+    <Route path="/test-tilegen">
+      <TestTileGenerators />
     </Route>
     <Route path="/wfc">
       <WFCTest />

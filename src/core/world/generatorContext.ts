@@ -8,6 +8,23 @@ export interface GeneratorContext {
   noiseSoil: Noise;
 }
 
+export interface GeneratorInfo {
+  soilLevel: number;
+  /**
+   * whether rock lives here.
+   */
+  rockLevel: number;
+
+  /**
+   * (y/height)**2; useful for placing objects deep down.
+   */
+  heightScalar: number;
+  /**
+   * 5x5 simplex noise.
+   */
+  waterValue: number;
+}
+
 function modulateSeed(seed: number, key: string) {
   for (const letter of key) {
     seed |= seed << (7 + letter.charCodeAt(0) ** 2);

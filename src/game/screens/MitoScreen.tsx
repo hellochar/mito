@@ -1,16 +1,19 @@
+import { PopulationAttempt } from "game/app";
+import { GameResult } from "game/gameResult";
 import { SketchComponent } from "game/screens/sketch/SketchComponent";
 import * as React from "react";
 import "./MitoScreen.scss";
 
 export interface ISketchRouteProps {
-  otherArgs?: any[];
+  attempt: PopulationAttempt;
+  onWinLoss: (result: GameResult) => void;
 }
 
 export default class MitoScreen extends React.PureComponent<ISketchRouteProps, {}> {
   public render() {
     return (
       <div className="full-page-sketch" ref={this.handleDivRef}>
-        <SketchComponent otherArgs={this.props.otherArgs} />
+        <SketchComponent {...this.props} />
       </div>
     );
   }

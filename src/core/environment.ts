@@ -1,8 +1,6 @@
-import { Tile } from "core/tile";
 import { createSimpleSchema, object } from "serializr";
-import { Vector2 } from "three";
 import { TileGeneratorName } from "../std/tileGenerators";
-import { World } from "./world/world";
+import { TileGenerator } from "./tileGenerator";
 
 export interface Environment {
   airEvaporation: number;
@@ -17,8 +15,6 @@ export interface Environment {
   temperaturePerSeason: number[];
   fill: TileGeneratorName | TileGenerator;
 }
-
-export type TileGenerator = (pos: Vector2, world: World) => Tile | undefined;
 
 export const EnvironmentSchema = createSimpleSchema<Environment>({
   climate: object(createSimpleSchema({ "*": true })),

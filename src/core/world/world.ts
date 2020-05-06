@@ -3,7 +3,7 @@ import { TIME_PER_DAY } from "core/constants";
 import { Environment } from "core/environment";
 import { Insect } from "core/insect";
 import { EventEmitter } from "events";
-import { randFloat } from "math";
+import { map, randFloat } from "math";
 import { gridRange } from "math/arrays";
 import { TileGenerators } from "std/tileGenerators";
 import { Vector2 } from "three";
@@ -18,7 +18,7 @@ import { Season, seasonFromTime } from "../season";
 import { Species } from "../species";
 import { Air, Cell, Soil, Tile } from "../tile";
 import { TileEvent } from "../tile/tileEvent";
-import { createGeneratorContext, GeneratorContext } from "./generatorContext";
+import { createGeneratorContext, GeneratorContext, GeneratorInfo } from "./generatorContext";
 import { StepStats } from "./stepStats";
 import { WeatherController } from "./weatherController";
 
@@ -76,6 +76,24 @@ export class World {
   public weather: WeatherController;
 
   genome: Genome;
+
+  generatorInfo(pos: Vector2): GeneratorInfo {
+    const { noiseHeight, noiseWater, noiseRock } = this.generatorContext;
+    const { x, y } = pos;
+    const { width, height } = this;
+
+    const soilLevel =
+      height / 2 - (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 - 16 * noiseHeight.perlin2(10, x / 20 + 10);
+    const rockLevel = map(y - height / 2, 0, height / 2, -0.8, 0.3) - noiseRock.simplex2(x / 5, y / 5);
+    const heightScalar = (y / height) ** 2;
+    const waterValue = noiseWater.simplex2(x / 5, y / 5) + 0.15;
+    return {
+      soilLevel,
+      rockLevel,
+      heightScalar,
+      waterValue,
+    };
+  }
 
   get season(): Season {
     return seasonFromTime(this.time);

@@ -1,4 +1,6 @@
 import classnames from "classnames";
+import { PopulationAttempt } from "game/app";
+import { GameResult } from "game/gameResult";
 import { params } from "game/params";
 import { Howler } from "howler";
 import * as React from "react";
@@ -12,7 +14,8 @@ import "./SketchComponent.scss";
 export interface ISketchComponentProps extends React.DOMAttributes<HTMLDivElement> {
   eventsOnBody?: boolean;
   errorElement?: JSX.Element;
-  otherArgs?: any[];
+  attempt: PopulationAttempt;
+  onWinLoss: (result: GameResult) => void;
 }
 
 export interface SketchSuccess {
@@ -254,8 +257,8 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
         renderer.debug.checkShaderErrors = true;
         ref.appendChild(renderer.domElement);
 
-        const [attempt, onWinLoss] = this.props.otherArgs || [];
-        const sketch = new Mito(renderer, this.audioContext, attempt as any, onWinLoss as any);
+        const { attempt, onWinLoss } = this.props;
+        const sketch = new Mito(renderer, this.audioContext, attempt, onWinLoss);
         this.setState({ status: { type: "success", sketch: sketch } });
       } catch (e) {
         this.setState({ status: { type: "error", error: e } });
@@ -271,7 +274,7 @@ export class SketchComponent extends React.PureComponent<ISketchComponentProps, 
   };
 
   public render() {
-    const { otherArgs, eventsOnBody, errorElement, ...containerProps } = this.props;
+    const { onWinLoss, attempt, eventsOnBody, errorElement, ...containerProps } = this.props;
     const className = classnames("sketch-component", this.state.status.type);
     return (
       <div {...containerProps} className={className} ref={this.handleContainerRef}>

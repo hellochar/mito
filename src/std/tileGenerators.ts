@@ -1,33 +1,21 @@
-import { Vector2 } from "three";
-import { TileGenerator } from "../core/environment";
 import { Fountain, Rock } from "../core/tile";
 import { Clay, Sand, Silt } from "../core/tile/soil";
-import { World } from "../core/world/world";
-import { clamp, map, randInt } from "../math";
-
-export type ScalarField = (pos: Vector2, world: World) => number;
-
-export const pointsFilter = (gen: TileGenerator, points: Vector2[]): TileGenerator => {
-  return (pos, world) => {
-    if (points.find((p) => p.equals(pos)) != null) {
-      return gen(pos, world);
-    }
-  };
-};
-
-/**
- * The first gen takes precedence over later ones.
- */
-export const layers = (...gens: TileGenerator[]): TileGenerator => {
-  return (pos, world) => {
-    for (const g of gens) {
-      const tile = g(pos, world);
-      if (tile) {
-        return tile;
-      }
-    }
-  };
-};
+import {
+  air,
+  betweenSoilDepth,
+  fountain,
+  inRock,
+  inSoil,
+  layers,
+  nearDeepWaterMaxima,
+  nearWaterMaxima,
+  pastSoilDepth,
+  rock,
+  silt,
+  smallFountain,
+  TileGenerator,
+} from "../core/tileGenerator";
+import { clamp, map } from "../math";
 
 const mixedSoilRock: TileGenerator = (pos, world) => {
   const { noiseSoil, noiseWater } = world.generatorContext;
@@ -39,45 +27,15 @@ const mixedSoilRock: TileGenerator = (pos, world) => {
   return s;
 };
 
-const Level0: TileGenerator = (pos, world) => {
-  const { noiseHeight, noiseWater, noiseRock } = world.generatorContext;
-  const { x, y } = pos;
-  const soilLevel =
-    world.height / 2 - (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 - 16 * noiseHeight.perlin2(10, x / 20 + 10);
-  if (y > soilLevel) {
-    const rockThreshold = map(y - world.height / 2, 0, world.height / 2, -0.8, 0.3);
-    const isRock = noiseRock.simplex2(x / 5, y / 5) < rockThreshold;
-    if (isRock) {
-      const rock = new Rock(pos, world);
-      return rock;
-    } else {
-      const heightScalar = Math.pow(map(y - world.height / 2, 0, world.height / 2, 0.5, 1), 2);
-      const simplexScalar = 0.2;
-      // the + at the end makes a *huge* difference
-      const simplexValue = noiseWater.simplex2(x * simplexScalar, y * simplexScalar) + 0.15;
-
-      const isEarlyFountain = simplexValue > 0.93 && y - soilLevel > 5 && y - soilLevel < 13;
-      if (isEarlyFountain) {
-        return new Fountain(pos, world, 3, 75 + randInt(-10, 10));
-      }
-
-      if (heightScalar * simplexValue > 1 && y - soilLevel > 8) {
-        const emitWaterScalar = Math.min(heightScalar * simplexValue, 1);
-        return new Fountain(
-          pos,
-          world,
-          Math.round(3 / emitWaterScalar),
-          map(y, world.height / 2, world.height, 100, 300) + randInt(-10, 10)
-        );
-      } else {
-        const s = new Silt(pos, world)!;
-        const water = Math.round(clamp((simplexValue > 0.4 ? heightScalar : 0) * 10 * 3, 1, 10));
-        s.inventory.set(water, 0);
-        return s;
-      }
-    }
-  }
-};
+const Level0: TileGenerator = layers(
+  air,
+  inSoil(
+    silt,
+    pastSoilDepth(8)(nearDeepWaterMaxima(fountain)),
+    betweenSoilDepth(5, 13)(nearWaterMaxima(smallFountain)),
+    inRock(rock)
+  )
+);
 
 const Temperate: TileGenerator = (pos, world) => {
   const { noiseHeight, noiseWater, noiseRock } = world.generatorContext;
