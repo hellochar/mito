@@ -230,7 +230,7 @@ class TileBatcher {
   }
 }
 
-const BLACK = new Color(0, 0, 0);
+export const BLACK = new Color(0, 0, 0);
 const ZERO = new Vector3(0, 0, 0);
 export class BatchInstance {
   public readonly batcher: TileBatcher;

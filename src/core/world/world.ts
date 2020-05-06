@@ -12,7 +12,8 @@ import shuffle from "../../math/shuffle";
 import Genome from "../cell/genome";
 import { DIRECTION_VALUES } from "../directions";
 import { Entity, isSteppable, step } from "../entity";
-import { Player, PlayerSeed } from "../player/player";
+import { Player } from "../player/player";
+import { PlayerSeed } from "../player/playerSeed";
 import { Season, seasonFromTime } from "../season";
 import { Species } from "../species";
 import { Air, Cell, Soil, Tile } from "../tile";
@@ -58,7 +59,7 @@ export class World {
 
   public playerSeed?: PlayerSeed;
 
-  private events = new EventEmitter();
+  public events = new EventEmitter();
 
   private readonly gridEnvironment: Tile[][];
 
@@ -364,11 +365,12 @@ export class World {
     // })();
   }
 
-  private stepStats: StepStats = new StepStats(0, this.frame);
+  private stepStats: StepStats = new StepStats(this.frame);
+
+  private lastStepStats: StepStats = this.stepStats;
 
   public step(dt: number): StepStats {
     const entities = this.entities();
-    this.stepStats = new StepStats(dt, this.frame);
     // dear god
     entities.forEach((entity) => {
       if (isSteppable(entity)) {
@@ -381,7 +383,9 @@ export class World {
     this.time += dt;
     this.fillCachedEntities();
     this.events.emit("step", this.stepStats);
-    return this.stepStats;
+    this.lastStepStats = this.stepStats;
+    this.stepStats = new StepStats(this.frame);
+    return this.lastStepStats;
     // this.checkResources();
   }
 
@@ -404,7 +408,7 @@ export class World {
   }
 
   public getLastStepStats() {
-    return this.stepStats;
+    return this.lastStepStats;
   }
 
   numRainWater = 0;

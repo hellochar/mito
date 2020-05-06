@@ -1,5 +1,6 @@
 import { Insect } from "./insect";
-import { Player, PlayerSeed } from "./player/player";
+import { Player } from "./player/player";
+import { PlayerSeed } from "./player/playerSeed";
 import { Tile } from "./tile";
 
 export type Entity = Tile | Player | PlayerSeed | Insect;

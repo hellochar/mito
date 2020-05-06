@@ -1,5 +1,6 @@
 import { Entity } from "../entity";
 import { EventPhotosynthesis, TileEvent, TileEventType } from "../tile/tileEvent";
+
 export class StepStats {
   public events: TileEventLog = {
     "cell-eat": [],
@@ -12,7 +13,10 @@ export class StepStats {
     oof: [],
   };
 
-  constructor(public dt: number, public frame: number, public deleted: Entity[] = [], public added: Entity[] = []) {}
+  /**
+   * All the changes between `frame` to `frame+1`.
+   */
+  constructor(public frame: number, public deleted: Entity[] = [], public added: Entity[] = []) {}
 
   logEvent(event: TileEvent) {
     this.events[event.type].push(event);

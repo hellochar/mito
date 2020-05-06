@@ -29,10 +29,10 @@ export const GenePipes = Gene.make(
   },
   () => ({
     connections: {
-      n: false,
-      e: false,
-      s: false,
-      w: false,
+      n: true,
+      e: true,
+      s: true,
+      w: true,
     } as PipesConnections,
   }),
   (dt, { cell, props: { diffusionRate }, state: { connections } }) => {

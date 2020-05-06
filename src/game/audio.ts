@@ -22,6 +22,7 @@ import genePickUpSrc from "assets/audio/switch25.wav";
 import whooshSrc from "assets/audio/whoosh.mp3";
 import { SketchAudioContext } from "game/screens/sketch/sketch";
 import { Howl } from "howler";
+import { randFloat } from "math";
 import * as THREE from "three";
 import devlog from "../common/devlog";
 import { Player } from "../core";
@@ -33,8 +34,13 @@ export let drums: AudioUnit;
 
 export const clickGeneric = new Howl({
   src: [clickGenericSrc],
-  volume: 0.1,
+  volume: 0.2,
 });
+
+export function playSmallRand(howl: Howl) {
+  const id = howl.play();
+  howl.rate(randFloat(0.9, 1.1), id);
+}
 
 export const genePickUp = new Howl({
   src: [genePickUpSrc],

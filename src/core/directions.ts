@@ -14,5 +14,26 @@ export const DIRECTIONS = {
 
 export type Directions = keyof typeof DIRECTIONS;
 
+export function oppositeDir(dir: Directions): Directions {
+  switch (dir) {
+    case "nw":
+      return "se";
+    case "w":
+      return "e";
+    case "sw":
+      return "ne";
+    case "n":
+      return "s";
+    case "s":
+      return "n";
+    case "ne":
+      return "sw";
+    case "e":
+      return "w";
+    case "se":
+      return "nw";
+  }
+}
+
 export const DIRECTION_NAMES = Object.keys(DIRECTIONS) as Directions[];
 export const DIRECTION_VALUES: Vector2[] = DIRECTION_NAMES.map((o) => DIRECTIONS[o]);

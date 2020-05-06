@@ -344,8 +344,9 @@ export class Cell extends Tile implements Interactable {
     // does it take, and what function does it follow to get there? These are generally
     // defined by the diffusionWater variable.
     const difference = giver.inventory.water - this.inventory.water;
+    const isBreakingSurfaceTension = this.inventory.water > 0 || giver.inventory.water > 0.2;
 
-    if (difference > 0) {
+    if (difference > 0.01 && isBreakingSurfaceTension) {
       // At high dt's this isn't accurate, but at these low numbers we can assume near linearity.
       const diffusionAmount = Math.min(difference * diffusionRate * dt, difference / 2);
       giver.inventory.give(this.inventory, diffusionAmount, 0);

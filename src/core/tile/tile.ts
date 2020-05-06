@@ -199,7 +199,7 @@ export abstract class Tile implements Steppable {
     // wet/dry border.
     const isBreakingSurfaceTension = this.inventory.water > 0 || giver.inventory.water > 1;
 
-    if (difference > 0 && isBreakingSurfaceTension) {
+    if (difference > 0.01 && isBreakingSurfaceTension) {
       // At high dt's this isn't accurate, but at these low numbers we can assume near linearity.
       const diffusionAmount = Math.min(difference * diffusionRate * dt, difference / 2);
       giver.inventory.give(this.inventory, diffusionAmount, 0);
@@ -208,10 +208,12 @@ export abstract class Tile implements Steppable {
 
   diffuseSugar(giver: Tile, dt: number, diffusionRate = this.diffusionSugar) {
     const difference = giver.inventory.sugar - this.inventory.sugar;
-    if (difference > 1) {
-      const diffusionAmount = Math.min(difference * diffusionRate * dt, difference / 2);
-      giver.inventory.give(this.inventory, 0, diffusionAmount);
+    // if (difference > 0.1) {
+    const diffusionAmount = Math.min(difference * diffusionRate * dt, difference / 2);
+    if (randRound(diffusionAmount) > 0) {
+      giver.inventory.give(this.inventory, 0, difference / 2);
     }
+    // }
   }
 
   /**

@@ -1,5 +1,6 @@
 import { GeneInstance } from "core/cell";
 import { easeCubicOut, easeExpOut } from "d3-ease";
+import { clickGeneric, playSmallRand } from "game/audio";
 import Keyboard from "game/input/keyboard";
 import { WorldDOMElement } from "game/mito/WorldDOMElement";
 import { randFloat, roundToNearest } from "math";
@@ -115,34 +116,40 @@ export class GeneTransportRenderer extends GeneRenderer<GeneTransport> {
 const TransportEditor: React.FC<{ gene: GeneInstance<GeneTransport> }> = ({ gene }) => {
   const setDirN = useCallback(() => {
     gene.cell.args?.direction?.set(0, -1);
+    playSmallRand(clickGeneric);
   }, [gene.cell.args]);
 
   const setDirS = useCallback(() => {
     gene.cell.args?.direction?.set(0, 1);
+    playSmallRand(clickGeneric);
   }, [gene.cell.args]);
 
   const setDirE = useCallback(() => {
     gene.cell.args?.direction?.set(1, 0);
+    playSmallRand(clickGeneric);
   }, [gene.cell.args]);
 
   const setDirW = useCallback(() => {
     gene.cell.args?.direction?.set(-1, 0);
+    playSmallRand(clickGeneric);
   }, [gene.cell.args]);
 
   const [wantedDirection, addEvent] = useWantedDirection();
   useEffect(() => {
     if (wantedDirection) {
-      gene.cell.args?.direction?.copy(wantedDirection);
+      if (!gene.cell.args?.direction?.equals(wantedDirection)) {
+        gene.cell.args?.direction?.copy(wantedDirection);
+        playSmallRand(clickGeneric);
+      }
     }
   }, [gene.cell.args, wantedDirection]);
   const handleMouseMove = useCallback(
     (event: React.MouseEvent) => {
       if (event.buttons !== 0) {
-        console.log(gene.cell.toString(), event.movementX, event.movementY);
         addEvent(event);
       }
     },
-    [addEvent, gene.cell]
+    [addEvent]
   );
 
   return (
