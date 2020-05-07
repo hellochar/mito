@@ -3,7 +3,7 @@ import { TIME_PER_DAY } from "core/constants";
 import { Environment } from "core/environment";
 import { Insect } from "core/insect";
 import { EventEmitter } from "events";
-import { map, randFloat } from "math";
+import { randFloat } from "math";
 import { gridRange } from "math/arrays";
 import { TileGenerators } from "std/tileGenerators";
 import { Vector2 } from "three";
@@ -78,20 +78,23 @@ export class World {
   genome: Genome;
 
   generatorInfo(pos: Vector2): GeneratorInfo {
-    const { noiseHeight, noiseWater, noiseRock } = this.generatorContext;
+    const { noiseHeight, noiseWater, noiseRock, noiseLarge0 } = this.generatorContext;
     const { x, y } = pos;
     const { width, height } = this;
 
     const soilLevel =
       height / 2 - (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 - 16 * noiseHeight.perlin2(10, x / 20 + 10);
-    const rockLevel = map(y - height / 2, 0, height / 2, -0.8, 0.3) - noiseRock.simplex2(x / 5, y / 5);
+    const rockLevel = noiseRock.simplex2(x / 5, y / 5);
     const heightScalar = (y / height) ** 2;
     const waterValue = noiseWater.simplex2(x / 5, y / 5) + 0.15;
+
+    const large0 = noiseLarge0.octaveSimplex2(x / 30, y / 30, 3, 0.5);
     return {
       soilLevel,
       rockLevel,
       heightScalar,
       waterValue,
+      large0,
     };
   }
 

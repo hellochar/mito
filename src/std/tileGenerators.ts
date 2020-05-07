@@ -1,24 +1,27 @@
-import { Fountain, Rock } from "../core/tile";
+import { Vector2 } from "three";
+import { Rock } from "../core/tile";
 import { Clay, Sand, Silt } from "../core/tile/soil";
 import {
   air,
   betweenSoilDepth,
   fountain,
-  inRock,
+  inRockLevel,
   inSoil,
   layers,
   nearDeepWaterMaxima,
   nearWaterMaxima,
   pastSoilDepth,
+  predicate,
   rock,
   silt,
   smallFountain,
+  TileCombiner,
   TileGenerator,
 } from "../core/tileGenerator";
 import { clamp, map } from "../math";
 
 const mixedSoilRock: TileGenerator = (pos, world) => {
-  const { noiseSoil, noiseWater } = world.generatorContext;
+  const { noiseSoil } = world.generatorContext;
   const { x, y } = pos;
   const level = noiseSoil.octaveSimplex2(x / 10, y / 10);
   const s = new (level < -0.37 ? Sand : level < 0.37 ? Silt : level < 1.2 ? Clay : Rock)(pos, world);
@@ -27,55 +30,51 @@ const mixedSoilRock: TileGenerator = (pos, world) => {
   return s;
 };
 
+export const inPillar = predicate((pos, world) => {
+  const { soilLevel } = world.generatorInfo(pos);
+  const { x, y } = pos;
+  const inPillar = x % 9 < 2 && Math.abs(y - soilLevel) < 8;
+  return inPillar;
+});
+
+export function skewX(amount: number): TileCombiner {
+  return (...generators: TileGenerator[]): TileGenerator => {
+    const gen = layers(...generators);
+    return (pos, world) => {
+      const newY = Math.round(pos.y + (world.width / 2 - pos.x) * amount);
+      const skewPos = new Vector2(pos.x, newY);
+      const tile = gen(skewPos, world);
+      if (tile) {
+        tile.pos = pos;
+        return tile;
+      }
+    };
+  };
+}
+
+export const inLarge0 = predicate((pos, world) => world.generatorInfo(pos).large0 > 0.5);
+
 const Level0: TileGenerator = layers(
   air,
+  // skewX(0.75)
   inSoil(
     silt,
     pastSoilDepth(8)(nearDeepWaterMaxima(fountain)),
     betweenSoilDepth(5, 13)(nearWaterMaxima(smallFountain)),
-    inRock(rock)
+    inRockLevel(-0.8, 0.3)(rock)
   )
+  // inPillar(mixedSoilRock)
 );
 
-const Temperate: TileGenerator = (pos, world) => {
-  const { noiseHeight, noiseWater, noiseRock } = world.generatorContext;
-  const { x, y } = pos;
-  const soilLevel =
-    world.height / 2 - (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 - 16 * noiseHeight.perlin2(10, x / 20 + 10);
-  if (y > soilLevel) {
-    const rockThreshold = map(y - world.height / 2, 0, world.height / 2, -0.7, 0.3);
-    const isRock = noiseRock.simplex2(x / 5, y / 5) < rockThreshold;
-    if (isRock) {
-      const rock = new Rock(pos, world);
-      return rock;
-    } else {
-      const heightScalar = Math.pow(map(y - world.height / 2, 0, world.height / 2, 0.5, 1), 2);
-      const simplexScalar = 0.2;
-      // the + at the end makes a *huge* difference
-      const simplexValue = noiseWater.simplex2(x * simplexScalar, y * simplexScalar) + 0.13;
-
-      const isFountain = simplexValue > 0.93 && y - soilLevel > 5 && y - soilLevel < 13;
-      if (isFountain) {
-        return new Fountain(pos, world, 3, map(y, world.height / 2, world.height, 100, 300));
-      }
-      if (heightScalar * simplexValue > 1 && y - soilLevel > 8) {
-        const emitWaterScalar = Math.min(heightScalar * simplexValue, 1);
-        return new Fountain(
-          pos,
-          world,
-          Math.round(3 / emitWaterScalar),
-          map(y, world.height / 2, world.height, 100, 300)
-        );
-      } else {
-        const s = mixedSoilRock(pos, world)!;
-        // const water = Math.round(clamp((simplexValue > 0.4 ? heightScalar : 0) * 10, 1, 10));
-
-        // s.inventory.set(water, 0);
-        return s;
-      }
-    }
-  }
-};
+const Temperate: TileGenerator = layers(
+  air,
+  inSoil(
+    mixedSoilRock,
+    pastSoilDepth(8)(nearDeepWaterMaxima(fountain)),
+    betweenSoilDepth(5, 13)(nearWaterMaxima(smallFountain)),
+    inRockLevel(-0.7, 0.3)(rock)
+  )
+);
 
 const Desert: TileGenerator = (pos, world) => {
   const { noiseHeight, noiseRock } = world.generatorContext;

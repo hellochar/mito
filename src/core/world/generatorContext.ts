@@ -6,12 +6,19 @@ export interface GeneratorContext {
   noiseRock: Noise;
   noiseWater: Noise;
   noiseSoil: Noise;
+  noiseLarge0: Noise;
 }
 
 export interface GeneratorInfo {
   soilLevel: number;
+
   /**
-   * whether rock lives here.
+   * 20x20 simplex in [0, 1]
+   */
+  large0: number;
+
+  /**
+   * 5x5 simplex noise.
    */
   rockLevel: number;
 
@@ -39,5 +46,6 @@ export function createGeneratorContext(seed: number): GeneratorContext {
     noiseRock: new Noise(modulateSeed(seed, "rock")),
     noiseWater: new Noise(modulateSeed(seed, "water")),
     noiseSoil: new Noise(modulateSeed(seed, "soil")),
+    noiseLarge0: new Noise(modulateSeed(seed, "large0")),
   };
 }
