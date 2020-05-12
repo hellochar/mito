@@ -7,27 +7,29 @@ export interface GeneratorContext {
   noiseWater: Noise;
   noiseSoil: Noise;
   noiseLarge0: Noise;
+  noiseMid0: Noise;
 }
 
 export interface GeneratorInfo {
   soilLevel: number;
+  soilLevelFlat: number;
 
   /**
-   * 20x20 simplex in [0, 1]
+   * 20x20 simplex in [-1, 1]
    */
   large0: number;
 
   /**
-   * 5x5 simplex noise.
+   * 10x10 simplex in [-1, 1]
    */
-  rockLevel: number;
+  mid0: number;
 
   /**
    * (y/height)**2; useful for placing objects deep down.
    */
   heightScalar: number;
   /**
-   * 5x5 simplex noise.
+   * 5x5 simplex noise in [-0.85, 1.15]
    */
   waterValue: number;
 }
@@ -47,5 +49,6 @@ export function createGeneratorContext(seed: number): GeneratorContext {
     noiseWater: new Noise(modulateSeed(seed, "water")),
     noiseSoil: new Noise(modulateSeed(seed, "soil")),
     noiseLarge0: new Noise(modulateSeed(seed, "large0")),
+    noiseMid0: new Noise(modulateSeed(seed, "mid0")),
   };
 }

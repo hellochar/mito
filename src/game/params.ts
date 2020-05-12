@@ -5,6 +5,7 @@ const PARAMS_DEFAULT = {
   showGodUI: false,
   showFPS: false,
   debugPerf: false,
+  debugLevel: false,
   debug: process.env.NODE_ENV === "development",
 };
 

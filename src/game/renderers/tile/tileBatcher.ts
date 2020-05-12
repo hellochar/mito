@@ -107,7 +107,7 @@ vec3 applyTemperature(vec3 color) {
   // return mix(mix(color, colorCold, amtCold * 0.5), colorFreezing, amtFreezing * 0.5);
 }
 
-// uv - [0,1]x[0,1] - our local sprite (16x16) UV coords
+// uv - [0,1]x[0,1] - our local sprite (32x32) UV coords
 // texturePosition - the grid x/y where our sprite lives in our texture. NOTE:
 // for texturePosition, top-left is 0, 0 (Y is image coordinates)
 // textureSize - the pixel width/height of the full spritesheet

@@ -24,7 +24,7 @@ const IconCell: React.FC<{ cellType: CellType; showCosts?: boolean; spritesheetL
     const image = texture.image;
     const url = (() => {
       if (image != null) {
-        if (image instanceof HTMLCanvasElement && spritesheetLoaded) {
+        if (image instanceof HTMLCanvasElement) {
           return image.toDataURL();
         } else if (image instanceof Image) {
           return image.src;
@@ -39,6 +39,8 @@ const IconCell: React.FC<{ cellType: CellType; showCosts?: boolean; spritesheetL
     return {
       backgroundImage,
     };
+    // Retrigger this when spritesheet gets loaded
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [color, spritesheetLoaded, texture.image]);
 
   const costsEl = showCosts ? (

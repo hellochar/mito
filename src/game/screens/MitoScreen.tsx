@@ -4,12 +4,12 @@ import { SketchComponent } from "game/screens/sketch/SketchComponent";
 import * as React from "react";
 import "./MitoScreen.scss";
 
-export interface ISketchRouteProps {
+export interface IMitoInstanceProps {
   attempt: PopulationAttempt;
   onWinLoss: (result: GameResult) => void;
 }
 
-export default class MitoScreen extends React.PureComponent<ISketchRouteProps, {}> {
+export default class MitoScreen extends React.PureComponent<IMitoInstanceProps, {}> {
   public render() {
     return (
       <div className="full-page-sketch" ref={this.handleDivRef}>

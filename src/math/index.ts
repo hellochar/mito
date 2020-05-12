@@ -52,13 +52,13 @@ export function sawTooth(x: number) {
   return mod(x, 1);
 }
 
-export function logistic(x: number) {
+export function logistic(x: number, k = 1) {
   if (x < -6) {
     return 0;
   } else if (x > 6) {
     return 1;
   }
-  return 1 / (1 + Math.exp(-x));
+  return 1 / (1 + Math.exp(-x * k));
 }
 
 export function roundToNearest(x: number, to: number) {

@@ -361,7 +361,7 @@ export class Noise {
     this.seed(seed);
   }
 
-  // 2D simplex noise
+  // 2D simplex noise; outputs a number from [-1, 1]
   public simplex2(xin: number, yin: number) {
     let n0, n1, n2; // Noise contributions from the three corners
     // Skew the input space to determine which simplex cell we're in
@@ -598,6 +598,9 @@ export class Noise {
   }
 
   // 2D Perlin Noise
+  /**
+   * Output range [-0.5, 0.5]
+   */
   public perlin2(x: number, y: number) {
     // Find unit grid cell containing point
     let X = Math.floor(x),
@@ -662,3 +665,5 @@ export class Noise {
     );
   }
 }
+
+(window as any).Noise = Noise;

@@ -77,24 +77,51 @@ export class World {
 
   genome: Genome;
 
-  generatorInfo(pos: Vector2): GeneratorInfo {
-    const { noiseHeight, noiseWater, noiseRock, noiseLarge0 } = this.generatorContext;
+  private generatorInfoCache = new Map<string, GeneratorInfo>();
+
+  public generatorInfo(pos: Vector2): GeneratorInfo {
+    const key = `${pos.x},${pos.y}`;
+    if (!this.generatorInfoCache.has(key)) {
+      this.generatorInfoCache.set(key, this.computeGeneratorInfo(pos));
+    }
+    return this.generatorInfoCache.get(key)!;
+  }
+
+  private computeGeneratorInfo(pos: Vector2): GeneratorInfo {
+    const { noiseHeight, noiseWater, noiseLarge0, noiseMid0 } = this.generatorContext;
     const { x, y } = pos;
     const { width, height } = this;
 
     const soilLevel =
-      height / 2 - (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 - 16 * noiseHeight.perlin2(10, x / 20 + 10);
-    const rockLevel = noiseRock.simplex2(x / 5, y / 5);
+      height / 2 -
+      // start soil a bit lower; provides higher chance for low co2 start
+      2 -
+      // period 20, +-8 - main soil line definition.
+      // mid-sized rolling hills. At the max this will approach 22.5deg.
+      16 * noiseHeight.perlin2(10, x / 20 + 10) -
+      // period 5, +- 1. small detail noise
+      2 * noiseHeight.perlin2(0, x / 5);
+
+    const soilLevelFlat =
+      height / 2 -
+      1 -
+      // period 100, +- 1.5 - really low frequency cut
+      3 * noiseHeight.perlin2(10, x / 100 + 10) -
+      // period 20, amplitude 1 - add some tiny dips here and there
+      noiseHeight.perlin2(0, x / 20);
+
     const heightScalar = (y / height) ** 2;
     const waterValue = noiseWater.simplex2(x / 5, y / 5) + 0.15;
 
-    const large0 = noiseLarge0.octaveSimplex2(x / 30, y / 30, 3, 0.5);
+    const large0 = noiseLarge0.octaveSimplex2(x / 20, y / 20, 3, 0.5);
+    const mid0 = noiseMid0.simplex2(x / 10, y / 10);
     return {
       soilLevel,
-      rockLevel,
+      soilLevelFlat,
       heightScalar,
       waterValue,
       large0,
+      mid0,
     };
   }
 

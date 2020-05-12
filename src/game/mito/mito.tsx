@@ -133,13 +133,13 @@ export class Mito extends ISketch {
     this.renderer.autoClear = false;
     this.nodePost = new Nodes.NodePostProcessing(renderer);
     this.ovalOutTime = new Nodes.FloatNode(0);
-    const noiseNode = new Nodes.MathNode(
+    const minNode = new Nodes.MathNode(
       new Nodes.ScreenNode(),
       new OvalNode(this.ovalOutTime),
       this.ovalOutTime,
       Nodes.MathNode.MIN
     );
-    this.nodePost.output = noiseNode as any;
+    this.nodePost.output = minNode as any;
     const { info } = attempt.targetHex;
     this.world = new World(environmentFromLevelInfo(info), info.seed, attempt.settlingSpecies);
 
@@ -147,7 +147,7 @@ export class Mito extends ISketch {
     this.camera.lookAt(0, 0, 0);
     this.camera.position.x = this.world.player.pos.x;
     this.camera.position.y = this.world.player.pos.y;
-    this.camera.zoom = this.userZoom = 1.5;
+    this.camera.zoom = this.userZoom = params.debugLevel ? 0.25 : 1.5;
     this.camera.add(this.audioListener);
 
     // this.hackCamera = new PerspectiveCamera(60, this.canvas.height / this.canvas.width);
@@ -177,8 +177,10 @@ export class Mito extends ISketch {
       const delta = -(e.deltaX + e.deltaY) / 125 / 20;
       const currZoom = this.userZoom;
       const scalar = Math.pow(2, delta);
-      const newZoom = clamp(currZoom * scalar, 1, 3);
-      // const newZoom = currZoom * scalar;
+      let newZoom = currZoom * scalar;
+      if (!params.debugLevel) {
+        newZoom = clamp(newZoom, 1, 3);
+      }
       this.userZoom = newZoom;
     },
   };
@@ -385,7 +387,11 @@ export class Mito extends ISketch {
       if (this.world.time - dt < ovalOutStart && this.world.time > ovalOutStart) {
         whoosh.play();
       }
-      this.ovalOutTime.value = easeSinIn(clamp((this.world.time - ovalOutStart) / 1.5, 0, 1));
+      if (params.debugLevel) {
+        this.ovalOutTime.value = 1;
+      } else {
+        this.ovalOutTime.value = easeSinIn(clamp((this.world.time - ovalOutStart) / 1.5, 0, 1));
+      }
       this.nodeFrame.update(millisDelta / 1000);
 
       // render everything as per norm

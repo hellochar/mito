@@ -7,6 +7,7 @@ import { Clay, Sand, Silt } from "core/tile/soil";
 import { easeCubic } from "d3-ease";
 import { scaleLinear } from "d3-scale";
 import Mito from "game/mito/mito";
+import { params } from "game/params";
 import { clamp, lerp, lerp2, map } from "math";
 import { reversed } from "math/easing";
 import { GeneFruit, GenePhotosynthesis, GenePipes, GeneSeed, GeneSoilAbsorption, GeneTransport } from "std/genes";
@@ -88,9 +89,16 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       );
     }
 
-    if (this.target.darkness < 1) {
+    if (this.getLightAmount() > 0) {
       this.commit();
     }
+  }
+
+  public getLightAmount() {
+    if (params.debugLevel) {
+      return 1;
+    }
+    return this.target.lightAmount();
   }
 
   private createGeneRendererFor(inst: GeneInstance<any>): GeneRenderer<any> | undefined {
@@ -134,7 +142,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   update() {
-    if (this.target.darkness < 1) {
+    if (this.getLightAmount() > 0) {
       this.updateScale();
       this.updateColor();
 
@@ -175,7 +183,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   updateColor() {
-    const lightAmount = this.target.lightAmount();
+    const lightAmount = this.getLightAmount();
     if (this.target instanceof Air) {
       const co2Color = CO2_COLORSCALE(this.target.co2());
       this.originalColor.set(co2Color);
