@@ -137,7 +137,6 @@ export abstract class Tile implements Steppable {
   // test tiles diffusing water around on same-type tiles
   public step(dt: number) {
     const neighbors = this.world.tileNeighbors(this.pos);
-    this.stepDarkness(neighbors);
     this.stepClosestCellDistance(neighbors);
     this.stepDiffusion(neighbors, dt);
     this.stepTemperature(dt);
@@ -148,6 +147,9 @@ export abstract class Tile implements Steppable {
     this.temperatureFloat = this.world.weather.getCurrentTemperature();
   }
 
+  /**
+   * Called by World.
+   */
   stepDarkness(neighbors: Map<Vector2, Tile>) {
     let minDarkness = this.darkness;
     for (const [, t] of neighbors) {

@@ -167,6 +167,7 @@ export class World {
     this.playerSeed = new PlayerSeed(start, this, this.player);
 
     this.fillCachedEntities();
+    this.computeDarkness();
 
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
@@ -428,6 +429,9 @@ export class World {
     });
     this.stepInsects(dt);
     this.weather.step(dt);
+    if (this.stepStats.added.length > 0 || this.stepStats.deleted.length > 0) {
+      this.computeDarkness();
+    }
     this.frame++;
     this.time += dt;
     this.fillCachedEntities();
@@ -485,6 +489,12 @@ export class World {
         }
         tile.depth = minNeighborDepth + 1;
       }
+    }
+  }
+
+  public computeDarkness() {
+    for (const tile of this.bfsIterator(this.player.pos, this.width * this.height)) {
+      tile.stepDarkness(this.tileNeighbors(tile.pos));
     }
   }
 
