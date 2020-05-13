@@ -6,7 +6,7 @@ const spriteSize = 32; // 32x32 sprites
 export let spritesheetLoaded = false;
 export const SPRITESHEET = lazy(() =>
   new THREE.TextureLoader().load(spritesheetUrl, (texture) => {
-    texture.magFilter = THREE.NearestFilter;
+    texture.magFilter = texture.minFilter = THREE.NearestFilter;
     texture.flipY = true;
     texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
     SPRITESHEET().dispatchEvent({ type: "update" });

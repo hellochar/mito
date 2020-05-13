@@ -85,14 +85,11 @@ varying float vAlpha;
 varying float vTemperature;
 
 const vec2 spritesheetSize = vec2(256., 256.);
+const vec2 spriteSize = vec2(32.);
 uniform sampler2D spriteSheet;
 
 float myRound(float x) {
   return sign(x) * floor(abs(x) + 0.5);
-}
-
-float random(float x) {
-  return fract(sin(x * .43));
 }
 
 vec3 applyTemperature(vec3 color) {
@@ -112,17 +109,17 @@ vec3 applyTemperature(vec3 color) {
 // for texturePosition, top-left is 0, 0 (Y is image coordinates)
 // textureSize - the pixel width/height of the full spritesheet
 // returns: a UV coordinate for this sprite, relative to the full spritesheet
-vec2 getCorrectUv(vec2 uv, vec2 texturePosition, vec2 textureSize) {
-  vec2 spriteSheetPxStart = texturePosition * vec2(32.);
-  spriteSheetPxStart.y = textureSize.y - spriteSheetPxStart.y - 32.;
-  vec2 spriteSheetUv = spriteSheetPxStart + uv * vec2(32.);
-  vec2 minUv = spriteSheetPxStart + vec2(1.);
-  vec2 maxUv = spriteSheetPxStart + vec2(32. - 1.);
-  return clamp(spriteSheetUv / textureSize, minUv / textureSize, maxUv / textureSize);
+vec2 getCorrectUv(vec2 uv, vec2 texturePosition) {
+  vec2 spriteSheetPxStart = texturePosition * spriteSize;
+  spriteSheetPxStart.y = spritesheetSize.y - spriteSheetPxStart.y - spriteSize.y;
+  vec2 spriteSheetUv = spriteSheetPxStart + uv * spriteSize;
+  vec2 minUv = spriteSheetPxStart;
+  vec2 maxUv = spriteSheetPxStart + spriteSize;
+  return clamp(spriteSheetUv / spritesheetSize, minUv / spritesheetSize, maxUv / spritesheetSize);
 }
 
 void main() {
-  vec2 correctUv = getCorrectUv(vUv, vTexturePosition, spritesheetSize);
+  vec2 correctUv = getCorrectUv(vUv, vTexturePosition);
   vec4 textureColor = texture2D(spriteSheet, correctUv);
   gl_FragColor = vec4(applyTemperature(textureColor.rgb * vColor), textureColor.a * vAlpha);
 }
@@ -141,7 +138,9 @@ function newTileShaderMaterial() {
 }
 
 function newTileBatcherGeometry() {
-  const referenceGeometry = new PlaneBufferGeometry(1, 1);
+  // overdraw just a tiny bit to prevent aliased black lines from appearing
+  // in various zoom levels
+  const referenceGeometry = new PlaneBufferGeometry(1.01, 1.01);
   const geometry = new InstancedBufferGeometry();
   // this copies:
   // [0, 2, 1, 2, 3, 1]
