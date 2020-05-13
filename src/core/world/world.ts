@@ -422,11 +422,12 @@ export class World {
   public step(dt: number): StepStats {
     const entities = this.entities();
     // dear god
-    entities.forEach((entity) => {
+    for (let i = 0; i < entities.length; i++) {
+      const entity = entities[i];
       if (isSteppable(entity)) {
         step(entity, dt);
       }
-    });
+    }
     this.stepInsects(dt);
     this.weather.step(dt);
     if (this.stepStats.added.length > 0 || this.stepStats.deleted.length > 0) {
