@@ -10,7 +10,7 @@ type AppReducerContextType = [AppState, React.Dispatch<AppActions>];
 
 export const AppReducerContext = React.createContext<AppReducerContextType>(null!);
 
-export function useAppReducer(): AppReducerContextType {
+export function useAppReducer() {
   return useContext(AppReducerContext);
 }
 

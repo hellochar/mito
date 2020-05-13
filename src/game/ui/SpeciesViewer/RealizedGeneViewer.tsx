@@ -42,14 +42,7 @@ export const RealizedGeneViewer: React.FC<{
   const energyUpkeepEl = gene.getStaticProperties().energyUpkeep ? (
     <EnergyUpkeep upkeep={gene.getStaticProperties().energyUpkeep!} />
   ) : null;
-  const geneLevelEl =
-    gene.level > 0 ? (
-      <div className="gene-level">
-        {arrayRange(gene.level).map((i) => (
-          <React.Fragment key={i}>⬥</React.Fragment>
-        ))}
-      </div>
-    ) : null;
+  const geneLevelEl = gene.level > 0 ? <div className="gene-level">{"⬥".repeat(gene.level)}</div> : null;
   const reproducer = gene.getStaticProperties().isReproductive;
   return (
     <Draggable key={gene.uuid} draggableId={`draggable-${gene.uuid}`} index={index} isDragDisabled={!draggable}>

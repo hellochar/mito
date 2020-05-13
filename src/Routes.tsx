@@ -1,12 +1,13 @@
 import React from "react";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import TestDiffusion from "tests/TestDiffusion";
-import TestLevel from "tests/TestLevel";
 import { TestLoseScreen } from "tests/TestLoseScreen";
 import { TestWinScreen } from "tests/TestWinScreen";
 import WFCTest from "tests/WFCTest";
 import App from "./game/screens/App";
 import "./index.scss";
+// tests must be imported with './' syntax to come after the './game' import; ordering is important
+import TestLevel from "./tests/TestLevel";
 import TestStats from "./tests/TestStats";
 
 export default () => (
