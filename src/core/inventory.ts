@@ -19,43 +19,10 @@ export class Inventory {
     public water: number = 0,
     public sugar: number = 0
   ) {
-    this.validate();
+    if (process.env.NODE_ENV === "development") {
+      this.validate();
+    }
   }
-
-  // public exchange(other: Inventory, giveWater: number, giveSugar: number, getWater: number, getSugar: number) {
-  //     giveWater = Math.min(giveWater, this.water);
-  //     giveSugar = Math.min(giveSugar, this.sugar);
-  //     getWater = Math.min(getWater, other.water);
-  //     getSugar = Math.min(getWater, other.sugar);
-
-  //     // positive = give this amount
-  //     // negative = other gives this amount
-  //     const wantedExchangedWater = giveWater - getWater;
-  //     const wantedExchangedSugar = giveSugar - getSugar;
-
-  //     const mySpace = fpref(this.space() + wantedExchangedSugar + wantedExchangedWater);
-  //     const otherSpace = fpref(other.space() - wantedExchangedSugar - wantedExchangedWater);
-
-  //     // const mySpace = fpref(this.capacity + giveWater + giveSugar - this.water - this.sugar);
-
-  //     // const otherSpace = fpref(other.capacity - other.water - other.sugar)
-
-  //     // const mySpaceNeeded = fpref(getWater + getSugar);
-  //     // const otherSpaceNeeded = fpref(giveWater + giveSugar);
-
-  //     // if (mySpace < mySpaceNeeded) {
-  //     //     // e.g. space = 2, needed = 4
-  //     //     // only get half
-  //     //     const weightedRatio = mySpace / mySpaceNeeded;
-  //     //     getWater = getWater * mySpace / mySpaceNeeded;
-  //     //     getSugar = getSugar * mySpace / mySpaceNeeded;
-  //     // }
-
-  //     // if (otherSpace < otherSpaceNeeded) {
-  //     //     giveWater = giveWater / otherSpace;
-  //     //     giveSugar = giveSugar / otherSpace;
-  //     // }
-  // }
 
   public isEmpty() {
     return this.water === 0 && this.sugar === 0;
@@ -140,7 +107,9 @@ export class Inventory {
   private change(water: number, sugar: number) {
     const newWater = fpref(this.water + water);
     const newSugar = fpref(this.sugar + sugar);
-    this.validate(newWater, newSugar);
+    if (process.env.NODE_ENV === "development") {
+      this.validate();
+    }
     this.water = newWater;
     this.sugar = newSugar;
 
