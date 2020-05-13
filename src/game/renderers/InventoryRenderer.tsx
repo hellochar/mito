@@ -36,9 +36,9 @@ export const SUGAR_POINTS_PARAMS: CommittablePointsParameters = {
 };
 
 export class InventoryPoints {
-  public waters = configure(new CommittablePoints(10000, WATER_POINTS_PARAMS), (p) => (p.renderOrder = 1));
+  public waters = configure(new CommittablePoints(20000, WATER_POINTS_PARAMS), (p) => (p.renderOrder = 1));
 
-  public sugars = configure(new CommittablePoints(10000, SUGAR_POINTS_PARAMS), (p) => (p.renderOrder = 1));
+  public sugars = configure(new CommittablePoints(20000, SUGAR_POINTS_PARAMS), (p) => (p.renderOrder = 1));
 
   public startFrame() {
     this.waters.startFrame();

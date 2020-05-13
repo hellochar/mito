@@ -44,13 +44,16 @@ export function predicate(predicate: (pos: Vector2, world: World) => boolean): T
   };
 }
 
-export function not(combiner: TileCombiner): TileCombiner {
-  return (...gens: TileGenerator[]): TileGenerator => {
-    const originalGenerator = combiner(...gens);
-    const gen = layers(...gens);
+/**
+ * Take an existing tile combiner, and reverse it
+ */
+export function not(original: TileGenerator): TileCombiner {
+  return (...generators) => {
+    const gen = layers(...generators);
+
     return (pos, world) => {
-      const t = originalGenerator(pos, world);
-      if (t) {
+      const t = original(pos, world);
+      if (t != null) {
         return undefined;
       } else {
         return gen(pos, world);

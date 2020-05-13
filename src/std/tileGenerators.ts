@@ -1,6 +1,7 @@
 import { World } from "core";
+import { Directions, DIRECTIONS } from "core/directions";
 import { Matrix3, Vector2 } from "three";
-import { Rock } from "../core/tile";
+import { Rock, Tile } from "../core/tile";
 import { Clay, Sand, Silt } from "../core/tile/soil";
 import {
   addDeepWater,
@@ -14,6 +15,7 @@ import {
   layers,
   nearDeepWaterMaxima,
   nearWaterMaxima,
+  not,
   pastSoilDepth,
   predicate,
   rock,
@@ -25,11 +27,21 @@ import {
 } from "../core/tileGenerator";
 import { clamp, logistic, map } from "../math";
 
-const mixedSoilRock: TileGenerator = (pos, world) => {
+const mixedSoilRockSmall: TileGenerator = (pos, world) => {
   const { noiseSoil } = world.generatorContext;
   const { x, y } = pos;
   const level = noiseSoil.octaveSimplex2(x / 10, y / 10);
   const s = new (level < -0.37 ? Sand : level < 0.37 ? Silt : level < 1.2 ? Clay : Rock)(pos, world);
+  const water = clamp(level * 30, 1, 20);
+  s.inventory.add(water, 0);
+  return s;
+};
+
+const mixedSoilRockMed: TileGenerator = (pos, world) => {
+  const { noiseSoil } = world.generatorContext;
+  const { x, y } = pos;
+  const level = noiseSoil.octaveSimplex2(x / 15 + 19.3291, y / 15 + 595.3, 3, 0.4);
+  const s = new (level < -0.5 ? Sand : level < 0.5 ? Silt : Clay)(pos, world);
   const water = clamp(level * 30, 1, 20);
   s.inventory.add(water, 0);
   return s;
@@ -87,6 +99,14 @@ export function translateY(y: number) {
   return translate(0, y);
 }
 
+export function rotate(theta: number) {
+  return transform(new Matrix3().rotate(theta));
+}
+
+export function scale(sx: number, sy: number) {
+  return transform(new Matrix3().scale(sx, sy));
+}
+
 /**
  * The center of the map gets translated up by `tall` tiles. This falls off
  * with a logistic curve of steepness `k` over `width` pixels.
@@ -115,7 +135,7 @@ const Level0: TileGenerator = layers(
 const Temperate: TileGenerator = layers(
   air,
   inSoil(
-    mixedSoilRock,
+    mixedSoilRockSmall,
     pastSoilDepth(8)(nearDeepWaterMaxima(fountain)),
     betweenSoilDepth(5, 13)(nearWaterMaxima(smallFountain)),
     inRockLevel(-0.7, 0.3)(rock)
@@ -125,7 +145,7 @@ const Temperate: TileGenerator = layers(
 const Desert: TileGenerator = layers(
   air,
   inSoilFlat(
-    addDeepWater(mixedSoilRock),
+    addDeepWater(mixedSoilRockSmall),
     // wavelength 4 creates much more single dot rocks.
     // -0.4 at bottom creates more open space
     inRockLevel(-0.8, -0.4, 4)(rock)
@@ -173,45 +193,139 @@ const Rocky: TileGenerator = layers(
   // moundShape(25, -25, 5)(translateY(25)(inSoil(silt)))
 );
 
-const Reservoires: TileGenerator = (pos, world) => {
-  const { noiseHeight } = world.generatorContext;
-  const { x, y } = pos;
-  const soilLevel =
-    world.height / 2 - (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 - 16 * noiseHeight.perlin2(10, x / 20 + 10);
-  // const isRock = Math.abs(noiseRock.simplex2(x / 10, y / 10)) < 0.1;
-  const isRockHere = Math.sin(x / 4 + y / 30) ** 2 + Math.cos(y / 4) ** 2 > 1.2;
-  const isRockBelow = Math.sin(x / 4 + (y + 2) / 30) ** 2 + Math.cos((y + 2) / 4) ** 2 > 1.2;
+/**
+ * Creates an axis aligned, non-random checkerboard pattern. You can round the edges of the
+ * checkboard by bumping the threshold between 1.0 and 2.0.
+ *
+ * At threshold 0 we basically fill the entire space.
+ *
+ * At threshold 1.0 we'll make perfect diamonds that touch each other (50% coverage).
+ *
+ * At threshold 2.0 we basically miss entirely, because of the sampling rate.
+ */
+const roundedCheckerboard = (wavelength: number, threshold: number = 1.2) =>
+  predicate((pos, world) => {
+    const { x, y } = pos;
+    // sin(x)**2 + cos(y)**2 ranges in [-0.3, 2.3], with intrinsic wavelength PI.
+    const c = Math.sin(Math.PI * (x / wavelength)) ** 2 + Math.cos(Math.PI * (y / wavelength)) ** 2;
+    return c > threshold;
+  });
 
-  const isRock = isRockHere && !isRockBelow;
-  if (isRock && y + 1 > soilLevel) {
-    return new Rock(pos, world);
-  }
-  if (y > soilLevel) {
-    return mixedSoilRock(pos, world);
-  }
+// only if all generators return a value, return the last one.
+const and: TileCombiner = (...generators) => {
+  return (pos, world) => {
+    let tile: Tile | undefined;
+    for (const g of generators) {
+      tile = g(pos, world);
+      if (tile == null) {
+        return;
+      }
+    }
+    return tile;
+  };
 };
 
-const SkySoil: TileGenerator = (pos, world) => {
+//prettier-ignore
+const Reservoires: TileGenerator = layers(
+  air,
+  inSoil(
+    mixedSoilRockMed,
+    pastSoilDepth(1)(
+      and(
+        rotate(-Math.PI * 0.05)(
+          roundedCheckerboard(12, 1.2)(rock)
+        ),
+        not(translateY(2)(
+          rotate(-Math.PI * 0.05)(
+            roundedCheckerboard(12, 1.2)(rock)
+          )
+        ))(rock),
+      ),
+    )
+  )
+);
+
+const inOverhang = predicate((pos, world) => {
   const { noiseHeight } = world.generatorContext;
   const { x, y } = pos;
+  // [-1, 1]
+  const soilLevel = noiseHeight.simplex2(x / 15, y / 15);
+  return soilLevel > map(y, 0, world.height, 4, -1);
+});
 
-  const p = 2.5;
-  const soilLevel = Math.sin(x / p + y / 12) ** 2 + Math.cos(y / p) ** 2 + noiseHeight.perlin2(x / 4, y / 26);
+const inSkySoil = (p: number) =>
+  predicate((pos, world) => {
+    const { noiseHeight } = world.generatorContext;
+    const { x, y } = pos;
 
-  if (soilLevel > 1.2 && y > 80 - soilLevel * 20) {
-    const s = new Silt(pos, world);
-    s.inventory.add(Math.floor(5 * (soilLevel - 1.1)), 0);
-    return s;
-  }
+    // this is basically roundedCheckerboard with a slight rotation and a wavelength of 7.85
+    // and then either
+    // 1) the checkerboard is domain warped by perlin noise a bit, but the threshold decreases as a function of y
+    // 2) roundedCheckerboard should accept a threshold scalar
+    // 3) we build generic scalar comparator predicates - e.g.
+    //    gt(roundedCheckerboard(12), 1.2)()
+    //    gt(roundedCheckerboard(12), (pos, world) => 1.2 - noiseHeight)()
+    //
+    // we should try to avoid writing a generic expression tree; e.g. this would be horrible:
+    //    and(
+    //      gt(plus(roundedCheckerboard(12), heightPerlin2), 1.2),
+    //      gt(y, minus(80, mult(soilLevel, 20)))
+    // ranges in [-0.8, 2.8]
+    const soilLevel = Math.sin(x / p + y / 12) ** 2 + Math.cos(y / p) ** 2 + noiseHeight.perlin2(x / 4, y / 26);
 
-  const soilLevelBase =
-    (world.height / 2) * 1.2 -
-    (4 * (noiseHeight.perlin2(0, x / 5) + 1)) / 2 -
-    16 * noiseHeight.perlin2(10, x / 20 + 10);
-  if (y > soilLevelBase) {
-    return mixedSoilRock(pos, world);
-  }
+    return soilLevel > map(y, 0, world.height, 2.8, 0.2);
+  });
+
+const erode = (generator: TileGenerator): TileGenerator => {
+  return (pos, world) => {
+    const tile = generator(pos, world);
+    if (tile == null) {
+      return;
+    }
+    let dirName: Directions;
+    for (dirName in DIRECTIONS) {
+      const dir = DIRECTIONS[dirName];
+      const testTile = generator(pos.clone().add(dir), world);
+      if (testTile == null) {
+        return;
+      }
+    }
+    return tile;
+  };
 };
+
+export const atEdge = (original: TileGenerator): TileCombiner => {
+  return (...generators) => {
+    const gen = layers(...generators);
+    return and(original, not(erode(original))(gen));
+  };
+};
+
+export const addEdge = (original: TileGenerator): TileCombiner => {
+  return (...generators) => {
+    const gen = layers(...generators);
+    return layers(original, atEdge(original)(gen));
+  };
+};
+
+//prettier-ignore
+const SkySoil = layers(
+  air,
+  inSkySoil(2.5)(
+    silt,
+    inRockLevel(-0.8, -0.3)(rock),
+    nearWaterMaxima(smallFountain),
+  ),
+  // addEdge(inSkySoil(2.5)(silt))(sand),
+  // erode(
+  //   inSkySoil(2.5)(silt)
+  // )
+  // addEdge(
+  //   inSkySoil(2.5)(silt)
+  // )(
+  //   rock
+  // )
+);
 
 export const TileGenerators = { Level0, Temperate, Desert, Rocky, Reservoires, SkySoil };
 export type TileGeneratorName = keyof typeof TileGenerators;

@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from "react";
 
 function newHexWithSeed(seed: number) {
   const hex = new HexTile(0, 0);
-  hex.info.height = 3;
+  hex.info.height = 4;
   hex.info.seed = seed;
   return hex;
 }
