@@ -185,8 +185,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   updateColor() {
     const lightAmount = this.getLightAmount();
     if (this.target instanceof Air) {
-      const co2Color = CO2_COLORSCALE(this.target.co2());
-      this.originalColor.set(co2Color);
+      const co2Color = getCo2Color(this.target.co2());
+      this.originalColor.copy(co2Color);
     }
     this.color.copy(this.originalColor);
     if (this.target instanceof Cell && this.target.energy < 0.5) {
@@ -295,9 +295,20 @@ export function getMaterialInfo(tile: Tile): MaterialInfo {
   }
 }
 
-const CO2_COLORSCALE = scaleLinear<string, string>()
-  .domain([0.25, 0.5, 1])
-  .range(["hsl(51, 32%, 28%)", "hsl(180, 31%, 76%)", "hsl(213, 83%, 48%)"]);
+const getCo2Color = (() => {
+  const CO2_COLORSCALE = scaleLinear<string, string>()
+    .domain([0.25, 0.5, 1])
+    .range(["hsl(51, 32%, 28%)", "hsl(180, 31%, 76%)", "hsl(213, 83%, 48%)"]);
+  const cache: Color[] = [];
+  const NUM_STEPS = 200;
+  for (let i = 0; i <= NUM_STEPS; i++) {
+    // creating threejs colors from the d3 colorscale is expensive! cache it once
+    cache[i] = new Color(CO2_COLORSCALE(i / NUM_STEPS));
+  }
+  return (co2: number) => {
+    return cache[Math.floor(co2 * NUM_STEPS)];
+  };
+})();
 
 const WHITE = new Color(1, 1, 1);
 const BLACK = new Color(0, 0, 0);
