@@ -1,5 +1,4 @@
 import configure from "common/configure";
-import Ticker from "std/ticker";
 import { Color, Scene, Vector2 } from "three";
 import { Inventory } from "../../core/inventory";
 import { map } from "../../math";
@@ -58,10 +57,6 @@ export class InventoryRenderer extends Renderer<Inventory> {
   public waters: Vector2[] = [];
 
   public sugars: Vector2[] = [];
-
-  private activeSugar?: Vector2;
-
-  private stableWater?: Vector2;
 
   constructor(target: Inventory, scene: Scene, mito: Mito, public particlePoints: InventoryPoints) {
     super(target, scene, mito);
@@ -160,16 +155,21 @@ export class InventoryRenderer extends Renderer<Inventory> {
     }
   }
 
+  private simulationT = 0;
+
   private simulateResourcePositions() {
     const numWaters = this.waters.length;
     const numResources = numWaters + this.sugars.length;
+    // 16 ms
+    this.simulationT += 0.0166667;
+    const basePushAngle = this.simulationT / 3 + this.animationOffset;
+    const basePushForceX = Math.cos(basePushAngle) * 0.02;
     for (let i = 0; i < numResources; i++) {
       const resource = i < numWaters ? this.waters[i] : this.sugars[i - numWaters];
       let vx = 0,
         vy = 0;
 
-      const angle = Ticker.now / 3000 + this.animationOffset;
-      vx += Math.cos(angle) * 0.02;
+      vx += basePushForceX;
 
       const goTowardsCenterStrength = 0.1 + resource.length() * 0.1;
       vx += -resource.x * goTowardsCenterStrength;
@@ -215,16 +215,30 @@ export class InventoryRenderer extends Renderer<Inventory> {
       }
       resource.x += vx;
       resource.y += vy;
-      // r.x *= 0.9;
     }
   }
 
   update() {
-    this.simulateResourcePositions();
-    this.commitParticles(this.particlePoints.waters, this.target.water * graphics.particlesPerWater, this.waters);
-    this.commitParticles(this.particlePoints.sugars, this.target.sugar, this.sugars);
-    this.activeSugar = this.sugars[this.sugars.length - 1];
-    this.stableWater = this.waters[0];
+    if (this.isProbablyVisible()) {
+      this.simulateResourcePositions();
+      this.commitParticles(this.particlePoints.waters, this.target.water * graphics.particlesPerWater, this.waters);
+      this.commitParticles(this.particlePoints.sugars, this.target.sugar, this.sugars);
+    }
+  }
+
+  /**
+   * Return true if this carrier's pos is within 100px of the screen.
+   */
+  public isProbablyVisible() {
+    // 100px buffer
+    const buffer = 100;
+    const screenPos = this.mito.worldToScreen(this.getCarrierPos());
+    const isVisible =
+      screenPos.x >= -buffer &&
+      screenPos.y >= -buffer &&
+      screenPos.x <= this.mito.canvas.width + buffer &&
+      screenPos.y <= this.mito.canvas.height + buffer;
+    return isVisible;
   }
 
   destroy() {
@@ -239,14 +253,14 @@ export class InventoryRenderer extends Renderer<Inventory> {
    * on the particle.
    */
   public getActiveSugar() {
-    return this.activeSugar;
+    return this.sugars[this.sugars.length - 1];
   }
 
   /**
    * See getActiveSugar(), but this returns the "oldest" water.
    */
   public getStableWater() {
-    return this.stableWater;
+    return this.waters[0];
   }
 }
 
