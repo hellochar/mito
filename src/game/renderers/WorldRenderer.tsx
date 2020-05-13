@@ -95,10 +95,12 @@ export class WorldRenderer extends Renderer<World> {
     }
 
     this.inventoryPoints?.startFrame();
-    this.target.entities().forEach((entity) => {
+    const entities = this.target.entities();
+    for (let i = 0; i < entities.length; i++) {
+      const entity = entities[i];
       const renderer = this.getOrCreateRenderer(entity);
       renderer?.update();
-    });
+    }
     this.inventoryPoints?.endFrame();
     this.tileBatcher.endFrame();
   }
