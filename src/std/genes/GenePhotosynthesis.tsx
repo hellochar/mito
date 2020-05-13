@@ -53,7 +53,7 @@ export const GenePhotosynthesis = Gene.make<PhotosynthesisState>(
     const neighbors = cell.world.tileNeighbors(cell.pos);
     let numAir = 0;
     for (const [dir, tile] of neighbors) {
-      if (tile instanceof Air) {
+      if (Air.is(tile)) {
         state.activeNeighbors.push(dir);
         numAir += 1;
         maybePhotosynthesize(dt, tile, cell, reactionChancePerSecond, state);

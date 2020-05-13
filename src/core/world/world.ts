@@ -157,7 +157,7 @@ export class World {
 
     // always drop player on the Soil Air interface
     const start = new Vector2(Math.floor(this.width / 2), Math.floor(this.height / 2));
-    const firstNonAir = this.gridEnvironment[start.x].find((t) => !(t instanceof Air));
+    const firstNonAir = this.gridEnvironment[start.x].find((t) => !Air.is(t));
     if (firstNonAir != null) {
       // if we hit a rock, go onto the Air right above it
       start.y = firstNonAir.isObstacle ? firstNonAir.pos.y - 1 : firstNonAir.pos.y;
@@ -474,14 +474,14 @@ export class World {
 
   public computeSoilDepths() {
     const airPositions = Array.from(this.allEnvironmentTiles())
-      .filter((t) => t instanceof Air)
+      .filter((t) => Air.is(t))
       .map((t) => t.pos);
 
     for (const tile of this.bfsIterator(airPositions, this.width * this.height)) {
       if (tile instanceof Soil) {
         let minNeighborDepth = tile.depth;
         for (const [, neighbor] of this.tileNeighbors(tile.pos)) {
-          if (neighbor instanceof Air) {
+          if (Air.is(neighbor)) {
             minNeighborDepth = 0;
           } else if (neighbor instanceof Soil) {
             minNeighborDepth = Math.min(minNeighborDepth, neighbor.depth);

@@ -126,11 +126,11 @@ export class Insect implements Steppable {
     // if we don't have food, find a Cell and eat it
     // const thisDist = this.currentTile().closestCellDistance;
     const neighbors = Array.from(this.world.tileNeighbors(this.pos).values()).filter(
-      (t) => t.pos.manhattanDistanceTo(this.pos) < 2 && (t instanceof Air || t instanceof Cell)
+      (t) => t.pos.manhattanDistanceTo(this.pos) < 2 && (Air.is(t) || t instanceof Cell)
     );
     if (this.inventory.sugar < 1) {
       const target = minBy(neighbors, (tile) => tile.closestCellAirDistance);
-      if (target instanceof Air) {
+      if (Air.is(target)) {
         this.setAction({
           type: "move",
           dir: target.pos
@@ -215,7 +215,7 @@ export class Insect implements Steppable {
 
   public isWalkable(pos: Tile | Vector2) {
     const tile = pos instanceof Vector2 ? this.world.tileAt(Math.round(pos.x), Math.round(pos.y)) : pos;
-    if (!(tile instanceof Air) || tile.isObstacle) {
+    if (!Air.is(tile) || tile.isObstacle) {
       // can't move!
       return false;
     }

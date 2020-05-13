@@ -74,7 +74,7 @@ export class Air extends Tile implements Interactable {
     this.stepClosestCellDistance(this.world.tileNeighbors(this.pos));
     this.stepGravity(dt);
     const tileBelow = this.world.tileAt(this.pos.x, this.pos.y + 1);
-    if (!(tileBelow instanceof Air)) {
+    if (!Air.is(tileBelow)) {
       this.stepDiffusionCheap(dt);
     }
     this.stepEvaporation(dt);
@@ -120,5 +120,12 @@ export class Air extends Tile implements Interactable {
   public sunlight() {
     return this.sunlightCached;
   }
+
+  private _isAir = true;
+
+  static is(t: any): t is Air {
+    return t != null && t._isAir === true;
+  }
 }
+
 const noiseCo2 = new Noise();

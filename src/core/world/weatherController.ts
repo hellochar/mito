@@ -53,7 +53,7 @@ export class WeatherController {
         const dropletSize = Math.min(numWater, 1);
         const x = randInt(0, world.width - 1);
         const t = world.tileAt(x, 0);
-        if (t instanceof Air) {
+        if (Air.is(t)) {
           const w = randRound(dropletSize);
           t.inventory.add(w, 0);
           world.numRainWater += w;
@@ -73,7 +73,7 @@ export class WeatherController {
     for (let y = 0; y <= this.world.height; y++) {
       for (let x = 0; x < this.world.width; x++) {
         const t = this.world.environmentTileAt(x, y);
-        if (t instanceof Air) {
+        if (Air.is(t)) {
           let sunlight = 0;
           if (y === 0) {
             sunlight = 1;
@@ -81,11 +81,9 @@ export class WeatherController {
             const tileUp = this.world.tileAt(x, y - 1);
             const tileRight = this.world.tileAt(x + 1, y - 1);
             const tileLeft = this.world.tileAt(x - 1, y - 1);
-            const upSunlight = tileUp instanceof Air ? tileUp.sunlightCached / sunAmount : tileUp == null ? 1 : 0;
-            const rightSunlight =
-              tileRight instanceof Air ? tileRight.sunlightCached / sunAmount : tileRight == null ? 1 : 0;
-            const leftSunlight =
-              tileLeft instanceof Air ? tileLeft.sunlightCached / sunAmount : tileLeft == null ? 1 : 0;
+            const upSunlight = Air.is(tileUp) ? tileUp.sunlightCached / sunAmount : tileUp == null ? 1 : 0;
+            const rightSunlight = Air.is(tileRight) ? tileRight.sunlightCached / sunAmount : tileRight == null ? 1 : 0;
+            const leftSunlight = Air.is(tileLeft) ? tileLeft.sunlightCached / sunAmount : tileLeft == null ? 1 : 0;
             if (directionalBias > 0) {
               // positive light travels to the right
               sunlight = rightSunlight * directionalBias + upSunlight * (1 - directionalBias);

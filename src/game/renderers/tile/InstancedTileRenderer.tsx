@@ -128,7 +128,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     } else if (this.target instanceof Cell) {
       this.instance.commitCenter(this.target.pos.x, this.target.pos.y + this.target.droopY, 1);
     } else {
-      const z = this.target instanceof Air ? -10 : 0;
+      const z = Air.is(this.target) ? -10 : 0;
       this.instance.commitCenter(this.target.pos.x, this.target.pos.y, z);
     }
     this.instance.commitTexturePosition(this.materialInfo.texturePosition);
@@ -184,7 +184,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   updateColor() {
     const lightAmount = this.getLightAmount();
-    if (this.target instanceof Air) {
+    if (Air.is(this.target)) {
       const co2Color = getCo2Color(this.target.co2());
       this.originalColor.copy(co2Color);
     }

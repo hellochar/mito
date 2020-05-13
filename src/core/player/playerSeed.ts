@@ -25,7 +25,7 @@ export class PlayerSeed implements Steppable {
   step(dt: number): void {
     const pos = this.pos;
     const tileBelow = this.world.tileAt(pos.x, pos.y + 1);
-    if (tileBelow instanceof Air) {
+    if (Air.is(tileBelow)) {
       // can keep going
       const velY = Math.min(20 * dt, 1);
       this.posFloat.y += velY;

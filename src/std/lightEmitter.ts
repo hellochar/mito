@@ -44,7 +44,7 @@ class LightOccluderManager {
   public getOccluders(): Object3D[] {
     // TODO add DeadCell
     const meshes = Array.from(this.world.allCells())
-      .filter((t) => !(t instanceof Air))
+      .filter((t) => !Air.is(t))
       .map((t) => this.getMesh(t));
     meshes.push(this.soilMesh);
     return meshes;

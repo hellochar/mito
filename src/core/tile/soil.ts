@@ -33,7 +33,7 @@ export abstract class Soil extends Tile implements Interactable {
    * All soils can pull from each other. Also can pull from Air.
    */
   canPullResources(giver: Tile) {
-    return giver instanceof Soil || giver instanceof Air;
+    return giver instanceof Soil || Air.is(giver);
   }
 
   interact(): Action | undefined {

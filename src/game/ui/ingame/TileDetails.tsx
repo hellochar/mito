@@ -147,7 +147,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   }
 
   private airInfo(tile: Tile) {
-    if (tile instanceof Air) {
+    if (Air.is(tile)) {
       return (
         <div className="info-air">
           <Tooltip content={"Sunlight increases photosynthesis rate."}>

@@ -18,7 +18,7 @@ export const GeneAiryExpansion = Gene.make({
   dynamic(cell, properties) {
     // relies on the fact that cell is in the same position as the growing cell.
     const neighbors = Array.from(cell.world.tileNeighbors(cell.pos).values());
-    if (neighbors.filter((t) => t instanceof Air).length >= NEIGHBORING_AIR_NEEDED) {
+    if (neighbors.filter((t) => Air.is(t)).length >= NEIGHBORING_AIR_NEEDED) {
       properties.timeToBuild /= GROWTH_RATE;
     }
     return properties;

@@ -25,7 +25,7 @@ export function findPositionsThroughTissue(world: World, target: Vector2, includ
 export function findPositionsThroughAir(world: World, target: Vector2) {
   const grid = newGrid(world.width, world.height, (x, y, g) => {
     const tile = world.tileAt(x, y);
-    if (tile instanceof Air) {
+    if (Air.is(tile)) {
       g.setWalkableAt(x, y, true);
     }
   });

@@ -34,6 +34,7 @@ export default class EventCollectSunlightRenderer extends EventRenderer<EventCol
         map: textureFromSpritesheet(0, 4),
       }
     );
+    this.ffPoints.renderOrder = 1;
     this.scene.add(this.ffPoints);
   }
 
