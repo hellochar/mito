@@ -14,6 +14,10 @@ export type TileCombiner = (...generators: TileGenerator[]) => TileGenerator;
 
 export type TileScalar = (pos: Vector2, world: World) => number;
 
+export function toScalar(number: number): TileScalar {
+  return (pos, world) => number;
+}
+
 /**
  * The later ones take precedence over earlier ones.
  */
@@ -117,6 +121,14 @@ export const inSoilFlat = predicate((pos, world) => {
   return pos.y > soilLevelFlat;
 });
 
+export function betweenSoilFlatDepth(min: number, max: number) {
+  return predicate((pos, world) => {
+    const { soilLevelFlat } = world.generatorInfo(pos);
+    const { y } = pos;
+    return y - soilLevelFlat > min && y - soilLevelFlat < max;
+  });
+}
+
 export function inRockLevel(midLevel = -0.8, bottomLevel = 0.3, wavelength = 5) {
   return predicate((pos, world) => {
     const { x, y } = pos;
@@ -196,4 +208,8 @@ export const fountain: TileGenerator = (pos, world) => {
 
 export const smallFountain: TileGenerator = (pos, world) => {
   return new Fountain(pos, world, 3, 75 + randInt(-10, 10));
+};
+
+export const largeFountain: TileGenerator = (pos, world) => {
+  return new Fountain(pos, world, 1, 500);
 };

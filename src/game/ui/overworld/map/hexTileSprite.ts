@@ -15,8 +15,8 @@ const testVignette = new Image();
 testVignette.src = testVignetteUrl;
 
 const COLOR_SCALE_HEIGHT = scaleLinear<string, string>()
-  .domain([-1, 0, 1, 5, 6])
-  .range(["rgb(0, 60, 255)", "lightblue", "yellow", "orange"]);
+  .domain([-1, 0, 1, 5, 12])
+  .range(["rgb(0, 60, 255)", "lightblue", "yellow", "orange", "red"]);
 
 export interface DrawingContext {
   populationAttempt?: PopulationAttempt;
@@ -128,7 +128,12 @@ export default class HexTileSprite {
       c.font = `${(12 * scale) / 48}px serif`;
       c.textAlign = "center";
       c.textBaseline = "middle";
-      c.fillStyle = "#666";
+      // c.strokeStyle = this.tile.info.height < 7 ? "#666" : "#fff";
+      // c.strokeStyle = "#111";
+      // c.lineWidth = ((12 * scale) / 48) * 0.25;
+      // c.strokeText(this.tile.info.height + "", px, py, scale);
+      // c.fillStyle = "white";
+      c.fillStyle = this.tile.info.height < 7 ? "#666" : "#fff";
       c.fillText(this.tile.info.height + "", px, py, scale);
     }
   }

@@ -17,7 +17,7 @@ export class Air extends Tile implements Interactable {
 
   public _co2: number;
 
-  public inventory = new Inventory(6, this);
+  public inventory = new Inventory(20, this);
 
   get cellAirDistanceContrib() {
     return 1;

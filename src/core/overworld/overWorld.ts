@@ -1,4 +1,5 @@
 import { Species } from "core/species";
+import { clamp } from "math";
 import { object, reference, serializable } from "serializr";
 import SimplexNoise from "simplex-noise";
 import { HexStore } from "./hexStore";
@@ -21,7 +22,7 @@ export class OverWorld {
     }
   }
 
-  private static randomHeight(tile: HexTile, noise: SimplexNoise) {
+  private static genHeightPlanet(tile: HexTile, noise: SimplexNoise) {
     const { x, y } = tile.cartesian;
     let height = 0;
     height += (noise.noise3D(x / 24, y / 24, 0) - 0.2) * 6;
@@ -37,12 +38,38 @@ export class OverWorld {
     return height;
   }
 
-  private static populateLevelInfo(tile: HexTile, noise: SimplexNoise) {
-    const { info } = tile;
-    info.height = OverWorld.randomHeight(tile, noise);
+  private static genHeightContinent(tile: HexTile, noise: SimplexNoise) {
+    let height = 12 - tile.magnitude / 2.5;
+    const { x, y } = tile.cartesian;
+    // const angle = Math.atan2(y, x);
+    // height += map(noise.noise2D(Math.cos(angle) * 0.5, Math.sin(angle) * 0.5), -1, 1, 5, -5);
+    // let height = 0;
+    height += noise.noise3D(x / 24, y / 24, 0) * 6;
+    height += noise.noise3D(x / 12, y / 12, 1.453) * 3;
+    height += noise.noise3D(x / 6, y / 6, 2.453) * 1.5;
+    // height += 1;
+    // // info.height += 4 - Math.abs(tile.magnitude * tile.magnitude) * 0.02;
+    // height -= Math.abs(y * y) * 0.025;
+    if (height < 0 && height >= -1) {
+      height = 0;
+    }
+    // height = Math.round(Math.max(Math.min(height, 6), -1));
+    // return height;
+    height = Math.round(clamp(height, -1, 12));
+    return height;
   }
 
-  static generateFilledHex(maxDist: number = 20): OverWorld {
+  private static populateLevelInfo(
+    tile: HexTile,
+    noise: SimplexNoise,
+    heightFn: (tile: HexTile, noise: SimplexNoise) => number
+  ) {
+    const { info } = tile;
+    // info.height = OverWorld.genHeightContinents(tile, noise);
+    info.height = heightFn(tile, noise);
+  }
+
+  static generateLargeContinent(maxDist: number = 20): OverWorld {
     const storage = new HexStore();
     const noise = new SimplexNoise();
     // the rule is: i + j + k = 0
@@ -56,7 +83,7 @@ export class OverWorld {
           continue;
         }
         const tile = new HexTile(i, j);
-        OverWorld.populateLevelInfo(tile, noise);
+        OverWorld.populateLevelInfo(tile, noise, OverWorld.genHeightContinent);
         storage.set(i, j, tile);
       }
     }
@@ -64,7 +91,7 @@ export class OverWorld {
     return new OverWorld(storage, startTile);
   }
 
-  static generateRectangle(width: number = 50, height: number = 25): OverWorld {
+  static generatePlanet(width: number = 50, height: number = 25): OverWorld {
     const storage = new HexStore();
     const noise = new SimplexNoise();
     // the rule is: i + j + k = 0
@@ -85,7 +112,7 @@ export class OverWorld {
           continue;
         }
 
-        OverWorld.populateLevelInfo(tile, noise);
+        OverWorld.populateLevelInfo(tile, noise, OverWorld.genHeightPlanet);
         storage.set(i, j, tile);
       }
     }

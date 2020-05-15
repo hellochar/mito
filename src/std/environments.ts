@@ -16,8 +16,23 @@ export function environmentFromLevelInfo(info: LevelInfo) {
     case 4:
       return SkySoil;
     case 5:
-    default:
       return Desert;
+    case 6:
+      return Mound;
+    case 7:
+      return InverseMound;
+    case 8:
+      return Pillars;
+    case 9:
+      return RockMaze;
+    case 10:
+      return CliffSide;
+    case 11:
+      return MountainSide;
+    case 12:
+      return MountainTop;
+    default:
+      return Level0;
   }
   // return Reservoires;
 }
@@ -113,4 +128,104 @@ export const Desert: Environment = {
   floorCo2: 0.95,
   temperaturePerSeason: [72, 89, 110, 50],
   fill: "Desert",
+};
+
+export const Mound: Environment = {
+  insectsPerDay: 0,
+  airEvaporation: 0.3,
+  climate: {
+    timeBetweenRainfall: 50,
+    rainDuration: 3,
+    waterPerSecond: 120,
+  },
+  secondsToEvaporate: 120,
+  floorCo2: 0.5,
+  temperaturePerSeason: [41, 50, 23, -10],
+  fill: "Mound",
+};
+
+export const InverseMound: Environment = {
+  insectsPerDay: 2,
+  airEvaporation: 0.5,
+  climate: {
+    timeBetweenRainfall: 40,
+    rainDuration: 3,
+    waterPerSecond: 120,
+  },
+  secondsToEvaporate: 12,
+  floorCo2: 0.5,
+  temperaturePerSeason: [84, 96, 120, 50],
+  fill: "InverseMound",
+};
+
+export const Pillars: Environment = {
+  insectsPerDay: 0,
+  airEvaporation: 0.02,
+  climate: {
+    // 17.778
+    timeBetweenRainfall: 90,
+    rainDuration: 8,
+    waterPerSecond: 200,
+  },
+  secondsToEvaporate: 300,
+  floorCo2: 0.8,
+  temperaturePerSeason: [12, 9, 26, -12],
+  fill: "Pillars",
+};
+
+export const RockMaze: Environment = {
+  insectsPerDay: 0,
+  airEvaporation: 0.1,
+  climate: {
+    // 13.333
+    timeBetweenRainfall: 30,
+    rainDuration: 2,
+    waterPerSecond: 200,
+  },
+  secondsToEvaporate: 60,
+  floorCo2: 0.5,
+  temperaturePerSeason: [84, 110, 50, 0],
+  fill: "RockMaze",
+};
+
+export const CliffSide: Environment = {
+  insectsPerDay: 0,
+  airEvaporation: 0.1,
+  climate: {
+    rainDuration: 4,
+    timeBetweenRainfall: 90,
+    waterPerSecond: 200,
+  },
+  secondsToEvaporate: 1000,
+  floorCo2: 2,
+  temperaturePerSeason: [50, 56, 64, 31],
+  fill: "CliffSide",
+};
+
+export const MountainSide: Environment = {
+  insectsPerDay: 0,
+  airEvaporation: 0.02,
+  climate: {
+    rainDuration: 11,
+    timeBetweenRainfall: 130,
+    waterPerSecond: 250,
+  },
+  secondsToEvaporate: 120,
+  floorCo2: 0.5,
+  temperaturePerSeason: [25, 50, 64, 0],
+  fill: "MountainSide",
+};
+
+export const MountainTop: Environment = {
+  insectsPerDay: 0,
+  airEvaporation: 0.02,
+  climate: {
+    rainDuration: 11,
+    timeBetweenRainfall: 130,
+    waterPerSecond: 250,
+  },
+  secondsToEvaporate: 120,
+  floorCo2: 0.5,
+  temperaturePerSeason: [25, 50, 64, 0],
+  fill: "Random",
 };

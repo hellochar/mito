@@ -8,6 +8,7 @@ import App from "./game/screens/App";
 import "./index.scss";
 // tests must be imported with './' syntax to come after the './game' import; ordering is important
 import TestLevel from "./tests/TestLevel";
+import TestOverworld from "./tests/TestOverworld";
 import TestStats from "./tests/TestStats";
 
 export default () => (
@@ -26,6 +27,9 @@ export default () => (
     </Route>
     <Route path="/test-level">
       <TestLevel />
+    </Route>
+    <Route path="/test-overworld">
+      <TestOverworld />
     </Route>
     <Route path="/wfc">
       <WFCTest />

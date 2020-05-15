@@ -157,7 +157,7 @@ export class World {
 
     // always drop player on the Soil Air interface
     const start = new Vector2(Math.floor(this.width / 2), Math.floor(this.height / 2));
-    const firstNonAir = this.gridEnvironment[start.x].find((t) => !Air.is(t));
+    const firstNonAir = this.gridEnvironment[start.x].find((t) => !Air.is(t) && t.pos.y > 25);
     if (firstNonAir != null) {
       // if we hit a rock, go onto the Air right above it
       start.y = firstNonAir.isObstacle ? firstNonAir.pos.y - 1 : firstNonAir.pos.y;

@@ -81,7 +81,7 @@ export const LocalForageStateProvider: React.FC<{ loadingComponent: JSX.Element 
 };
 
 export function newInitialAppState(): AppState {
-  const overWorld = OverWorld.generateRectangle(100, 50);
+  const overWorld = OverWorld.generateLargeContinent(23);
   const rootSpecies = newBaseSpecies("plantum originus");
   const startHex = overWorld.getStartHex();
   // rootSpecies.freeMutationPoints = 25;

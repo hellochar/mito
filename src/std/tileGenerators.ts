@@ -1,31 +1,39 @@
 import { World } from "core";
 import { Directions, DIRECTIONS } from "core/directions";
+import { sortBy } from "lodash";
 import { Matrix3, Vector2 } from "three";
 import { Rock, Tile } from "../core/tile";
 import { Clay, Sand, Silt } from "../core/tile/soil";
 import {
   addDeepWater,
   air,
+  atMaxima,
   atWaterMaxima,
   betweenSoilDepth,
+  clay,
   fountain,
   inRockLevel,
   inSoil,
   inSoilFlat,
+  largeFountain,
   layers,
+  modify,
   nearDeepWaterMaxima,
   nearWaterMaxima,
   not,
   pastSoilDepth,
   predicate,
   rock,
+  sand,
   silt,
   smallFountain,
   TileCombiner,
   TileGenerator,
   TileScalar,
+  toScalar,
+  withoutWater,
 } from "../core/tileGenerator";
-import { clamp, logistic, map } from "../math";
+import { clamp, logistic, map, mod } from "../math";
 
 const mixedSoilRockSmall: TileGenerator = (pos, world) => {
   const { noiseSoil } = world.generatorContext;
@@ -46,13 +54,6 @@ const mixedSoilRockMed: TileGenerator = (pos, world) => {
   s.inventory.add(water, 0);
   return s;
 };
-
-export const inPillar = predicate((pos, world) => {
-  const { soilLevel } = world.generatorInfo(pos);
-  const { x, y } = pos;
-  const inPillar = x % 9 < 2 && Math.abs(y - soilLevel) < 8;
-  return inPillar;
-});
 
 export function skewX(amount: number): TileCombiner {
   return (...generators: TileGenerator[]): TileGenerator => {
@@ -119,6 +120,9 @@ export const moundShape = (wide: number, tall: number, k = 1) =>
   });
 
 export const inLarge0 = predicate((pos, world) => world.generatorInfo(pos).large0 > 0.5);
+
+export const nearLarge0Maxima = (threshold: number = 0.93) =>
+  predicate((pos, world) => world.generatorInfo(pos).large0 > threshold);
 
 const Level0: TileGenerator = layers(
   air,
@@ -188,9 +192,6 @@ const Rocky: TileGenerator = layers(
   ),
   // rocks can go up to 5 tiles above the final soil level (plus more on edges where skewed)
   inSoil(inBigRock()(rock))
-
-  // cool big mound shape thing
-  // moundShape(25, -25, 5)(translateY(25)(inSoil(silt)))
 );
 
 /**
@@ -245,14 +246,6 @@ const Reservoires: TileGenerator = layers(
   )
 );
 
-const inOverhang = predicate((pos, world) => {
-  const { noiseHeight } = world.generatorContext;
-  const { x, y } = pos;
-  // [-1, 1]
-  const soilLevel = noiseHeight.simplex2(x / 15, y / 15);
-  return soilLevel > map(y, 0, world.height, 4, -1);
-});
-
 const inSkySoil = (p: number) =>
   predicate((pos, world) => {
     const { noiseHeight } = world.generatorContext;
@@ -301,12 +294,16 @@ export const atEdge = (original: TileGenerator): TileCombiner => {
   };
 };
 
-export const addEdge = (original: TileGenerator): TileCombiner => {
-  return (...generators) => {
+type TileTransformer = (g: TileGenerator) => TileCombiner;
+
+export const alsoWith = (transformer: TileTransformer): TileTransformer => {
+  return (original) => (...generators) => {
     const gen = layers(...generators);
-    return layers(original, atEdge(original)(gen));
+    return layers(original, transformer(original)(gen));
   };
 };
+
+export const alsoWithEdge = alsoWith(atEdge);
 
 //prettier-ignore
 const SkySoil = layers(
@@ -316,7 +313,11 @@ const SkySoil = layers(
     inRockLevel(-0.8, -0.3)(rock),
     nearWaterMaxima(smallFountain),
   ),
-  // addEdge(inSkySoil(2.5)(silt))(sand),
+  // addEdge(
+  //   inSkySoil(2.5)(silt)
+  // )(
+  //   sand
+  // ),
   // erode(
   //   inSkySoil(2.5)(silt)
   // )
@@ -327,5 +328,219 @@ const SkySoil = layers(
   // )
 );
 
-export const TileGenerators = { Level0, Temperate, Desert, Rocky, Reservoires, SkySoil };
+//prettier-ignore
+const Mound = layers(
+  air,
+  // cool big mound shape thing
+  moundShape(10, 25, 1)(
+    translateY(-20)(
+      inSoil(
+        mixedSoilRockMed,
+        pastSoilDepth(1)(inRockLevel(-0.3, -0.1)(rock)),
+        nearWaterMaxima(smallFountain)
+      ),
+    )
+  )
+);
+
+//prettier-ignore
+const InverseMound = layers(
+  air,
+  // cool big mound shape thing
+  onlyIn(
+    moundShape(25, -25, 0.7)(
+      inSoil(
+        addDeepWater(silt),
+        pastSoilDepth(1)(inRockLevel(-0.3, -0.1, 16)(sand)),
+        nearLarge0Maxima(0.85)(fountain),
+        pastSoilDepth(6)(atMaxima((pos, world) => world.generatorInfo(pos).mid0)(fountain))
+        // nearWaterMaxima(fountain)
+      ),
+    )
+  )(
+    inRockLevel(-0.6, -0.0, 4)(rock)
+  )
+);
+
+// never puts a pillar in the center of the map, so the player starts at the bottom
+export const inPillar = predicate((pos, world) => {
+  const { soilLevel } = world.generatorInfo(pos);
+  const { x, y } = pos;
+  const inPillar = mod(x - world.width / 2 - 2, 5) < 2 && Math.abs(y - soilLevel) < 9;
+  return inPillar;
+});
+
+export const stratified = (layerHeight: TileScalar): TileCombiner => (...generators) => {
+  return (pos, world) => {
+    const { soilLevel } = world.generatorInfo(pos);
+    const layerIndex = mod(Math.floor((pos.y - soilLevel) / layerHeight(pos, world)), generators.length);
+    return generators[layerIndex](pos, world);
+  };
+};
+
+//prettier-ignore
+const Pillars = layers(
+  air,
+  inPillar(
+    withoutWater(clay),
+  ),
+  inSoil(
+    stratified(toScalar(4))(clay, silt, sand),
+    inRockLevel(-0.6, 0.5, 3)(rock)
+  )
+);
+
+export const alsoWithNNeighborRock = (num: number) =>
+  alsoWith(
+    (generator: TileGenerator): TileCombiner => {
+      return (...generators) => {
+        const gen = layers(...generators);
+        return (pos, world) => {
+          let countRock = 0;
+          let dirName: Directions;
+          for (dirName in DIRECTIONS) {
+            const dir = DIRECTIONS[dirName];
+            const testTile = generator(pos.clone().add(dir), world);
+            if (testTile instanceof Rock) {
+              countRock++;
+            }
+          }
+          if (countRock >= num) {
+            return gen(pos, world);
+          }
+        };
+      };
+    }
+  );
+
+export const withTwoWater = modify((tile) => tile.inventory.set(2, 0));
+//prettier-ignore
+const RockMaze = layers(
+  air,
+  alsoWithNNeighborRock(7)(inSoil(
+    rock,
+    not(pastSoilDepth(3)(rock))(withTwoWater(silt)),
+    pastSoilDepth(3)(
+      inRockLevel(0.0, 0.0, 2)(withTwoWater(silt))
+    )
+  ))(largeFountain)
+);
+
+const inOverhang = predicate((pos, world) => {
+  const { noiseHeight } = world.generatorContext;
+  const { x, y } = pos;
+  // [-1, 1]
+  const soilLevel = noiseHeight.simplex2(x / 15, y / 15);
+  return soilLevel > map(y, 0, world.height, 2.5, -2.5);
+});
+
+export const mix = (mixFn: TileScalar): TileCombiner => {
+  return (...generators) => {
+    return (pos, world) => {
+      const mixValue = mixFn(pos, world);
+      const index = clamp(Math.floor(map(mixValue, 0, 1, 0, generators.length)), 0, generators.length - 1);
+      const gen = generators[index];
+      if (gen) {
+        return gen(pos, world);
+      }
+    };
+  };
+};
+
+//prettier-ignore
+export const CliffSide = layers(
+  air,
+  // translateY(25)(caveSide),
+  // scale(1, -1)(translate(100, 105)(caveSide)),
+  // rotate(-Math.PI / 2)(caveSide)
+  rotate(-Math.PI * 0.5)(translateY(25)(
+    inOverhang(
+      stratified((pos, world) => 3 + world.generatorInfo(pos).mid0 * 0.2)(
+        silt,
+        clay,
+        layers(
+          clay,
+          inRockLevel(0, 0, 2)(rock)
+        )
+      )
+    )
+  ))
+);
+
+const voroniEdgeMed = (edgeThickness = 1) =>
+  predicate((pos, world) => {
+    const centersByDistance = sortBy(world.generatorContext.poissonMed, (p) => p.distanceToSquared(pos));
+    const [nearest, secondNearest] = centersByDistance;
+    const distNearest = nearest.distanceTo(pos);
+    const distSecondNearest = secondNearest.distanceTo(pos);
+    const distDifference = distSecondNearest - distNearest;
+    return distDifference <= edgeThickness;
+    // function getNearestCenter(point: Vector2, centers: Vector2[]) {
+    //   return minBy(centers, (c) => c.distanceToSquared(point));
+    // }
+    // const cLeft = getNearestCenter(pos.clone().add(DIRECTIONS.w), world.generatorContext.poissonMed);
+    // const cRight = getNearestCenter(pos.clone().add(DIRECTIONS.e), world.generatorContext.poissonMed);
+  });
+
+//prettier-ignore
+export const MountainSide = layers(
+  air,
+  onlyIn(
+    rotate(-Math.PI * 0.24)(translateY(0)(
+      inSoilFlat(rock)
+    ))
+  )(
+    voroniEdgeMed(3)(
+      withTwoWater(sand)
+    )
+  ),
+  // predicate((p, w) => w.generatorContext.poissonMed.find((v) => v.equals(p)) != null)(
+)
+
+//prettier-ignore
+// export const CliffSide = mix(
+//   (pos, world) => map(world.generatorContext.noiseMix.octaveSimplex2(pos.x / 5, pos.y / 5), -1.3, 1.3, 0, 1),
+//   // (pos, world) => {
+//   //   const {x, y} = pos;
+//   //   const wavelength = 5;
+//   //   const c = Math.sin(Math.PI * (x / wavelength)) ** 2 + Math.cos(Math.PI * (y / wavelength)) ** 2;
+//   //   return c / 2;
+//   // }
+// )(
+//   Mound,
+//   RockMaze,
+//   CliffSide2
+// );
+
+export const Random = layers(
+  air,
+  withoutWater(
+    mix(
+      (pos, world) => map(world.generatorContext.noiseMix.octaveSimplex2(pos.x / 12 - 50, pos.y / 12 + 9), -1.3, 1.3, 0, 1),
+    )(
+      SkySoil,
+      Mound,
+      RockMaze,
+      Pillars,
+      CliffSide
+    )
+  )
+);
+
+export const TileGenerators = {
+  Level0,
+  Temperate,
+  Reservoires,
+  Rocky,
+  SkySoil,
+  Desert,
+  Mound,
+  InverseMound,
+  Pillars,
+  RockMaze,
+  CliffSide,
+  MountainSide,
+  Random,
+};
+
 export type TileGeneratorName = keyof typeof TileGenerators;

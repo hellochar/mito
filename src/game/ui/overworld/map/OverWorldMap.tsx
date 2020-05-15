@@ -68,6 +68,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     const [dX, dY] = getCameraPositionCenteredOn(overWorld.getStartHex(), scale);
     this.state = {
       cameraState: { scale, dX, dY },
+      // cameraState: { scale: 10, dX: 0, dY: 0 },
       pressedKeys: {},
       frame: 0,
     };
