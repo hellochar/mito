@@ -168,6 +168,7 @@ export class World {
 
     this.fillCachedEntities();
     this.computeDarkness();
+    this.updateClosestCellDistance();
 
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
@@ -432,6 +433,7 @@ export class World {
     this.weather.step(dt);
     if (this.stepStats.added.length > 0 || this.stepStats.deleted.length > 0) {
       this.computeDarkness();
+      this.updateClosestCellDistance();
     }
     this.frame++;
     this.time += dt;
@@ -496,6 +498,16 @@ export class World {
   public computeDarkness() {
     for (const tile of this.bfsIterator(this.player.pos, this.width * this.height)) {
       tile.stepDarkness(this.tileNeighbors(tile.pos));
+    }
+  }
+
+  public updateClosestCellDistance() {
+    for (const tile of this.allTiles()) {
+      tile.closestCellAirDistance = 1000;
+    }
+    const startCell = this.player.findNearestWalkableCell();
+    for (const tile of this.bfsIterator(startCell?.pos ?? this.player.pos, this.width * this.height)) {
+      tile.stepClosestCellDistance(this.tileNeighbors(tile.pos));
     }
   }
 

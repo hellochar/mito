@@ -71,7 +71,6 @@ export class Air extends Tile implements Interactable {
 
   step(dt: number) {
     // we do NOT call super, to avoid stepping darkness and diffusion.
-    this.stepClosestCellDistance(this.world.tileNeighbors(this.pos));
     this.stepGravity(dt);
     const tileBelow = this.world.tileAt(this.pos.x, this.pos.y + 1);
     if (!Air.is(tileBelow)) {
