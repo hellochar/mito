@@ -161,8 +161,8 @@ const Desert: TileGenerator = layers(
  */
 const inBigRock = (rockThreshold: TileScalar = (pos, world) => map(pos.y, 0, world.height, 1, 0)) =>
   predicate((pos, world) => {
-    const { generatorContext, height } = world;
-    const { noiseHeight, noiseRock } = generatorContext;
+    const { generatorContext } = world;
+    const { noiseRock } = generatorContext;
     const { x, y } = pos;
     const isRock = noiseRock.simplex2(x / 10, y / 10) > rockThreshold(pos, world);
     return isRock;

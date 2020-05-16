@@ -90,7 +90,7 @@ export class World {
   private computeGeneratorInfo(pos: Vector2): GeneratorInfo {
     const { noiseHeight, noiseWater, noiseLarge0, noiseMid0 } = this.generatorContext;
     const { x, y } = pos;
-    const { width, height } = this;
+    const { height } = this;
 
     const soilLevel =
       height / 2 -

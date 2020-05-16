@@ -68,7 +68,7 @@ const EnvironmentInfo: React.FC<{ environment: Environment; info: LevelInfo }> =
     <div className="environment-info">
       {environment.insectsPerDay > 0 ? (
         <div className="insects">
-          <img src={locustsSrc} />
+          <img src={locustsSrc} alt="" />
           <b>Has Locusts</b>
         </div>
       ) : null}
