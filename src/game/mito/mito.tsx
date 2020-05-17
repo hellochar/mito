@@ -474,14 +474,14 @@ const WindowFPS: React.FC<{ mito: Mito }> = ({ mito }) => {
     };
   }, [mito.stats.dom]);
   React.useEffect(() => {
-    mito.statsStep.dom.style.paddingTop = "50px";
+    mito.statsStep.dom.style.marginTop = "50px";
     document.body.appendChild(mito.statsStep.dom);
     return () => {
       document.body.removeChild(mito.statsStep.dom);
     };
   }, [mito.statsStep.dom]);
   React.useEffect(() => {
-    mito.statsRenderer.dom.style.paddingTop = "100px";
+    mito.statsRenderer.dom.style.marginTop = "100px";
     document.body.appendChild(mito.statsRenderer.dom);
     return () => {
       document.body.removeChild(mito.statsRenderer.dom);
