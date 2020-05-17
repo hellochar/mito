@@ -357,21 +357,19 @@ export class Player implements Steppable {
   }
 
   public attemptDeconstruct(action: ActionDeconstruct, _dt: number): boolean {
-    if (!action.position.equals(this.pos) || action.force) {
-      const cell = this.world.maybeRemoveCellAt(action.position);
-      if (cell != null) {
-        if (cell instanceof GrowingCell) {
-          // refund the resources back
-          const { costSugar, costWater } = cell.completedCell.type.chromosome.computeStaticProperties();
-          this.inventory.add(costWater, costSugar);
-        }
-
-        // maybeRemoveCellAt has already tried redistributing inventory to neighbors,
-        // but if it couldn't do that, as a last ditch, give resources directly to
-        // the player
-        cell.inventory.give(this.inventory, cell.inventory.water, cell.inventory.sugar);
-        return true;
+    const cell = this.world.maybeRemoveCellAt(action.position);
+    if (cell != null) {
+      if (cell instanceof GrowingCell) {
+        // refund the resources back
+        const { costSugar, costWater } = cell.completedCell.type.chromosome.computeStaticProperties();
+        this.inventory.add(costWater, costSugar);
       }
+
+      // maybeRemoveCellAt has already tried redistributing inventory to neighbors,
+      // but if it couldn't do that, as a last ditch, give resources directly to
+      // the player
+      cell.inventory.give(this.inventory, cell.inventory.water, cell.inventory.sugar);
+      return true;
     }
     return false;
   }
