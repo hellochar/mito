@@ -140,7 +140,7 @@ export class CancerEffect extends CellEffect implements Interactable {
       // if that neighbor is a cell without cancer, add cancer to that neighbor
       // if that neighbor is empty, duplicate this cell onto that neighbor
       for (const [, tile] of neighbors) {
-        if (tile instanceof Cell && !tile.findEffectOfType(CancerEffect)) {
+        if (Cell.is(tile) && !tile.findEffectOfType(CancerEffect)) {
           tile.addEffect(new CancerEffect());
           break;
         } else if (tile.world.player.canBuildAt(tile)) {

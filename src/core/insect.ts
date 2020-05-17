@@ -126,7 +126,7 @@ export class Insect implements Steppable {
     // if we don't have food, find a Cell and eat it
     // const thisDist = this.currentTile().closestCellDistance;
     const neighbors = Array.from(this.world.tileNeighbors(this.pos).values()).filter(
-      (t) => t.pos.manhattanDistanceTo(this.pos) < 2 && (Air.is(t) || t instanceof Cell)
+      (t) => t.pos.manhattanDistanceTo(this.pos) < 2 && (Air.is(t) || Cell.is(t))
     );
     if (this.inventory.sugar < 1) {
       const target = minBy(neighbors, (tile) => tile.closestCellAirDistance);
@@ -138,7 +138,7 @@ export class Insect implements Steppable {
             .sub(this.posFloat)
             .normalize(),
         });
-      } else if (target instanceof Cell) {
+      } else if (Cell.is(target)) {
         this.setAction({
           type: "deconstruct",
           position: target.pos,
@@ -225,7 +225,7 @@ export class Insect implements Steppable {
   public canBuildAt(tile: Tile | null): tile is Tile {
     if (tile == null) {
       return false;
-    } else if (tile instanceof Cell) {
+    } else if (Cell.is(tile)) {
       return false;
     } else {
       return !tile.isObstacle;
@@ -240,7 +240,7 @@ export class Insect implements Steppable {
     const nextPos = this.posFloat.clone().add(action.dir.clone().setLength(this.speed * dt));
     if (this.isWalkable(nextPos)) {
       // const t = this.currentTile();
-      // if (t instanceof Cell) {
+      // if (Cell.is(t)) {
       //   if (t.temperature < 40) {
       //     t.nextTemperature += 0.2;
       //   }

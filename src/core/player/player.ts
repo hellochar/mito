@@ -39,7 +39,7 @@ export class Player implements Steppable {
 
   public get speed() {
     const t = this.currentTile();
-    return this.baseSpeed * (t instanceof Cell ? t.moveSpeed : 1);
+    return this.baseSpeed * (Cell.is(t) ? t.moveSpeed : 1);
   }
 
   get pos() {
@@ -85,7 +85,7 @@ export class Player implements Steppable {
 
   public droopY() {
     const tile = this.world.tileAt(this.pos.x, this.pos.y);
-    if (tile instanceof Cell) {
+    if (Cell.is(tile)) {
       return tile.droopY;
     } else {
       return 0;
@@ -139,12 +139,12 @@ export class Player implements Steppable {
    * You're near the plant if one of your neighbors is a cell.
    */
   public isNearPlant() {
-    if (this.currentTile() instanceof Cell) {
+    if (Cell.is(this.currentTile())) {
       return true;
     } else {
       const neighbors = this.world.tileNeighbors(this.pos);
       for (const n of neighbors.values()) {
-        if (n instanceof Cell) {
+        if (Cell.is(n)) {
           return true;
         }
       }
@@ -251,7 +251,7 @@ export class Player implements Steppable {
     if (tile.isObstacle) {
       return false;
     }
-    if (tile instanceof Cell) {
+    if (Cell.is(tile)) {
       return tile.findEffectOfType(FreezeEffect) == null;
     }
     return false;
@@ -261,7 +261,7 @@ export class Player implements Steppable {
     if (tile == null) {
       return false;
     }
-    if (tile instanceof Cell) {
+    if (Cell.is(tile)) {
       return false;
     }
     if (tile.isObstacle) {
@@ -271,7 +271,7 @@ export class Player implements Steppable {
     // you can build off any adjacent existing cell
     const neighbors = this.world.tileNeighbors(tile.pos);
     for (const n of neighbors.values()) {
-      if (n instanceof Cell && !n.isObstacle) {
+      if (Cell.is(n) && !n.isObstacle) {
         return true;
       }
     }

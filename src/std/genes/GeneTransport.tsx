@@ -35,7 +35,7 @@ export const GeneTransport = Gene.make(
     if (state.cooldown <= 0) {
       state.cooldown += secondsPerPush;
       const forwardTile = cell.world.tileAt(cell.pos.x + cell.args!.direction!.x, cell.pos.y + cell.args!.direction!.y);
-      if (forwardTile instanceof Cell) {
+      if (Cell.is(forwardTile)) {
         state.didJustTransport = push(cell, forwardTile, 1, 1);
       }
 
@@ -43,7 +43,7 @@ export const GeneTransport = Gene.make(
         cell.pos.x - cell.args!.direction!.x,
         cell.pos.y - cell.args!.direction!.y
       );
-      if (backwardTile instanceof Cell) {
+      if (Cell.is(backwardTile)) {
         state.didJustTransport = state.didJustTransport || push(backwardTile, cell, 1, 1);
       }
     }

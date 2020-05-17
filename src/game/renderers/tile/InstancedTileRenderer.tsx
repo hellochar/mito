@@ -78,7 +78,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       );
       this.inventoryRenderer.animationOffset = (this.target.pos.x + this.target.pos.y) / 2;
     }
-    if (this.target instanceof Cell) {
+    if (Cell.is(this.target)) {
       // if it takes no time to build, start it off small just for show
       if (this.target.timeToBuild <= 0 && worldRenderer.renderResources) {
         this.scale.set(0.01, 0.01, 1);
@@ -125,7 +125,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       const t = this.scale.x;
       lerp2(p, t1Pos, t);
       this.instance.commitCenter(p.x, p.y, 1);
-    } else if (this.target instanceof Cell) {
+    } else if (Cell.is(this.target)) {
       this.instance.commitCenter(this.target.pos.x, this.target.pos.y + this.target.droopY, 1);
     } else {
       const z = Air.is(this.target) ? -10 : 0;
@@ -175,7 +175,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     if (this.target instanceof GrowingCell) {
       const s = map(this.target.percentGrown, 0, 1, 0.1, 1);
       lerp2(this.scale, { x: s, y: s }, 0.5);
-    } else if (this.target instanceof Cell && this.target.isReproductive) {
+    } else if (Cell.is(this.target) && this.target.isReproductive) {
       // Do nothing; GeneRenderer sets scale for you
     } else {
       lerp2(this.scale, InstancedTileRenderer.ONE, 0.25);
@@ -189,7 +189,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.originalColor.copy(co2Color);
     }
     this.color.copy(this.originalColor);
-    if (this.target instanceof Cell && this.target.energy < 0.5) {
+    if (Cell.is(this.target) && this.target.energy < 0.5) {
       const amountBlack = map(this.target.energy, 0, 0.5, 1, 0);
       this.color.lerp(BLACK, amountBlack);
     }
@@ -220,7 +220,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
   }
 
   growPulseAnimation(): Animation {
-    const duration = 0.5 * (this.target instanceof Cell ? this.target.tempo : 1);
+    const duration = 0.5 * (Cell.is(this.target) ? this.target.tempo : 1);
     const ease = reversed(easeCubic);
     return (t) => {
       const tNorm = clamp(t / duration, 0, 1);
@@ -288,7 +288,7 @@ const materialInfoMapping = (() => {
 export function getMaterialInfo(tile: Tile): MaterialInfo {
   if (tile instanceof GrowingCell) {
     return getMaterialInfo(tile.completedCell);
-  } else if (tile instanceof Cell) {
+  } else if (Cell.is(tile)) {
     return tile.type.material;
   } else {
     return materialInfoMapping.get(tile.constructor as Constructor<Tile>)!;

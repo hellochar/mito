@@ -128,7 +128,7 @@ function setPipe(gene: GeneInstance<GenePipes>, dir: Directions, val: boolean | 
   connections[dir] = val;
   // also set neighbor's connecting pipe
   const neighbor = gene.cell.world.tileNeighbors(gene.cell.pos).get(DIRECTIONS[dir]);
-  if (neighbor instanceof Cell) {
+  if (Cell.is(neighbor)) {
     const neighborPipes = neighbor.findGene(GenePipes);
     if (neighborPipes != null) {
       neighborPipes.state.connections[oppositeDir(dir)] = val;

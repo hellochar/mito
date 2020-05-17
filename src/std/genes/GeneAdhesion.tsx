@@ -18,7 +18,7 @@ export const GeneAdhesion = Gene.make(
       const neighbors = cell.world.tileNeighbors(cell.pos);
       let nonCellNeighbors = 0;
       for (const [, t] of neighbors) {
-        if (!(t instanceof Cell)) {
+        if (!Cell.is(t)) {
           nonCellNeighbors++;
         }
       }

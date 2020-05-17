@@ -120,7 +120,7 @@ export class PlayerControlScheme implements ControlScheme {
     if (tile == null) {
       return;
     }
-    if (tile instanceof Cell) {
+    if (Cell.is(tile)) {
       // HACK stop movement
       Keyboard.keyMap.delete("KeyW");
       Keyboard.keyMap.delete("KeyS");

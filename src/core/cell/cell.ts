@@ -154,7 +154,7 @@ export class Cell extends Tile implements Interactable {
    * All cells can pull from each other.
    */
   canPullResources(giver: Tile) {
-    return giver instanceof Cell;
+    return Cell.is(giver);
   }
 
   addEffect(effect: CellEffect) {
@@ -307,14 +307,12 @@ export class Cell extends Tile implements Interactable {
       if (tile.isStructuralSupport) {
         this.droopY = Math.min(this.droopY, 0);
         return;
-      } else if (tile instanceof Cell) {
+      } else if (Cell.is(tile)) {
         this.droopY = Math.min(this.droopY, tile.droopY);
         return;
       }
     }
-    const springNeighborCells = [aboveLeft, above, aboveRight, left, right, this].filter(
-      (n) => n instanceof Cell
-    ) as Cell[];
+    const springNeighborCells = [aboveLeft, above, aboveRight, left, right, this].filter((n) => Cell.is(n)) as Cell[];
     // TODO tighten springs scaled by dt
     this.droopY = springNeighborCells.reduce((sum, n) => sum + n.droopY, 0) / springNeighborCells.length;
 
@@ -374,6 +372,12 @@ export class Cell extends Tile implements Interactable {
         console.error("bad dir length", dir);
       }
     }
+  }
+
+  private _isCell = true;
+
+  static is(t: any): t is Cell {
+    return t != null && t._isCell === true;
   }
 }
 

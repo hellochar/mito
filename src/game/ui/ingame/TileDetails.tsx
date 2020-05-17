@@ -56,7 +56,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   }
 
   private interactInfo(tile: Tile) {
-    if (tile instanceof Cell) {
+    if (Cell.is(tile)) {
       const leftClickEl =
         tile.type.interaction != null ? (
           <div className="interact-info first">Left click - {describeCellInteraction(tile.type.interaction)}.</div>
@@ -71,7 +71,7 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   }
 
   private cellInfo(tile: Tile) {
-    if (tile instanceof Cell) {
+    if (Cell.is(tile)) {
       const secondsPerUpkeep = 1 / tile.energyUpkeep;
       const secondsRemaining = secondsPerUpkeep != null ? tile.energy * secondsPerUpkeep : null;
       const secondsRemainingEl = secondsRemaining ? <>({Math.floor(secondsRemaining)} seconds remaining)</> : null;

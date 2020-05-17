@@ -17,7 +17,7 @@ export const GeneProliferation = Gene.make({
   dynamic(cell, properties) {
     // relies on the fact that cell is in the same position as the growing cell.
     const neighbors = Array.from(cell.world.tileNeighbors(cell.pos).values());
-    if (neighbors.filter((t) => t instanceof Cell).length >= NEIGHBORING_CELLS_NEEDED) {
+    if (neighbors.filter((t) => Cell.is(t)).length >= NEIGHBORING_CELLS_NEEDED) {
       properties.timeToBuild /= GROWTH_RATE;
     }
     return properties;

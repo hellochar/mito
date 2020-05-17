@@ -51,7 +51,7 @@ export class PlayerSeed implements Steppable {
             (t) => t.pos.distanceTo(start)
           )
         ).forEach((tile, i) => {
-          if (!(tile instanceof Cell)) {
+          if (!Cell.is(tile)) {
             const cell = new Cell(tile.pos, this.world, this.world.genome.cellTypes[0]);
             // const growingCell = new GrowingCell(tile.pos, this.world, cell, start);
             this.world.setTileAt(tile.pos, cell);

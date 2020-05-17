@@ -203,7 +203,7 @@ class TileBatcher {
   // getInstance(layer: number, pos: Vector2) {
   getBatchInstance(tile: Tile) {
     const pos = tile.pos;
-    const layer = tile instanceof Cell ? 1 : 0;
+    const layer = Cell.is(tile) ? 1 : 0;
     const layerOffset = (layer * this.maxTiles) / 2;
     const positionOffset = pos.y * this.world.width + pos.x;
     const index = layerOffset + positionOffset;

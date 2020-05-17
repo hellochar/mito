@@ -123,7 +123,7 @@ function makeToolToBuildCellType(cellType: CellType): ToolBuild {
 }
 
 // function maybeDeconstructAction(tile: Tile): ActionDeconstruct | undefined {
-//   if (tile instanceof Cell && tile.isReproductive) {
+//   if (Cell.is(tile) && tile.isReproductive) {
 //     return undefined; // disallow deleting reproductive cells
 //   }
 //   return {

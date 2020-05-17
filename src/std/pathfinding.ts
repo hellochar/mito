@@ -14,7 +14,7 @@ export function findPositionsThroughTissue(world: World, target: Vector2, includ
   });
   grid.setWalkableAt(target.x, target.y, true);
   const path = findPositions(grid, world.player.pos, target);
-  if (!(world.tileAt(target) instanceof Cell) && !includeTargetIfNonTissue) {
+  if (!Cell.is(world.tileAt(target)) && !includeTargetIfNonTissue) {
     // get rid of trying to actually walk past the edge
     path.pop();
     return path;
@@ -31,7 +31,7 @@ export function findPositionsThroughAir(world: World, target: Vector2) {
   });
   grid.setWalkableAt(target.x, target.y, true);
   const path = findPositions(grid, world.player.pos, target);
-  // if (!(world.tileAt(target) instanceof Cell) && !includeTargetIfNonTissue) {
+  // if (!Cell.is(world.tileAt(target)) && !includeTargetIfNonTissue) {
   //   // get rid of trying to actually walk past the edge
   //   path.pop();
   //   return path;

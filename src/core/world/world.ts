@@ -254,7 +254,7 @@ export class World {
     if (!this.isValidPosition(x, y)) {
       throw new Error(`invalid position ${x}, ${y} `);
     }
-    if (tile instanceof Cell && tile.isReproductive) {
+    if (Cell.is(tile) && tile.isReproductive) {
       this.mpEarners.set(tile, 0);
     }
     const oldTile = this.tileAt(x, y)!;
@@ -270,7 +270,7 @@ export class World {
       this.stepStats.deleted.push(oldCell);
     }
 
-    if (tile instanceof Cell) {
+    if (Cell.is(tile)) {
       // set gridCell only
       this.gridCells[x][y] = tile;
     } else {
@@ -522,7 +522,7 @@ export class World {
     this.entities().forEach((e) => {
       totalSugar += e.inventory.sugar;
       totalWater += e.inventory.water;
-      if (e instanceof Cell) {
+      if (Cell.is(e)) {
         totalEnergy += e.energy;
       }
     });

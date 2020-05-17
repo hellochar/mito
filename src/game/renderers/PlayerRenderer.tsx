@@ -142,7 +142,7 @@ export class PlayerRenderer extends Renderer<Player> {
     }
     this.neuronMesh.update(isInteract ? dt * 10 : dt * 5, neuronMeshTarget);
     this.prevHighlightedTile = highlight;
-    // this.neuronMesh.visible = this.mito.getHighlightedTile() instanceof Cell;
+    // this.neuronMesh.visible = Cell.is(this.mito.getHighlightedTile());
 
     // pos.x += Math.cos(Ticker.now / 1000) * 0.04;
     // pos.y += Math.sin(Ticker.now / 400) * 0.08;

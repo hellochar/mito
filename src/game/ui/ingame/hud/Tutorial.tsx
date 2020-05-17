@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { Player, StepStats } from "core";
-import { Cell } from "core/cell";
 import { Action } from "core/player/action";
+import { Cell } from "core/tile";
 import { EventPhotosynthesis } from "core/tile/tileEvent";
 import Mito from "game/mito/mito";
 import * as React from "react";
@@ -102,7 +102,7 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
     setPercentDone(
       useCountActionTarget(
         player,
-        (action) => action.type === "pickup" && action.target instanceof Cell && action.target.displayName === "Root",
+        (action) => action.type === "pickup" && Cell.is(action.target) && action.target.displayName === "Root",
         14
       )
     );
@@ -124,7 +124,7 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
     setPercentDone(
       useCountActionTarget(
         player,
-        (action) => action.type === "drop" && action.target instanceof Cell && action.target.displayName === "Leaf",
+        (action) => action.type === "drop" && Cell.is(action.target) && action.target.displayName === "Leaf",
         14
       )
     );
@@ -165,7 +165,7 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
       useCountActionTarget(
         player,
         (action) =>
-          active && action.type === "drop" && action.target instanceof Cell && action.target.displayName === "Tissue",
+          active && action.type === "drop" && Cell.is(action.target) && action.target.displayName === "Tissue",
         7
       )
     );

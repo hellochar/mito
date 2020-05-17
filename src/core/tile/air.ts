@@ -6,6 +6,7 @@ import { clamp, map } from "../../math/index";
 import { Inventory } from "../inventory";
 import { World } from "../world/world";
 import { Tile } from "./tile";
+
 export class Air extends Tile implements Interactable {
   displayName = "Air";
 

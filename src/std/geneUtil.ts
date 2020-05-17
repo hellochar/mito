@@ -6,7 +6,7 @@ import { Cell } from "core/cell";
 export function takeFromOneNeighborCell(cell: Cell, water: number, sugar: number) {
   const neighbors = cell.world.tileNeighbors(cell.pos);
   for (const [, tile] of neighbors) {
-    if (tile instanceof Cell) {
+    if (Cell.is(tile)) {
       const { water: waterTaken, sugar: sugarTaken } = tile.inventory.give(cell.inventory, water, sugar);
       if (waterTaken > 0 || sugarTaken > 0) {
         break;
@@ -18,7 +18,7 @@ export function takeFromOneNeighborCell(cell: Cell, water: number, sugar: number
 export function takeFromEveryNeighborCell(cell: Cell, water: number, sugar: number) {
   const neighbors = cell.world.tileNeighbors(cell.pos);
   for (const [, tile] of neighbors) {
-    if (tile instanceof Cell) {
+    if (Cell.is(tile)) {
       // const { water: waterTaken, sugar: sugarTaken } = tile.inventory.give(cell.inventory, water, sugar);
       tile.inventory.give(cell.inventory, water, sugar);
     }
