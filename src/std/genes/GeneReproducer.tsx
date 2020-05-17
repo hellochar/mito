@@ -112,7 +112,7 @@ function commitEnergy(dt: number, seed: Cell, state: ReproducerState, neededEner
   let energyLeftToTake = neededEnergy - state.energyRecieved;
   let energyRecieved = 0;
   const tileNeighbors = seed.world.tileNeighbors(seed.pos);
-  for (const neighbor of tileNeighbors.values()) {
+  for (const neighbor of tileNeighbors.array) {
     if (!Cell.is(neighbor)) continue;
 
     if (neighbor.energy > NEIGHBOR_ENERGY_THRESHOLD && energyLeftToTake > 0 && !neighbor.isReproductive) {

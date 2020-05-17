@@ -126,7 +126,8 @@ export class OverWorld {
       return undefined;
     }
     const tiles = Array.from(storage);
-    return tiles.filter((t) => t.info.height === 0).sort((t1, t2) => t1.magnitude - t2.magnitude)[0];
+    // start at the farthest away tile
+    return tiles.filter((t) => t.info.height === 0).sort((t1, t2) => t2.magnitude - t1.magnitude)[0];
   }
 
   /**

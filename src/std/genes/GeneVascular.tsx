@@ -20,8 +20,8 @@ export const GeneVascular = Gene.make(
   },
   {},
   (dt, { cell, props: { diffusionRate } }) => {
-    const neighbors = Array.from(cell.world.tileNeighbors(cell.pos).values());
-    const vascularNeighbors = neighbors.filter((t) => Cell.is(t) && t.chromosome.has(GeneVascular));
+    const neighbors = cell.world.tileNeighbors(cell.pos);
+    const vascularNeighbors = neighbors.array.filter((t) => Cell.is(t) && t.chromosome.has(GeneVascular));
     for (const n of vascularNeighbors) {
       cell.diffuseWater(n, dt, diffusionRate);
     }

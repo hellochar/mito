@@ -139,7 +139,7 @@ export class CancerEffect extends CellEffect implements Interactable {
       // spread to one neighbor:
       // if that neighbor is a cell without cancer, add cancer to that neighbor
       // if that neighbor is empty, duplicate this cell onto that neighbor
-      for (const [, tile] of neighbors) {
+      for (const tile of neighbors.array) {
         if (Cell.is(tile) && !tile.findEffectOfType(CancerEffect)) {
           tile.addEffect(new CancerEffect());
           break;

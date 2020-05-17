@@ -103,7 +103,7 @@ export abstract class Tile implements Steppable {
     if (water > 0 || sugar > 0) {
       // push resources to nearby tiles
       const neighbors = this.world.tileNeighbors(this.pos);
-      const giveCandidates = Array.from(neighbors.values()).filter((n) => n.canPullResources(this));
+      const giveCandidates = neighbors.array.filter((n) => n.canPullResources(this));
       let guard = 0;
       while ((water > 0 || sugar > 0) && giveCandidates.length > 0 && guard < 20) {
         shuffle(giveCandidates);
@@ -136,8 +136,7 @@ export abstract class Tile implements Steppable {
 
   // test tiles diffusing water around on same-type tiles
   public step(dt: number) {
-    const neighbors = this.world.tileNeighbors(this.pos);
-    this.stepDiffusion(neighbors, dt);
+    this.stepDiffusion(dt);
     this.stepTemperature(dt);
     this.stepGravity(dt);
   }
@@ -149,16 +148,18 @@ export abstract class Tile implements Steppable {
   /**
    * Called by World.
    */
-  stepDarkness(neighbors: Map<Vector2, Tile>) {
+  stepDarkness() {
+    const neighbors = this.world.tileNeighbors(this.pos);
     let minDarkness = this.darkness;
-    for (const [, t] of neighbors) {
+    for (const t of neighbors.array) {
       const darknessFromNeighbor = t.darkness + t.darknessContrib;
       minDarkness = Math.min(minDarkness, darknessFromNeighbor);
     }
     this.darkness = minDarkness;
   }
 
-  stepClosestCellDistance(neighbors: Map<Vector2, Tile>) {
+  stepClosestCellDistance() {
+    const neighbors = this.world.tileNeighbors(this.pos);
     let minDistance = this.closestCellAirDistance;
     for (const [v, t] of neighbors) {
       const neighborDistance = t.closestCellAirDistance + this.cellAirDistanceContrib * v.length();
@@ -167,8 +168,8 @@ export abstract class Tile implements Steppable {
     this.closestCellAirDistance = minDistance;
   }
 
-  stepDiffusion(neighbors: Map<Vector2, Tile>, dt: number) {
-    for (const tile of neighbors.values()) {
+  stepDiffusion(dt: number) {
+    for (const tile of this.world.tileNeighbors(this.pos).array) {
       if (!this.canPullResources(tile)) {
         continue;
       }

@@ -119,6 +119,10 @@ export class Mito extends ISketch {
 
   public stats = new Stats();
 
+  public statsStep = configure(new Stats(), (s) => s.showPanel(1));
+
+  public statsRenderer = configure(new Stats(), (s) => s.showPanel(1));
+
   public isPaused = false;
 
   public pausedInspectedTile?: Tile;
@@ -237,7 +241,9 @@ export class Mito extends ISketch {
   }
 
   public worldStep(dt: number) {
+    this.statsStep.begin();
     this.world.step(dt);
+    this.statsStep.end();
 
     const gameResult = maybeGetGameResult(this);
     if (gameResult != null) {
@@ -360,7 +366,9 @@ export class Mito extends ISketch {
     const dt = Math.min(millisDelta / 1000, 1 / 10);
     if (!this.isPaused) {
       this.worldStep(dt);
+      this.statsRenderer.begin();
       this.worldRenderer.update();
+      this.statsRenderer.end();
       this.updateCamera(this.suggestedCamera || this.defaultCameraState());
       this.pausedInspectedTile = undefined;
 
@@ -465,6 +473,20 @@ const WindowFPS: React.FC<{ mito: Mito }> = ({ mito }) => {
       document.body.removeChild(mito.stats.dom);
     };
   }, [mito.stats.dom]);
+  React.useEffect(() => {
+    mito.statsStep.dom.style.paddingTop = "50px";
+    document.body.appendChild(mito.statsStep.dom);
+    return () => {
+      document.body.removeChild(mito.statsStep.dom);
+    };
+  }, [mito.statsStep.dom]);
+  React.useEffect(() => {
+    mito.statsRenderer.dom.style.paddingTop = "100px";
+    document.body.appendChild(mito.statsRenderer.dom);
+    return () => {
+      document.body.removeChild(mito.statsRenderer.dom);
+    };
+  }, [mito.statsRenderer.dom]);
 
   return null;
 };

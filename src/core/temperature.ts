@@ -1,5 +1,3 @@
-import { lerp } from "math";
-
 export enum Temperature {
   Scorching = "Scorching",
   Hot = "Hot",
@@ -20,14 +18,4 @@ export function temperatureFor(t: number) {
   } else {
     return Temperature.Scorching;
   }
-}
-
-export function nextTemperature(currentTemperature: number, neighborTemperatures: number[], dt: number): number {
-  let averageTemperature = currentTemperature;
-  for (const temp of neighborTemperatures) {
-    averageTemperature += temp;
-  }
-  averageTemperature /= neighborTemperatures.length + 1;
-  // TODO maybe use proper dt-scaling lerp
-  return lerp(currentTemperature, averageTemperature, dt / 12);
 }

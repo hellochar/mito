@@ -38,7 +38,7 @@ export const GeneNutrientExtraction = Gene.make(
     }
     if (state.soil == null) {
       const neighbors = cell.world.tileNeighbors(cell.pos);
-      for (const [, tile] of neighbors) {
+      for (const tile of neighbors.array) {
         if (tile instanceof Soil) {
           state.soil = tile;
           break;

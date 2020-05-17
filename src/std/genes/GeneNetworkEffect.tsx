@@ -18,9 +18,9 @@ export const GeneNetworkEffect = Gene.make({
     </>
   ),
   dynamic(cell, properties) {
-    const neighbors = Array.from(cell.world.tileNeighbors(cell.pos).values());
+    const neighbors = cell.world.tileNeighbors(cell.pos);
     let numCells = 0;
-    for (const n of neighbors) {
+    for (const n of neighbors.array) {
       if (Cell.is(n)) {
         numCells++;
       }

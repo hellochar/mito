@@ -125,9 +125,9 @@ export class Insect implements Steppable {
   public findNextAction() {
     // if we don't have food, find a Cell and eat it
     // const thisDist = this.currentTile().closestCellDistance;
-    const neighbors = Array.from(this.world.tileNeighbors(this.pos).values()).filter(
-      (t) => t.pos.manhattanDistanceTo(this.pos) < 2 && (Air.is(t) || Cell.is(t))
-    );
+    const neighbors = this.world
+      .tileNeighbors(this.pos)
+      .array.filter((t) => t.pos.manhattanDistanceTo(this.pos) < 2 && (Air.is(t) || Cell.is(t)));
     if (this.inventory.sugar < 1) {
       const target = minBy(neighbors, (tile) => tile.closestCellAirDistance);
       if (Air.is(target)) {

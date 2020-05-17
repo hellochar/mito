@@ -32,7 +32,7 @@ export const GeneBark = Gene.make(
   (dt, { cell, state, props }) => {
     if (!state.tried && cell.age > props.timeBeforeGrowth) {
       const neighbors = cell.world.tileNeighbors(cell.pos);
-      for (const [, tile] of neighbors) {
+      for (const tile of neighbors.array) {
         if (tile.pos.manhattanDistanceTo(cell.pos) <= 1 && Air.is(tile)) {
           const deadCell = new DeadCell(tile.pos, tile.world);
           tile.world.setTileAt(deadCell.pos, deadCell);

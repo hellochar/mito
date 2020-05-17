@@ -2,12 +2,12 @@ import { Player } from "core";
 import { Inventory } from "core/inventory";
 import { Action } from "core/player/action";
 import { params } from "game/params";
+import { lerp } from "math";
 import { Vector2 } from "three";
 import { CELL_DROOP } from "../constants";
 import { DIRECTIONS } from "../directions";
 import { step } from "../entity";
 import { Interactable, isInteractable } from "../interactable";
-import { nextTemperature } from "../temperature";
 import { DeadCell } from "../tile/deadCell";
 import { Tile } from "../tile/tile";
 import { World } from "../world/world";
@@ -270,9 +270,7 @@ export class Cell extends Tile implements Interactable {
   }
 
   stepTemperature(dt: number) {
-    const neighbors = this.world.tileNeighbors(this.pos);
-    const neighborTemperatures = Array.from(neighbors.values()).map((t) => t.temperatureFloat);
-    this.nextTemperature = nextTemperature(this.temperatureFloat, neighborTemperatures, dt);
+    this.nextTemperature = nextTemperature(this.temperatureFloat, this.world.tileNeighbors(this.pos).array, dt);
     if (this.temperatureFloat <= 0) {
       const chanceToFreeze = 0.01667 * dt; // on average, this cell freezes every day
       if (Math.random() < chanceToFreeze) {
@@ -351,7 +349,7 @@ export class Cell extends Tile implements Interactable {
     }
   }
 
-  stepDarkness(neighbors: Map<Vector2, Tile>) {
+  stepDarkness() {
     this.darkness = 0;
   }
 
@@ -383,4 +381,14 @@ export class Cell extends Tile implements Interactable {
 
 function isFractional(x: number) {
   return x % 1 !== 0;
+}
+
+function nextTemperature(currentTemperature: number, neighbors: Tile[], dt: number): number {
+  let averageTemperature = currentTemperature;
+  for (const n of neighbors) {
+    averageTemperature += n.temperatureFloat;
+  }
+  averageTemperature /= neighbors.length + 1;
+  // TODO maybe use proper dt-scaling lerp
+  return lerp(currentTemperature, averageTemperature, dt / 12);
 }

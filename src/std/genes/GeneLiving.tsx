@@ -36,7 +36,7 @@ export const GeneLiving = Gene.make(
 
     // share energy
     const tileNeighbors = cell.world.tileNeighbors(cell.pos);
-    for (const neighbor of tileNeighbors.values()) {
+    for (const neighbor of tileNeighbors.array) {
       if (Cell.is(neighbor)) {
         maybeGiveEnergy(dt, cell, neighbor, 0.05);
       }

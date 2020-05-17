@@ -143,7 +143,7 @@ export class Player implements Steppable {
       return true;
     } else {
       const neighbors = this.world.tileNeighbors(this.pos);
-      for (const n of neighbors.values()) {
+      for (const n of neighbors.array) {
         if (Cell.is(n)) {
           return true;
         }
@@ -180,7 +180,7 @@ export class Player implements Steppable {
     if (!this.isWalkable(this.currentTile())) {
       const neighbors = this.world.tileNeighbors(this.pos);
       const walkableNeighbors = sortBy(
-        Array.from(neighbors.values()).filter(
+        neighbors.array.filter(
           (n) => this.isWalkable(n)
           // && n.pos.manhattanDistanceTo(this.pos) === 1
         ),
@@ -270,7 +270,7 @@ export class Player implements Steppable {
 
     // you can build off any adjacent existing cell
     const neighbors = this.world.tileNeighbors(tile.pos);
-    for (const n of neighbors.values()) {
+    for (const n of neighbors.array) {
       if (Cell.is(n) && !n.isObstacle) {
         return true;
       }

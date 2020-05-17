@@ -65,7 +65,7 @@ export class World {
 
   private readonly gridCells: Array<Array<Cell | null>>;
 
-  private readonly neighborCache: Array<Array<Map<Vector2, Tile>>>;
+  private readonly neighborCache: Array<Array<NeighborMap>>;
 
   public readonly mpEarners = new Map<Cell, number>();
 
@@ -321,7 +321,7 @@ export class World {
   }
 
   private computeTileNeighbors(px: number, py: number) {
-    const mapping = new Map<Vector2, Tile>();
+    const mapping = new NeighborMap();
     // randomize the neighbor array to reduce aliasing
     const directions = DIRECTION_VALUES_RAND[this.frame % DIRECTION_VALUES_RAND.length];
     directions.forEach((v) => {
@@ -497,7 +497,7 @@ export class World {
 
   public computeDarkness() {
     for (const tile of this.bfsIterator(this.player.pos, this.width * this.height)) {
-      tile.stepDarkness(this.tileNeighbors(tile.pos));
+      tile.stepDarkness();
     }
   }
 
@@ -507,7 +507,7 @@ export class World {
     }
     const startCell = this.player.findNearestWalkableCell();
     for (const tile of this.bfsIterator(startCell?.pos ?? this.player.pos, this.width * this.height)) {
-      tile.stepClosestCellDistance(this.tileNeighbors(tile.pos));
+      tile.stepClosestCellDistance();
     }
   }
 
@@ -629,3 +629,14 @@ const InsectToaster = Toaster.create({
   maxToasts: 1,
   position: "bottom",
 });
+
+export class NeighborMap extends Map<Vector2, Tile> {
+  private _array: Tile[] | undefined;
+
+  get array() {
+    if (this._array == null) {
+      this._array = Array.from(this.values());
+    }
+    return this._array as Tile[];
+  }
+}

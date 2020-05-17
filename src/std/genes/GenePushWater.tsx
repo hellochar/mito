@@ -20,9 +20,9 @@ export const GenePushWater = Gene.make(
     cooldown: 0,
   },
   (dt, { cell, state, props: { secondsPerPush } }) => {
-    const neighbors = cell.world.tileNeighbors(cell.pos);
     if (state.cooldown <= 0) {
-      for (const [, tile] of neighbors) {
+      const neighbors = cell.world.tileNeighbors(cell.pos);
+      for (const tile of neighbors.array) {
         // push water to nearby sources
         if (Cell.is(tile)) {
           // tile.inventory.give(cell.inventory, randRound(LEAF_WATER_INTAKE_PER_SECOND * dt), 0);
