@@ -17,9 +17,35 @@
 
   .cell-header {
     display: flex;
-    h2 {
+
+    .name-container {
       flex-grow: 1;
-      margin-right: auto;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        &::after {
+          content: "🖋";
+          width: 25px;
+          font-weight: bold;
+          height: 25px;
+          font-size: 20px;
+        }
+      }
+    }
+
+    .name {
+      font-size: 1.5em;
+      font-weight: bold;
+      padding: 0 0 10px 0;
+      background: none;
+      border: none;
+      display: block;
+      border-bottom: 1px solid $gray3;
+      outline: none;
+
+      // text-decoration: underline;
     }
   }
 

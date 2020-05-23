@@ -25,9 +25,17 @@ export const Keyboard = new (class Keyboard {
   };
 
   private handleKeyDown = (event: KeyboardEvent) => {
-    const code = event.code;
+    const { code } = event;
+
+    const isTargetAnInput = event.target instanceof HTMLInputElement;
+    const isOpeningDevtoolsOnChrome =
+      (code === "KeyI" && event.shiftKey && event.ctrlKey) || (code === "KeyI" && event.altKey && event.metaKey);
+    if (isTargetAnInput || isOpeningDevtoolsOnChrome) {
+      return true;
+    }
     this.keyMap.add(code);
-    if (event.code in OPPOSITE_KEYS) {
+    console.log("keyMap adding", code, "is now", this.keyMap);
+    if (code in OPPOSITE_KEYS) {
       this.keyMap.delete(OPPOSITE_KEYS[code]);
     }
     if (code === "KeyH") {
@@ -42,12 +50,9 @@ export const Keyboard = new (class Keyboard {
     if (code === "Slash") {
       params.showGodUI = !params.showGodUI;
     }
-    const isOpeningDevtoolsOnChrome =
-      (code === "KeyI" && event.shiftKey && event.ctrlKey) || (code === "KeyI" && event.altKey && event.metaKey);
-    if (!isOpeningDevtoolsOnChrome) {
-      event.preventDefault();
-      return false;
-    }
+
+    event.preventDefault();
+    return false;
   };
 
   private handleKeyUp = (event: KeyboardEvent) => {

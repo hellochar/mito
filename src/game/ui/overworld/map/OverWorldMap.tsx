@@ -1,4 +1,5 @@
 import { AppActions, AppReducerContext, PopulationAttempt } from "game/app";
+import Keyboard from "game/input/keyboard";
 import { lerp } from "math";
 import React from "react";
 import Ticker from "std/ticker";
@@ -33,7 +34,6 @@ export interface CameraState {
 
 interface OverWorldMapState {
   cameraState: CameraState;
-  pressedKeys: { [code: string]: boolean };
   populationAttempt?: PopulationAttempt;
   // TODO one of population attempt or highlighted hex can be
   // non-null at a time
@@ -69,7 +69,6 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     this.state = {
       cameraState: { scale, dX, dY },
       // cameraState: { scale: 10, dX: 0, dY: 0 },
-      pressedKeys: {},
       frame: 0,
     };
     for (const tile of overWorld) {
@@ -171,23 +170,6 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     }
   }
 
-  private handleKeyDown = (e: KeyboardEvent) => {
-    if (!e.repeat) {
-      const newPressedKeys = { ...this.state.pressedKeys, [e.code]: true };
-      this.setState({
-        pressedKeys: newPressedKeys,
-      });
-    }
-  };
-
-  private handleKeyUp = (e: KeyboardEvent) => {
-    const newPressedKeys = { ...this.state.pressedKeys };
-    delete newPressedKeys[e.code];
-    this.setState({
-      pressedKeys: newPressedKeys,
-    });
-  };
-
   private handleWheel = (e: React.WheelEvent) => {
     const delta = -(e.deltaX + e.deltaY) / 125 / 10;
     const scalar = Math.pow(2, delta);
@@ -230,7 +212,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     }
     const panSpeed = 20;
     let offset = new Vector2();
-    for (const key in this.state.pressedKeys) {
+    for (const key of Keyboard.keyMap) {
       if (key === "KeyW" || key === "ArrowUp") {
         offset.y += panSpeed;
       } else if (key === "KeyS" || key === "ArrowDown") {
@@ -302,15 +284,11 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
   }
 
   componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown);
-    document.addEventListener("keyup", this.handleKeyUp);
     window.addEventListener("resize", this.handleResize);
     this.rafId = Ticker.addAnimation(this.updateCamera);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-    document.removeEventListener("keyup", this.handleKeyUp);
     window.removeEventListener("resize", this.handleResize);
     Ticker.removeAnimation(this.rafId!);
   }

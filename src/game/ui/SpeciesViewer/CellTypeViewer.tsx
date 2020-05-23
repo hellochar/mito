@@ -30,11 +30,20 @@ export const CellTypeViewer: React.FC<{
     [cellType.interaction]
   );
   const reproducer = cellType.isReproducer();
+  const handleNameChange = useCallback(
+    (event: React.FormEvent<HTMLInputElement>) => {
+      cellType.name = event.currentTarget.value;
+    },
+    [cellType.name]
+  );
 
   return (
     <div className={classNames("cell-type", { reproducer })}>
       <div className="cell-header">
-        <h2>{name}</h2>
+        {/* <h2>{name}</h2> */}
+        <div className="name-container">
+          <input className="name" type="text" defaultValue={name} onInput={handleNameChange} />
+        </div>
         {editable ? <CellActionsPopover cellType={cellType} genome={genome} /> : null}
       </div>
       <ChromosomeViewer cellType={cellType} />
