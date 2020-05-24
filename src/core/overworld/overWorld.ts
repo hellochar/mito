@@ -1,4 +1,5 @@
 import { Species } from "core/species";
+import { maxBy } from "lodash";
 import { clamp } from "math";
 import { object, reference, serializable } from "serializr";
 import SimplexNoise from "simplex-noise";
@@ -125,9 +126,27 @@ export class OverWorld {
     if (storage == null) {
       return undefined;
     }
-    const tiles = Array.from(storage);
+    // const tiles = Array.from(storage);
+    const tiles = Array.from(OverWorld.getContinentConnectedHexes(storage)).filter((t) => t.info.height === 0);
     // start at the farthest away tile
-    return tiles.filter((t) => t.info.height === 0).sort((t1, t2) => t2.magnitude - t1.magnitude)[0];
+    return maxBy(tiles, (t) => t.magnitude)!;
+  }
+
+  private static getContinentConnectedHexes(store: HexStore) {
+    const filter = (hex: HexTile) => hex.info.height >= 0;
+    // start at 0,0, and go outwards from neighbors until you can't anymore
+    const frontier = [store.get(0, 0)!];
+    const processed = new Set<HexTile>();
+    while (frontier.length > 0) {
+      const hex = frontier.shift()!;
+      processed.add(hex);
+      for (const n of store.hexNeighbors(hex)) {
+        if (n != null && !frontier.includes(n) && !processed.has(n) && filter(n)) {
+          frontier.push(n);
+        }
+      }
+    }
+    return processed;
   }
 
   /**
@@ -146,15 +165,7 @@ export class OverWorld {
    * 330: (1, -1, 0)
    */
   public hexNeighbors(hex: HexTile) {
-    const { i, j } = hex;
-    const neighbors: (HexTile | undefined)[] = [];
-    neighbors[0] = this.storage.get(i + 1, j);
-    neighbors[1] = this.storage.get(i, j + 1);
-    neighbors[2] = this.storage.get(i - 1, j + 1);
-    neighbors[3] = this.storage.get(i - 1, j);
-    neighbors[4] = this.storage.get(i, j - 1);
-    neighbors[5] = this.storage.get(i + 1, j - 1);
-    return neighbors;
+    return this.storage.hexNeighbors(hex);
   }
 
   /**
