@@ -1,5 +1,5 @@
 import { Species } from "core/species";
-import { maxBy } from "lodash";
+import { minBy } from "lodash";
 import { clamp } from "math";
 import { object, reference, serializable } from "serializr";
 import SimplexNoise from "simplex-noise";
@@ -128,8 +128,8 @@ export class OverWorld {
     }
     // const tiles = Array.from(storage);
     const tiles = Array.from(OverWorld.getContinentConnectedHexes(storage)).filter((t) => t.info.height === 0);
-    // start at the farthest away tile
-    return maxBy(tiles, (t) => t.magnitude)!;
+    // start at the nearest height 0 tile
+    return minBy(tiles, (t) => t.magnitude)!;
   }
 
   private static getContinentConnectedHexes(store: HexStore) {
@@ -147,6 +147,14 @@ export class OverWorld {
       }
     }
     return processed;
+  }
+
+  public computeOxygenLevel() {
+    let oxygenLevel = 0;
+    for (const tile of this) {
+      oxygenLevel += tile.info.flora?.oxygenContribution ?? 0;
+    }
+    return oxygenLevel / 100;
   }
 
   /**

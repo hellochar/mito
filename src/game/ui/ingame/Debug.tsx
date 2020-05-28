@@ -11,6 +11,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
       mpEarners: mito.world.mpEarners,
       world: mito.world,
       status: "won",
+      oxygenContribution: mito.world.oxygenPerSecond,
       mutationPointsPerEpoch: 1,
       vignettes: mito.vignettes,
     });
@@ -18,6 +19,7 @@ const Debug: React.FC<{ mito: Mito }> = ({ mito }) => {
 
   const doLose = React.useCallback(() => {
     mito.onWinLoss({
+      oxygenContribution: 0,
       mpEarners: mito.world.mpEarners,
       world: mito.world,
       status: "lost",

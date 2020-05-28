@@ -3,6 +3,7 @@ import { World } from "../core/world/world";
 import Mito from "./mito/mito";
 
 export interface GameResult {
+  oxygenContribution: number;
   status: "won" | "lost";
   mpEarners: Map<Cell, number>;
   /**
@@ -44,6 +45,7 @@ export function getDecidedGameResult(mito: Mito): GameResult {
 
   return {
     mpEarners: world.mpEarners,
+    oxygenContribution: world.oxygenPerSecond,
     mutationPointsPerEpoch: matureEarners.map(([, mp]) => mp).reduce((a, b) => a + b, 0),
     status: shouldWin ? "won" : "lost",
     vignettes,

@@ -3,7 +3,7 @@ import { TIME_PER_DAY } from "core/constants";
 import { Environment } from "core/environment";
 import { Insect } from "core/insect";
 import { EventEmitter } from "events";
-import { randFloat } from "math";
+import { randFloat, roundToNearest } from "math";
 import { gridRange } from "math/arrays";
 import { TileGenerators } from "std/tileGenerators";
 import { Vector2 } from "three";
@@ -69,6 +69,8 @@ export class World {
 
   public readonly mpEarners = new Map<Cell, number>();
 
+  public oxygenContribution: number = 0;
+
   public readonly species: Species;
 
   public readonly generatorContext: GeneratorContext;
@@ -78,6 +80,10 @@ export class World {
   genome: Genome;
 
   private generatorInfoCache = new Map<string, GeneratorInfo>();
+
+  public get oxygenPerSecond() {
+    return roundToNearest(this.oxygenContribution / this.time, 0.01);
+  }
 
   public generatorInfo(pos: Vector2): GeneratorInfo {
     const key = `${pos.x},${pos.y}`;

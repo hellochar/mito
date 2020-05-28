@@ -34,7 +34,6 @@ export const Keyboard = new (class Keyboard {
       return true;
     }
     this.keyMap.add(code);
-    console.log("keyMap adding", code, "is now", this.keyMap);
     if (code in OPPOSITE_KEYS) {
       this.keyMap.delete(OPPOSITE_KEYS[code]);
     }

@@ -129,6 +129,7 @@ function maybePhotosynthesize(
     cell.inventory.add(-waterToConvert, sugarMade);
     state.sugarConverted += sugarMade;
     state.totalSugarProduced += sugarMade;
+    cell.world.oxygenContribution += sugarMade;
     cell.world.logEvent({
       type: "photosynthesis",
       cell,

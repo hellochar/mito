@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { nf } from "common/formatters";
 import { WorldDOMComponent } from "game/mito/WorldDOMElement";
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
@@ -78,10 +79,11 @@ export class HUD extends React.Component<HUDProps, HUDState> {
             season={this.world.season}
             temperature={this.world.weather.getCurrentTemperature()}
           />
+          <div className="oxygen-rate">{nf(this.world.oxygenPerSecond, 3)} Oxygen per second</div>
         </div>
         <GameMenu {...this.props} />
         {this.maybeRenderSpeciesViewer()}
-        {this.maybeRenderCollectButton()}
+        <div className="hud-right-of-time">{this.maybeRenderWinButton()}</div>
         {this.maybeRenderWinShine()}
         {this.maybeRenderGerminateButton()}
         {this.maybeRenderPausedUI()}
@@ -165,15 +167,13 @@ export class HUD extends React.Component<HUDProps, HUDState> {
     }
   }
 
-  maybeRenderCollectButton() {
+  maybeRenderWinButton() {
     const result = getDecidedGameResult(this.mito);
     if (result.status === "won") {
       return (
-        <div className="hud-right-of-time">
-          <Button color="purple" onClick={() => this.mito.onWinLoss(result)}>
-            Win (+ {result.mutationPointsPerEpoch} MP per epoch)
-          </Button>
-        </div>
+        <Button color="purple" onClick={() => this.mito.onWinLoss(result)}>
+          Win (+ {result.mutationPointsPerEpoch} MP per epoch)
+        </Button>
       );
     }
   }

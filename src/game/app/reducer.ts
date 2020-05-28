@@ -131,6 +131,7 @@ function handlePopulationAttemptSuccess(state: AppState, action: AAPopulationAtt
     targetHex.info.flora = {
       species: settlingSpecies,
       mutationPointsPerEpoch: results.mutationPointsPerEpoch,
+      oxygenContribution: results.oxygenContribution,
     };
 
     if (oldSpecies) {

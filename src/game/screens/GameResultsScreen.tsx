@@ -115,7 +115,9 @@ function GameWonScreen({ results }: GameResultsScreenProps) {
         <Character size="large" className="dance" />
       </div>
       <h1>You {winDescription}!</h1>
-      <h2>{results.mutationPointsPerEpoch} Mutation Points earned.</h2>
+      <h2>
+        {results.mutationPointsPerEpoch} Mutation Points earned. {results.oxygenContribution} Oxygen per second.
+      </h2>
       <VignetteList vignettes={results.vignettes} />
       <MPEarnerList mpEarners={results.mpEarners} />
     </>

@@ -13,6 +13,7 @@ export interface LevelInfo {
   flora?: {
     species: Species;
     mutationPointsPerEpoch: number;
+    oxygenContribution: number;
   };
 }
 
@@ -32,6 +33,7 @@ export const LevelInfoSchema = createSimpleSchema<LevelInfo>({
       species: reference(SpeciesSchema),
       mutationPointsPerEpoch: primitive(),
       actionPoints: primitive(),
+      oxygenContribution: primitive(),
     })
   ),
 });

@@ -37,13 +37,11 @@ function HexInfo({ playSpecies, tile, onClickPlay }: HexInfo) {
           </b>
         </p>
         <p>
-          <MP amount={flora.mutationPointsPerEpoch} /> per epoch
+          <MP amount={flora.mutationPointsPerEpoch} /> per epoch.
         </p>
+        <p>{flora.oxygenContribution} oxygen per second.</p>
       </div>
     ) : null;
-
-  const stringifyInfo = { ...tile.info };
-  delete stringifyInfo.flora;
 
   const habitableInfo = tile.isHabitable ? (
     <EnvironmentInfo info={tile.info} environment={environmentFromLevelInfo(tile.info)} />

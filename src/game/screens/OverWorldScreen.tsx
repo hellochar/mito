@@ -1,5 +1,6 @@
-import { Overlay } from "@blueprintjs/core";
+import { Intent, Overlay, ProgressBar } from "@blueprintjs/core";
 import classNames from "classnames";
+import { nf } from "common/formatters";
 import { sleep } from "common/promise";
 import { lineage, Species } from "core/species";
 import { useAppReducer } from "game/app";
@@ -7,7 +8,8 @@ import { resetGame, save } from "game/app/saveLoad";
 import { mitoOverworld } from "game/audio";
 import { Button } from "game/ui/common/Button";
 import PhylogeneticTree from "game/ui/overworld/PhylogeneticTree";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { map } from "math";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GiFamilyTree } from "react-icons/gi";
 import { HexTile } from "../../core/overworld/hexTile";
 import { EpochUI } from "../ui/overworld/EpochUI";
@@ -48,7 +50,7 @@ const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
     setViewedSpecies(s.id);
   }, []);
 
-  const [{ rootSpecies, epoch }] = useAppReducer();
+  const [{ rootSpecies, epoch, overWorld }] = useAppReducer();
 
   const onMountEpoch = useRef(epoch);
 
@@ -100,12 +102,29 @@ const OverWorldScreen = React.memo(({ onNextEpoch }: OverWorldScreenProps) => {
 
   const [appState] = useAppReducer();
 
+  const oxygenLevel = useMemo(() => overWorld.computeOxygenLevel(), [overWorld]);
+  function renderOxygenLevel() {
+    return (
+      <div className="oxygen-level">
+        <ProgressBar
+          className="progress-bar"
+          animate={false}
+          intent={Intent.SUCCESS}
+          stripes={false}
+          value={map(oxygenLevel, 0, 1, 0.01, 1)}
+        />
+        <div className="indicator">{nf(oxygenLevel, 3)}% Global Atmospheric Oxygen</div>
+      </div>
+    );
+  }
+
   return (
     <div className="overworld-screen">
       <OverWorldMap focusedHex={focusedHex} />
       {maybeRenderPhylogeneticTreePanel()}
       {speciesViewerEl}
       <EpochUI onNextEpoch={onNextEpoch} onFocusHex={handleFocusHex} />
+      {renderOxygenLevel()}
       <div style={{ position: "absolute", right: "10px", top: "10px" }}>
         <Button onClick={() => save(appState)}>Save</Button>
       </div>

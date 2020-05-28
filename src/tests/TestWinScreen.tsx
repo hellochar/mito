@@ -32,6 +32,7 @@ export function TestWinScreen() {
       [f3, 3],
     ]),
     mutationPointsPerEpoch: 6,
+    oxygenContribution: 0,
     world,
   };
   return <GameResultsScreen results={mockResults} onDone={() => {}} />;

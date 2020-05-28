@@ -66,6 +66,9 @@
   transform: translateX(-50%);
   transition: transform 2s 2s;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   animation: 1s inFromTop 5s backwards;
 
@@ -157,6 +160,12 @@
   top: 10px;
   left: calc(50% + 60px);
   margin-left: 5px;
+}
+
+.oxygen-rate {
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 5px 10px;
 }
 
 .hud-germinate {
