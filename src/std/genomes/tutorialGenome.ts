@@ -22,6 +22,7 @@ const cellTypeTissue = new CellType(
   {
     type: "give",
     resources: "sugar",
+    continuous: false,
   }
 );
 
@@ -36,6 +37,7 @@ const cellTypeLeaf = new CellType(
   {
     type: "give",
     resources: "water take sugar",
+    continuous: true,
   }
 );
 
@@ -50,11 +52,22 @@ const cellTypeRoot = new CellType(
   {
     type: "take",
     resources: "water and sugar",
+    continuous: true,
   }
 );
 
-const cellTypeSeed = new CellType("Seed", 0, new Chromosome(GeneLiving.level(0), GeneSeed.level(0)), {
-  texturePosition: new Vector2(1, 4),
-});
+const cellTypeSeed = new CellType(
+  "Seed",
+  0,
+  new Chromosome(GeneLiving.level(0), GeneSeed.level(0)),
+  {
+    texturePosition: new Vector2(1, 4),
+  },
+  {
+    type: "give",
+    resources: "sugar",
+    continuous: true,
+  }
+);
 
 export const tutorialGenome = new Genome([cellTypeTissue, cellTypeLeaf, cellTypeRoot, cellTypeSeed]);

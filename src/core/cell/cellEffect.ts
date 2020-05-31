@@ -57,6 +57,7 @@ export class FreezeEffect extends CellEffect implements Interactable {
     return {
       type: "thaw",
       target: this,
+      continuous: true,
     };
   }
 
@@ -118,6 +119,7 @@ export class CancerEffect extends CellEffect implements Interactable {
     return {
       type: "remove-cancer",
       target: this,
+      continuous: true,
     };
   }
 

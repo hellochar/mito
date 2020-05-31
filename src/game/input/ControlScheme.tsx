@@ -1,5 +1,5 @@
 import { Cell } from "core/cell";
-import { ActionMove, isContinuous } from "core/player/action";
+import { ActionMove } from "core/player/action";
 import { Vector2 } from "three";
 import { Mito } from "../mito/mito";
 import Keyboard from "./keyboard";
@@ -110,7 +110,7 @@ export class PlayerControlScheme implements ControlScheme {
       return;
     }
     const action = mito.toolBar.leftClick(target);
-    if (action != null && !isContinuous(action)) {
+    if (action != null && !action.continuous) {
       mito.world.player.setAction(action);
     }
   }
@@ -137,7 +137,7 @@ export class PlayerControlScheme implements ControlScheme {
       return;
     }
     const action = mito.toolBar.leftClick(target);
-    if (action != null && isContinuous(action)) {
+    if (action != null && action.continuous) {
       mito.world.player.setAction(action);
     }
   }

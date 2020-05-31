@@ -4,7 +4,7 @@ import { easeSinInOut } from "d3-ease";
 import Keyboard from "game/input/keyboard";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { Player } from "../../core";
-import { Action, ActionBuild, ActionLong, isContinuous } from "../../core/player/action";
+import { Action, ActionBuild, ActionLong } from "../../core/player/action";
 import { Tile } from "../../core/tile";
 import { clamp, lerp2, map, randFloat } from "../../math";
 import {
@@ -107,7 +107,7 @@ export class PlayerRenderer extends Renderer<Player> {
     }
 
     if (message != null) {
-      if (isContinuous(action)) {
+      if (action.continuous) {
         // only show an error if it's not the exact same error that already exists
         if (this.mito.invalidAction?.message !== message) {
           this.mito.showInvalidAction({ message });

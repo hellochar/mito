@@ -10,25 +10,7 @@ import { RealizedGene } from "./realizedGene";
 export interface CellInteraction {
   type: "give" | "take";
   resources: "water" | "sugar" | "water and sugar" | "water take sugar" | "sugar take water";
-}
-
-const interactSpeedMap: Record<string, InteractSpeed> = {
-  "give water": "instant",
-  "give sugar": "instant", // mostly for Tissue
-  "give water and sugar": "continuous", // mostly for Seed
-  "give water take sugar": "continuous", // mostly for Leaf
-  "give sugar take water": "instant",
-  "take water": "continuous",
-  "take sugar": "continuous",
-  "take water and sugar": "continuous", // mostly for Root
-};
-
-export type InteractSpeed = "instant" | "continuous";
-
-export function interactionSpeed(interaction: CellInteraction): InteractSpeed {
-  const { resources, type } = interaction;
-  const name = `${type} ${resources}`;
-  return interactSpeedMap[name] ?? "instant";
+  continuous?: boolean;
 }
 
 const CellInteractionSchema = createSimpleSchema({

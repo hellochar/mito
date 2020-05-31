@@ -188,7 +188,7 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
     const percentDone =
       (Array.from(player.world.mpEarners.keys())[0]?.findGene(GeneSeed)?.state.energyRecieved ?? 0) / 100;
     setPercentDone(percentDone);
-    return <>Get seed to 150 energy.</>;
+    return <>Get seed to 250 energy.</>;
   },
 ];
 

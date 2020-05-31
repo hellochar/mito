@@ -136,6 +136,8 @@
 
 .interaction-select-container {
   @include smalltext();
+  display: flex;
+  flex-direction: column;
 }
 
 .interaction-select {

@@ -1,29 +1,47 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { CellInteraction, describeCellInteraction } from "../../../core/cell/genome";
 
 export const CellInteractionSelector: React.FC<{
   interaction?: CellInteraction;
   setInteraction: (i: CellInteraction | undefined) => void;
 }> = React.memo(({ interaction, setInteraction }) => {
-  const handleSelect = React.useCallback(
+  const handleSelect = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
       const indexOrUndefined = event.target.value;
       if (indexOrUndefined == null) {
         setInteraction(undefined);
         // cellType.interaction = undefined;
       } else {
-        setInteraction(possibleInteractions[Number(indexOrUndefined)]);
-        // cellType.interaction = possibleInteractions[Number(indexOrUndefined)];
+        const newInteraction = possibleInteractions[Number(indexOrUndefined)];
+        if (interaction == null) {
+          return newInteraction;
+        } else {
+          return {
+            ...newInteraction,
+            continuous: interaction.continuous,
+          };
+        }
       }
     },
-    [setInteraction]
+    [interaction, setInteraction]
+  );
+
+  const handleChangeContinuous = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (interaction != null) {
+        setInteraction({
+          ...interaction,
+          continuous: event.target.checked,
+        });
+      }
+    },
+    [interaction, setInteraction]
   );
   const selectValue =
     interaction == null
       ? undefined
       : possibleInteractions.findIndex((i) => interaction.resources === i.resources && interaction.type === i.type);
   const interactionEl = (
-    // <select className="interaction-select" onChange={handleSelect} value={selectValue}>
     <select className="interaction-select" onChange={handleSelect} defaultValue={String(selectValue)}>
       <option value={undefined}>do nothing</option>
       {possibleInteractions.map((interaction, index) => {
@@ -35,7 +53,19 @@ export const CellInteractionSelector: React.FC<{
       })}
     </select>
   );
-  return <div className="interaction-select-container">Left-click to {interactionEl}.</div>;
+
+  const continuousEl =
+    interaction != null ? (
+      <label>
+        <input type="checkbox" checked={interaction.continuous} onChange={handleChangeContinuous} /> continuously.
+      </label>
+    ) : null;
+  return (
+    <form className="interaction-select-container">
+      <label>Left-click to {interactionEl}.</label>
+      {continuousEl}
+    </form>
+  );
 });
 
 const interactionTypes = ["give", "take"] as const;

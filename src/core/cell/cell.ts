@@ -16,7 +16,7 @@ import { CellProperties } from "./cellProperties";
 import Chromosome from "./chromosome";
 import { Gene } from "./gene";
 import { GeneInstance } from "./geneInstance";
-import { CellType, interactionSpeed } from "./genome";
+import { CellType } from "./genome";
 
 export interface CellArgs {
   direction?: Vector2;
@@ -207,7 +207,7 @@ export class Cell extends Tile implements Interactable {
         water,
         sugar,
         target: this,
-        continuous: interactionSpeed(interaction) === "continuous",
+        continuous: interaction.continuous,
       };
       return action;
     }

@@ -4,19 +4,23 @@ import { Vector2 } from "three";
 import { CellArgs } from "../cell/cell";
 import { CellType } from "../cell/genome";
 
-export interface ActionMove {
+export interface ActionBase {
+  continuous?: boolean;
+}
+
+export interface ActionMove extends ActionBase {
   type: "move";
   dir: Vector2;
 }
 
-export interface ActionBuild {
+export interface ActionBuild extends ActionBase {
   type: "build";
   cellType: CellType;
   args?: CellArgs;
   position: Vector2;
 }
 
-export interface ActionDeconstruct {
+export interface ActionDeconstruct extends ActionBase {
   type: "deconstruct";
   position: Vector2;
   force?: boolean;
@@ -25,7 +29,7 @@ export interface ActionDeconstruct {
 /**
  * Instantaneously drop some amount of water and sugar.
  */
-export interface ActionDrop {
+export interface ActionDrop extends ActionBase {
   type: "drop";
   water: number;
   sugar: number;
@@ -33,7 +37,7 @@ export interface ActionDrop {
   continuous?: boolean;
 }
 
-export interface ActionPickup {
+export interface ActionPickup extends ActionBase {
   type: "pickup";
 
   /**
@@ -50,24 +54,24 @@ export interface ActionPickup {
   continuous?: boolean;
 }
 
-export interface ActionMultiple {
+export interface ActionMultiple extends ActionBase {
   type: "multiple";
   actions: Action[];
 }
 
-export interface ActionLong<T extends Action = Action> {
+export interface ActionLong<T extends Action = Action> extends ActionBase {
   type: "long";
   elapsed: number;
   duration: number;
   effect: T;
 }
 
-export interface ActionThaw {
+export interface ActionThaw extends ActionBase {
   type: "thaw";
   target: FreezeEffect;
 }
 
-export interface ActionRemoveCancer {
+export interface ActionRemoveCancer extends ActionBase {
   type: "remove-cancer";
   target: CancerEffect;
 }
@@ -82,15 +86,3 @@ export type Action =
   | ActionPickup
   | ActionThaw
   | ActionRemoveCancer;
-
-/**
- * A continuous action should be re-set every frame while holding the mouse button.
- */
-export function isContinuous(action: Action) {
-  if (action.type === "pickup" || action.type === "drop") {
-    return !!action.continuous;
-  } else if (action.type === "remove-cancer" || action.type === "thaw") {
-    return true;
-  }
-  return false;
-}
