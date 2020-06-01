@@ -9,9 +9,9 @@ import { Gene } from "../../core/cell/gene";
 export const GeneVascular = Gene.make(
   {
     name: "Vascular",
-    levelCosts: [1, 1, 2, 2, 3],
+    levelCosts: [1, 1, 1, 1, 1],
     levelProps: {
-      diffusionRate: [0.1, 0.15, 0.2, 0.25, 0.35],
+      diffusionRate: [0.1, 0.15, 0.2, 0.25, 5],
     },
     static: {
       energyUpkeep: 1 / 1200,

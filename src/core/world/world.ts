@@ -5,12 +5,13 @@ import { Insect } from "core/insect";
 import { EventEmitter } from "events";
 import { randFloat, roundToNearest } from "math";
 import { gridRange } from "math/arrays";
+import { GeneFruit, GenePhotosynthesis, GenePipes, GeneSeed, GeneSoilAbsorption } from "std/genes";
 import { TileGenerators } from "std/tileGenerators";
 import { Vector2 } from "three";
 import devlog from "../../common/devlog";
 import shuffle from "../../math/shuffle";
 import Genome from "../cell/genome";
-import { DIRECTION_VALUES } from "../directions";
+import { DIRECTION_VALUES, dirName } from "../directions";
 import { Entity, isSteppable, step } from "../entity";
 import { Player } from "../player/player";
 import { PlayerSeed } from "../player/playerSeed";
@@ -290,7 +291,41 @@ export class World {
       this.gridEnvironment[x][y] = tile;
     }
     this.stepStats.added.push(tile);
+
     this.handleTileUpdated(position);
+
+    if (Cell.is(tile)) {
+      this.autoConnectPipes(tile);
+    }
+  }
+
+  private autoConnectPipes(cell: Cell) {
+    // auto-update Pipes:
+    // neighbors who are resource producers/consumers, or who have pipes,
+    // should get auto-connected
+    for (const [dir, neighbor] of this.tileNeighbors(cell.pos)) {
+      const isDirectlyAdjacent = dir.manhattanLength() < 2;
+      if (isDirectlyAdjacent && Cell.is(neighbor)) {
+        this.updateConnection(cell, neighbor);
+        this.updateConnection(neighbor, cell);
+      }
+    }
+  }
+
+  private updateConnection(from: Cell, to: Cell) {
+    const pipes = from.findGene(GenePipes);
+    if (pipes == null) {
+      return;
+    }
+    const dir = to.pos.clone().sub(from.pos);
+    const name = dirName(dir)!;
+
+    const isProducerConsumer =
+      (to.findGene(GenePhotosynthesis) ||
+        to.findGene(GeneSoilAbsorption) ||
+        to.findGene(GeneFruit) ||
+        to.findGene(GeneSeed)) != null;
+    pipes.state.connections[name] = isProducerConsumer;
   }
 
   public maybeRemoveCellAt(position: Vector2): Cell | null {

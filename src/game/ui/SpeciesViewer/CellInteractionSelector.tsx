@@ -14,12 +14,12 @@ export const CellInteractionSelector: React.FC<{
       } else {
         const newInteraction = possibleInteractions[Number(indexOrUndefined)];
         if (interaction == null) {
-          return newInteraction;
+          setInteraction(newInteraction);
         } else {
-          return {
+          setInteraction({
             ...newInteraction,
             continuous: interaction.continuous,
-          };
+          });
         }
       }
     },

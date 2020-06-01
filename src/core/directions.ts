@@ -12,6 +12,16 @@ export const DIRECTIONS = {
   se: new Vector2(+1, +1),
 };
 
+export function dirName(v: Vector2) {
+  let dirName: Directions;
+  for (dirName in DIRECTIONS) {
+    const dir = DIRECTIONS[dirName];
+    if (v.equals(dir)) {
+      return dirName;
+    }
+  }
+}
+
 export type Directions = keyof typeof DIRECTIONS;
 
 export function oppositeDir(dir: Directions): Directions {

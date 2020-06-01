@@ -7,9 +7,9 @@ import RI from "./RI";
 export const GenePipes = Gene.make(
   {
     name: "Pipes",
-    levelCosts: [1, 1, 1, 2, 3],
+    levelCosts: [1, 1, 1, 1, 1],
     levelProps: {
-      diffusionRate: [0.15, 0.175, 0.2, 0.25, 0.25],
+      diffusionRate: [0.15, 0.175, 0.2, 0.25, 5],
     },
     static: {
       energyUpkeep: 1 / 1500,
@@ -29,10 +29,10 @@ export const GenePipes = Gene.make(
   },
   () => ({
     connections: {
-      n: true,
-      e: true,
-      s: true,
-      w: true,
+      n: false,
+      e: false,
+      s: false,
+      w: false,
     } as PipesConnections,
   }),
   (dt, { cell, props: { diffusionRate }, state: { connections } }) => {
