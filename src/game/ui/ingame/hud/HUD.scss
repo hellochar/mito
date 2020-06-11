@@ -86,6 +86,16 @@
     visibility: hidden;
     transform: translateX(-50%) translateY(-170%);
   }
+
+  .time {
+    @include text-outline();
+    color: white;
+
+    .icon {
+      vertical-align: middle;
+      font-size: 1.5em;
+    }
+  }
 }
 
 .hud-below-center {

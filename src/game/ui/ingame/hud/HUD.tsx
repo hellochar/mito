@@ -1,9 +1,11 @@
+import { Tooltip } from "@blueprintjs/core";
 import classNames from "classnames";
 import { nf } from "common/formatters";
 import { WorldDOMComponent } from "game/mito/WorldDOMElement";
 import { Button } from "game/ui/common/Button";
 import * as React from "react";
 import { DragDropContext } from "react-beautiful-dnd";
+import { MdPause, MdPlayArrow } from "react-icons/md";
 import { getDecidedGameResult } from "../../../gameResult";
 import { PlayerSeedControlScheme } from "../../../input/ControlScheme";
 import Mito from "../../../mito/mito";
@@ -79,6 +81,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
             season={this.world.season}
             temperature={this.world.weather.getCurrentTemperature()}
           />
+          {this.renderTime()}
           <div className="oxygen-rate">{nf(this.world.oxygenPerSecond, 3)} Oxygen per second</div>
         </div>
         <GameMenu {...this.props} />
@@ -148,6 +151,38 @@ export class HUD extends React.Component<HUDProps, HUDState> {
       return <InvalidActionMessage invalidAction={invalidAction} />;
     }
   }
+
+  private formatTime(t: number) {
+    return new Date(1000 * t).toISOString().substr(14, 5);
+  }
+
+  private timeTooltipContent = (
+    <>
+      There are sixty seconds per day.
+      <br />
+      <br />
+      There are three days per month.
+    </>
+  );
+
+  private renderTime() {
+    const time = this.world.time;
+    const isPaused = this.mito.isPaused;
+    return (
+      <Tooltip content={this.timeTooltipContent}>
+        <div className="time">
+          {this.formatTime(time)} -{" "}
+          <span className="icon" onClick={this.handlePauseClick}>
+            {isPaused ? <MdPause /> : <MdPlayArrow />}
+          </span>
+        </div>
+      </Tooltip>
+    );
+  }
+
+  private handlePauseClick = () => {
+    this.mito.isPaused = !this.mito.isPaused;
+  };
 
   maybeRenderGerminateButton() {
     const showSeedHUD = this.world.playerSeed != null;

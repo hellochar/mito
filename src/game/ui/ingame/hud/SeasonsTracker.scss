@@ -36,9 +36,4 @@
       color: $color-freezing;
     }
   }
-
-  .time {
-    @include text-outline();
-    color: white;
-  }
 }

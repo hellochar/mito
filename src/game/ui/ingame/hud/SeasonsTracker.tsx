@@ -13,15 +13,6 @@ const temperatureTooltipContentMap = {
   [Temperature.Scorching]: <>Cells evaporate water! Cells operate 50% faster, you walk 50% faster.</>,
 };
 
-const timeTooltipContent = (
-  <>
-    There are sixty seconds per day.
-    <br />
-    <br />
-    There are three days per month.
-  </>
-);
-
 export default function SeasonsTracker({
   time,
   season,
@@ -53,13 +44,6 @@ export default function SeasonsTracker({
         <br />
         {temperatureElement}
       </div>
-      <Tooltip content={timeTooltipContent}>
-        <div className="time">{formatTime(time)}</div>
-      </Tooltip>
     </div>
   );
-}
-
-function formatTime(t: number) {
-  return new Date(1000 * t).toISOString().substr(14, 5);
 }
