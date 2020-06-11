@@ -5,7 +5,7 @@ import { Cell } from "core/tile";
 import { EventPhotosynthesis } from "core/tile/tileEvent";
 import Mito from "game/mito/mito";
 import * as React from "react";
-import { GeneSeed } from "std/genes";
+import { GeneSeed, reproducerGetPercentMatured } from "std/genes";
 import { HUDProps } from ".";
 import { HotkeyButton } from "../HotkeyButton";
 import "./Tutorial.scss";
@@ -185,8 +185,8 @@ const tutorialSteps: Array<React.FC<TutorialStepProps>> = [
   //   );
   // },
   ({ player, setPercentDone }) => {
-    const percentDone =
-      (Array.from(player.world.mpEarners.keys())[0]?.findGene(GeneSeed)?.state.energyRecieved ?? 0) / 100;
+    const seed = Array.from(player.world.mpEarners.keys())[0]?.findGene(GeneSeed);
+    const percentDone = seed != null ? reproducerGetPercentMatured(seed) : 0;
     setPercentDone(percentDone);
     return <>Get seed to 250 energy.</>;
   },

@@ -149,18 +149,21 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   private airInfo(tile: Tile) {
     if (Air.is(tile)) {
       return (
-        <div className="info-air">
-          <Tooltip content={"Sunlight increases photosynthesis rate."}>
-            <div>☀️ {nf(tile.sunlight() * 100, 2)}%</div>
-          </Tooltip>
-          <Tooltip content="CO2 improves the water to sugar ratio.">
-            <div className="co2-container">
-              <span className="co2">
-                CO<sub>2</sub>
-              </span>{" "}
-              {nf(tile.co2() * 100, 2)}%
-            </div>
-          </Tooltip>
+        <div>
+          <div className="info-air">
+            <Tooltip content={"Sunlight increases photosynthesis rate."}>
+              <div>☀️ {nf(tile.sunlight() * 100, 2)}%</div>
+            </Tooltip>
+            <Tooltip content="CO2 improves the water to sugar ratio.">
+              <div className="co2-container">
+                <span className="co2">
+                  CO<sub>2</sub>
+                </span>{" "}
+                {nf(tile.co2() * 100, 2)}%
+              </div>
+            </Tooltip>
+          </div>
+          <div>Height {tile.height}.</div>
         </div>
       );
     }

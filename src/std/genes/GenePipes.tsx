@@ -9,7 +9,7 @@ export const GenePipes = Gene.make(
     name: "Pipes",
     levelCosts: [1, 1, 1, 1, 1],
     levelProps: {
-      diffusionRate: [0.15, 0.175, 0.2, 0.25, 5],
+      diffusionRate: [5, 5, 5, 5, 5],
     },
     static: {
       energyUpkeep: 1 / 1500,
@@ -18,16 +18,16 @@ export const GenePipes = Gene.make(
       <>
         <b>Hold Shift to configure.</b>
         <p>
-          Continuously equalize <RI w /> <RI s /> between connected cells.
+          Continuously equalize <RI w /> between connected cells.
         </p>
         <p>
-          On average, every 1<RI w />1<RI s /> will get equalized after <GN value={1 / diffusionRate} sigFigs={3} />{" "}
-          seconds.
+          On average, every <RI w /> will get equalized after <GN value={1 / diffusionRate} sigFigs={3} /> seconds.
         </p>
       </>
     ),
   },
   () => ({
+    isEnabled: false,
     connections: {
       n: false,
       e: false,
@@ -44,8 +44,9 @@ export const GenePipes = Gene.make(
         if (neighbor) {
           cell.diffuseWater(neighbor, dt, diffusionRate);
           neighbor.diffuseWater(cell, dt, diffusionRate);
-          cell.diffuseSugar(neighbor, dt, diffusionRate);
-          neighbor.diffuseSugar(cell, dt, diffusionRate);
+
+          // cell.diffuseSugar(neighbor, dt, diffusionRate);
+          // neighbor.diffuseSugar(cell, dt, diffusionRate);
         }
       }
     }

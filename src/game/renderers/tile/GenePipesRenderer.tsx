@@ -7,26 +7,27 @@ import Keyboard from "game/input/keyboard";
 import { WorldDOMElement } from "game/mito/WorldDOMElement";
 import React, { useCallback } from "react";
 import { IoIosClose } from "react-icons/io";
+import { GenePhotosynthesis, GeneSoilAbsorption } from "std/genes";
 import { GenePipes } from "std/genes/GenePipes";
 import { BoxBufferGeometry, Color, DoubleSide, Mesh, MeshBasicMaterial } from "three";
 import "./GenePipesRenderer.scss";
 import { GeneRenderer } from "./GeneRenderer";
-import { BLACK } from "./tileBatcher";
 
 const PIPE_DIR_GEOMETRY = new BoxBufferGeometry(0.4, 0.2);
 const PIPE_CENTER_GEOMETRY = new BoxBufferGeometry(0.2, 0.2);
+const WHITE = new Color(1, 1, 1);
 
 const materialMap = new Map<CellType, MeshBasicMaterial>();
 function getPipeMaterial(cellType: CellType) {
   if (!materialMap.has(cellType)) {
     const color = new Color(cellType.material.color?.getHex() ?? 0xffffff);
-    color.lerp(BLACK, 0.5);
+    color.lerp(WHITE, 0.5);
     materialMap.set(
       cellType,
       new MeshBasicMaterial({
         color,
         side: DoubleSide,
-        opacity: 0.5,
+        opacity: 0.8,
         transparent: true,
       })
     );
@@ -44,7 +45,6 @@ export class GenePipesRenderer extends GeneRenderer<GenePipes> {
     mesh.position.z = 1;
     mesh.updateMatrix();
     mesh.matrixAutoUpdate = false;
-    this.scene.add(mesh);
   });
 
   private argsEditor?: WorldDOMElement;
@@ -58,6 +58,13 @@ export class GenePipesRenderer extends GeneRenderer<GenePipes> {
       } else if (!connections[direction] && this.meshes[direction] != null) {
         this.removeMesh(direction);
       }
+    }
+
+    const isEnabled = this.target.state.isEnabled;
+    if (isEnabled && this.zeroMesh.parent == null) {
+      this.scene.add(this.zeroMesh);
+    } else if (!isEnabled && this.zeroMesh.parent != null) {
+      this.scene.remove(this.zeroMesh);
     }
 
     if (this.tileRenderer.worldRenderer.renderResources) {
@@ -138,24 +145,69 @@ function setPipe(gene: GeneInstance<GenePipes>, dir: Directions, val: boolean | 
   return val;
 }
 
-function setAllPipes(gene: GeneInstance<GenePipes>, off: boolean) {
+function maybeEnablePipeConnection(gene: GeneInstance<GenePipes>, dir: Directions) {
+  const { connections } = gene.state;
+  const neighbor = gene.cell.world.tileNeighbors(gene.cell.pos).get(DIRECTIONS[dir]);
+  if (!Cell.is(neighbor)) {
+    return;
+  }
+  const isNeighborConsumerOrProducer =
+    (neighbor.findGene(GenePhotosynthesis) || neighbor.findGene(GeneSoilAbsorption)) != null;
+  const isNeighborAlsoPipeEnabled = !!neighbor.findGene(GenePipes)?.state.isEnabled;
+  const shouldConnect = isNeighborConsumerOrProducer || isNeighborAlsoPipeEnabled;
+  connections[dir] = shouldConnect;
+
+  // also set neighbor's connecting pipe
+  if (isNeighborAlsoPipeEnabled) {
+    const neighborPipes = neighbor.findGene(GenePipes);
+    if (neighborPipes != null) {
+      neighborPipes.state.connections[oppositeDir(dir)] = true;
+    }
+  }
+}
+
+// function setAllPipes(gene: GeneInstance<GenePipes>, off: boolean) {
+//   if (off) {
+//     if (areAllOn(gene)) {
+//       playSmallRand(clickGeneric);
+//     }
+//     setPipe(gene, "n", false, true);
+//     setPipe(gene, "s", false, true);
+//     setPipe(gene, "e", false, true);
+//     setPipe(gene, "w", false, true);
+//     lastEventStateType = "all-false";
+//   } else {
+//     if (!areAllOn(gene)) {
+//       playSmallRand(clickGeneric);
+//     }
+//     setPipe(gene, "n", true, true);
+//     setPipe(gene, "s", true, true);
+//     setPipe(gene, "e", true, true);
+//     setPipe(gene, "w", true, true);
+//     lastEventStateType = "all-true";
+//   }
+// }
+
+function setIsEnabled(gene: GeneInstance<GenePipes>, off: boolean) {
   if (off) {
-    if (isAnyOn(gene)) {
+    if (gene.state.isEnabled) {
       playSmallRand(clickGeneric);
     }
+    gene.state.isEnabled = false;
     setPipe(gene, "n", false, true);
     setPipe(gene, "s", false, true);
     setPipe(gene, "e", false, true);
     setPipe(gene, "w", false, true);
     lastEventStateType = "all-false";
   } else {
-    if (!isAnyOn(gene)) {
+    if (!gene.state.isEnabled) {
       playSmallRand(clickGeneric);
     }
-    setPipe(gene, "n", true, true);
-    setPipe(gene, "s", true, true);
-    setPipe(gene, "e", true, true);
-    setPipe(gene, "w", true, true);
+    gene.state.isEnabled = true;
+    maybeEnablePipeConnection(gene, "n");
+    maybeEnablePipeConnection(gene, "s");
+    maybeEnablePipeConnection(gene, "e");
+    maybeEnablePipeConnection(gene, "w");
     lastEventStateType = "all-true";
   }
 }
@@ -174,40 +226,41 @@ function handleMouseMove(event: React.MouseEvent, gene: GeneInstance<GenePipes>,
     } else if (lastEventStateType === "set-false") {
       setPipe(gene, dir, false);
     } else if (lastEventStateType === "all-false") {
-      setAllPipes(gene, true);
+      setIsEnabled(gene, true);
     } else if (lastEventStateType === "all-true") {
-      setAllPipes(gene, false);
+      setIsEnabled(gene, false);
     }
   }
 }
 
-function isAnyOn(gene: GeneInstance<GenePipes>) {
+function areAllOn(gene: GeneInstance<GenePipes>) {
   const { connections } = gene.state;
-  return !!(connections.n || connections.s || connections.e || connections.w);
+  return !!(connections.n && connections.s && connections.e && connections.w);
 }
 
 const PipesEditor: React.FC<{ gene: GeneInstance<GenePipes> }> = ({ gene }) => {
-  const setDirN = useCallback(() => handleMouseDown(gene, "n"), [gene]);
-  const setDirS = useCallback(() => handleMouseDown(gene, "s"), [gene]);
-  const setDirE = useCallback(() => handleMouseDown(gene, "e"), [gene]);
-  const setDirW = useCallback(() => handleMouseDown(gene, "w"), [gene]);
+  // const setDirN = useCallback(() => handleMouseDown(gene, "n"), [gene]);
+  // const setDirS = useCallback(() => handleMouseDown(gene, "s"), [gene]);
+  // const setDirE = useCallback(() => handleMouseDown(gene, "e"), [gene]);
+  // const setDirW = useCallback(() => handleMouseDown(gene, "w"), [gene]);
 
-  const mouseMoveDirN = useCallback((event) => handleMouseMove(event, gene, "n"), [gene]);
-  const mouseMoveDirS = useCallback((event) => handleMouseMove(event, gene, "s"), [gene]);
-  const mouseMoveDirE = useCallback((event) => handleMouseMove(event, gene, "e"), [gene]);
-  const mouseMoveDirW = useCallback((event) => handleMouseMove(event, gene, "w"), [gene]);
+  // const mouseMoveDirN = useCallback((event) => handleMouseMove(event, gene, "n"), [gene]);
+  // const mouseMoveDirS = useCallback((event) => handleMouseMove(event, gene, "s"), [gene]);
+  // const mouseMoveDirE = useCallback((event) => handleMouseMove(event, gene, "e"), [gene]);
+  // const mouseMoveDirW = useCallback((event) => handleMouseMove(event, gene, "w"), [gene]);
 
-  let shouldClickTurnOff = isAnyOn(gene);
+  // let shouldClickTurnOff = areAllOn(gene);
+  let shouldClickTurnOff = gene.state.isEnabled;
   const toggleAllDirections = useCallback(() => {
-    setAllPipes(gene, shouldClickTurnOff);
+    setIsEnabled(gene, shouldClickTurnOff);
   }, [gene, shouldClickTurnOff]);
   const mouseMoveAllDirections = useCallback(
     (event) => {
       if (event.buttons > 0) {
         if (lastEventStateType === "all-false") {
-          setAllPipes(gene, true);
+          setIsEnabled(gene, true);
         } else {
-          setAllPipes(gene, false);
+          setIsEnabled(gene, false);
         }
       }
     },
@@ -216,8 +269,8 @@ const PipesEditor: React.FC<{ gene: GeneInstance<GenePipes> }> = ({ gene }) => {
 
   return (
     <div className="pipes-editor">
-      <div className="zone-n" onMouseDown={setDirN} onMouseMove={mouseMoveDirN}></div>
-      <div className="zone-w" onMouseDown={setDirW} onMouseMove={mouseMoveDirW}></div>
+      {/* <div className="zone-n" onMouseDown={setDirN} onMouseMove={mouseMoveDirN}></div>
+      <div className="zone-w" onMouseDown={setDirW} onMouseMove={mouseMoveDirW}></div> */}
       <div
         className={classNames("zone-center", { "turn-on": !shouldClickTurnOff })}
         onMouseDown={toggleAllDirections}
@@ -225,8 +278,8 @@ const PipesEditor: React.FC<{ gene: GeneInstance<GenePipes> }> = ({ gene }) => {
       >
         <IoIosClose />
       </div>
-      <div className="zone-e" onMouseDown={setDirE} onMouseMove={mouseMoveDirE}></div>
-      <div className="zone-s" onMouseDown={setDirS} onMouseMove={mouseMoveDirS}></div>
+      {/* <div className="zone-e" onMouseDown={setDirE} onMouseMove={mouseMoveDirE}></div>
+      <div className="zone-s" onMouseDown={setDirS} onMouseMove={mouseMoveDirS}></div> */}
     </div>
   );
 };

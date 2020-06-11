@@ -2,10 +2,11 @@ import { Toaster } from "@blueprintjs/core";
 import { TIME_PER_DAY } from "core/constants";
 import { Environment } from "core/environment";
 import { Insect } from "core/insect";
+import { Locust } from "core/locust";
 import { EventEmitter } from "events";
 import { randFloat, roundToNearest } from "math";
 import { gridRange } from "math/arrays";
-import { GeneFruit, GenePhotosynthesis, GenePipes, GeneSeed, GeneSoilAbsorption } from "std/genes";
+import { GenePhotosynthesis, GenePipes, GeneSoilAbsorption } from "std/genes";
 import { TileGenerators } from "std/tileGenerators";
 import { Vector2 } from "three";
 import devlog from "../../common/devlog";
@@ -161,6 +162,7 @@ export class World {
     this.fillCachedEntities();
 
     this.computeSoilDepths();
+    this.computeAirHeights();
 
     // always drop player on the Soil Air interface
     const start = new Vector2(Math.floor(this.width / 2), Math.floor(this.height / 2));
@@ -317,14 +319,13 @@ export class World {
     if (pipes == null) {
       return;
     }
+    if (!pipes.state.isEnabled) {
+      return;
+    }
     const dir = to.pos.clone().sub(from.pos);
     const name = dirName(dir)!;
 
-    const isProducerConsumer =
-      (to.findGene(GenePhotosynthesis) ||
-        to.findGene(GeneSoilAbsorption) ||
-        to.findGene(GeneFruit) ||
-        to.findGene(GeneSeed)) != null;
+    const isProducerConsumer = (to.findGene(GenePhotosynthesis) || to.findGene(GeneSoilAbsorption)) != null;
     pipes.state.connections[name] = isProducerConsumer;
   }
 
@@ -487,16 +488,21 @@ export class World {
   }
 
   stepInsects(dt: number) {
+    // create butterfly
+    // const hasExistingButterflies = this.insects.filter((i) => i instanceof Butterfly).length;
+
+    // create locusts if needed
+    const hasExistingLocust = this.insects.find((i) => i instanceof Locust);
     if (
       this.playerSeed == null &&
-      this.insects.length < 1 &&
+      !hasExistingLocust &&
       Math.random() < (this.environment.insectsPerDay / TIME_PER_DAY) * dt
     ) {
-      InsectToaster.clear();
-      InsectToaster.show({
-        message: "Insect approaching!",
+      LocustToaster.clear();
+      LocustToaster.show({
+        message: "Locust approaching!",
       });
-      this.insects.push(new Insect(new Vector2(randFloat(0, this.width), 0), this));
+      this.insects.push(new Locust(new Vector2(randFloat(0, this.width), 0), this));
     }
   }
 
@@ -532,6 +538,26 @@ export class World {
           }
         }
         tile.depth = minNeighborDepth + 1;
+      }
+    }
+  }
+
+  public computeAirHeights() {
+    const soilPositions = Array.from(this.allEnvironmentTiles())
+      .filter((t) => t instanceof Soil)
+      .map((t) => t.pos);
+
+    for (const tile of this.bfsIterator(soilPositions, this.width * this.height)) {
+      if (tile instanceof Air) {
+        let minNeighborHeight = tile.height;
+        for (const [, neighbor] of this.tileNeighbors(tile.pos)) {
+          if (neighbor instanceof Soil) {
+            minNeighborHeight = 0;
+          } else if (Air.is(neighbor)) {
+            minNeighborHeight = Math.min(minNeighborHeight, neighbor.height);
+          }
+        }
+        tile.height = minNeighborHeight + 1;
       }
     }
   }
@@ -665,7 +691,7 @@ const DIRECTION_VALUES_RAND = [
   shuffle(DIRECTION_VALUES.slice()),
 ];
 
-const InsectToaster = Toaster.create({
+const LocustToaster = Toaster.create({
   canEscapeKeyClear: false,
   maxToasts: 1,
   position: "bottom",

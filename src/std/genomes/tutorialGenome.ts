@@ -10,13 +10,12 @@ import {
   GeneScaffolding,
   GeneSeed,
   GeneSoilAbsorption,
-  GeneVascular,
 } from "../genes";
 
 const cellTypeTissue = new CellType(
   "Tissue",
   0,
-  new Chromosome(GeneLiving.level(0), GenePipes.level(4)),
+  new Chromosome(GeneLiving.level(0), GenePipes.level(0)),
   {
     texturePosition: new Vector2(1, 1),
     color: new Color(0x30ae25),
@@ -46,13 +45,7 @@ const cellTypeLeaf = new CellType(
 const cellTypeRoot = new CellType(
   "Root",
   0,
-  new Chromosome(
-    GeneLiving.level(0),
-    GeneScaffolding.level(0),
-    GeneInventory.level(0),
-    GeneSoilAbsorption.level(0),
-    GeneVascular.level(4)
-  ),
+  new Chromosome(GeneLiving.level(0), GeneScaffolding.level(0), GeneInventory.level(0), GeneSoilAbsorption.level(0)),
   {
     color: new Color("white"),
     texturePosition: new Vector2(3, 1),

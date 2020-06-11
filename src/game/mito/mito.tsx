@@ -183,7 +183,7 @@ export class Mito extends ISketch {
       const scalar = Math.pow(2, delta);
       let newZoom = currZoom * scalar;
       if (!params.debugLevel) {
-        newZoom = clamp(newZoom, 1, 3);
+        newZoom = clamp(newZoom, 0.5, 3);
       }
       this.userZoom = newZoom;
     },

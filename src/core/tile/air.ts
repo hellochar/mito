@@ -14,6 +14,11 @@ export class Air extends Tile implements Interactable {
 
   static diffusionWater = 1.5;
 
+  /**
+   * How far away is this Air from the nearest Soil?
+   */
+  public height = 1000;
+
   public sunlightCached: number = 1;
 
   public _co2: number;
@@ -118,7 +123,11 @@ export class Air extends Tile implements Interactable {
   }
 
   public sunlight() {
-    return this.sunlightCached;
+    return this.sunlightCached * this.sunlightHeightScalar;
+  }
+
+  private get sunlightHeightScalar() {
+    return clamp(map(this.height, 1, 15, 0.2, 1) ** 2, 0, 1);
   }
 
   private _isAir = true;

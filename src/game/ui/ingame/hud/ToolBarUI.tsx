@@ -3,6 +3,7 @@ import Keyboard from "game/input/keyboard";
 import { spritesheetLoaded } from "game/spritesheet";
 import IconCell, { ActionBarItem } from "game/ui/common/IconCell";
 import * as React from "react";
+import { GenePipes } from "std/genes";
 import { Vector2 } from "three";
 import { Tool, ToolBar, ToolBuild } from "../../../input/toolBar";
 import { HotkeyButton } from "../HotkeyButton";
@@ -42,11 +43,19 @@ const ToolBarItem: React.FC<{ bar: ToolBar; code: string; selected: boolean; too
       <ToolBuildIcon onClick={onClick} tool={tool} spritesheetLoaded={spritesheetLoaded} />
     );
 
+  const shiftButtonEl =
+    tool.type === "build" ? (
+      tool.cellType.chromosome.has(GenePipes) ? (
+        <HotkeyButton className="mito-hud-build-item" hotkey="Shift" />
+      ) : null
+    ) : null;
+
   const hotkey = code.charAt(code.length - 1);
   return (
     <div className={classNames("tool-bar-item", { selected })}>
       {itemIcon}
       <HotkeyButton className="mito-hud-build-item" hotkey={hotkey} onClick={onClick} />
+      {shiftButtonEl}
     </div>
   );
 };

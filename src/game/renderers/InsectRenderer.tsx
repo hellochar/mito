@@ -1,5 +1,8 @@
+import { MaterialInfo } from "core/cell";
 import { Insect } from "core/insect";
-import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene } from "three";
+import { Locust } from "core/locust";
+import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
+import { Constructor } from "typings/constructor";
 import { lerp2 } from "../../math";
 import { Mito } from "../mito/mito";
 import { textureFromSpritesheet } from "../spritesheet";
@@ -16,7 +19,7 @@ export class InsectRenderer extends Renderer<Insect> {
 
   constructor(target: Insect, scene: Scene, mito: Mito) {
     super(target, scene, mito);
-    this.mesh = newMesh();
+    this.mesh = newMesh(target);
     this.mesh.name = "Insect Mesh";
     lerp2(this.mesh.position, this.target.pos, 1);
     this.mesh.position.z = 1;
@@ -45,15 +48,24 @@ export class InsectRenderer extends Renderer<Insect> {
   }
 }
 
-function newMesh() {
+function newMesh(insect: Insect) {
+  const materialInfo = materialInfoMapping.get(insect.constructor as Constructor<Insect>)!;
   const m = new Mesh(
     new PlaneBufferGeometry(1, 1),
     new MeshBasicMaterial({
       transparent: true,
-      map: textureFromSpritesheet(0, 7, "transparent"),
+      map: textureFromSpritesheet(materialInfo.texturePosition.x, materialInfo.texturePosition.y, "transparent"),
       color: new Color("white"),
       side: DoubleSide,
     })
   );
   return m;
 }
+
+const materialInfoMapping = (() => {
+  const materials = new Map<Constructor<Insect>, MaterialInfo>();
+  materials.set(Locust, {
+    texturePosition: new Vector2(0, 7),
+  });
+  return materials;
+})();

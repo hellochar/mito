@@ -1,6 +1,5 @@
 import { EventEmitter } from "events";
 import { params } from "game/params";
-import { maxBy, minBy } from "lodash";
 import { Vector2 } from "three";
 import { Cell, GrowingCell } from "./cell";
 import { PLAYER_INTERACT_EXCHANGE_SPEED } from "./constants";
@@ -20,7 +19,8 @@ import {
 } from "./player/action";
 import { Air, Tile } from "./tile";
 import { World } from "./world/world";
-export class Insect implements Steppable {
+
+export abstract class Insect implements Steppable {
   private events = new EventEmitter();
 
   public inventory = new Inventory(10, this);
@@ -112,7 +112,10 @@ export class Insect implements Steppable {
     //   }
     // }
     if (this.action == null) {
-      this.findNextAction();
+      const nextAction = this.findNextAction();
+      if (nextAction) {
+        this.setAction(nextAction);
+      }
     }
     if (this.action != null) {
       this.attemptAction(this.action, dt);
@@ -122,56 +125,7 @@ export class Insect implements Steppable {
     }
   }
 
-  public findNextAction() {
-    // if we don't have food, find a Cell and eat it
-    // const thisDist = this.currentTile().closestCellDistance;
-    const neighbors = this.world
-      .tileNeighbors(this.pos)
-      .array.filter((t) => t.pos.manhattanDistanceTo(this.pos) < 2 && (Air.is(t) || Cell.is(t)));
-    if (this.inventory.sugar < 1) {
-      const target = minBy(neighbors, (tile) => tile.closestCellAirDistance);
-      if (Air.is(target)) {
-        this.setAction({
-          type: "move",
-          dir: target.pos
-            .clone()
-            .sub(this.posFloat)
-            .normalize(),
-        });
-      } else if (Cell.is(target)) {
-        this.setAction({
-          type: "deconstruct",
-          position: target.pos,
-          force: true,
-        });
-        // this.setAction({
-        //   type: "long",
-        //   duration: 3,
-        //   effect: {
-        //     type: "deconstruct",
-        //     position: target.pos,
-        //     force: true,
-        //   },
-        //   elapsed: 0,
-        // });
-      }
-    } else {
-      // insect is full; run away
-      const target = maxBy(neighbors, (tile) => tile.closestCellAirDistance);
-      if (this.world.isAtEdge(this.pos)) {
-        this.world.removeInsect(this);
-      }
-      if (target != null) {
-        this.setAction({
-          type: "move",
-          dir: target.pos
-            .clone()
-            .sub(this.posFloat)
-            .normalize(),
-        });
-      }
-    }
-  }
+  public abstract findNextAction(): Action | undefined;
 
   public attemptAction(action: Action, dt: number) {
     const result = this._attemptAction(action, dt);
