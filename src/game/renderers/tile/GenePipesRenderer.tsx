@@ -1,14 +1,13 @@
 import classNames from "classnames";
 import configure from "common/configure";
-import { Cell, CellType, GeneInstance } from "core/cell";
-import { Directions, DIRECTIONS, oppositeDir } from "core/directions";
+import { CellType, GeneInstance } from "core/cell";
+import { Directions, DIRECTIONS } from "core/directions";
 import { clickGeneric, playSmallRand } from "game/audio";
 import Keyboard from "game/input/keyboard";
 import { WorldDOMElement } from "game/mito/WorldDOMElement";
 import React, { useCallback } from "react";
 import { IoIosClose } from "react-icons/io";
-import { GenePhotosynthesis, GeneSoilAbsorption } from "std/genes";
-import { GenePipes } from "std/genes/GenePipes";
+import { GenePipes, updatePipeConnections } from "std/genes/GenePipes";
 import { BoxBufferGeometry, Color, DoubleSide, Mesh, MeshBasicMaterial } from "three";
 import "./GenePipesRenderer.scss";
 import { GeneRenderer } from "./GeneRenderer";
@@ -124,36 +123,12 @@ export class GenePipesRenderer extends GeneRenderer<GenePipes> {
   }
 }
 
-function updatePipeConnection(gene: GeneInstance<GenePipes>, dir: Directions) {
-  const { isEnabled, connections } = gene.state;
-  const neighbor = gene.cell.world.tileNeighbors(gene.cell.pos).get(DIRECTIONS[dir]);
-  if (!Cell.is(neighbor)) {
-    return;
-  }
-  const isNeighborConsumerOrProducer =
-    (neighbor.findGene(GenePhotosynthesis) || neighbor.findGene(GeneSoilAbsorption)) != null;
-  const isNeighborAlsoPipeEnabled = !!neighbor.findGene(GenePipes)?.state.isEnabled;
-  const shouldConnect = (isNeighborConsumerOrProducer || isNeighborAlsoPipeEnabled) && isEnabled;
-  connections[dir] = shouldConnect;
-
-  // also set neighbor's connecting pipe
-  if (isNeighborAlsoPipeEnabled) {
-    const neighborPipes = neighbor.findGene(GenePipes);
-    if (neighborPipes != null) {
-      neighborPipes.state.connections[oppositeDir(dir)] = isEnabled;
-    }
-  }
-}
-
 function setIsEnabled(gene: GeneInstance<GenePipes>, newIsEnabled: boolean) {
   if (gene.state.isEnabled !== newIsEnabled) {
     playSmallRand(clickGeneric);
   }
   gene.state.isEnabled = newIsEnabled;
-  updatePipeConnection(gene, "n");
-  updatePipeConnection(gene, "s");
-  updatePipeConnection(gene, "e");
-  updatePipeConnection(gene, "w");
+  updatePipeConnections(gene);
   lastEventStateType = newIsEnabled;
 }
 

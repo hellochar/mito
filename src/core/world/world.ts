@@ -6,13 +6,13 @@ import { Locust } from "core/locust";
 import { EventEmitter } from "events";
 import { randFloat, roundToNearest } from "math";
 import { gridRange } from "math/arrays";
-import { GenePhotosynthesis, GenePipes, GeneSoilAbsorption } from "std/genes";
+import { GenePipes, updatePipeConnections } from "std/genes";
 import { TileGenerators } from "std/tileGenerators";
 import { Vector2 } from "three";
 import devlog from "../../common/devlog";
 import shuffle from "../../math/shuffle";
 import Genome from "../cell/genome";
-import { DIRECTION_VALUES, dirName } from "../directions";
+import { DIRECTION_VALUES } from "../directions";
 import { Entity, isSteppable, step } from "../entity";
 import { Player } from "../player/player";
 import { PlayerSeed } from "../player/playerSeed";
@@ -296,37 +296,26 @@ export class World {
 
     this.handleTileUpdated(position);
 
-    if (Cell.is(tile)) {
-      this.autoConnectPipes(tile);
-    }
+    this.maybeAutoConnectPipes(tile);
   }
 
-  private autoConnectPipes(cell: Cell) {
-    // auto-update Pipes:
-    // neighbors who are resource producers/consumers, or who have pipes,
-    // should get auto-connected
-    for (const [dir, neighbor] of this.tileNeighbors(cell.pos)) {
+  private maybeAutoConnectPipes(tile: Tile) {
+    this.updateConnection(tile);
+    for (const [dir, neighbor] of this.tileNeighbors(tile.pos)) {
       const isDirectlyAdjacent = dir.manhattanLength() < 2;
-      if (isDirectlyAdjacent && Cell.is(neighbor)) {
-        this.updateConnection(cell, neighbor);
-        this.updateConnection(neighbor, cell);
+      if (isDirectlyAdjacent) {
+        this.updateConnection(neighbor);
       }
     }
   }
 
-  private updateConnection(from: Cell, to: Cell) {
-    const pipes = from.findGene(GenePipes);
-    if (pipes == null) {
-      return;
+  private updateConnection(tile: Tile) {
+    if (Cell.is(tile)) {
+      const pipes = tile.findGene(GenePipes);
+      if (pipes) {
+        updatePipeConnections(pipes);
+      }
     }
-    if (!pipes.state.isEnabled) {
-      return;
-    }
-    const dir = to.pos.clone().sub(from.pos);
-    const name = dirName(dir)!;
-
-    const isProducerConsumer = (to.findGene(GenePhotosynthesis) || to.findGene(GeneSoilAbsorption)) != null;
-    pipes.state.connections[name] = isProducerConsumer;
   }
 
   public maybeRemoveCellAt(position: Vector2): Cell | null {
