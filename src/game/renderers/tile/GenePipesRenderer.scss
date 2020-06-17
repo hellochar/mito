@@ -59,7 +59,7 @@
     border: 1px solid transparentize($color: lightblue, $amount: 0.5);
     background: transparentize(lightblue, 0.9);
     transform: scale(1);
-    transition: all 0.05s;
+    // transition: all 0.05s;
 
     &:hover {
       transform: scale(1.1);
