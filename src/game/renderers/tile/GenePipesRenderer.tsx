@@ -124,29 +124,8 @@ export class GenePipesRenderer extends GeneRenderer<GenePipes> {
   }
 }
 
-function setPipe(gene: GeneInstance<GenePipes>, dir: Directions, val: boolean | "flip", silent = false) {
-  const { connections } = gene.state;
-  if (val === "flip") {
-    val = !connections[dir];
-  }
-  if (connections[dir] !== val && !silent) {
-    playSmallRand(clickGeneric);
-  }
-  connections[dir] = val;
-  // also set neighbor's connecting pipe
-  const neighbor = gene.cell.world.tileNeighbors(gene.cell.pos).get(DIRECTIONS[dir]);
-  if (Cell.is(neighbor)) {
-    const neighborPipes = neighbor.findGene(GenePipes);
-    if (neighborPipes != null) {
-      neighborPipes.state.connections[oppositeDir(dir)] = val;
-    }
-  }
-
-  return val;
-}
-
-function maybeEnablePipeConnection(gene: GeneInstance<GenePipes>, dir: Directions) {
-  const { connections } = gene.state;
+function updatePipeConnection(gene: GeneInstance<GenePipes>, dir: Directions) {
+  const { isEnabled, connections } = gene.state;
   const neighbor = gene.cell.world.tileNeighbors(gene.cell.pos).get(DIRECTIONS[dir]);
   if (!Cell.is(neighbor)) {
     return;
@@ -154,132 +133,60 @@ function maybeEnablePipeConnection(gene: GeneInstance<GenePipes>, dir: Direction
   const isNeighborConsumerOrProducer =
     (neighbor.findGene(GenePhotosynthesis) || neighbor.findGene(GeneSoilAbsorption)) != null;
   const isNeighborAlsoPipeEnabled = !!neighbor.findGene(GenePipes)?.state.isEnabled;
-  const shouldConnect = isNeighborConsumerOrProducer || isNeighborAlsoPipeEnabled;
+  const shouldConnect = (isNeighborConsumerOrProducer || isNeighborAlsoPipeEnabled) && isEnabled;
   connections[dir] = shouldConnect;
 
   // also set neighbor's connecting pipe
   if (isNeighborAlsoPipeEnabled) {
     const neighborPipes = neighbor.findGene(GenePipes);
     if (neighborPipes != null) {
-      neighborPipes.state.connections[oppositeDir(dir)] = true;
+      neighborPipes.state.connections[oppositeDir(dir)] = isEnabled;
     }
   }
 }
 
-// function setAllPipes(gene: GeneInstance<GenePipes>, off: boolean) {
-//   if (off) {
-//     if (areAllOn(gene)) {
-//       playSmallRand(clickGeneric);
-//     }
-//     setPipe(gene, "n", false, true);
-//     setPipe(gene, "s", false, true);
-//     setPipe(gene, "e", false, true);
-//     setPipe(gene, "w", false, true);
-//     lastEventStateType = "all-false";
-//   } else {
-//     if (!areAllOn(gene)) {
-//       playSmallRand(clickGeneric);
-//     }
-//     setPipe(gene, "n", true, true);
-//     setPipe(gene, "s", true, true);
-//     setPipe(gene, "e", true, true);
-//     setPipe(gene, "w", true, true);
-//     lastEventStateType = "all-true";
-//   }
-// }
-
-function setIsEnabled(gene: GeneInstance<GenePipes>, off: boolean) {
-  if (off) {
-    if (gene.state.isEnabled) {
-      playSmallRand(clickGeneric);
-    }
-    gene.state.isEnabled = false;
-    setPipe(gene, "n", false, true);
-    setPipe(gene, "s", false, true);
-    setPipe(gene, "e", false, true);
-    setPipe(gene, "w", false, true);
-    lastEventStateType = "all-false";
-  } else {
-    if (!gene.state.isEnabled) {
-      playSmallRand(clickGeneric);
-    }
-    gene.state.isEnabled = true;
-    maybeEnablePipeConnection(gene, "n");
-    maybeEnablePipeConnection(gene, "s");
-    maybeEnablePipeConnection(gene, "e");
-    maybeEnablePipeConnection(gene, "w");
-    lastEventStateType = "all-true";
+function setIsEnabled(gene: GeneInstance<GenePipes>, newIsEnabled: boolean) {
+  if (gene.state.isEnabled !== newIsEnabled) {
+    playSmallRand(clickGeneric);
   }
+  gene.state.isEnabled = newIsEnabled;
+  updatePipeConnection(gene, "n");
+  updatePipeConnection(gene, "s");
+  updatePipeConnection(gene, "e");
+  updatePipeConnection(gene, "w");
+  lastEventStateType = newIsEnabled;
 }
 
-let lastEventStateType: "set-true" | "set-false" | "all-true" | "all-false" | undefined;
-
-function handleMouseDown(gene: GeneInstance<GenePipes>, dir: Directions) {
-  const val = setPipe(gene, dir, "flip");
-  lastEventStateType = val ? "set-true" : "set-false";
-}
-
-function handleMouseMove(event: React.MouseEvent, gene: GeneInstance<GenePipes>, dir: Directions) {
-  if (event.buttons > 0) {
-    if (lastEventStateType === "set-true") {
-      setPipe(gene, dir, true);
-    } else if (lastEventStateType === "set-false") {
-      setPipe(gene, dir, false);
-    } else if (lastEventStateType === "all-false") {
-      setIsEnabled(gene, true);
-    } else if (lastEventStateType === "all-true") {
-      setIsEnabled(gene, false);
-    }
-  }
-}
-
-function areAllOn(gene: GeneInstance<GenePipes>) {
-  const { connections } = gene.state;
-  return !!(connections.n && connections.s && connections.e && connections.w);
-}
+let lastEventStateType: true | false | undefined;
 
 const PipesEditor: React.FC<{ gene: GeneInstance<GenePipes> }> = ({ gene }) => {
-  // const setDirN = useCallback(() => handleMouseDown(gene, "n"), [gene]);
-  // const setDirS = useCallback(() => handleMouseDown(gene, "s"), [gene]);
-  // const setDirE = useCallback(() => handleMouseDown(gene, "e"), [gene]);
-  // const setDirW = useCallback(() => handleMouseDown(gene, "w"), [gene]);
-
-  // const mouseMoveDirN = useCallback((event) => handleMouseMove(event, gene, "n"), [gene]);
-  // const mouseMoveDirS = useCallback((event) => handleMouseMove(event, gene, "s"), [gene]);
-  // const mouseMoveDirE = useCallback((event) => handleMouseMove(event, gene, "e"), [gene]);
-  // const mouseMoveDirW = useCallback((event) => handleMouseMove(event, gene, "w"), [gene]);
-
-  // let shouldClickTurnOff = areAllOn(gene);
-  let shouldClickTurnOff = gene.state.isEnabled;
+  let newIsEnabled = !gene.state.isEnabled;
   const toggleAllDirections = useCallback(() => {
-    setIsEnabled(gene, shouldClickTurnOff);
-  }, [gene, shouldClickTurnOff]);
+    setIsEnabled(gene, newIsEnabled);
+  }, [gene, newIsEnabled]);
   const mouseMoveAllDirections = useCallback(
     (event) => {
-      if (event.buttons > 0) {
-        if (lastEventStateType === "all-false") {
-          setIsEnabled(gene, true);
-        } else {
-          setIsEnabled(gene, false);
-        }
+      if (event.buttons > 0 && lastEventStateType !== undefined) {
+        setIsEnabled(gene, lastEventStateType);
       }
     },
     [gene]
   );
 
+  // useEffect(() => {
+  //   if (lastEventStateType !== undefined) {
+  //     setIsEnabled(gene, lastEventStateType);
+  //   }
+  // }, [gene]);
+
   return (
-    <div className="pipes-editor">
-      {/* <div className="zone-n" onMouseDown={setDirN} onMouseMove={mouseMoveDirN}></div>
-      <div className="zone-w" onMouseDown={setDirW} onMouseMove={mouseMoveDirW}></div> */}
-      <div
-        className={classNames("zone-center", { "turn-on": !shouldClickTurnOff })}
-        onMouseDown={toggleAllDirections}
-        onMouseMove={mouseMoveAllDirections}
-      >
-        <IoIosClose />
-      </div>
-      {/* <div className="zone-e" onMouseDown={setDirE} onMouseMove={mouseMoveDirE}></div>
-      <div className="zone-s" onMouseDown={setDirS} onMouseMove={mouseMoveDirS}></div> */}
+    <div
+      className={classNames("pipes-editor", { "turn-on": !newIsEnabled })}
+      onMouseDown={toggleAllDirections}
+      // onMouseMove={mouseMoveAllDirections}
+      onMouseEnter={mouseMoveAllDirections}
+    >
+      <IoIosClose />
     </div>
   );
 };
