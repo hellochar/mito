@@ -69,6 +69,8 @@ export class Mito extends ISketch {
 
   private _inspectedCell?: Cell;
 
+  public showInteractToolSwitcher = false;
+
   public get inspectedCell() {
     return this._inspectedCell;
   }

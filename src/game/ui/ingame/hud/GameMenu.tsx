@@ -1,10 +1,11 @@
 import { Overlay, Tab, Tabs } from "@blueprintjs/core";
+import { useHotkey } from "common/useHotkey";
 import { getDecidedGameResult } from "game/gameResult";
 import React from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { GoGear } from "react-icons/go";
 import "./GameMenu.scss";
-import { HUDProps, useHotkey } from "./HUD";
+import { HUDProps } from "./HUD";
 
 export const GameMenu: React.FC<HUDProps> = ({ mito }) => {
   const [isOpen, setIsOpen] = React.useState(false);

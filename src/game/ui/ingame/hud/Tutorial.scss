@@ -49,14 +49,10 @@
       z-index: 1;
     }
 
-    .mito-hud-button {
+    .hotkey-button {
       display: inline;
       margin: 0 4px;
       text-shadow: none;
-
-      .mito-hud-button-hotkey {
-        color: $black;
-      }
     }
 
     .next {

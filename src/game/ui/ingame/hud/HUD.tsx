@@ -16,6 +16,7 @@ import { TileDetails } from "../TileDetails";
 import { CellInspector } from "./CellInspector";
 import { GameMenu } from "./GameMenu";
 import "./HUD.scss";
+import { InteractToolSwitcher } from "./InteractToolSwitcher";
 import { InvalidActionMessage } from "./InvalidActionMessage";
 import { PausedTileDetailsPopover } from "./PausedTileDetailsPopover";
 import SeasonsTracker from "./SeasonsTracker";
@@ -92,6 +93,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         {this.maybeRenderPausedUI()}
         {this.maybeRenderInvalidAction()}
         {this.maybeRenderTutorial()}
+        {this.maybeRenderInteractToolSwitcher()}
         <div className={classNames("hud-bottom-right", { hidden: !showPlayerHUD })}>
           {this.mito.isPaused ? (
             this.mito.pausedInspectedTile ? null : (
@@ -115,6 +117,12 @@ export class HUD extends React.Component<HUDProps, HUDState> {
         {this.maybeRenderCellInspector()}
       </>
     );
+  }
+
+  maybeRenderInteractToolSwitcher() {
+    if (this.mito.showInteractToolSwitcher) {
+      return <InteractToolSwitcher mito={this.mito} />;
+    }
   }
 
   private positionFn = () => {
@@ -263,18 +271,4 @@ export class HUD extends React.Component<HUDProps, HUDState> {
 
   // no-op
   private handleDragEnd = () => {};
-}
-
-export function useHotkey(key: string, action: (event: KeyboardEvent) => void) {
-  React.useEffect(() => {
-    const cb = (event: KeyboardEvent) => {
-      if (key === event.code) {
-        action(event);
-      }
-    };
-    window.addEventListener("keyup", cb);
-    return () => {
-      window.removeEventListener("keyup", cb);
-    };
-  }, [action, key]);
 }

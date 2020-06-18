@@ -36,45 +36,6 @@
   }
 }
 
-.mito-hud-button {
-  border-radius: 2px;
-  cursor: pointer;
-  pointer-events: initial;
-
-  &:hover {
-    .mito-hud-button-hotkey {
-      top: -2px;
-      left: -2px;
-      box-shadow: 4px 4px 1px 0 $dark-gray1;
-    }
-  }
-
-  &:active {
-    .mito-hud-button-hotkey {
-      top: 0;
-      left: 0;
-      box-shadow: none;
-    }
-  }
-
-  .mito-hud-button-hotkey {
-    background: white;
-    font-family: "Courier New", Courier, monospace;
-    font-weight: bold;
-    // text-decoration: underline;
-    font-size: 16px;
-    border: 1px solid $dark-gray1;
-    padding: 5px 10px;
-    box-shadow: 2px 2px 1px 0 $dark-gray1;
-    border-radius: 5px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    transition: left 0.2s, top 0.2s, box-shadow 0.2s;
-  }
-}
-
 .ui-popup {
   position: absolute;
   animation: popIn 0.2s both;
@@ -148,7 +109,7 @@
     padding: 5px;
   }
 
-  .mito-hud-button {
+  .hotkey-button {
     display: inline-block;
   }
 }

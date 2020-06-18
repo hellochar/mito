@@ -1,0 +1,21 @@
+@import "../../../../variables";
+
+.interact-tool-switcher {
+  position: absolute;
+  top: 20%;
+  left: calc(50% - 30px);
+  color: white;
+  display: flex;
+  flex-direction: row;
+  transition: transform 0.2s;
+
+  .item {
+    text-align: center;
+    margin: 0 15px;
+    transform: scale(1.25);
+  }
+
+  &.take-all {
+    transform: translateX(-(60px * 1.25 + 15px));
+  }
+}
