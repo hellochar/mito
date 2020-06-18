@@ -9,8 +9,8 @@ const GenomeViewer: React.FC<{ genome: Genome }> = ({ genome }) => {
   const { editable } = React.useContext(ViewerContext);
   return (
     <div className="genome-viewer">
-      {genome.cellTypes.map((c) => (
-        <CellTypeViewer key={c.name} cellType={c} editable={editable} genome={genome} />
+      {genome.cellTypes.map((c, index) => (
+        <CellTypeViewer key={index} cellType={c} editable={editable} genome={genome} />
       ))}
       {editable ? <AddCellCard genome={genome} /> : null}
     </div>
