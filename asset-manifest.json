@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "./static/css/main.64e9b292.chunk.css",
-    "main.js": "./static/js/main.e4e419ce.chunk.js",
-    "main.js.map": "./static/js/main.e4e419ce.chunk.js.map",
+    "main.css": "./static/css/main.87662a84.chunk.css",
+    "main.js": "./static/js/main.cbdc241e.chunk.js",
+    "main.js.map": "./static/js/main.cbdc241e.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.ad0d04df.js",
     "runtime-main.js.map": "./static/js/runtime-main.ad0d04df.js.map",
     "static/css/2.7300295f.chunk.css": "./static/css/2.7300295f.chunk.css",
-    "static/js/2.72886862.chunk.js": "./static/js/2.72886862.chunk.js",
-    "static/js/2.72886862.chunk.js.map": "./static/js/2.72886862.chunk.js.map",
+    "static/js/2.3f4bfe89.chunk.js": "./static/js/2.3f4bfe89.chunk.js",
+    "static/js/2.3f4bfe89.chunk.js.map": "./static/js/2.3f4bfe89.chunk.js.map",
     "index.html": "./index.html",
-    "precache-manifest.6a055d0d7c14e7116dd7685a0e373268.js": "./precache-manifest.6a055d0d7c14e7116dd7685a0e373268.js",
+    "precache-manifest.67ce1502d5c0a915e2da6739df4df050.js": "./precache-manifest.67ce1502d5c0a915e2da6739df4df050.js",
     "service-worker.js": "./service-worker.js",
     "static/css/2.7300295f.chunk.css.map": "./static/css/2.7300295f.chunk.css.map",
-    "static/css/main.64e9b292.chunk.css.map": "./static/css/main.64e9b292.chunk.css.map",
-    "static/js/2.72886862.chunk.js.LICENSE.txt": "./static/js/2.72886862.chunk.js.LICENSE.txt",
+    "static/css/main.87662a84.chunk.css.map": "./static/css/main.87662a84.chunk.css.map",
+    "static/js/2.3f4bfe89.chunk.js.LICENSE.txt": "./static/js/2.3f4bfe89.chunk.js.LICENSE.txt",
     "static/media/Blop-Mark_DiAngelo-79054334.mp3": "./static/media/Blop-Mark_DiAngelo-79054334.627c0e8b.mp3",
     "static/media/build.mp3": "./static/media/build.0e2001c4.mp3",
     "static/media/build_complete.mp3": "./static/media/build_complete.9af6ac71.mp3",
@@ -39,14 +39,13 @@
     "static/media/switch23.wav": "./static/media/switch23.23bfba73.wav",
     "static/media/switch25.wav": "./static/media/switch25.f76e435c.wav",
     "static/media/switch26.wav": "./static/media/switch26.69545541.wav",
-    "static/media/ToolBarUI.scss": "./static/media/tether-icon.3a2b8da1.png",
     "static/media/whoosh.mp3": "./static/media/whoosh.fde62e78.mp3"
   },
   "entrypoints": [
     "static/js/runtime-main.ad0d04df.js",
     "static/css/2.7300295f.chunk.css",
-    "static/js/2.72886862.chunk.js",
-    "static/css/main.64e9b292.chunk.css",
-    "static/js/main.e4e419ce.chunk.js"
+    "static/js/2.3f4bfe89.chunk.js",
+    "static/css/main.87662a84.chunk.css",
+    "static/js/main.cbdc241e.chunk.js"
   ]
 }
