@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import * as React from "react";
+import "./HotkeyButton.scss";
 
 interface HotkeyButtonProps extends React.HTMLProps<HTMLDivElement> {
   hotkey: string;
@@ -11,8 +12,8 @@ export function HotkeyButton({ hotkey, className, onClick, ...restProps }: Hotke
     ensureCanvasFocus(e);
   };
   return (
-    <div className={classNames("mito-hud-button", className)} onClick={handleClick} {...restProps}>
-      <span className="mito-hud-button-hotkey">{hotkey}</span>
+    <div className={classNames("hotkey-button", className)} onClick={handleClick} {...restProps}>
+      <span className="hotkey">{hotkey}</span>
     </div>
   );
 }

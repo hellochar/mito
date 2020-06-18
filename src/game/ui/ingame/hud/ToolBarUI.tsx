@@ -34,31 +34,31 @@ const ToolBarItem: React.FC<{ bar: ToolBar; code: string; selected: boolean; too
     bar.setKey(code);
   }, [bar, code]);
 
+  const hotkey = code.charAt(code.length - 1);
   const itemIcon =
     tool.type === "interact" ? (
-      <ActionBarItem onClick={onClick} className="interact-tool-icon">
-        {tool.name}
-      </ActionBarItem>
+      <InteractToolItem onClick={onClick} isTakeAll={tool.isTakeAll} />
     ) : (
       <ToolBuildIcon onClick={onClick} tool={tool} spritesheetLoaded={spritesheetLoaded} />
     );
 
   const shiftButtonEl =
-    tool.type === "build" ? (
-      tool.cellType.chromosome.has(GenePipes) ? (
-        <HotkeyButton className="mito-hud-build-item" hotkey="Shift" />
-      ) : null
-    ) : null;
+    tool.type === "build" ? tool.cellType.chromosome.has(GenePipes) ? <HotkeyButton hotkey="Shift" /> : null : null;
 
-  const hotkey = code.charAt(code.length - 1);
   return (
     <div className={classNames("tool-bar-item", { selected })}>
       {itemIcon}
-      <HotkeyButton className="mito-hud-build-item" hotkey={hotkey} onClick={onClick} />
+      <HotkeyButton hotkey={hotkey} onClick={onClick} />
       {shiftButtonEl}
     </div>
   );
 };
+
+export const InteractToolItem: React.FC<{ onClick?: () => void; isTakeAll: boolean }> = ({ onClick, isTakeAll }) => (
+  <ActionBarItem onClick={onClick} className={classNames("interact-tool-icon", { "take-all": isTakeAll })}>
+    {isTakeAll ? "Take All" : "Interact"}
+  </ActionBarItem>
+);
 
 export interface CellBarItemProps {
   onClick: () => void;

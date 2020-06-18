@@ -39,8 +39,8 @@ export abstract class Soil extends Tile implements Interactable {
   interact(): Action | undefined {
     return {
       type: "pickup",
-      water: 0.1,
-      sugar: 0.1,
+      water: 1,
+      sugar: 1,
       target: this,
       continuous: true,
     };

@@ -40,8 +40,8 @@ export class Air extends Tile implements Interactable {
   interact(): Action {
     return {
       type: "pickup",
-      water: 0.1,
-      sugar: 0.1,
+      water: 1,
+      sugar: 1,
       target: this,
       continuous: true,
     };

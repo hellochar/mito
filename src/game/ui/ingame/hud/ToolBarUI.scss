@@ -7,7 +7,7 @@
   pointer-events: initial;
   position: relative;
 
-  .mito-hud-button-hotkey {
+  .hotkey-button {
     margin-top: 10px;
   }
 
@@ -16,22 +16,28 @@
     flex-direction: row;
     transition: all 0.05s;
   }
+}
 
-  .tool-bar-item {
-    margin: 0 5px;
-    text-align: center;
+.tool-bar-item {
+  margin: 0 5px;
+  text-align: center;
 
-    &.selected {
-      transform: scale(1.25);
-    }
+  &.selected {
+    transform: scale(1.25);
   }
+}
 
-  .interact-tool-icon {
-    background-image: url("../../../../assets/images/tether-icon.png");
-    cursor: pointer;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
+.interact-tool-icon {
+  background-image: url("../../../../assets/images/interact-tool-icon.png");
+  cursor: pointer;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  &.take-all {
+    filter: invert(1);
+    // background-image: url("../../../../assets/images/take-all-tool-icon.png");
+    // transform: scale(0.5);
   }
 }
 

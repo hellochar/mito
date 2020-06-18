@@ -1,7 +1,7 @@
 import { CellType } from "core/cell";
 import { CellArgs } from "../../core/cell/cell";
 import { isInteractable } from "../../core/interactable";
-import { Action, ActionBuild } from "../../core/player/action";
+import { Action, ActionBuild, ActionPickup } from "../../core/player/action";
 import { Tile } from "../../core/tile";
 import Mito from "../mito/mito";
 
@@ -13,6 +13,10 @@ export class ToolBar {
   };
 
   public currentKey: string = "KeyQ";
+
+  get interactTool() {
+    return TOOL_INTERACT;
+  }
 
   constructor(public mito: Mito) {
     const validCellTypes = mito.world.genome.cellTypes.filter((c) => c.getDuplicateGenes().size === 0);
@@ -43,13 +47,12 @@ export class ToolBar {
 
   setKey(key: string) {
     if (key in this.tools) {
-      const lastKey = this.currentKey;
-
-      // if you tap the same cellType twice, modify the args direction
-      if (key === lastKey) {
-        this.currentTool.nextConfiguration?.();
+      if (this.currentKey !== key) {
+        this.currentKey = key;
+        this.currentTool.onActivate?.(this.mito);
+      } else {
+        this.currentTool.onReActivate?.(this.mito);
       }
-      this.currentKey = key;
     }
   }
 
@@ -72,11 +75,13 @@ interface ToolBase {
   name: string;
   leftClick: (tile: Tile) => Action | undefined;
   rightClick: (tile: Tile) => Action | undefined;
-  nextConfiguration?(): void;
+  onActivate?: (mito: Mito) => void;
+  onReActivate?: (mito: Mito) => void;
 }
 
 export interface ToolInteract extends ToolBase {
   type: "interact";
+  isTakeAll: boolean;
 }
 
 export interface ToolBuild extends ToolBase {
@@ -87,11 +92,37 @@ export interface ToolBuild extends ToolBase {
 const TOOL_INTERACT: ToolInteract = {
   name: "Interact",
   type: "interact",
-  leftClick: (target: Tile): Action | undefined => (isInteractable(target) ? target.interact(null!) : undefined),
+  isTakeAll: false,
+  leftClick(target: Tile): Action | undefined {
+    if (this.isTakeAll) {
+      const action: ActionPickup = {
+        type: "pickup",
+        sugar: 1,
+        target,
+        water: 1,
+        continuous: true,
+      };
+      return action;
+    } else {
+      return isInteractable(target) ? target.interact(null!) : undefined;
+    }
+  },
   rightClick: (target: Tile): Action | undefined => ({
     type: "deconstruct",
     position: target.pos,
   }),
+  onActivate(mito: Mito) {
+    this.isTakeAll = false;
+    mito.showInteractToolSwitcher = true;
+  },
+  onReActivate(mito: Mito) {
+    if (mito.showInteractToolSwitcher) {
+      // this is handled by the InteractToolSwitcher component
+    } else {
+      this.isTakeAll = false;
+      mito.showInteractToolSwitcher = true;
+    }
+  },
 };
 
 function makeToolToBuildCellType(cellType: CellType): ToolBuild {
@@ -115,9 +146,6 @@ function makeToolToBuildCellType(cellType: CellType): ToolBuild {
     },
     rightClick(tile: Tile) {
       return undefined;
-    },
-    nextConfiguration() {
-      cellType.rotateArgDirection();
     },
   };
 }
