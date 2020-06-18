@@ -14,6 +14,7 @@ import {
 
 export const playerBrown = 0x8f673f;
 export const playerTeal = 0x5eb780;
+export const darkPink = 0x8c4b7a;
 
 const baseMesh = (() => {
   const geometry = new CircleBufferGeometry(0.07, 20);
@@ -99,6 +100,20 @@ class NeuronMesh extends Object3D {
     // gui.add(this, "pullForceScalar", 0, 100);
     // gui.add(this, "towardsTargetForce", 0, 100);
     // gui.add(this, "dragForceScalar", -100, -0);
+  }
+
+  public setColor(color: number) {
+    const mat = this.line.material as LineBasicMaterial;
+    const oldColor = mat.color;
+    if (color !== oldColor.getHex()) {
+      for (const mesh of this.meshes) {
+        const meshMaterial = mesh.material as MeshBasicMaterial;
+        meshMaterial.color.set(color);
+        meshMaterial.needsUpdate = true;
+      }
+      mat.color.set(color);
+      mat.needsUpdate = true;
+    }
   }
 
   public handleInteracted() {

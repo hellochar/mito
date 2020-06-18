@@ -1,21 +1,46 @@
 @import "../../../../variables";
 
 .interact-tool-switcher {
+  $scale: 1.25;
+  $margin: 25px;
+  $icon-width: 60px;
+
   position: absolute;
   top: 20%;
-  left: calc(50% - 30px);
+  left: calc(50% - #{$icon-width/2 * $scale});
   color: white;
   display: flex;
   flex-direction: row;
-  transition: transform 0.2s;
+  transition: transform 0.1s ease;
+  pointer-events: none;
+  animation: fadeIn 0.1s both;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  * {
+    pointer-events: none;
+  }
 
   .item {
     text-align: center;
-    margin: 0 15px;
-    transform: scale(1.25);
+    transform: scale($scale);
+    & ~ .item {
+      margin-left: $margin;
+    }
+
+    .hotkey-button {
+      margin-bottom: 10px;
+    }
   }
 
   &.take-all {
-    transform: translateX(-(60px * 1.25 + 15px));
+    transform: translateX(-($icon-width + $margin));
   }
 }

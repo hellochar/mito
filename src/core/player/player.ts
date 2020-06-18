@@ -4,6 +4,7 @@ import { sortBy } from "lodash";
 import { Vector2 } from "three";
 import {
   PLAYER_BASE_SPEED,
+  PLAYER_INTERACT_EXCHANGE_NONCELL_SPEED,
   PLAYER_INTERACT_EXCHANGE_SPEED,
   PLAYER_MAX_RESOURCES,
   PLAYER_STARTING_SUGAR,
@@ -393,8 +394,13 @@ export class Player implements Steppable {
 
     let { water: waterToDrop, sugar: sugarToDrop } = action;
     if (action.continuous) {
-      waterToDrop *= PLAYER_INTERACT_EXCHANGE_SPEED * dt;
-      sugarToDrop *= PLAYER_INTERACT_EXCHANGE_SPEED * dt;
+      if (Cell.is(target)) {
+        waterToDrop *= PLAYER_INTERACT_EXCHANGE_SPEED * dt;
+        sugarToDrop *= PLAYER_INTERACT_EXCHANGE_SPEED * dt;
+      } else {
+        waterToDrop *= PLAYER_INTERACT_EXCHANGE_NONCELL_SPEED * dt;
+        sugarToDrop *= PLAYER_INTERACT_EXCHANGE_NONCELL_SPEED * dt;
+      }
     }
     const { water, sugar } = inv.give(this.inventory, waterToDrop, sugarToDrop);
     return water > 0 || sugar > 0;

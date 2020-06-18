@@ -20,7 +20,7 @@ import {
 } from "../audio";
 import { Mito } from "../mito/mito";
 import { textureFromSpritesheet } from "../spritesheet";
-import NeuronMesh from "./neuronMesh";
+import NeuronMesh, { darkPink, playerTeal } from "./neuronMesh";
 import { Renderer } from "./Renderer";
 import { also, Animation, AnimationController, animPause, chain } from "./tile/Animation";
 
@@ -140,6 +140,7 @@ export class PlayerRenderer extends Renderer<Player> {
       sticky.rate(randFloat(0.9, 1.1), id);
       sticky.volume(randFloat(0.8, 1), id);
     }
+    this.neuronMesh.setColor(this.mito.toolBar.interactTool.isTakeAll ? darkPink : playerTeal);
     this.neuronMesh.update(isInteract ? dt * 10 : dt * 5, neuronMeshTarget);
     this.prevHighlightedTile = highlight;
     // this.neuronMesh.visible = Cell.is(this.mito.getHighlightedTile());

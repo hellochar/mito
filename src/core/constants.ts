@@ -14,6 +14,11 @@ export const PLAYER_STARTING_WATER = 25;
 export const PLAYER_STARTING_SUGAR = 25;
 
 export const PLAYER_INTERACT_EXCHANGE_SPEED = 30;
+
+/**
+ * 3 resources per second.
+ */
+export const PLAYER_INTERACT_EXCHANGE_NONCELL_SPEED = 3;
 /**
  * How fast the Player moves from standing on Transport.
  */

@@ -28,15 +28,16 @@
 }
 
 .interact-tool-icon {
-  background-image: url("../../../../assets/images/tether-icon.png");
+  background-image: url("../../../../assets/images/interact-tool-icon.png");
   cursor: pointer;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
 
   &.take-all {
-    // filter: hue-rotate(180deg) saturate(2) invert(1);
-    transform: scale(0.5);
+    filter: invert(1);
+    // background-image: url("../../../../assets/images/take-all-tool-icon.png");
+    // transform: scale(0.5);
   }
 }
 
