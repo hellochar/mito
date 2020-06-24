@@ -371,7 +371,7 @@ export class Mito extends ISketch {
       this.statsRenderer.begin();
       this.worldRenderer.update();
       this.statsRenderer.end();
-      this.updateCamera(this.suggestedCamera || this.defaultCameraState());
+      this.updateCamera(this.suggestedCamera ?? this.defaultCameraState());
       this.pausedInspectedTile = undefined;
 
       this.highlightedPosition = this.computeHighlightedPosition();

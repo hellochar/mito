@@ -1,4 +1,4 @@
-import { randInt, randRound } from "math";
+import { clamp, randInt } from "math";
 import { PERCENT_DAYLIGHT, SUNLIGHT_DIFFUSION, SUNLIGHT_REINTRODUCTION, TIME_PER_DAY } from "../constants";
 import { Air } from "../tile";
 import { World } from "./world";
@@ -49,16 +49,16 @@ export class WeatherController {
     if (isRaining) {
       // add multiple random droplets
       let numWater = world.environment.climate.waterPerSecond * dt;
-      while (numWater > 0) {
-        const dropletSize = Math.min(numWater, 1);
+      let guard = 0;
+      while (numWater > 0 && guard++ < 100) {
+        const dropletSize = clamp(numWater, 0, 1);
         const x = randInt(0, world.width - 1);
         const t = world.tileAt(x, 0);
         if (Air.is(t)) {
-          const w = randRound(dropletSize);
-          t.inventory.add(w, 0);
-          world.numRainWater += w;
+          t.inventory.add(dropletSize, 0);
+          world.numRainWater += dropletSize;
+          numWater -= dropletSize;
         }
-        numWater -= 1;
       }
     }
   }
