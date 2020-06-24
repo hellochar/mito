@@ -1,11 +1,9 @@
-import { MousePositionContext } from "common/useMousePosition";
 import { GameResult } from "game/gameResult";
 import OverWorldScreen from "game/screens/OverWorldScreen";
 import { Button } from "game/ui/common/Button";
 import React, { memo, useRef } from "react";
 import { FaDiscord } from "react-icons/fa";
 import { CSSTransition } from "react-transition-group";
-import { createSelector } from "reselect";
 import { serialize } from "serializr";
 import { LocalForageStateProvider } from "../app/AppStateProvider";
 import { AppReducerContext, useAppReducer } from "../app/reducer";
@@ -16,7 +14,6 @@ import MitoScreen from "./MitoScreen";
 import StartScreen from "./StartScreen";
 
 interface AppComponentState {
-  mousePosition: { x: number; y: number };
   showStartScreen: boolean;
   error?: Error;
 }
@@ -29,35 +26,14 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
   constructor(props: {}, context: any) {
     super(props, context);
     this.state = {
-      mousePosition: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
       showStartScreen: true,
       error: undefined,
     };
   }
 
-  handleMousePosition = (e: MouseEvent) => {
-    this.setState({
-      mousePosition: { x: e.clientX, y: e.clientY },
-    });
-  };
-
-  componentDidMount() {
-    document.addEventListener("mousemove", this.handleMousePosition);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("mousemove", this.handleMousePosition);
-  }
-
   static getDerivedStateFromError(error: Error) {
     return { error };
   }
-
-  // componentDidCatch(error: Error) {
-  //   this.setState({
-  //     error,
-  //   });
-  // }
 
   handleNextEpoch = () => {
     const [, dispatch] = this.context;
@@ -119,17 +95,8 @@ class AppComponent extends React.PureComponent<{}, AppComponentState> {
       </>
     );
 
-    return (
-      <MousePositionContext.Provider value={this.state.mousePosition}>
-        <div className="App">{appContent}</div>
-      </MousePositionContext.Provider>
-    );
+    return <div className="App">{appContent}</div>;
   }
-
-  private otherArgsSelector = createSelector(
-    (s: AppState) => s.activePopulationAttempt,
-    (activePopulationAttempt) => [activePopulationAttempt, this.handleWinLoss]
-  );
 }
 
 const AppError = React.memo(({ error, appState }: { error: Error; appState: AppState }) => {
