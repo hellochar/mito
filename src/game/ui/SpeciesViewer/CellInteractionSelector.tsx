@@ -14,12 +14,14 @@ export const CellInteractionSelector: React.FC<{
       } else {
         const newInteraction = possibleInteractions[Number(indexOrUndefined)];
         if (interaction == null) {
-          setInteraction(newInteraction);
+          setInteraction(ensureValidatedInteraction(newInteraction));
         } else {
-          setInteraction({
-            ...newInteraction,
-            continuous: interaction.continuous,
-          });
+          setInteraction(
+            ensureValidatedInteraction({
+              ...newInteraction,
+              continuous: interaction.continuous,
+            })
+          );
         }
       }
     },
@@ -29,18 +31,23 @@ export const CellInteractionSelector: React.FC<{
   const handleChangeContinuous = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       if (interaction != null) {
-        setInteraction({
-          ...interaction,
-          continuous: event.target.checked,
-        });
+        setInteraction(
+          ensureValidatedInteraction({
+            ...interaction,
+            continuous: event.target.checked,
+          })
+        );
       }
     },
     [interaction, setInteraction]
   );
-  const selectValue =
+  let selectValue =
     interaction == null
       ? undefined
       : possibleInteractions.findIndex((i) => interaction.resources === i.resources && interaction.type === i.type);
+  if (selectValue === -1) {
+    selectValue = undefined;
+  }
   const interactionEl = (
     <select className="interaction-select" onChange={handleSelect} defaultValue={String(selectValue)}>
       <option value={undefined}>do nothing</option>
@@ -86,3 +93,17 @@ possibleInteractions.push(
     resources: "sugar take water",
   }
 );
+
+function ensureValidatedInteraction(interaction: CellInteraction | undefined): CellInteraction | undefined {
+  if (interaction == null) {
+    return undefined;
+  }
+  const index = possibleInteractions.findIndex(
+    (i) => interaction.resources === i.resources && interaction.type === i.type
+  );
+  if (index === -1) {
+    return undefined;
+  } else {
+    return interaction;
+  }
+}

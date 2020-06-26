@@ -200,6 +200,8 @@ export class Cell extends Tile implements Interactable {
             return [-1, 1];
           case "water take sugar":
             return [1, -1];
+          default:
+            return [0, 0];
         }
       })();
       const action: Action = {
