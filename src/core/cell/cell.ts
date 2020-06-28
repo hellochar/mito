@@ -326,7 +326,7 @@ export class Cell extends Tile implements Interactable {
         if (this.world.player.pos.equals(this.pos)) {
           this.world.player.posFloat.y += 1;
         }
-        this.world.maybeRemoveCellAt(this.pos);
+        this.world.maybeRemoveCellAt(this.pos, false);
         this.pos.y += 1;
         this.droopY -= 1;
         this.world.setTileAt(this.pos, this);

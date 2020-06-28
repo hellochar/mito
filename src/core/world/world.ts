@@ -293,13 +293,13 @@ export class World {
     this.handleTileUpdated(position);
   }
 
-  public maybeRemoveCellAt(position: Vector2): Cell | null {
+  public maybeRemoveCellAt(position: Vector2, die = true): Cell | null {
     const cell = this.cellAt(position.x, position.y);
     if (cell) {
       cell.redistributeInventoryToNeighbors();
       this.gridCells[position.x][position.y] = null;
       this.stepStats.deleted.push(cell);
-      cell.isDead = true;
+      cell.isDead = die;
     }
     this.handleTileUpdated(position);
     return cell;

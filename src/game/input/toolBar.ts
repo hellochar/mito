@@ -37,10 +37,6 @@ export class ToolBar {
     return this.currentTool.leftClick(target);
   }
 
-  rightClick(target: Tile): Action | undefined {
-    return this.currentTool.rightClick(target);
-  }
-
   get currentTool() {
     return this.tools[this.currentKey];
   }
@@ -74,7 +70,6 @@ export type Tool = ToolInteract | ToolBuild;
 interface ToolBase {
   name: string;
   leftClick: (tile: Tile) => Action | undefined;
-  rightClick: (tile: Tile) => Action | undefined;
   onActivate?: (mito: Mito) => void;
   onReActivate?: (mito: Mito) => void;
 }
@@ -107,10 +102,6 @@ const TOOL_INTERACT: ToolInteract = {
       return isInteractable(target) ? target.interact(null!) : undefined;
     }
   },
-  rightClick: (target: Tile): Action | undefined => ({
-    type: "deconstruct",
-    position: target.pos,
-  }),
   onActivate(mito: Mito) {
     this.isTakeAll = false;
     mito.showInteractToolSwitcher = true;
@@ -143,9 +134,6 @@ function makeToolToBuildCellType(cellType: CellType): ToolBuild {
         args,
       };
       return action;
-    },
-    rightClick(tile: Tile) {
-      return undefined;
     },
   };
 }

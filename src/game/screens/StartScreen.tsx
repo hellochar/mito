@@ -31,7 +31,7 @@ const StartScreen: React.FC<{ onStart: () => void }> = React.memo(({ onStart }) 
       </h1>
       <div className="bottom-area">
         <Button color="green" onClick={onStart}>
-          Start Game
+          Continue Game
         </Button>
         <a className="discord" rel="noopener noreferrer" target="_blank" href="http://discord.gg/N8wWwPX">
           <FaDiscord />
