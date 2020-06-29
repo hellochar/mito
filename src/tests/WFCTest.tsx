@@ -257,7 +257,6 @@ function collapseGridPoint(
 ): Id | undefined {
   let weights = uncollapsedGrid[point.y][point.x];
   if (typeof weights === "number") {
-    debugger;
     throw new Error("Collapsing an already collapsed point!");
   }
   if (isZero(weights)) {

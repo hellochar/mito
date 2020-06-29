@@ -372,24 +372,38 @@ export class World {
 
   private fillCachedEntities() {
     const newEntities: Entity[] = [];
-    // we do this super hacky thing for performance where we only run every other entity in
-    // a checkerboard pattern.
-    //
-    // also, entities can interact with other entities, there is no lock-step buffer state,
-    // which means you can get weird artifacts like "water suddenly moves 20 squares".
-    // to combat this we alternatingly reverse the tile iteration order.
+    // We have no lock-step buffer state, but entities can interact with  entities
+    // so you can get weird artifacts like "water suddenly moves 20 squares" based on the
+    // iteration order. Thankfully, generally they only interact with direct neighbors.
+    // So, we:
+    // 1. order entities in a checkerboard pattern
+    // 2. alternatingly reverse the entire array iteration order
     let x = 0,
       y = 0;
     for (x = 0; x < this.width; x++) {
       for (y = (x + this.frame) % 2; y < this.height; y += 2) {
-        // checkerboard
-        newEntities.push(this.tileAt(x, y)!);
+        // checkerboard one
+        const t = this.tileAt(x, y)!;
+        newEntities.push(t);
+        if (Cell.is(t)) {
+          const tileUnderneath = this.environmentTileAt(x, y)!;
+          if (Air.is(tileUnderneath)) {
+            newEntities.push(tileUnderneath);
+          }
+        }
       }
     }
     for (x = 0; x < this.width; x++) {
       for (y = (x + this.frame + 1) % 2; y < this.height; y += 2) {
-        // opposite checkerboard
-        newEntities.push(this.tileAt(x, y)!);
+        // checkerboard two
+        const t = this.tileAt(x, y)!;
+        newEntities.push(t);
+        if (Cell.is(t)) {
+          const tileUnderneath = this.environmentTileAt(x, y)!;
+          if (Air.is(tileUnderneath)) {
+            newEntities.push(tileUnderneath);
+          }
+        }
       }
     }
     if (this.frame % 4 < 2) {
@@ -405,21 +419,6 @@ export class World {
     }
     newEntities.push(...this.insects);
     this.cachedEntities = newEntities;
-
-    // update renderable entities
-    // (() => {
-    //     const entities: Entity[] = [this.player];
-    //     for (x = 0; x < width; x++) {
-    //         for (y = 0; y < height; y++) {
-    //             entities.push(this.gridEnvironment[x][y]);
-    //             const cellMaybe = this.gridCells[x][y];
-    //             if (cellMaybe != null) {
-    //                 entities.push(cellMaybe);
-    //             }
-    //         }
-    //     }
-    //     this.cachedRenderableEntities = entities;
-    // })();
   }
 
   private stepStats: StepStats = new StepStats(this.frame);

@@ -79,8 +79,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.inventoryRenderer.animationOffset = (this.target.pos.x + this.target.pos.y) / 2;
     }
     if (Cell.is(this.target)) {
-      // if it takes no time to build, start it off small just for show
-      if (this.target.timeToBuild <= 0 && worldRenderer.renderResources) {
+      // if it takes no time to build, and it was just built, start it off small just for show
+      if (this.target.timeToBuild <= 0 && worldRenderer.renderResources && this.target.age < 0.1) {
         this.scale.set(0.01, 0.01, 1);
       }
       this.cellEffectsRenderer = new CellEffectsRenderer(this.target, this.scene, this.mito);
