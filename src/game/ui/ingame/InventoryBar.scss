@@ -42,6 +42,7 @@
 
 .inventory-text {
   text-align: center;
+  white-space: nowrap;
   .text ~ .text {
     margin-left: 10px;
   }

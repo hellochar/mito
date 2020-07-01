@@ -2,6 +2,9 @@ import { sleep } from "common/promise";
 import { EventOof } from "core/tile/tileEvent";
 import { easeSinInOut } from "d3-ease";
 import Keyboard from "game/input/keyboard";
+import { WorldDOMElement } from "game/mito/WorldDOMElement";
+import { InventoryBar } from "game/ui/ingame/InventoryBar";
+import React from "react";
 import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Scene, Vector2 } from "three";
 import { Player } from "../../core";
 import { Action, ActionBuild, ActionLong } from "../../core/player/action";
@@ -21,6 +24,7 @@ import {
 import { Mito } from "../mito/mito";
 import { textureFromSpritesheet } from "../spritesheet";
 import NeuronMesh, { darkPink, playerTeal } from "./neuronMesh";
+import "./PlayerRenderer.scss";
 import { Renderer } from "./Renderer";
 import { also, Animation, AnimationController, animPause, chain } from "./tile/Animation";
 
@@ -48,7 +52,63 @@ export class PlayerRenderer extends Renderer<Player> {
     this.target.on("start-long-action", this.handleStartLongAction);
     this.target.on("action", this.handleAction);
     this.target.on("action-fail", this.handlePlayerActionFail);
+    // this.target.inventory.on("get", this.handleResourceGet);
+    this.target.inventory.on("change", this.handleResourceChange);
   }
+
+  private resourceText?: {
+    element: WorldDOMElement;
+    water: number;
+    sugar: number;
+    position: Vector2;
+    timeoutId: number;
+  };
+
+  // handleResourceGet = (from: Inventory, w: number, s: number) => {
+  //   this.handleResourceAdd(w, s);
+  // };
+
+  handleResourceChange = (w: number, s: number) => {
+    const positionFn = () => this.resourceText!.position;
+    const renderFn = () => {
+      const { water, sugar } = this.resourceText!;
+      // const { water, sugar } = this.target.inventory;
+      const sign = water > 0 || sugar > 0 ? "+" : null;
+      return (
+        <div className="player-resource-popup">
+          {sign}
+          <InventoryBar water={water} sugar={sugar} showBar={false} format="icons" capacity={100} colored={false} />
+        </div>
+      );
+    };
+    if (this.resourceText == null) {
+      this.resourceText = {
+        element: this.mito.addWorldDOMElement(positionFn, renderFn),
+        position: this.target.posFloat.clone(),
+        water: w,
+        sugar: s,
+        timeoutId: (setTimeout(() => {
+          this.mito.removeWorldDOMElement(this.resourceText!.element);
+          delete this.resourceText;
+        }, 1500) as unknown) as number,
+      };
+    } else {
+      if (Math.sign(this.resourceText.water) !== Math.sign(w) || Math.sign(this.resourceText.sugar) !== Math.sign(s)) {
+        this.resourceText.water = 0;
+        this.resourceText.sugar = 0;
+      }
+      this.resourceText.position.copy(this.target.posFloat);
+      this.resourceText.water += w;
+      this.resourceText.sugar += s;
+      this.mito.removeWorldDOMElement(this.resourceText.element);
+      this.resourceText.element = this.mito.addWorldDOMElement(positionFn, renderFn);
+      clearTimeout(this.resourceText.timeoutId);
+      this.resourceText.timeoutId = (setTimeout(() => {
+        this.mito.removeWorldDOMElement(this.resourceText!.element);
+        delete this.resourceText;
+      }, 1500) as unknown) as number;
+    }
+  };
 
   handleStartLongAction = (action: ActionLong) => {
     if (action.effect.type === "build") {

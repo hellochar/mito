@@ -1,0 +1,22 @@
+.player-resource-popup {
+  border-radius: 2px;
+  // background: rgba(255, 255, 255, 0.9);
+  padding: 2px 2px;
+  animation: floatUp2 linear 0.5s 1s both;
+  position: absolute;
+  transform: translateX(-50%) translateY(-30px);
+  display: flex;
+  color: white !important;
+
+  @keyframes floatUp2 {
+    from {
+      opacity: 1;
+      top: 0;
+    }
+
+    to {
+      opacity: 0;
+      top: -5px;
+    }
+  }
+}

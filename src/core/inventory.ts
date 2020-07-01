@@ -71,12 +71,12 @@ export class Inventory {
 
   private events?: EventEmitter;
 
-  public on(name: "give" | "get" | "add", fn: (...args: any[]) => void) {
+  public on(name: "give" | "get" | "add" | "change", fn: (...args: any[]) => void) {
     this.events = this.events || new EventEmitter();
     this.events.on(name, fn);
   }
 
-  public off(name: "give" | "get" | "add", fn: (...args: any[]) => any) {
+  public off(name: "give" | "get" | "add" | "change", fn: (...args: any[]) => any) {
     this.events = this.events || new EventEmitter();
     this.events.off(name, fn);
   }
@@ -126,6 +126,10 @@ export class Inventory {
       } else {
         this.sugar = this.capacity - this.water;
       }
+    }
+
+    if (this.events) {
+      this.events.emit("change", water, sugar);
     }
   }
 

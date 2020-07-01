@@ -12,7 +12,8 @@ export const InventoryBar: React.FC<{
   colored?: boolean;
   capacityBasedWidth?: boolean;
   className?: string;
-}> = React.memo(({ water, sugar, capacity, className, colored = true, format, capacityBasedWidth }) => {
+  showBar?: boolean;
+}> = React.memo(({ water, sugar, capacity, className, colored = true, showBar = true, format, capacityBasedWidth }) => {
   if (capacity === 0) {
     return null;
   }
@@ -41,12 +42,13 @@ export const InventoryBar: React.FC<{
       </>
     ) : (
       <>
-        {water > 0 || (water === 0 && sugar === 0) ? (
+        {water !== 0 || (water === 0 && sugar === 0) ? (
           <span className="text water">
-            {sugar > 0 ? <ResourceIcon name="water" /> : null} <DynamicNumber speed={0.5} value={water} />
+            {/* {sugar > 0 ? <ResourceIcon name="water" /> : null} <DynamicNumber speed={0.5} value={water} /> */}
+            <ResourceIcon name="water" /> <DynamicNumber speed={0.5} value={water} />
           </span>
         ) : null}
-        {sugar > 0 ? (
+        {sugar !== 0 ? (
           <span className="text sugar">
             <ResourceIcon name="sugar" /> <DynamicNumber speed={0.5} value={sugar} />
           </span>
@@ -60,12 +62,14 @@ export const InventoryBar: React.FC<{
 
   return (
     <div className={classNames("inventory-bar-container", className)}>
-      <div className="inventory-bar" style={barStyles}>
-        <div style={waterStyles} className="bar-water"></div>
-        <div style={sugarStyles} className="bar-sugar"></div>
-        <div style={emptyStyles} className="bar-empty"></div>
-        {capacityBasedWidth ? <div className="markers" /> : null}
-      </div>
+      {showBar ? (
+        <div className="inventory-bar" style={barStyles}>
+          <div style={waterStyles} className="bar-water"></div>
+          <div style={sugarStyles} className="bar-sugar"></div>
+          <div style={emptyStyles} className="bar-empty"></div>
+          {capacityBasedWidth ? <div className="markers" /> : null}
+        </div>
+      ) : null}
       <div className={classNames("inventory-text", { colored })}>{textElements}</div>
     </div>
   );

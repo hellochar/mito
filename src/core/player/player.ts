@@ -364,6 +364,10 @@ export class Player implements Steppable {
         // refund the resources back
         const { costSugar, costWater } = cell.completedCell.type.chromosome.computeStaticProperties();
         this.inventory.add(costWater, costSugar);
+      } else {
+        // refund half the cost
+        const { costSugar, costWater } = cell.type.chromosome.computeStaticProperties();
+        this.inventory.add(costWater / 2, costSugar / 2);
       }
 
       // maybeRemoveCellAt has already tried redistributing inventory to neighbors,
