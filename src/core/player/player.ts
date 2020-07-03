@@ -186,25 +186,43 @@ export class Player implements Steppable {
           // && n.pos.manhattanDistanceTo(this.pos) === 1
         ),
         (n) => this.posFloat.distanceToSquared(n.pos)
-      );
+      ) as Cell[];
       const [closest, secondClosest] = walkableNeighbors;
 
       // always pull to closest
       if (closest != null) {
         EDGE_PULL_VELOCITY.set(0, 0);
 
-        const forceClosest = 0.2;
-        const forceSecondClosest = 0.1;
-        EDGE_PULL_VELOCITY.x += (closest.pos.x - this.posFloat.x) * forceClosest;
-        EDGE_PULL_VELOCITY.y += (closest.pos.y - this.posFloat.y) * forceClosest;
+        // const forceClosest = 0.2;
+        // EDGE_PULL_VELOCITY.x += (closest.pos.x - this.posFloat.x) * forceClosest;
+        // EDGE_PULL_VELOCITY.y += (closest.pos.y - this.posFloat.y) * forceClosest;
 
-        // if the second closest is also touching the closest, pull to second closest as well.
-        // effectively, this works on diagonals.
-        if (secondClosest != null && closest.pos.distanceTo(secondClosest.pos) < 2) {
-          EDGE_PULL_VELOCITY.x += (secondClosest.pos.x - this.posFloat.x) * forceSecondClosest;
-          EDGE_PULL_VELOCITY.y += (secondClosest.pos.y - this.posFloat.y) * forceSecondClosest;
+        let { x: newX, y: newY } = this.posFloat;
+        const dX = this.posFloat.x - closest.pos.x;
+        if (dX > 0.5) {
+          newX = closest.pos.x + 0.5;
+        } else if (dX < -0.5) {
+          newX = closest.pos.x - 0.5;
         }
-        this.posFloat.add(EDGE_PULL_VELOCITY);
+        const dY = this.posFloat.y - closest.pos.y;
+        if (dY > 0.5) {
+          newY = closest.pos.y + 0.5;
+        } else if (dY < -0.5) {
+          newY = closest.pos.y - 0.5;
+        }
+        this.posFloat.set(newX, newY);
+
+        // // if the second closest is also touching the closest, pull to second closest as well.
+        // // effectively, this works on diagonals.
+        // if (secondClosest != null && closest.pos.distanceTo(secondClosest.pos) < 2) {
+        //   const forceSecondClosest = 0.1;
+        //   EDGE_PULL_VELOCITY.x += (secondClosest.pos.x - this.posFloat.x) * forceSecondClosest;
+        //   EDGE_PULL_VELOCITY.y += (secondClosest.pos.y - this.posFloat.y) * forceSecondClosest;
+        // }
+        // const edgeX = Math.floor(this.posFloat.x) + 0.5;
+        // const edgeY = Math.floor(this.posFloat.y) + 0.5;
+        // console.log(edgeY - this.posFloat.y);
+        // this.posFloat.add(EDGE_PULL_VELOCITY);
       }
     }
   }
