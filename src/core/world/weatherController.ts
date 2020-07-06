@@ -1,7 +1,16 @@
+import { Temperature, temperatureFor } from "core/temperature";
 import { clamp, randInt } from "math";
 import { PERCENT_DAYLIGHT, SUNLIGHT_DIFFUSION, SUNLIGHT_REINTRODUCTION, TIME_PER_DAY } from "../constants";
 import { Air } from "../tile";
 import { World } from "./world";
+
+const SUNLIGHT_TEMPERATURE_SCALAR = {
+  [Temperature.Freezing]: 0.5,
+  [Temperature.Cold]: 0.75,
+  [Temperature.Mild]: 1,
+  [Temperature.Hot]: 1.25,
+  [Temperature.Scorching]: 1.5,
+};
 /**
  * WeatherController is responsible for weather related properties, such as:
  *
@@ -26,7 +35,9 @@ export class WeatherController {
   }
 
   get sunAmount() {
-    return (Math.atan(Math.sin(this.sunAngle) * 12) / (Math.PI / 2)) * 0.5 + 0.5;
+    const temperatureScalar = SUNLIGHT_TEMPERATURE_SCALAR[temperatureFor(this.getCurrentTemperature())];
+    const baseAmount = (Math.atan(Math.sin(this.sunAngle) * 12) / (Math.PI / 2)) * 0.5 + 0.5;
+    return baseAmount * temperatureScalar;
   }
 
   getCurrentTemperature() {

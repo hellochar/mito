@@ -6,6 +6,14 @@ export function lerp(a: number, b: number, x: number) {
   return a + (b - a) * x;
 }
 
+/**
+ * Go from a to b at a max speed of *speed*.
+ */
+export function lerpLinear(a: number, b: number, speed: number) {
+  // we have to clamp to account for FP math errors
+  return clamp(a + Math.sign(b - a) * speed, Math.min(a, b), Math.max(a, b));
+}
+
 export function lerp2(v: { x: number; y: number }, t: { x: number; y: number }, l: number) {
   v.x = v.x * (1 - l) + t.x * l;
   v.y = v.y * (1 - l) + t.y * l;

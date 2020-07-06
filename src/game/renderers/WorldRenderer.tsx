@@ -1,8 +1,10 @@
 import snowUrl from "assets/images/snow.png";
 import { Insect } from "core/insect";
+import { WeatherController } from "core/world/weatherController";
+import { lerpLinear } from "math";
+import { arrayRange } from "math/arrays";
 import { createSelector } from "reselect";
 import {
-  Color,
   DoubleSide,
   Mesh,
   MeshBasicMaterial,
@@ -36,9 +38,7 @@ export class WorldRenderer extends Renderer<World> {
 
   public inventoryPoints?: InventoryPoints;
 
-  snowMesh: Mesh;
-
-  snowMap: Texture;
+  public snow: SnowRenderer[];
 
   constructor(target: World, scene: Scene, mito: Mito, public renderResources = true) {
     super(target, scene, mito);
@@ -53,25 +53,7 @@ export class WorldRenderer extends Renderer<World> {
     this.eventLogRenderer = new EventLogRenderer(this);
     if (renderResources) {
     }
-    const snowGeometry = new PlaneGeometry(50, 100);
-    this.snowMap = new TextureLoader().load(snowUrl, (texture) => {
-      texture.magFilter = texture.minFilter = NearestFilter;
-      texture.flipY = true;
-      texture.wrapS = texture.wrapT = RepeatWrapping;
-      texture.repeat = new Vector2(5, 10);
-    });
-    const snowMaterial = new MeshBasicMaterial({
-      map: this.snowMap,
-      color: new Color(1, 1, 1),
-      transparent: true,
-      // alphaTest: 0.3,
-      opacity: 0.3,
-      side: DoubleSide,
-    });
-    this.snowMesh = new Mesh(snowGeometry, snowMaterial);
-    this.snowMesh.position.set(25, 50, -9);
-    this.snowMesh.renderOrder = 1;
-    scene.add(this.snowMesh);
+    this.snow = arrayRange(3).map((i) => new SnowRenderer(this.target.weather, scene, 1.5 ** (i + 1)));
     // this.lightEmitter = new LightEmitter(this);
   }
 
@@ -123,8 +105,7 @@ export class WorldRenderer extends Renderer<World> {
   update(): void {
     this.deleteDeadEntityRenderers(this.target.getLastStepStats());
     // this.lightEmitter.update(1 / 30);
-    this.snowMap.offset.x -= 0.0001;
-    this.snowMap.offset.y -= 0.0005;
+    this.snow.forEach((s) => s.update());
 
     // careful - event log renderers rely on state from other renderers (e.g. position
     // of water particle as it's evaporating) that requires it to update before others
@@ -145,5 +126,48 @@ export class WorldRenderer extends Renderer<World> {
 
   destroy(): void {
     throw new Error("Method not implemented.");
+  }
+}
+
+class SnowRenderer {
+  static geometry = new PlaneGeometry(50, 100);
+
+  snowMesh: Mesh;
+
+  snowMap: Texture;
+
+  enabledOpacity: number;
+
+  snowMaterial: MeshBasicMaterial;
+
+  constructor(public target: WeatherController, public scene: Scene, public readonly scalar = 1) {
+    this.snowMap = new TextureLoader().load(snowUrl, (texture) => {
+      texture.magFilter = texture.minFilter = NearestFilter;
+      texture.flipY = true;
+      texture.wrapS = texture.wrapT = RepeatWrapping;
+      texture.repeat = new Vector2(3 * scalar, 6 * scalar);
+    });
+    this.enabledOpacity = 0.4 / scalar;
+    this.snowMaterial = new MeshBasicMaterial({
+      map: this.snowMap,
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0,
+      side: DoubleSide,
+    });
+    this.snowMesh = new Mesh(SnowRenderer.geometry, this.snowMaterial);
+    this.snowMesh.position.set(25, 50, -9);
+    this.snowMesh.renderOrder = 1;
+    scene.add(this.snowMesh);
+  }
+
+  update() {
+    const targetOpacity = this.target.getCurrentTemperature() < 32 ? this.enabledOpacity : 0;
+    if (this.snowMaterial.opacity !== targetOpacity) {
+      this.snowMaterial.opacity = lerpLinear(this.snowMaterial.opacity, targetOpacity, this.enabledOpacity * 0.02);
+      this.snowMaterial.needsUpdate = true;
+    }
+    this.snowMap.offset.x -= 0.0001 / this.scalar;
+    this.snowMap.offset.y -= 0.0005 / this.scalar;
   }
 }

@@ -48,7 +48,7 @@ export const Level0: Environment = {
   },
   secondsToEvaporate: 166,
   floorCo2: 0.5,
-  temperaturePerSeason: [18, 56, 52, 43],
+  temperaturePerSeason: [48, 56, 52, 43],
   fill: "Level0",
 };
 

@@ -32,7 +32,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     [Temperature.Scorching]: new Color("orange"),
     [Temperature.Hot]: new Color("orange").lerp(new Color("white"), 0.5),
     [Temperature.Mild]: new Color("white"),
-    [Temperature.Cold]: new Color("lightblue"), //.lerp(new Color("white"), 0.5),
+    [Temperature.Cold]: new Color("blue"),
     [Temperature.Freezing]: new Color("rgb(43, 34, 126)"),
   } as Record<Temperature, Color>;
 

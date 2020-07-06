@@ -7,7 +7,7 @@ import "./SeasonsTracker.scss";
 
 const temperatureTooltipContentMap = {
   [Temperature.Freezing]: <>Cells may freeze! Cells operate 50% slower, you walk 50% slower.</>,
-  [Temperature.Cold]: <>Cells operate 33% slower, you walk 33% slower.</>,
+  [Temperature.Cold]: <>Max sunlight at 75%. Cells operate 33% slower. You walk 33% slower.</>,
   [Temperature.Mild]: null,
   [Temperature.Hot]: <>Cells operate 25% faster, you walk 25% faster.</>,
   [Temperature.Scorching]: <>Cells evaporate water! Cells operate 50% faster, you walk 50% faster.</>,
