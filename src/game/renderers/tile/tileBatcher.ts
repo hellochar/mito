@@ -254,11 +254,11 @@ export class BatchInstance {
     BatchInstance.numInUse++;
   }
 
-  commitColor(color: Color) {
+  commitColor(r: number, g: number, b: number) {
     if (!this.owner) {
       console.error("freed tileBatcher still in use!");
     }
-    this.batcher.colors.setXYZ(this.index, color.r, color.g, color.b);
+    this.batcher.colors.setXYZ(this.index, r, g, b);
   }
 
   commitTemperature(temperature: number) {
@@ -291,7 +291,7 @@ export class BatchInstance {
   }
 
   destroy() {
-    this.commitColor(BLACK);
+    this.commitColor(0, 0, 0);
     this.commitScale(ZERO);
     this.owner = undefined;
     BatchInstance.numInUse--;

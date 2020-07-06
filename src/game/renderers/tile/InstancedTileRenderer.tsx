@@ -32,7 +32,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     [Temperature.Scorching]: new Color("orange"),
     [Temperature.Hot]: new Color("orange").lerp(new Color("white"), 0.5),
     [Temperature.Mild]: new Color("white"),
-    [Temperature.Cold]: new Color("lightblue").lerp(new Color("white"), 0.5),
+    [Temperature.Cold]: new Color("lightblue"), //.lerp(new Color("white"), 0.5),
     [Temperature.Freezing]: new Color("rgb(43, 34, 126)"),
   } as Record<Temperature, Color>;
 
@@ -91,6 +91,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
     if (this.getLightAmount() > 0) {
       this.commit();
+    } else {
+      this.commitBlack();
     }
   }
 
@@ -132,12 +134,20 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.instance.commitCenter(this.target.pos.x, this.target.pos.y, z);
     }
     this.instance.commitTexturePosition(this.materialInfo.texturePosition);
-    this.instance.commitColor(this.color);
+    this.instance.commitColor(this.color.r, this.color.g, this.color.b);
     this.instance.commitTemperature(this.target.temperatureFloat);
     // const dist = this.target.pos.distanceTo(this.mito.world.player.pos);
     // const timeAlive = this.target.age;
     // const alpha = clamp(easeCubicIn(timeAlive * 3 - dist), 0, 1);
     // this.instance.commitAlpha(alpha);
+    this.instance.commitScale(this.scale);
+  }
+
+  commitBlack() {
+    this.instance.commitTexturePosition(this.materialInfo.texturePosition);
+    this.instance.commitTemperature(this.target.temperatureFloat);
+    this.instance.commitColor(0, 0, 0);
+    this.instance.commitCenter(this.target.pos.x, this.target.pos.y, 10);
     this.instance.commitScale(this.scale);
   }
 
@@ -157,6 +167,8 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
         this.animation.update();
       }
       this.commit();
+    } else {
+      this.commitBlack();
     }
   }
 

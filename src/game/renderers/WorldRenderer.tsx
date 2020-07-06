@@ -1,6 +1,19 @@
+import snowUrl from "assets/images/snow.png";
 import { Insect } from "core/insect";
 import { createSelector } from "reselect";
-import { Scene } from "three";
+import {
+  Color,
+  DoubleSide,
+  Mesh,
+  MeshBasicMaterial,
+  NearestFilter,
+  PlaneGeometry,
+  RepeatWrapping,
+  Scene,
+  Texture,
+  TextureLoader,
+  Vector2,
+} from "three";
 import { Entity, Player, PlayerSeed, StepStats, World } from "../../core";
 import { Tile } from "../../core/tile";
 import Mito from "../mito/mito";
@@ -23,6 +36,10 @@ export class WorldRenderer extends Renderer<World> {
 
   public inventoryPoints?: InventoryPoints;
 
+  snowMesh: Mesh;
+
+  snowMap: Texture;
+
   constructor(target: World, scene: Scene, mito: Mito, public renderResources = true) {
     super(target, scene, mito);
 
@@ -36,6 +53,25 @@ export class WorldRenderer extends Renderer<World> {
     this.eventLogRenderer = new EventLogRenderer(this);
     if (renderResources) {
     }
+    const snowGeometry = new PlaneGeometry(50, 100);
+    this.snowMap = new TextureLoader().load(snowUrl, (texture) => {
+      texture.magFilter = texture.minFilter = NearestFilter;
+      texture.flipY = true;
+      texture.wrapS = texture.wrapT = RepeatWrapping;
+      texture.repeat = new Vector2(5, 10);
+    });
+    const snowMaterial = new MeshBasicMaterial({
+      map: this.snowMap,
+      color: new Color(1, 1, 1),
+      transparent: true,
+      // alphaTest: 0.3,
+      opacity: 0.3,
+      side: DoubleSide,
+    });
+    this.snowMesh = new Mesh(snowGeometry, snowMaterial);
+    this.snowMesh.position.set(25, 50, -9);
+    this.snowMesh.renderOrder = 1;
+    scene.add(this.snowMesh);
     // this.lightEmitter = new LightEmitter(this);
   }
 
@@ -87,6 +123,8 @@ export class WorldRenderer extends Renderer<World> {
   update(): void {
     this.deleteDeadEntityRenderers(this.target.getLastStepStats());
     // this.lightEmitter.update(1 / 30);
+    this.snowMap.offset.x -= 0.0001;
+    this.snowMap.offset.y -= 0.0005;
 
     // careful - event log renderers rely on state from other renderers (e.g. position
     // of water particle as it's evaporating) that requires it to update before others
