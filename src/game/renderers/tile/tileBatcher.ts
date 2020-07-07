@@ -44,7 +44,6 @@ attribute vec3 scales;
 attribute vec3 colors;
 attribute vec2 texturePositions;
 attribute float alphas;
-attribute float temperatures;
 
 // things we pass onto fragment
 varying vec3 vTileCenter;
@@ -52,7 +51,6 @@ varying vec3 vColor;
 varying vec2 vUv;
 varying vec2 vTexturePosition;
 varying float vAlpha;
-varying float vTemperature;
 
 // based on https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_instancing_billboards.html
 void main() {
@@ -61,7 +59,6 @@ void main() {
   vUv = uv;
   vTexturePosition = texturePositions;
   vAlpha = alphas;
-  vTemperature = temperatures;
 
   vec4 mvPosition = modelViewMatrix * vec4(centers, 1.);
   mvPosition.xyz += position * scales;
@@ -82,7 +79,6 @@ varying vec3 vColor;
 varying vec2 vUv;
 varying vec2 vTexturePosition;
 varying float vAlpha;
-varying float vTemperature;
 
 const vec2 spritesheetSize = vec2(256., 256.);
 const vec2 spriteSize = vec2(32.);
@@ -90,18 +86,6 @@ uniform sampler2D spriteSheet;
 
 float myRound(float x) {
   return sign(x) * floor(abs(x) + 0.5);
-}
-
-vec3 applyTemperature(vec3 color) {
-  return color;
-
-  // TODO add heat, maybe rework this to look better
-
-  // vec3 colorFreezing = vec3(12., 54., 89.) / 255.;
-  // vec3 colorCold = vec3(214., 235., 242.) / 255.;
-  // float amtFreezing = (1. - step(0., vTemperature));
-  // float amtCold = (1. - step(32., vTemperature)) * step(0., vTemperature);
-  // return mix(mix(color, colorCold, amtCold * 0.5), colorFreezing, amtFreezing * 0.5);
 }
 
 // uv - [0,1]x[0,1] - our local sprite (32x32) UV coords
@@ -121,7 +105,7 @@ vec2 getCorrectUv(vec2 uv, vec2 texturePosition) {
 void main() {
   vec2 correctUv = getCorrectUv(vUv, vTexturePosition);
   vec4 textureColor = texture2D(spriteSheet, correctUv);
-  gl_FragColor = vec4(applyTemperature(textureColor.rgb * vColor), textureColor.a * vAlpha);
+  gl_FragColor = vec4(textureColor.rgb * vColor, textureColor.a * vAlpha);
 }
 `;
 
@@ -172,8 +156,6 @@ class TileBatcher {
   texturePositions = this.attr(2);
 
   alphas = this.attr(1, 1);
-
-  temperatures = this.attr(1, 1);
 
   private attr(dim: number, fill = 0) {
     const attr = new InstancedBufferAttribute(new Float32Array(this.maxTiles * dim).fill(fill), dim, false, 1);
@@ -259,13 +241,6 @@ export class BatchInstance {
       console.error("freed tileBatcher still in use!");
     }
     this.batcher.colors.setXYZ(this.index, r, g, b);
-  }
-
-  commitTemperature(temperature: number) {
-    if (!this.owner) {
-      console.error("freed tileBatcher still in use!");
-    }
-    this.batcher.temperatures.setX(this.index, temperature);
   }
 
   commitCenter(x: number, y: number, z: number) {

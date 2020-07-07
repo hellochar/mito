@@ -4,12 +4,12 @@ import { Temperature } from "core/temperature";
 import * as React from "react";
 import "./TemperatureGauge.scss";
 
-const temperatureTooltipContentMap = {
-  [Temperature.Freezing]: <>Cells may freeze! Cells operate 50% slower, you walk 50% slower.</>,
-  [Temperature.Cold]: <>Max sunlight at 75%. Cells operate 33% slower. You walk 33% slower.</>,
-  [Temperature.Mild]: <>Temperature changes will affect your cells.</>,
-  [Temperature.Hot]: <>Cells operate 25% faster, you walk 25% faster.</>,
-  [Temperature.Scorching]: <>Cells evaporate water! Cells operate 50% faster, you walk 50% faster.</>,
+const tooltipMap = {
+  [Temperature.Freezing]: <>Cells may freeze! Sunlight at 50%. Cells operate 50% slower. You walk 50% slower.</>,
+  [Temperature.Cold]: <>Sunlight at 75%. Cells operate 33% slower. You walk 33% slower.</>,
+  [Temperature.Mild]: <>No effect from temperature.</>,
+  [Temperature.Hot]: <>Sunlight at 125%. Cells operate 25% faster. You walk 25% faster.</>,
+  [Temperature.Scorching]: <>Cells evaporate water! Sunlight at 150%. Cells operate 50% faster. You walk 50% faster.</>,
 };
 
 const TemperatureGauge: React.FC<{ temperature: Temperature; showMild?: boolean }> = ({
@@ -20,7 +20,7 @@ const TemperatureGauge: React.FC<{ temperature: Temperature; showMild?: boolean 
   if (!showMild && temperature === Temperature.Mild) {
     return null;
   } else {
-    const tooltipContent = temperatureTooltipContentMap[temperature];
+    const tooltipContent = tooltipMap[temperature];
     return (
       <Tooltip content={tooltipContent}>
         <div className={classNames("temperature-gauge", name.toLowerCase())}>{name}</div>

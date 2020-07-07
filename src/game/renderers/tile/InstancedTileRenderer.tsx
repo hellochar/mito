@@ -135,7 +135,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
     this.instance.commitTexturePosition(this.materialInfo.texturePosition);
     this.instance.commitColor(this.color.r, this.color.g, this.color.b);
-    this.instance.commitTemperature(this.target.temperatureFloat);
     // const dist = this.target.pos.distanceTo(this.mito.world.player.pos);
     // const timeAlive = this.target.age;
     // const alpha = clamp(easeCubicIn(timeAlive * 3 - dist), 0, 1);
@@ -145,7 +144,6 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   commitBlack() {
     this.instance.commitTexturePosition(this.materialInfo.texturePosition);
-    this.instance.commitTemperature(this.target.temperatureFloat);
     this.instance.commitColor(0, 0, 0);
     this.instance.commitCenter(this.target.pos.x, this.target.pos.y, 10);
     this.instance.commitScale(this.scale);
@@ -194,6 +192,14 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     }
   }
 
+  /**
+   * A few considerations go into color computation:
+   *
+   * 1) there's the "original color" of the materialInfo, or, for Air, get the co2 color as the base
+   * 2) that's fed into "re-color based on temperature"
+   * 3) this is fed into "darken based on energy"
+   * 4) then fed into "shade based on darkness"
+   */
   updateColor() {
     const lightAmount = this.getLightAmount();
     if (Air.is(this.target)) {
@@ -201,12 +207,15 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
       this.originalColor.copy(co2Color);
     }
     this.color.copy(this.originalColor);
+
+    // modify color based on temperature
+    this.modifyColorFromTemperature(this.color);
+
     if (Cell.is(this.target) && this.target.energy < 0.5) {
       const amountBlack = map(this.target.energy, 0, 0.5, 1, 0);
       this.color.lerp(BLACK, amountBlack);
     }
 
-    this.lerpColorTemperature(this.color);
     // darkness overlay
     this.color.lerp(BLACK, map(lightAmount, 0, 1, 0.8, 0));
   }
@@ -215,7 +224,17 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
 
   private currentLerp = 0;
 
-  private lerpColorTemperature(color: Color) {
+  /**
+   * What we want:
+   *
+   * input: Color
+   *
+   * output: new color
+   *
+   * mild: *no* movement from input color
+   * cold: target is lerping input color to 25% blue
+   */
+  private modifyColorFromTemperature(input: Color) {
     const { temperature } = this.target;
     let tColor = InstancedTileRenderer.TEMPERATURE_COLORS[temperature];
     if (tColor !== this.temperatureColor) {
@@ -224,7 +243,7 @@ export class InstancedTileRenderer<T extends Tile = Tile> extends Renderer<T> {
     const targetLerp = temperature === Temperature.Mild ? 0 : 0.25;
     this.temperatureColor = tColor;
     this.currentLerp = lerp(this.currentLerp, targetLerp, 0.1);
-    color.lerp(this.temperatureColor, this.currentLerp);
+    input.lerp(this.temperatureColor, this.currentLerp);
   }
 
   updateHover() {

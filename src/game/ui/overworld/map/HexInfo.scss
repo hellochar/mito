@@ -18,6 +18,7 @@
 
   .inhabited {
     text-align: center;
+    padding: 10px;
 
     p {
       font-size: 16px;
@@ -56,6 +57,19 @@
     margin: 10px 0;
   }
   .insects {
-    font-size: 24px;
+    font-size: 16px;
+
+    img {
+      height: 1.2em;
+    }
+  }
+
+  table {
+    width: 100%;
+    // border-collapse: collapse;
+
+    td:first-of-type {
+      padding-left: 0;
+    }
   }
 }
