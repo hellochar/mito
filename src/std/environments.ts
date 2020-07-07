@@ -48,7 +48,7 @@ export const Level0: Environment = {
   },
   secondsToEvaporate: 166,
   floorCo2: 0.5,
-  temperaturePerSeason: [48, 56, 52, 43],
+  temperaturePerSeason: [2, 2, 2, 1],
   fill: "Level0",
 };
 
@@ -63,7 +63,7 @@ export const Temperate: Environment = {
   },
   secondsToEvaporate: 166,
   floorCo2: 0.5,
-  temperaturePerSeason: [53, 81, 43, 20],
+  temperaturePerSeason: [2, 3, 2, 1],
   fill: "Temperate",
 };
 
@@ -78,7 +78,7 @@ export const Reservoires: Environment = {
   },
   secondsToEvaporate: 166,
   floorCo2: 0.5,
-  temperaturePerSeason: [53, 75, 43, 25],
+  temperaturePerSeason: [2, 3, 2, 1],
   fill: "Reservoires",
 };
 
@@ -93,7 +93,7 @@ export const Rocky: Environment = {
   },
   secondsToEvaporate: 166,
   floorCo2: 0.8,
-  temperaturePerSeason: [40, 62, 36, 15],
+  temperaturePerSeason: [2, 2, 1, 1],
   fill: "Rocky",
 };
 
@@ -109,7 +109,7 @@ export const SkySoil: Environment = {
   secondsToEvaporate: 166,
   floorCo2: 0.5,
   // start cold
-  temperaturePerSeason: [18, 62, 36, 15],
+  temperaturePerSeason: [1, 2, 2, 1],
   fill: "SkySoil",
 };
 
@@ -126,7 +126,7 @@ export const Desert: Environment = {
   secondsToEvaporate: 16,
   // very good co2
   floorCo2: 0.95,
-  temperaturePerSeason: [72, 89, 110, 50],
+  temperaturePerSeason: [3, 3, 4, 2],
   fill: "Desert",
 };
 
@@ -140,7 +140,7 @@ export const Mound: Environment = {
   },
   secondsToEvaporate: 120,
   floorCo2: 0.5,
-  temperaturePerSeason: [41, 50, 23, -10],
+  temperaturePerSeason: [2, 2, 1, 0],
   fill: "Mound",
 };
 
@@ -154,7 +154,7 @@ export const InverseMound: Environment = {
   },
   secondsToEvaporate: 12,
   floorCo2: 0.5,
-  temperaturePerSeason: [84, 96, 120, 50],
+  temperaturePerSeason: [3, 4, 4, 2],
   fill: "InverseMound",
 };
 
@@ -169,7 +169,7 @@ export const Pillars: Environment = {
   },
   secondsToEvaporate: 300,
   floorCo2: 0.8,
-  temperaturePerSeason: [12, 9, 26, -12],
+  temperaturePerSeason: [1, 1, 1, 0],
   fill: "Pillars",
 };
 
@@ -184,7 +184,7 @@ export const RockMaze: Environment = {
   },
   secondsToEvaporate: 60,
   floorCo2: 0.5,
-  temperaturePerSeason: [84, 110, 50, 0],
+  temperaturePerSeason: [3, 4, 2, 0],
   fill: "RockMaze",
 };
 
@@ -198,7 +198,7 @@ export const CliffSide: Environment = {
   },
   secondsToEvaporate: 1000,
   floorCo2: 2,
-  temperaturePerSeason: [50, 56, 64, 31],
+  temperaturePerSeason: [1, 2, 1, 0],
   fill: "CliffSide",
 };
 
@@ -212,7 +212,7 @@ export const MountainSide: Environment = {
   },
   secondsToEvaporate: 120,
   floorCo2: 0.5,
-  temperaturePerSeason: [25, 50, 64, 0],
+  temperaturePerSeason: [2, 2, 1, 0],
   fill: "MountainSide",
 };
 
@@ -226,6 +226,6 @@ export const MountainTop: Environment = {
   },
   secondsToEvaporate: 120,
   floorCo2: 0.5,
-  temperaturePerSeason: [25, 50, 64, 0],
+  temperaturePerSeason: [1, 2, 1, 0],
   fill: "Random",
 };

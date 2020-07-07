@@ -15,6 +15,8 @@
   white-space: nowrap;
 
   .info-tile {
+    display: flex;
+    align-items: center;
     // border
     border-bottom: 1px solid $light-gray1;
     padding-bottom: 10px;
@@ -24,11 +26,16 @@
     width: calc(100% + 20px);
     margin-left: -10px;
     padding-left: 10px;
-  }
 
-  .info-tile-row {
-    display: flex;
-    align-items: center;
+    .info-tile-name {
+      display: inline-block;
+      font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+      margin-right: 10px;
+    }
+
+    .temperature-gauge {
+      margin-right: 10px;
+    }
   }
 
   .interact-infos {
@@ -36,11 +43,6 @@
     font-family: $arial-family;
     color: $gray1;
     font-size: 12px;
-  }
-
-  .info-tile-name {
-    display: inline-block;
-    font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
   }
 
   .info-air {

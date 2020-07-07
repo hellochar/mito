@@ -1,4 +1,5 @@
-import { Temperature, temperatureFor } from "core/temperature";
+import { Temperature } from "core/temperature";
+import { params } from "game/params";
 import { clamp, randInt } from "math";
 import { PERCENT_DAYLIGHT, SUNLIGHT_DIFFUSION, SUNLIGHT_REINTRODUCTION, TIME_PER_DAY } from "../constants";
 import { Air } from "../tile";
@@ -15,9 +16,10 @@ const SUNLIGHT_TEMPERATURE_SCALAR = {
  * WeatherController is responsible for weather related properties, such as:
  *
  * Temperature of the environment
- * Sunlight
+ * Sunlight amount and angle
+ * Rainfall
  */
-export class WeatherController {
+export class Weather {
   constructor(public world: World) {}
 
   /**
@@ -26,6 +28,9 @@ export class WeatherController {
    * pi to 2pi: nighttime (PERCENT_DAYLIGHT to 1)
    */
   get sunAngle() {
+    if (params.forceNight) {
+      return (Math.PI * 3) / 2;
+    }
     const timeOfDay = (this.world.time / TIME_PER_DAY) % 1;
     if (timeOfDay < PERCENT_DAYLIGHT) {
       return (timeOfDay / PERCENT_DAYLIGHT) * Math.PI;
@@ -35,18 +40,27 @@ export class WeatherController {
   }
 
   get sunAmount() {
-    const temperatureScalar = SUNLIGHT_TEMPERATURE_SCALAR[temperatureFor(this.getCurrentTemperature())];
+    const temperatureScalar = SUNLIGHT_TEMPERATURE_SCALAR[this.getBaseTemperature()];
     const baseAmount = (Math.atan(Math.sin(this.sunAngle) * 12) / (Math.PI / 2)) * 0.5 + 0.5;
     return baseAmount * temperatureScalar;
   }
 
-  getCurrentTemperature() {
+  getBaseTemperature() {
     const { season } = this.world.season;
     return this.world.environment.temperaturePerSeason[season];
   }
 
+  getCurrentTemperature() {
+    const temperature = this.getBaseTemperature();
+    // temperature gets one tick colder at night
+    if (this.sunAngle > Math.PI) {
+      return clamp(temperature - 1, Temperature.Freezing, Temperature.Scorching) as Temperature;
+    } else {
+      return temperature;
+    }
+  }
+
   step(dt: number) {
-    this.updateTemperatures();
     this.computeSunlight();
     this.stepWeather(dt);
   }
@@ -111,12 +125,6 @@ export class WeatherController {
           t.sunlightCached = sunlight;
         }
       }
-    }
-  }
-
-  public updateTemperatures() {
-    for (const t of this.world.allCells()) {
-      t.temperatureFloat = t.nextTemperature;
     }
   }
 }

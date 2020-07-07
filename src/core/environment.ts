@@ -1,5 +1,6 @@
 import { createSimpleSchema, object } from "serializr";
 import { TileGeneratorName } from "../std/tileGenerators";
+import { Temperature } from "./temperature";
 import { TileGenerator } from "./tileGenerator";
 
 export interface Environment {
@@ -12,7 +13,7 @@ export interface Environment {
   insectsPerDay: number;
   secondsToEvaporate: number;
   floorCo2: number;
-  temperaturePerSeason: number[];
+  temperaturePerSeason: Temperature[];
   fill: TileGeneratorName | TileGenerator;
 }
 

@@ -1,8 +1,8 @@
 import { Player } from "core";
 import { Inventory } from "core/inventory";
 import { Action } from "core/player/action";
+import { Temperature } from "core/temperature";
 import { params } from "game/params";
-import { lerp } from "math";
 import { Vector2 } from "three";
 import { CELL_DROOP } from "../constants";
 import { DIRECTIONS } from "../directions";
@@ -34,8 +34,6 @@ export class Cell extends Tile implements Interactable {
   public darkness = 0;
 
   public closestCellAirDistance = 0;
-
-  public nextTemperature: number;
 
   // offset [-0.5, 0.5] means you're still "inside" this cell, going out of it will break you
   // public offset = new Vector2();
@@ -109,34 +107,20 @@ export class Cell extends Tile implements Interactable {
     if (args?.direction) {
       this.args.direction!.copy(args?.direction);
     }
-    this.temperatureFloat = 48;
-    this.nextTemperature = this.temperatureFloat;
 
     // careful - ordering matters here (e.g. this.inventory shouldn't be null)
     this.properties = this.computeDynamicProperties();
 
     this.geneInstances = this.chromosome.newGeneInstances(this);
+
+    this.stepTemperature(0);
   }
 
   /**
    * Temperature speed multiplier.
    */
   protected get temperatureTempo() {
-    if (this.temperatureFloat <= 0) {
-      // 50% slower - 1 / 2;
-      return 1 / 2;
-    } else if (this.temperatureFloat <= 32) {
-      // 33% slower - 2 / (2 / 3) = 3
-      return 2 / 3;
-    } else if (this.temperatureFloat <= 64) {
-      return 1;
-    } else if (this.temperatureFloat <= 96) {
-      // 25% faster
-      return 1.25;
-    } else {
-      // 50% faster
-      return 1.5;
-    }
+    return TEMPO_FROM_TEMPERATURE[this.temperature];
   }
 
   /**
@@ -272,13 +256,19 @@ export class Cell extends Tile implements Interactable {
   }
 
   stepTemperature(dt: number) {
-    this.nextTemperature = nextTemperature(this.temperatureFloat, this.world.tileNeighbors(this.pos).array, dt);
-    if (this.temperatureFloat <= 0) {
+    this.temperature = Temperature.Mild;
+    for (const neighbor of this.world.tileNeighbors(this.pos).array) {
+      if (!Cell.is(neighbor) && neighbor.temperature !== Temperature.Mild) {
+        this.temperature = neighbor.temperature;
+        break;
+      }
+    }
+    if (this.temperature === Temperature.Freezing) {
       const chanceToFreeze = 0.01667 * dt; // on average, this cell freezes every day
       if (Math.random() < chanceToFreeze) {
         this.addEffect(new FreezeEffect());
       }
-    } else if (this.temperatureFloat > 96) {
+    } else if (this.temperature === Temperature.Scorching) {
       const waterToLose = Math.min(this.inventory.water, 1);
       const chanceEvaporate = waterToLose * 0.01667; // no average, lose 1 water per day
       if (Math.random() < chanceEvaporate * dt) {
@@ -385,12 +375,10 @@ function isFractional(x: number) {
   return x % 1 !== 0;
 }
 
-function nextTemperature(currentTemperature: number, neighbors: Tile[], dt: number): number {
-  let averageTemperature = currentTemperature;
-  for (const n of neighbors) {
-    averageTemperature += n.temperatureFloat;
-  }
-  averageTemperature /= neighbors.length + 1;
-  // TODO maybe use proper dt-scaling lerp
-  return lerp(currentTemperature, averageTemperature, dt / 12);
-}
+const TEMPO_FROM_TEMPERATURE = {
+  [Temperature.Freezing]: 1 / 2,
+  [Temperature.Cold]: 2 / 3,
+  [Temperature.Mild]: 1,
+  [Temperature.Hot]: 1.25,
+  [Temperature.Scorching]: 1.5,
+};

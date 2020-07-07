@@ -196,20 +196,18 @@ export class TileDetails extends React.Component<TileDetailsProps> {
   private tileInfo(tile: Tile) {
     return (
       <div className="info-tile">
-        <div className="info-tile-row">
-          <div className="info-tile-name">{tile.displayName}</div>
-          <TemperatureGauge tile={tile} />
-          <Tooltip content="Inventory is how much water and sugar this Tile can hold.">
-            <InventoryBar
-              water={tile.inventory.water}
-              sugar={tile.inventory.sugar}
-              capacity={tile.inventory.capacity}
-              format="icons"
-              colored={false}
-              capacityBasedWidth
-            />
-          </Tooltip>
-        </div>
+        <div className="info-tile-name">{tile.displayName}</div>
+        <TemperatureGauge temperature={tile.temperature} />
+        <Tooltip content="Inventory is how much water and sugar this Tile can hold.">
+          <InventoryBar
+            water={tile.inventory.water}
+            sugar={tile.inventory.sugar}
+            capacity={tile.inventory.capacity}
+            format="icons"
+            colored={false}
+            capacityBasedWidth
+          />
+        </Tooltip>
       </div>
     );
   }

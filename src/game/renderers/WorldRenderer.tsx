@@ -1,21 +1,7 @@
-import snowUrl from "assets/images/snow.png";
 import { Insect } from "core/insect";
-import { WeatherController } from "core/world/weatherController";
-import { lerpLinear } from "math";
 import { arrayRange } from "math/arrays";
 import { createSelector } from "reselect";
-import {
-  DoubleSide,
-  Mesh,
-  MeshBasicMaterial,
-  NearestFilter,
-  PlaneGeometry,
-  RepeatWrapping,
-  Scene,
-  Texture,
-  TextureLoader,
-  Vector2,
-} from "three";
+import { Scene } from "three";
 import { Entity, Player, PlayerSeed, StepStats, World } from "../../core";
 import { Tile } from "../../core/tile";
 import Mito from "../mito/mito";
@@ -25,6 +11,7 @@ import { InventoryPoints } from "./InventoryRenderer";
 import { PlayerRenderer } from "./PlayerRenderer";
 import { PlayerSeedRenderer } from "./PlayerSeedRenderer";
 import { Renderer } from "./Renderer";
+import { SnowRenderer } from "./SnowRenderer";
 import { InstancedTileRenderer } from "./tile/InstancedTileRenderer";
 import TileBatcher from "./tile/tileBatcher";
 
@@ -126,48 +113,5 @@ export class WorldRenderer extends Renderer<World> {
 
   destroy(): void {
     throw new Error("Method not implemented.");
-  }
-}
-
-class SnowRenderer {
-  static geometry = new PlaneGeometry(50, 100);
-
-  snowMesh: Mesh;
-
-  snowMap: Texture;
-
-  enabledOpacity: number;
-
-  snowMaterial: MeshBasicMaterial;
-
-  constructor(public target: WeatherController, public scene: Scene, public readonly scalar = 1) {
-    this.snowMap = new TextureLoader().load(snowUrl, (texture) => {
-      texture.magFilter = texture.minFilter = NearestFilter;
-      texture.flipY = true;
-      texture.wrapS = texture.wrapT = RepeatWrapping;
-      texture.repeat = new Vector2(3 * scalar, 6 * scalar);
-    });
-    this.enabledOpacity = 0.4 / scalar;
-    this.snowMaterial = new MeshBasicMaterial({
-      map: this.snowMap,
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0,
-      side: DoubleSide,
-    });
-    this.snowMesh = new Mesh(SnowRenderer.geometry, this.snowMaterial);
-    this.snowMesh.position.set(25, 50, -9);
-    this.snowMesh.renderOrder = 1;
-    scene.add(this.snowMesh);
-  }
-
-  update() {
-    const targetOpacity = this.target.getCurrentTemperature() < 32 ? this.enabledOpacity : 0;
-    if (this.snowMaterial.opacity !== targetOpacity) {
-      this.snowMaterial.opacity = lerpLinear(this.snowMaterial.opacity, targetOpacity, this.enabledOpacity * 0.02);
-      this.snowMaterial.needsUpdate = true;
-    }
-    this.snowMap.offset.x -= 0.0001 / this.scalar;
-    this.snowMap.offset.y -= 0.0005 / this.scalar;
   }
 }

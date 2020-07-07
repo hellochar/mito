@@ -6,6 +6,7 @@ const PARAMS_DEFAULT = {
   showFPS: false,
   debugPerf: false,
   debugLevel: false,
+  forceNight: false,
   debug: process.env.NODE_ENV === "development",
 };
 

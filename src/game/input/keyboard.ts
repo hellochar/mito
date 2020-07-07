@@ -43,6 +43,9 @@ export const Keyboard = new (class Keyboard {
     if (code === "KeyL") {
       params.debugLevel = !params.debugLevel;
     }
+    if (code === "KeyN") {
+      params.forceNight = !params.forceNight;
+    }
     if (code === "Period") {
       params.showFPS = !params.showFPS;
     }

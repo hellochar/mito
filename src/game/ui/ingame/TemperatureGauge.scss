@@ -1,39 +1,30 @@
 @import "../../../variables";
 
 .temperature-gauge {
-  $size: 30px;
-  $marker-thickness: 2.5px;
-  margin: 0 10px;
   display: inline-block;
-  // overflow: hidden;
   position: relative;
 
-  .temperature-scale {
-    height: $marker-thickness;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform-origin: 0 center;
-    border-left: $size/4 solid transparent;
-    border-radius: $marker-thickness / 2;
+  &.freezing {
+    color: darkblue;
+    font-weight: bold;
   }
 
-  .temperature-pointer {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform-origin: 0 center;
-    height: $marker-thickness;
-    border-left: $size / 4 * 1.25 solid $black;
+  &.cold {
+    color: rgb(64, 64, 255);
+    font-weight: bold;
   }
 
-  .temperature-label {
-    position: absolute;
-    bottom: 1px;
-    left: 50%;
-    transform: translate(-50%, 50%);
-    font-family: $arial-family;
-    font-size: 11px;
+  &.mild {
+    color: black;
+  }
+
+  &.hot {
+    color: orange;
+    font-weight: bold;
+  }
+
+  &.scorching {
+    color: red;
     font-weight: bold;
   }
 }

@@ -2,8 +2,9 @@ import { TIME_PER_DAY } from "core/constants";
 import { Interactable } from "core/interactable";
 import { Inventory } from "core/inventory";
 import { Action } from "core/player/action";
+import { Temperature } from "core/temperature";
 import { Tile } from "core/tile/tile";
-import { clamp, lerp, map, randFloat, randRound } from "math/index";
+import { clamp, map, randFloat, randRound } from "math/index";
 import { Air } from "./air";
 export abstract class Soil extends Tile implements Interactable {
   /**
@@ -104,8 +105,11 @@ export abstract class Soil extends Tile implements Interactable {
   }
 
   stepTemperature(_dt: number) {
-    const outsideTemperature = this.world.weather.getCurrentTemperature();
-    this.temperatureFloat = lerp(outsideTemperature, 50, clamp(map(this.depth - 1, 0, 8, 0, 1), 0, 1));
+    if (this.depth > 4) {
+      this.temperature = Temperature.Mild;
+    } else {
+      this.temperature = this.world.weather.getCurrentTemperature();
+    }
   }
 }
 

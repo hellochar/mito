@@ -20,7 +20,7 @@ import { Air, Cell, Soil, Tile } from "../tile";
 import { TileEvent } from "../tile/tileEvent";
 import { createGeneratorContext, GeneratorContext, GeneratorInfo } from "./generatorContext";
 import { StepStats } from "./stepStats";
-import { WeatherController } from "./weatherController";
+import { Weather } from "./weather";
 
 export interface WorldOptions {
   width: number;
@@ -75,7 +75,7 @@ export class World {
 
   public readonly generatorContext: GeneratorContext;
 
-  public weather: WeatherController;
+  public weather: Weather;
 
   genome: Genome;
 
@@ -147,7 +147,7 @@ export class World {
     this.generatorContext = createGeneratorContext(seed);
     this.species = species;
     this.genome = species.genome;
-    this.weather = new WeatherController(this);
+    this.weather = new Weather(this);
 
     const tileGenerator = typeof environment.fill === "string" ? TileGenerators[environment.fill] : environment.fill;
     this.gridEnvironment = gridRange(this.width, this.height, (x, y) => {

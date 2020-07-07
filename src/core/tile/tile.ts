@@ -3,7 +3,7 @@ import { Vector2 } from "three";
 import { clamp, randRound } from "../../math/index";
 import { Steppable } from "../entity";
 import { Inventory } from "../inventory";
-import { Temperature, temperatureFor } from "../temperature";
+import { Temperature } from "../temperature";
 import { World } from "../world/world";
 
 export abstract class Tile implements Steppable {
@@ -15,7 +15,7 @@ export abstract class Tile implements Steppable {
 
   public darkness = Infinity;
 
-  public temperatureFloat: number;
+  public temperature: Temperature;
 
   public isStructuralSupport = false;
 
@@ -26,9 +26,6 @@ export abstract class Tile implements Steppable {
   public closestCellAirDistance: number = 1000;
 
   // public lightIntersection?: Intersection;
-  get temperature(): Temperature {
-    return temperatureFor(this.temperatureFloat);
-  }
 
   get diffusionWater(): number {
     return (this.constructor as any).diffusionWater;
@@ -68,7 +65,7 @@ export abstract class Tile implements Steppable {
       throw new Error("null world!");
     }
     this.timeMade = world.time;
-    this.temperatureFloat = this.world.weather.getCurrentTemperature();
+    this.temperature = this.world.weather.getCurrentTemperature();
   }
 
   abstract shouldStep(dt: number): boolean;
@@ -142,7 +139,7 @@ export abstract class Tile implements Steppable {
   }
 
   stepTemperature(_dt: number) {
-    this.temperatureFloat = this.world.weather.getCurrentTemperature();
+    this.temperature = this.world.weather.getCurrentTemperature();
   }
 
   /**
