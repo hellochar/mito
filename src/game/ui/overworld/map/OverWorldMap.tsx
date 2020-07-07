@@ -101,7 +101,7 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
       const [{ overWorld }] = this.context;
       const clicked = overWorld.hexAt(coords.i, coords.j);
       // simplest check - we clicked on a tile we can see
-      if (clicked != null && clicked.info.visible) {
+      if (clicked != null) {
         // if clicked has no flora, migrate into it
         if (clicked.info.flora == null) {
           const target = clicked;
@@ -114,9 +114,11 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
             };
             this.setState({ populationAttempt, highlightedHex: undefined });
           } else {
-            // TODO add a Popover for when you see a tile but can't reach it with anything
+            // For when you see a tile but can't reach it with anything
             // this can happen in the future if earthquakes happen and destroy
             // blocks you used to own
+            const highlightedHex = clicked;
+            this.setState({ highlightedHex, populationAttempt: undefined });
           }
         } else {
           // clicked does have flora; just show a highlight
@@ -389,21 +391,14 @@ export class OverWorldMap extends React.PureComponent<OverWorldMapProps, OverWor
     if (populationAttempt != null) {
       return (
         <OverWorldPopover camera={cameraState} tile={populationAttempt.targetHex}>
-          <HexInfo
-            playSpecies={populationAttempt.settlingSpecies}
-            tile={populationAttempt.targetHex}
-            onClickPlay={this.handleClickPlay}
-          />
+          <HexInfo tile={populationAttempt.targetHex} onClickPlay={this.handleClickPlay} />
         </OverWorldPopover>
       );
     } else if (highlightedHex != null) {
+      const canPlay = highlightedHex.info.visible;
       return (
         <OverWorldPopover camera={cameraState} tile={highlightedHex}>
-          <HexInfo
-            playSpecies={highlightedHex.info.flora!.species}
-            tile={highlightedHex}
-            onClickPlay={this.handleClickPlay}
-          />
+          <HexInfo tile={highlightedHex} onClickPlay={canPlay ? this.handleClickPlay : undefined} />
         </OverWorldPopover>
       );
     }

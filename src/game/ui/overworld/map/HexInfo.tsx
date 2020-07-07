@@ -2,7 +2,6 @@ import locustsSrc from "assets/images/grasshopper.png";
 import { nf } from "common/formatters";
 import { Environment } from "core/environment";
 import { LevelInfo } from "core/overworld/levelInfo";
-import { Species } from "core/species";
 import TemperatureGauge from "game/ui/ingame/TemperatureGauge";
 import React from "react";
 import { environmentFromLevelInfo } from "std/environments";
@@ -12,16 +11,15 @@ import MP from "../../common/MP";
 import "./HexInfo.scss";
 
 interface HexInfo {
-  playSpecies: Species;
   tile: HexTile;
-  onClickPlay: () => void;
+  onClickPlay?: () => void;
 }
 
-function HexInfo({ playSpecies, tile, onClickPlay }: HexInfo) {
+function HexInfo({ tile, onClickPlay }: HexInfo) {
   const { height, flora } = tile.info;
 
   const playButtonElement =
-    height === -1 ? null : (
+    height === -1 || onClickPlay == null ? null : (
       <div className="play-selector">
         <Button color="green" className="play-button" onClick={onClickPlay}>
           Play Level
@@ -87,18 +85,18 @@ const EnvironmentInfo: React.FC<{ environment: Environment; info: LevelInfo }> =
               <td>
                 <b>Temperature</b>
               </td>
-              {environment.temperaturePerSeason.map((t) => (
-                <td>
+              {environment.temperaturePerSeason.map((t, i) => (
+                <td key={i}>
                   <TemperatureGauge temperature={t} showMild />
                 </td>
               ))}
             </tr>
             <tr>
               <td>
-                <b>Length of Day</b>
+                <b>Length&nbsp;of&nbsp;Day</b>
               </td>
-              {environment.daylightPerSeason.map((percent) => (
-                <td>{nf(percent * 100, 2)}%</td>
+              {environment.daylightPerSeason.map((percent, i) => (
+                <td key={i}>{nf(percent * 100, 2)}%</td>
               ))}
             </tr>
             <tr>
