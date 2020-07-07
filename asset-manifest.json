@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "./static/css/main.080cad80.chunk.css",
-    "main.js": "./static/js/main.56c91c22.chunk.js",
-    "main.js.map": "./static/js/main.56c91c22.chunk.js.map",
+    "main.css": "./static/css/main.02f25f06.chunk.css",
+    "main.js": "./static/js/main.095546c6.chunk.js",
+    "main.js.map": "./static/js/main.095546c6.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.ad0d04df.js",
     "runtime-main.js.map": "./static/js/runtime-main.ad0d04df.js.map",
     "static/css/2.7300295f.chunk.css": "./static/css/2.7300295f.chunk.css",
-    "static/js/2.fd1027b6.chunk.js": "./static/js/2.fd1027b6.chunk.js",
-    "static/js/2.fd1027b6.chunk.js.map": "./static/js/2.fd1027b6.chunk.js.map",
+    "static/js/2.ffa2e502.chunk.js": "./static/js/2.ffa2e502.chunk.js",
+    "static/js/2.ffa2e502.chunk.js.map": "./static/js/2.ffa2e502.chunk.js.map",
     "index.html": "./index.html",
-    "precache-manifest.0e70e13f4fc29eaae7ab70f2668d1eeb.js": "./precache-manifest.0e70e13f4fc29eaae7ab70f2668d1eeb.js",
+    "precache-manifest.a5b753bb4f479372decd3e643df288d5.js": "./precache-manifest.a5b753bb4f479372decd3e643df288d5.js",
     "service-worker.js": "./service-worker.js",
     "static/css/2.7300295f.chunk.css.map": "./static/css/2.7300295f.chunk.css.map",
-    "static/css/main.080cad80.chunk.css.map": "./static/css/main.080cad80.chunk.css.map",
-    "static/js/2.fd1027b6.chunk.js.LICENSE.txt": "./static/js/2.fd1027b6.chunk.js.LICENSE.txt",
+    "static/css/main.02f25f06.chunk.css.map": "./static/css/main.02f25f06.chunk.css.map",
+    "static/js/2.ffa2e502.chunk.js.LICENSE.txt": "./static/js/2.ffa2e502.chunk.js.LICENSE.txt",
     "static/media/Blop-Mark_DiAngelo-79054334.mp3": "./static/media/Blop-Mark_DiAngelo-79054334.627c0e8b.mp3",
     "static/media/build.mp3": "./static/media/build.0e2001c4.mp3",
     "static/media/build_complete.mp3": "./static/media/build_complete.9af6ac71.mp3",
@@ -33,6 +33,7 @@
     "static/media/mito-strings.mp3": "./static/media/mito-strings.9f30639c.mp3",
     "static/media/mitodeath.mp3": "./static/media/mitodeath.207c4872.mp3",
     "static/media/rollover6.wav": "./static/media/rollover6.a81b9fe6.wav",
+    "static/media/snow.png": "./static/media/snow.6c6ff636.png",
     "static/media/StartScreen.scss": "./static/media/startscreen-bg.5d06e97f.png",
     "static/media/sticky.mp3": "./static/media/sticky.6d27b20f.mp3",
     "static/media/suckwater.wav": "./static/media/suckwater.b0fe81fa.wav",
@@ -44,8 +45,8 @@
   "entrypoints": [
     "static/js/runtime-main.ad0d04df.js",
     "static/css/2.7300295f.chunk.css",
-    "static/js/2.fd1027b6.chunk.js",
-    "static/css/main.080cad80.chunk.css",
-    "static/js/main.56c91c22.chunk.js"
+    "static/js/2.ffa2e502.chunk.js",
+    "static/css/main.02f25f06.chunk.css",
+    "static/js/main.095546c6.chunk.js"
   ]
 }
