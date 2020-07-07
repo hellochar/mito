@@ -14,6 +14,7 @@ export interface Environment {
   secondsToEvaporate: number;
   floorCo2: number;
   temperaturePerSeason: Temperature[];
+  daylightPerSeason: number[];
   fill: TileGeneratorName | TileGenerator;
 }
 

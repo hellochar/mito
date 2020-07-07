@@ -27,12 +27,12 @@ export const GenePhotosynthesis = Gene.make<PhotosynthesisState>(
     description: ({ reactionChancePerSecond }) => (
       <>
         <p>
-          Converts <ResourceIcon name="water" /> into <ResourceIcon name="sugar" />.
+          Converts 2<ResourceIcon name="water" /> into 1<ResourceIcon name="sugar" />.
         </p>
-        <p>50% co2, the trade is 2:1. At 100% co2, the trade is 1:1.</p>
+        <p>Scaled by both sunlight and co2 of adjacent Air.</p>
         <p>
-          Each neighboring Air provides a <GN value={reactionChancePerSecond * 100} sigFigs={3} />% chance per second,
-          scaled with sunlight.
+          In perfect sunlight and co2, each Air provides a <GN value={reactionChancePerSecond * 100} sigFigs={3} />%
+          chance per second.
         </p>
       </>
     ),
@@ -75,9 +75,10 @@ function maybePhotosynthesize(
   state: PhotosynthesisState
 ) {
   const sunlight = air.sunlight();
+  const co2 = air.co2();
 
   // gives much less sugar lower down
-  const conversionRate = air.co2();
+  const conversionRate = 0.5; // air.co2();
 
   state.averageConversionRate += conversionRate;
   // in prime conditions:
@@ -89,7 +90,7 @@ function maybePhotosynthesize(
   const bestEfficiencyWater = 1 / conversionRate;
   const waterToConvert = Math.min(cell.inventory.water, bestEfficiencyWater);
 
-  const ambientChancePerSecond = reactionChancePerSecond * sunlight;
+  const ambientChancePerSecond = reactionChancePerSecond * sunlight * co2;
   // this.sunlightCollected += chance * dt;
   if (waterToConvert > 0 && ambientChancePerSecond > 0) {
     cell.world.logEvent({

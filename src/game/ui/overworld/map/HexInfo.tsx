@@ -1,4 +1,5 @@
 import locustsSrc from "assets/images/grasshopper.png";
+import { nf } from "common/formatters";
 import { Environment } from "core/environment";
 import { LevelInfo } from "core/overworld/levelInfo";
 import { Species } from "core/species";
@@ -71,7 +72,7 @@ const EnvironmentInfo: React.FC<{ environment: Environment; info: LevelInfo }> =
   return (
     <div className="environment-info">
       <div>
-        <table className="bp3-html-table">
+        <table className="bp3-html-table bp3-html-table-condensed">
           <thead>
             <tr>
               <th />
@@ -94,15 +95,22 @@ const EnvironmentInfo: React.FC<{ environment: Environment; info: LevelInfo }> =
             </tr>
             <tr>
               <td>
+                <b>Length of Day</b>
+              </td>
+              {environment.daylightPerSeason.map((percent) => (
+                <td>{nf(percent * 100, 2)}%</td>
+              ))}
+            </tr>
+            <tr>
+              <td>
                 <b>Rainfall</b>
               </td>
-              <td colSpan={4}>{rainfallDescription}</td>
+              <td colSpan={4} className="rainfall">
+                {rainfallDescription}
+              </td>
             </tr>
           </tbody>
         </table>
-      </div>
-      <div>
-        <b>Soil Type</b>: {info.soilType}
       </div>
       {environment.insectsPerDay > 0 ? (
         <div className="insects">

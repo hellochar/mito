@@ -15,6 +15,7 @@ const allSoilEnvironment: Environment = {
   secondsToEvaporate: Infinity,
   floorCo2: 1,
   temperaturePerSeason: [50, 50, 50, 50],
+  daylightPerSeason: [0.9, 0.9, 0.9, 0.9],
 };
 
 function testWorld(width: number, height: number) {

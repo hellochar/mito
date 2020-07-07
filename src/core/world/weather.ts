@@ -1,7 +1,7 @@
 import { Temperature } from "core/temperature";
 import { params } from "game/params";
 import { clamp, randInt } from "math";
-import { PERCENT_DAYLIGHT, SUNLIGHT_DIFFUSION, SUNLIGHT_REINTRODUCTION, TIME_PER_DAY } from "../constants";
+import { SUNLIGHT_DIFFUSION, SUNLIGHT_REINTRODUCTION, TIME_PER_DAY } from "../constants";
 import { Air } from "../tile";
 import { World } from "./world";
 
@@ -23,6 +23,19 @@ export class Weather {
   constructor(public world: World) {}
 
   /**
+   * The day is further split into a "daytime" and a "nighttime". Sunlight
+   * angles from -90 to +90 over the course of the day. This percentage says
+   * how much of a full day is filled with sun.
+   *
+   * Balance-wise, we keep it daytime often because daytime is more fun; nighttime
+   * is just a time-keeping convenience, and a way to reset the sun angle.
+   */
+  get percentDaylight() {
+    const { season } = this.world.season;
+    return this.world.environment.daylightPerSeason[season];
+  }
+
+  /**
    * 0 to 2pi, where
    * 0 to pi: daytime (time of day - 0 to PERCENT_DAYLIGHT)
    * pi to 2pi: nighttime (PERCENT_DAYLIGHT to 1)
@@ -32,10 +45,11 @@ export class Weather {
       return (Math.PI * 3) / 2;
     }
     const timeOfDay = (this.world.time / TIME_PER_DAY) % 1;
-    if (timeOfDay < PERCENT_DAYLIGHT) {
-      return (timeOfDay / PERCENT_DAYLIGHT) * Math.PI;
+    const percentDaylight = this.percentDaylight;
+    if (timeOfDay < percentDaylight) {
+      return (timeOfDay / percentDaylight) * Math.PI;
     } else {
-      return Math.PI * (1 + (timeOfDay - PERCENT_DAYLIGHT) / (1 - PERCENT_DAYLIGHT));
+      return Math.PI * (1 + (timeOfDay - percentDaylight) / (1 - percentDaylight));
     }
   }
 
