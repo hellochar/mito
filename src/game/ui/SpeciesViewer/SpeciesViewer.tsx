@@ -85,7 +85,7 @@ const MutationChooser: React.FC<{ species: Species }> = ({ species }) => {
           </small>
         ) : null}
       </h1>
-      <p>Drag and Drop into your cell</p>
+      <p className="instruction">Drag and Drop into your cell</p>
       <Droppable droppableId={ID_GENE_OPTIONS} isDropDisabled direction="horizontal">
         {(provided, snapshot) => (
           <div className="gene-options" ref={provided.innerRef} {...provided.droppableProps}>
