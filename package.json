@@ -29,7 +29,7 @@
     "electron": "^8.0.2",
     "gh-pages": "^2.0.1",
     "howler": "^2.1.3",
-    "immer": "^6.0.3",
+    "immer": "^8.0.1",
     "localforage": "^1.7.3",
     "lodash": "^4.17.15",
     "node-sass": "^4.12.0",
