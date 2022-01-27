@@ -48,7 +48,7 @@
     "serializr": "^1.5.3",
     "simplex-noise": "^2.4.0",
     "stats.js": "^0.17.0",
-    "three": "^0.112.0",
+    "three": "^0.137.0",
     "typescript": "3.7.5",
     "uuid": "^3.3.3"
   },
