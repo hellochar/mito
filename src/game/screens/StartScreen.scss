@@ -43,4 +43,123 @@
       margin-bottom: 50px;
     }
   }
+  
+  // Mode selection styles
+  &.mode-selection {
+    .game-mode-selection {
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 12px;
+      padding: 40px;
+      margin-top: 40px;
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      
+      h2 {
+        color: $white;
+        text-align: center;
+        font-size: 36px;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      
+      .mode-options {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 40px;
+        
+        .mode-option {
+          background: rgba(255, 255, 255, 0.05);
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          border-radius: 8px;
+          padding: 24px;
+          width: 300px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+          }
+          
+          &.selected {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+          }
+          
+          .mode-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 16px;
+          }
+          
+          h3 {
+            color: $white;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 16px;
+          }
+          
+          p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            text-align: center;
+          }
+          
+          ul {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            
+            li {
+              padding: 4px 0;
+              position: relative;
+              padding-left: 16px;
+              
+              &::before {
+                content: '•';
+                color: #00ff88;
+                position: absolute;
+                left: 0;
+              }
+            }
+          }
+        }
+      }
+      
+      .mode-actions {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        
+        button {
+          padding: 12px 24px;
+          font-size: 18px;
+          min-width: 120px;
+        }
+      }
+    }
+    
+    h1 {
+      margin: 60px auto 20px;
+      font-size: 80px;
+    }
+  }
+}
+
+// Discord icon styling
+.discord {
+  color: $white;
+  font-size: 32px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  
+  &:hover {
+    opacity: 1;
+  }
 }
