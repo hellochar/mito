@@ -7,6 +7,7 @@ const PARAMS_DEFAULT = {
   debugPerf: false,
   debugLevel: false,
   forceNight: false,
+  sandboxMode: false, // New sandbox mode parameter
   debug: process.env.NODE_ENV === "development",
 };
 
@@ -39,3 +40,9 @@ export function updateParamsHash() {
   }
 }
 updateParamsHash();
+
+// Helper function to toggle sandbox mode
+export function setSandboxMode(enabled: boolean) {
+  params.sandboxMode = enabled;
+  updateParamsHash();
+}
