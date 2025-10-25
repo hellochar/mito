@@ -1,0 +1,187 @@
+.sandbox-controls {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  
+  .sandbox-panel {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 16px;
+    min-width: 300px;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    
+    h3 {
+      margin: 0 0 16px 0;
+      color: #ffd700;
+      font-size: 18px;
+      text-align: center;
+      border-bottom: 1px solid #444;
+      padding-bottom: 8px;
+    }
+    
+    h4 {
+      margin: 16px 0 8px 0;
+      color: #ccc;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .control-group {
+      margin-bottom: 16px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    .resource-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+      
+      select {
+        flex: 1;
+        padding: 6px 8px;
+        background: #2a2a2a;
+        border: 1px solid #444;
+        border-radius: 4px;
+        color: #fff;
+        
+        &:focus {
+          border-color: #00ff88;
+          outline: none;
+        }
+      }
+      
+      input[type="number"] {
+        width: 80px;
+        padding: 6px 8px;
+        background: #2a2a2a;
+        border: 1px solid #444;
+        border-radius: 4px;
+        color: #fff;
+        
+        &:focus {
+          border-color: #00ff88;
+          outline: none;
+        }
+      }
+      
+      button {
+        padding: 6px 12px;
+        background: #00ff88;
+        border: none;
+        border-radius: 4px;
+        color: #000;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        
+        &:hover {
+          background: #00dd77;
+        }
+        
+        &:active {
+          background: #00bb66;
+        }
+      }
+    }
+    
+    .toggle-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      
+      label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        
+        input[type="checkbox"] {
+          width: 16px;
+          height: 16px;
+          accent-color: #00ff88;
+        }
+      }
+    }
+    
+    .environment-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      
+      label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        
+        input[type="checkbox"] {
+          width: 16px;
+          height: 16px;
+          accent-color: #00ff88;
+        }
+      }
+    }
+    
+    .speed-controls {
+      display: flex;
+      gap: 4px;
+      
+      button {
+        flex: 1;
+        padding: 8px 12px;
+        background: #2a2a2a;
+        border: 1px solid #444;
+        border-radius: 4px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &:hover {
+          background: #3a3a3a;
+          border-color: #555;
+        }
+        
+        &.bp3-active {
+          background: #00ff88;
+          border-color: #00ff88;
+          color: #000;
+        }
+      }
+    }
+  }
+}
+
+// Hide sandbox controls in regular mode
+body:not(.sandbox-mode) .sandbox-controls {
+  display: none;
+}
+
+// Add visual indicator for sandbox mode
+body.sandbox-mode {
+  &::before {
+    content: "🧪 SANDBOX MODE";
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 215, 0, 0.9);
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
